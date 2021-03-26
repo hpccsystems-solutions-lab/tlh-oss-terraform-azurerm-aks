@@ -1,10 +1,10 @@
 variable "cluster_name" {
-  description = "The name of the EKS cluster to create, also used as a prefix in names of related resources."
+  description = "The name of the AKS cluster to create, also used as a prefix in names of related resources."
   type        = string
 }
 
 variable "subnets" {
-  description = "The primary subnets to be used for the cluster and workers."
+  description = "The primary subnets to be used for the nodes."
   type = object({
     private = object({id = string})
     public  = object({id = string})
@@ -35,26 +35,20 @@ variable "network_plugin" {
 }
 
 variable "node_pool_defaults" {
-  description = "Override default values for the workers, this will NOT override the values that the module sets directly."
+  description = "Override default values for the nodes, this will NOT override the values that the module sets directly."
   type        = any
   default     = {}
 }
 
 variable "node_pool_taints" {
-  description = "Extend or overwrite the default worker taints to apply based on the worker tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden)."
+  description = "Extend or overwrite the default node taints to apply based on the node tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden)."
   type        = map(string)
   default     = {}
 }
 
 variable "node_pool_tags" {
-  description = "Additional tags for all workers."
+  description = "Additional tags for all nodes."
   type        = map(string)
-  default     = {}
-}
-
-variable "default_node_pool" {
-  description = "Override default values for default node pool."
-  type        = any
   default     = {}
 }
 
@@ -71,4 +65,19 @@ variable "node_pools" {
     max_count = number
     tags      = map(string)
   }))
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
+  }
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
+  }
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if pool.lifecycle != "normal"]) == 0)
+    error_message = "Only lifecycle type \"normal\" is currently supported."
+  }
 }

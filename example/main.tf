@@ -17,7 +17,7 @@ terraform {
       version = "=2.0.3"
     }
   }
-   required_version = "=0.14.8"
+   required_version = ">=0.14.8"
 }
 
 provider "azurerm" {
@@ -106,7 +106,8 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    "iaas-private" = { cidrs = ["10.1.0.0/24"] }
+    "iaas-private" = { cidrs = ["10.1.0.0/24"] 
+                       allow_internet_outbound = true }  # Allow traffic to Internet for image download
     "iaas-public"  = { cidrs                   = ["10.1.1.0/24"]
                        allow_lb_inbound        = true    # Allow traffic from Azure Load Balancer to pods
                        allow_internet_outbound = true }  # Allow traffic to Internet for image download
@@ -130,8 +131,8 @@ module "aks" {
     {
       name      = "private"
       tier      = "standard"
-      lifecycle = "Regular"
-      vm_size   = "xlarge"
+      lifecycle = "normal"
+      vm_size   = "large"
       os_type   = "Linux"
       subnet    = "private"
       min_count = "1"
@@ -141,7 +142,7 @@ module "aks" {
     {
       name      = "public"
       tier      = "ingress"
-      lifecycle = "Spot"
+      lifecycle = "normal"
       vm_size   = "medium"
       os_type   = "Linux"
       subnet    = "public"
@@ -177,18 +178,6 @@ module "aks" {
   }
 
 
-}
-
-output "node_pool_defaults" {
-  value = module.aks.node_pool_defaults
-}
-
-output "node_pools" {
-  value = module.aks.node_pools
-}
-
-output "default_node_pool" {
-  value = module.aks.default_node_pool
 }
 
 #resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
