@@ -12,36 +12,36 @@ locals {
   }, var.vm_types)
 
   node_pool_defaults = merge({
-    availability_zones           = [1,2,3]
+    availability_zones           = [1, 2, 3]
     enable_auto_scaling          = true
     max_pods                     = null
     max_surge                    = "1"
     only_critical_addons_enabled = false
     orchestrator_version         = null
-  },
-  var.node_pool_defaults,
-  { # These default settings cannot be overridden
-    priority                     = "Regular"
-    type                         = "VirtualMachineScaleSets"
-    eviction_policy              = null
-    enable_host_encryption       = true
-    proximity_placement_group_id = null
-    spot_max_price               = null
-    os_disk_size_gb              = null
-    os_disk_type                 = "Managed"
-  },
-  { # These settings are determinted by the node pool inputs
-    vm_size               = null
-    os_type               = null
-    node_taints           = null
-    node_labels           = null
-    tags                  = null
-    node_count            = null
-    min_count             = null
-    max_count             = null
-    subnet                = null
-    enable_node_public_ip = null
-    mode                  = null
+    },
+    var.node_pool_defaults,
+    { # These default settings cannot be overridden
+      priority                     = "Regular"
+      type                         = "VirtualMachineScaleSets"
+      eviction_policy              = null
+      enable_host_encryption       = true
+      proximity_placement_group_id = null
+      spot_max_price               = null
+      os_disk_size_gb              = null
+      os_disk_type                 = "Managed"
+    },
+    { # These settings are determinted by the node pool inputs
+      vm_size               = null
+      os_type               = null
+      node_taints           = null
+      node_labels           = null
+      tags                  = null
+      node_count            = null
+      min_count             = null
+      max_count             = null
+      subnet                = null
+      enable_node_public_ip = null
+      mode                  = null
   })
 
   node_pool_tags = merge(var.node_pool_tags, {
@@ -76,7 +76,7 @@ locals {
     tags      = {}
   }
 
-  node_pools = merge(values({ for pool in concat([local.default_node_pool], var.node_pools):
+  node_pools = merge(values({ for pool in concat([local.default_node_pool], var.node_pools) :
     pool.name => { for zone in(contains(local.multi_az_node_pool_tiers, pool.tier) ? local.node_pool_defaults.availability_zones : [0]) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         vm_size     = local.vm_types[pool.vm_size]
@@ -98,4 +98,7 @@ locals {
       })
     }
   })...)
+
+  windows_nodes = (length([for v in local.node_pools : v if lower(v.os_type) == "windows"]) > 0 ? true : false)
+
 }

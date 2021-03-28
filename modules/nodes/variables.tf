@@ -6,8 +6,8 @@ variable "cluster_name" {
 variable "subnets" {
   description = "The primary subnets to be used for the nodes."
   type = object({
-    private = object({id = string})
-    public  = object({id = string})
+    private = object({ id = string })
+    public  = object({ id = string })
   })
 }
 
@@ -67,17 +67,17 @@ variable "node_pools" {
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
     error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
     error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if pool.lifecycle != "normal"]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if pool.lifecycle != "normal"]) == 0)
     error_message = "Only lifecycle type \"normal\" is currently supported."
   }
 }
