@@ -95,8 +95,8 @@ variable "network_plugin" {
   default     = "kubenet"
 
   validation {
-    condition     = contains(["kubenet", "azurecni"], lower(var.network_plugin))
-    error_message = "Network plugin must be kubenet or AzureCNI."
+    condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
+    error_message = "Network plugin must be kubenet or azure."
   }
 }
 

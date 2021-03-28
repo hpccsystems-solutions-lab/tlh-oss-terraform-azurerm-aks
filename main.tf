@@ -28,4 +28,9 @@ module "kubernetes" {
   node_pool_subnets = var.subnets
   node_pools        = module.nodes.node_pools
   default_node_pool = module.nodes.default_node_pool
+
+  windows_profile = (module.nodes.windows_config.enabled ? {
+    admin_username = module.nodes.windows_config.admin_username
+    admin_password = module.nodes.windows_config.admin_password
+  } : null)
 }
