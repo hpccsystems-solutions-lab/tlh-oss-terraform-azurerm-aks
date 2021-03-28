@@ -35,24 +35,6 @@ variable "vm_types" {
   default     = {}
 }
 
-variable "spot_vm_types" {
-  description = "Extend or overwrite the default override vm types for spot node pools."
-  type        = map(string)
-  default     = {}
-}
-
-variable "instance_nic_count" {
-  description = "Extend or overwrite the default maximum network interfaces."
-  type        = map(string)
-  default     = {}
-}
-
-variable "ips_per_nic" {
-  description = "Extend or overwrite the default ip addresses per network interface."
-  type        = map(string)
-  default     = {}
-}
-
 variable "node_pool_defaults" {
   description = "Override default values for the node pools, this will NOT override the values that the module sets directly."
   type        = any
@@ -73,8 +55,8 @@ variable "node_pool_tags" {
 
 variable "default_node_pool" {
   description = "Override default values for default node pool."
-  type = any
-  default = {}
+  type        = any
+  default     = {}
 }
 
 variable "node_pools" {
@@ -90,6 +72,21 @@ variable "node_pools" {
     max_count = number
     tags      = map(string)
   }))
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
+  }
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
+  }
+
+  validation {
+    condition     = (length([for pool in var.node_pools: pool.name if pool.lifecycle != "normal"]) == 0)
+    error_message = "Only lifecycle type \"normal\" is currently supported."
+  }
 }
 
 variable "network_plugin" {
