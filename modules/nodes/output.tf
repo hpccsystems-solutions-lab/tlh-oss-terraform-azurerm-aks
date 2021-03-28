@@ -1,8 +1,3 @@
-output "node_pool_defaults" {
-  description = "The node pool defaults."
-  value       = local.node_pool_defaults
-}
-
 output "node_pools" {
   description = "The node_pool definitions."
   value       = local.node_pools
