@@ -17,7 +17,7 @@ terraform {
       version = "=2.0.3"
     }
   }
-   required_version = ">=0.14.8"
+  required_version = ">=0.14.8"
 }
 
 provider "azurerm" {
@@ -25,18 +25,18 @@ provider "azurerm" {
 }
 
 provider "kubernetes" {
-  host                   = module.kubernetes.kube_config.host
-  client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
-  client_key             = base64decode(module.kubernetes.kube_config.client_key)
-  cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
+  host                   = module.aks.kube_config.host
+  client_certificate     = base64decode(module.aks.kube_config.client_certificate)
+  client_key             = base64decode(module.aks.kube_config.client_key)
+  cluster_ca_certificate = base64decode(module.aks.kube_config.cluster_ca_certificate)
 }
 
 provider "helm" {
   kubernetes {
-    host                   = module.kubernetes.kube_config.host
-    client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
-    client_key             = base64decode(module.kubernetes.kube_config.client_key)
-    cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
+    host                   = module.aks.kube_config.host
+    client_certificate     = base64decode(module.aks.kube_config.client_certificate)
+    client_key             = base64decode(module.aks.kube_config.client_key)
+    cluster_ca_certificate = base64decode(module.aks.kube_config.cluster_ca_certificate)
   }
 }
 
@@ -55,12 +55,12 @@ resource "random_string" "random" {
 }
 
 resource "random_password" "admin" {
-  length      = 14
-  special     = true
+  length  = 14
+  special = true
 }
 
 module "subscription" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-subscription-data.git?ref=v1.0.0"
+  source          = "github.com/Azure-Terraform/terraform-azurerm-subscription-data.git?ref=v1.0.0"
   subscription_id = data.azurerm_subscription.current.subscription_id
 }
 
@@ -74,7 +74,7 @@ module "metadata" {
   naming_rules = module.naming.yaml
 
   market              = "us"
-  project             = "https://github.com/Azure-Terraform/terraform-azurerm-kubernetes/tree/master/example/mixed-arch"
+  project             = "https://github.com/LexisNexis-RBA/terraform-azurerm-aks/tree/master/example"
   location            = "eastus2"
   environment         = "sandbox"
   product_name        = random_string.random.result
@@ -94,7 +94,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.5.1"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.6.0"
 
   naming_rules = module.naming.yaml
 
@@ -106,11 +106,15 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    "iaas-private" = { cidrs = ["10.1.0.0/24"] 
-                       allow_internet_outbound = true }  # Allow traffic to Internet for image download
-    "iaas-public"  = { cidrs                   = ["10.1.1.0/24"]
-                       allow_lb_inbound        = true    # Allow traffic from Azure Load Balancer to pods
-                       allow_internet_outbound = true }  # Allow traffic to Internet for image download
+    "iaas-private" = {
+      cidrs                   = ["10.1.0.0/24"]
+      allow_internet_outbound = true # Allow traffic to Internet for image download
+    }
+    "iaas-public" = {
+      cidrs                   = ["10.1.1.0/24"]
+      allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
+      allow_internet_outbound = true # Allow traffic to Internet for image download
+    }
   }
 }
 
@@ -123,9 +127,9 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
-  node_pool_tags = {}
+  node_pool_tags     = {}
   node_pool_defaults = {}
-  node_pool_taints = {}
+  node_pool_taints   = {}
 
   node_pools = [
     {
@@ -149,22 +153,10 @@ module "aks" {
       min_count = "1"
       max_count = "2"
       tags      = {}
-  }
-]
+    }
+  ]
 
-
-  #identity_type = "UserAssigned"
-
-  #windows_profile = {
-  #  admin_username = "testadmin"
-  #  admin_password = random_password.admin.result
-  #}
-
-  #network_plugin             = "azure"
-  #configure_network_role     = true
-  #configure_subnet_nsg_rules = true
-
-  subnets = { 
+  subnets = {
     private = {
       id                          = module.virtual_network.subnets["iaas-private"].id
       resource_group_name         = module.virtual_network.subnets["iaas-private"].resource_group_name
@@ -176,103 +168,52 @@ module "aks" {
       network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
     }
   }
-
-
 }
 
-#resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
-#  name                        = "AllowNginx"
-#  priority                    = 100
-#  direction                   = "Inbound"
-#  access                      = "Allow"
-#  protocol                    = "tcp"
-#  source_port_range           = "*"
-#  destination_port_range      = "80"
-#  source_address_prefix       = "Internet"
-#  destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
-#  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-#  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
-#}
-#
-#resource "azurerm_network_security_rule" "ingress_public_allow_iis" {
-#  name                        = "AllowIIS"
-#  priority                    = 101
-#  direction                   = "Inbound"
-#  access                      = "Allow"
-#  protocol                    = "tcp"
-#  source_port_range           = "*"
-#  destination_port_range      = "80"
-#  source_address_prefix       = "Internet"
-#  destination_address_prefix  = data.kubernetes_service.iis.status.0.load_balancer.0.ingress.0.ip
-#  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-#  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
-#}
-#
-#resource "helm_release" "nginx" {
-#  depends_on = [module.kubernetes] 
-#  name       = "nginx"
-#  chart      = "./helm_chart"
-#
-#  set {
-#    name  = "name"
-#    value = "nginx"
-#  }
-#
-#  set {
-#    name  = "image"
-#    value = "nginx:latest"
-#  }
-#
-#  set {
-#    name  = "nodeSelector"
-#    value = yamlencode({agentpool = "linuxweb"})
-#  }
-#}
-#
-#resource "helm_release" "iis" {
-#  depends_on = [module.kubernetes] 
-#  name       = "iis"
-#  chart      = "./helm_chart"
-#  timeout    = 600
-#
-#  set {
-#    name  = "name"
-#    value = "iis"
-#  }
-#
-#  set {
-#    name  = "image"
-#    value = "microsoft/iis:latest"
-#  }
-#
-#  set {
-#    name  = "nodeSelector"
-#    value = yamlencode({agentpool = "winweb"})
-#  }
-#}
-#
-#data "kubernetes_service" "nginx" {
-#  depends_on = [helm_release.nginx] 
-#  metadata {
-#    name = "nginx"
-#  }
-#}
-#
-#data "kubernetes_service" "iis" {
-#  depends_on = [helm_release.iis] 
-#  metadata {
-#    name = "iis"
-#  }
-#}
-#
-#output "nginx_url" {
-#  value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
-#}
-#
-#output "iis_url" {
-#  value = "http://${data.kubernetes_service.iis.status.0.load_balancer.0.ingress.0.ip}"
-#}
-#
-#output "aks_login" {
-#  value = "az aks get-credentials --name ${module.kubernetes.name} --resource-group ${module.resource_group.name}"
-#}
+resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
+  name                        = "AllowNginx"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "80"
+  source_address_prefix       = "Internet"
+  destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
+  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
+  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
+}
+
+resource "helm_release" "nginx" {
+  depends_on = [module.aks]
+  name       = "nginx"
+  chart      = "./helm_chart"
+
+  values = [<<-EOT
+  name: nginx
+  image: nginx:latest
+  nodeSelector:
+    lnrs.io/tier: ingress
+  tolerations:
+  - key: "ingress"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+  EOT
+  ]
+}
+
+data "kubernetes_service" "nginx" {
+  depends_on = [helm_release.nginx]
+  metadata {
+    name = "nginx"
+  }
+}
+
+output "nginx_url" {
+  value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
+}
+
+output "aks_login" {
+  value = "az aks get-credentials --name ${module.aks.aks_cluster_name} --resource-group ${module.resource_group.name}"
+}
