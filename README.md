@@ -32,7 +32,10 @@ This module is designed to provide a standard set of defaults for all node pools
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| terraform | >= 0.14.8 |
+| azurerm | >= 2.51.0 |
 
 ## Providers
 
