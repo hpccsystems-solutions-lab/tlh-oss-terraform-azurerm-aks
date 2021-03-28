@@ -119,7 +119,7 @@ module "virtual_network" {
 }
 
 module "aks" {
-  source = "../"
+  source = "../../"
 
   cluster_name = random_string.random.result
 
@@ -187,7 +187,7 @@ resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
 resource "helm_release" "nginx" {
   depends_on = [module.aks]
   name       = "nginx"
-  chart      = "./helm_chart"
+  chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
   name: nginx
