@@ -28,7 +28,6 @@ This module is designed to provide a standard set of defaults for all node pools
 
 ---
 
-## Variables
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
