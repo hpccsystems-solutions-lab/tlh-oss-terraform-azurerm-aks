@@ -1,14 +1,14 @@
 locals {
   vm_types = merge({
     medium     = "Standard_B2s"
-    large      = "Standard_D2a_v4"
-    xlarge     = "Standard_D4a_v4"
-    "2xlarge"  = "Standard_D8a_v4"
-    "4xlarge"  = "Standard_D16a_v4"
-    "8xlarge"  = "Standard_D32a_v4"
-    "12xlarge" = "Standard_D48a_v4"
-    "16xlarge" = "Standard_D64a_v4"
-    "24xlarge" = "Standard_D96a_v4"
+    large      = "Standard_D2s_v4"
+    xlarge     = "Standard_D4s_v4"
+    "2xlarge"  = "Standard_D8s_v4"
+    "4xlarge"  = "Standard_D16s_v4"
+    "8xlarge"  = "Standard_D32s_v4"
+    "12xlarge" = "Standard_D48s_v4"
+    "16xlarge" = "Standard_D64s_v4"
+    "24xlarge" = "Standard_D96as_v4"
   }, var.vm_types)
 
   node_pool_defaults = merge({
