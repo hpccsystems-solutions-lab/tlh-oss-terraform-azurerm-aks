@@ -11,7 +11,7 @@ output "default_node_pool" {
 output "windows_config" {
   value = {
     enabled        = local.windows_nodes
-    admin_username = (local.windows_nodes ? random_password.windwows_admin_username.0.result : null)
-    admin_password = (local.windows_nodes ? random_password.windwows_admin_password.0.result : null)
+    admin_username = (local.windows_nodes ? random_password.windows_admin_username.0.result : null)
+    admin_password = (local.windows_nodes ? random_password.windows_admin_password.0.result : null)
   }
 }
