@@ -41,7 +41,7 @@ provider "helm" {
 }
 
 data "http" "my_ip" {
-  url = "http://ipv4.icanhazip.com"
+  url = "https://ipv4.icanhazip.com"
 }
 
 data "azurerm_subscription" "current" {
