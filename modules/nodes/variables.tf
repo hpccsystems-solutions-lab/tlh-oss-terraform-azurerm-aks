@@ -23,17 +23,6 @@ variable "vm_types" {
   default     = {}
 }
 
-variable "spot_vm_types" {
-  description = "Extend or overwrite the default override vm types for spot groups."
-  type        = map(string)
-  default     = {}
-}
-
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or AzureCNI)"
-  type        = string
-}
-
 variable "node_pool_defaults" {
   description = "Override default values for the nodes, this will NOT override the values that the module sets directly."
   type        = any
