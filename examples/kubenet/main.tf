@@ -190,16 +190,16 @@ resource "helm_release" "nginx" {
   chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
-  name: nginx
-  image: nginx:latest
-  nodeSelector:
-    lnrs.io/tier: ingress
-  tolerations:
-  - key: "ingress"
-    operator: "Equal"
-    value: "true"
-    effect: "NoSchedule"
-  EOT
+    name: nginx
+    image: nginx:latest
+    nodeSelector:
+      lnrs.io/tier: ingress
+    tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    EOT
   ]
 }
 

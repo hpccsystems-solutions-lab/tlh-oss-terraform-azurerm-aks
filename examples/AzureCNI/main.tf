@@ -217,17 +217,17 @@ resource "helm_release" "nginx" {
   chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
-  name: nginx
-  image: nginx:latest
-  nodeSelector:
-    lnrs.io/tier: ingress
-    kubernetes.io/os: linux
-  tolerations:
-  - key: "ingress"
-    operator: "Equal"
-    value: "true"
-    effect: "NoSchedule"
-  EOT
+    name: nginx
+    image: nginx:latest
+    nodeSelector:
+      lnrs.io/tier: ingress
+      kubernetes.io/os: linux
+    tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    EOT
   ]
 }
 
@@ -237,17 +237,17 @@ resource "helm_release" "iis" {
   chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
-  name: iis
-  image: microsoft/iis:latest
-  nodeSelector:
-    lnrs.io/tier: ingress
-    kubernetes.io/os: windows
-  tolerations:
-  - key: "ingress"
-    operator: "Equal"
-    value: "true"
-    effect: "NoSchedule"
-  EOT
+    name: iis
+    image: microsoft/iis:latest
+    nodeSelector:
+      lnrs.io/tier: ingress
+      kubernetes.io/os: windows
+    tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    EOT
   ]
 }
 
