@@ -2,7 +2,6 @@ module "nodes" {
   source = "./modules/nodes"
 
   cluster_name   = local.cluster_name
-  network_plugin = var.network_plugin
   subnets        = var.subnets
 
   node_pool_defaults = var.node_pool_defaults
