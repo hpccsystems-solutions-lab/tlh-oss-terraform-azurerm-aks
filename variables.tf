@@ -148,25 +148,20 @@ variable "additional_storage_classes" {
   description = "A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information."
 
   validation {
-    condition     = var.additional_storage_classes == null
-    error_message = "Testing."
-  }
-
-  validation {
-    condition     = (length([for storclass in var.additional_storage_classes: storclass.reclaim_policy if storclass.reclaim_policy != "Retain"]) == 0 ||
-                    length([for storclass in var.additional_storage_classes: storclass.reclaim_policy if storclass.reclaim_policy != "Delete"]) == 0)
+    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
+                    length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
     error_message = "The reclaim policy setting must be set to 'Delete' or 'Reclaim'."
   }
 
   validation {
-    condition     = (length([for storclass in var.additional_storage_classes: storclass.storage_provisioner if storclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
-                    length([for storclass in var.additional_storage_classes: storclass.storage_provisioner if storclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
+    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
+                    length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
     error_message = "The storage provisioner setting must be set to 'kubernetes.io/azure-file' or 'kubernetes.io/azure-disk'."
   }
 
   validation {
-    condition     = (length([for storclass in var.additional_storage_classes: storclass.volume_binding_mode if storclass.volume_binding_mode != "Immediate"]) == 0 ||
-                    length([for storclass in var.additional_storage_classes: storclass.volume_binding_mode if storclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
+    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
+                    length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
     error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
   }
 }
