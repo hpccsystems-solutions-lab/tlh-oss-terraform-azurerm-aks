@@ -168,6 +168,40 @@ module "aks" {
       network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
     }
   }
+
+  additional_priority_classes = {
+    name-of-priority-class = {
+      description = "A description for this priority class"
+      value       = 1500 # lower number = lower priority
+      labels      = {
+        label1 = "foo"
+        label2 = "bar"
+      }
+      annotations = {
+        "lnrs.io/foo" = "bar"
+        "lnrs.io/baz" = "qux"
+      }
+    }
+  }
+
+  additional_storage_classes = {
+    special-storage-class = {
+      labels              = {
+        "test" = "foo"
+      }
+      annotations         = {}
+      storage_provisioner = "kubernetes.io/azure-disk"
+      parameters = {
+        cachingmode        = "ReadOnly"
+        kind               = "Managed"
+        storageaccounttype = "StandardSSD_LRS"
+      }
+      reclaim_policy         = "Delete"
+      mount_options          = ["debug"]
+      volume_binding_mode    = "WaitForFirstConsumer"
+      allow_volume_expansion = true
+    }
+  }
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
