@@ -11,7 +11,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.2"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.4"
 
   location            = var.location
   tags                = var.tags
