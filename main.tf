@@ -11,7 +11,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.2"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.3"
 
   location            = var.location
   tags                = var.tags
@@ -32,4 +32,19 @@ module "kubernetes" {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
   } : null)
+}
+
+module "pod_identity" {
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes-aad-pod-identity.git?ref=v2.0.1"
+
+  helm_chart_version = "3.0.3"
+
+  enable_kubenet_plugin = (lower(var.network_plugin) == "kubenet" ? true : false)
+
+  aks_node_resource_group = module.kubernetes.node_resource_group
+  additional_scopes       = {
+    parent_rg = data.azurerm_resource_group.parent.id
+  }
+
+  aks_identity = module.kubernetes.kubelet_identity.object_id
 }
