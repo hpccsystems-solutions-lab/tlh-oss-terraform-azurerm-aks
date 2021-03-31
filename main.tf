@@ -33,3 +33,22 @@ module "kubernetes" {
     admin_password = module.nodes.windows_config.admin_password
   } : null)
 }
+
+provider "kubernetes" {
+  host                   = module.kubernetes.kube_config.host
+  client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
+  client_key             = base64decode(module.kubernetes.kube_config.client_key)
+  cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
+}
+
+module "priority_classes" {
+  source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"
+
+  additional_priority_classes = var.additional_priority_classes
+}
+
+module "storage_classes" {
+  source = "./modules/storage-classes"
+
+  additional_storage_classes = var.additional_storage_classes
+}
