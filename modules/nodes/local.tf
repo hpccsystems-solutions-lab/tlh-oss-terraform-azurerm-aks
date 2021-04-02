@@ -92,7 +92,7 @@ locals {
         max_count             = pool.max_count
         availability_zones    = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
         subnet                = (contains(local.public_tiers, pool.tier) ? "public" : "private")
-        enable_node_public_ip = (pool.subnet == "public" ? true : false)
+        enable_node_public_ip = (contains(local.public_tiers, pool.tier) ? true : false)
         priority              = (pool.lifecycle == "normal" ? "Regular" : null)
         mode                  = (pool.name == local.default_node_pool.name ? "System" : "User")
       })

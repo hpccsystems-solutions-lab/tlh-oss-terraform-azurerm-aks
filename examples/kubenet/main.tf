@@ -138,7 +138,6 @@ module "aks" {
       lifecycle = "normal"
       vm_size   = "large"
       os_type   = "Linux"
-      subnet    = "private"
       min_count = "1"
       max_count = "2"
       tags      = {}
@@ -149,7 +148,6 @@ module "aks" {
       lifecycle = "normal"
       vm_size   = "medium"
       os_type   = "Linux"
-      subnet    = "public"
       min_count = "1"
       max_count = "2"
       tags      = {}
