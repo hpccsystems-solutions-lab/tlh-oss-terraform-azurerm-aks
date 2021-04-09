@@ -22,6 +22,8 @@ resource "null_resource" "install_kubectl" {
 }
 
 resource "local_file" "kubeconfig" {
+  depends_on = [ null_resource.install_kubectl ]
+
   sensitive_content = var.kubeconfig
   filename          = "${var.directory}/.kubeconfig"
 }

@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  password: foo
+kind: Secret
+metadata:
+  name: test-secret
+  namespace: default
+type: Opaque

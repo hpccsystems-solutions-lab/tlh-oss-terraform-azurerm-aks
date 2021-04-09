@@ -246,6 +246,10 @@ output "nginx_url" {
   value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
 }
 
+output "kube_config" {
+  value = module.aks.kube_config
+}
+
 output "aks_login" {
   value = "az aks get-credentials --name ${module.aks.aks_cluster_name} --resource-group ${module.resource_group.name}"
 }

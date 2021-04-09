@@ -3,7 +3,7 @@ output "kubeconfig_path" {
   value       = local_file.kubeconfig.filename
 }
 
-output "kubectl_path" {
+output "kubectl_bin" {
   description = "Path to kubectl binary."
   value       = "${var.directory}/kubectl"
 }

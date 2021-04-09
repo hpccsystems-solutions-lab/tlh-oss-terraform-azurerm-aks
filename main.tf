@@ -52,3 +52,16 @@ module "storage_classes" {
 
   additional_storage_classes = var.additional_storage_classes
 }
+
+module "kubectl_setup" {
+  source          = "./modules/kubectl-setup"
+  kubectl_version = null 
+  directory       = path.module
+  kubeconfig      = module.kubernetes.kube_config_raw
+}
+
+module "core-config" {
+  source          = "./modules/core-config"
+  kubeconfig_path = module.kubectl_setup.kubeconfig_path
+  kubectl_bin     = module.kubectl_setup.kubectl_bin
+}
