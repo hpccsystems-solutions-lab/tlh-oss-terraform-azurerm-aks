@@ -41,6 +41,15 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = module.kubernetes.kube_config.host
+    client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
+    client_key             = base64decode(module.kubernetes.kube_config.client_key)
+    cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
+  }
+}
+
 module "priority_classes" {
   source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"
 
@@ -51,4 +60,20 @@ module "storage_classes" {
   source = "./modules/storage-classes"
 
   additional_storage_classes = var.additional_storage_classes
+}
+
+data "azurerm_client_config" "current" {}
+
+module "external_dns" {
+  source = "./modules/external-dns"
+
+  azure_tenant_id       = data.azurerm_client_config.current.tenant_id
+  azure_subscription_id = data.azurerm_client_config.current.subscription_id
+
+  resource_group_name          = var.resource_group_name
+  cluster_name                 = module.kubernetes.name
+  dns_zone_resource_group_name = var.dns_zone_resource_group_name
+  dns_zone_name                = var.dns_zone_name
+
+  tags = var.tags
 }

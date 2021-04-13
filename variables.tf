@@ -164,3 +164,16 @@ variable "additional_storage_classes" {
     error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
   }
 }
+
+#
+# EXTERNAL-DNS SUBMODULE VARIABLES
+#
+variable "dns_zone_resource_group_name" {
+  type        = string
+  description = "The name of the resource group containing the DNS zone to manage with external-dns"
+}
+
+variable "dns_zone_name" {
+  type        = string
+  description = "The name of the DNS zone to manage with external-dns"
+}
