@@ -21,7 +21,9 @@ This module is designed to provide a standard set of defaults for all node pools
 
 ## Providers
 
-No provider.
+| Name | Version |
+|------|---------|
+| azurerm | >= 2.51.0 |
 
 ## Inputs
 
@@ -32,6 +34,8 @@ No provider.
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
 | default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
+| dns\_zone\_name | The name of the DNS zone to manage with external-dns | `string` | n/a | yes |
+| dns\_zone\_resource\_group\_name | The name of the resource group containing the DNS zone to manage with external-dns | `string` | n/a | yes |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | network\_plugin | Kubernetes Network Plugin (kubenet or AzureCNI) | `string` | `"kubenet"` | no |
 | node\_pool\_defaults | Override default values for the node pools, this will NOT override the values that the module sets directly. | `any` | `{}` | no |
