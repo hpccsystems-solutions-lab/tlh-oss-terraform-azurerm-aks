@@ -18,10 +18,7 @@ This module is designed to provide a standard set of defaults for all node pools
 | terraform | >= 0.14.8 |
 | azurerm | >= 2.51.0 |
 | helm | >= 2.0.3 |
-<<<<<<< HEAD
-=======
 | kubectl | >= 1.10.0 |
->>>>>>> e370c4194b96f46e777ed76efb4ba9c4d39f7c77
 | kubernetes | >= 2.0.0 |
 
 ## Providers
@@ -36,11 +33,8 @@ No provider.
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
-<<<<<<< HEAD
-| custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
-=======
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
->>>>>>> e370c4194b96f46e777ed76efb4ba9c4d39f7c77
+| custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
 | default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
