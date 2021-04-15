@@ -24,9 +24,15 @@ module "kubernetes" {
 
   network_plugin = var.network_plugin
 
-  node_pool_subnets = var.subnets
-  node_pools        = module.nodes.node_pools
-  default_node_pool = module.nodes.default_node_pool
+  node_pool_subnets      = var.subnets
+  custom_route_table_ids = var.custom_route_table_ids
+  node_pools             = module.nodes.node_pools
+  default_node_pool      = module.nodes.default_node_pool
+
+  rbac = {
+    enabled        = true
+    ad_integration = true
+  }
 
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username

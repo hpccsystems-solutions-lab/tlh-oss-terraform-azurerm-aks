@@ -121,6 +121,12 @@ variable "subnets" {
   )
 }
 
+variable "custom_route_table_ids" {
+  description = "Custom route tables used by node pool subnets."
+  type        = map(string)
+  default     = {}
+}
+
 variable "additional_priority_classes" {
   type = map(object({
     description = string
