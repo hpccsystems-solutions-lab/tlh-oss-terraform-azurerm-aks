@@ -31,6 +31,7 @@ No provider.
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
+| custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
 | default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | network\_plugin | Kubernetes Network Plugin (kubenet or AzureCNI) | `string` | `"kubenet"` | no |
