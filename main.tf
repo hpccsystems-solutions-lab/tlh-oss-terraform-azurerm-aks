@@ -1,8 +1,8 @@
 module "nodes" {
   source = "./modules/nodes"
 
-  cluster_name   = local.cluster_name
-  subnets        = var.subnets
+  cluster_name = local.cluster_name
+  subnets      = var.subnets
 
   node_pool_defaults = var.node_pool_defaults
   node_pool_taints   = var.node_pool_taints
@@ -27,6 +27,11 @@ module "kubernetes" {
   node_pool_subnets = var.subnets
   node_pools        = module.nodes.node_pools
   default_node_pool = module.nodes.default_node_pool
+
+  rbac = {
+    enabled        = true
+    ad_integration = true
+  }
 
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username
