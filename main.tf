@@ -29,6 +29,11 @@ module "kubernetes" {
   node_pools             = module.nodes.node_pools
   default_node_pool      = module.nodes.default_node_pool
 
+  rbac = {
+    enabled        = true
+    ad_integration = true
+  }
+
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
