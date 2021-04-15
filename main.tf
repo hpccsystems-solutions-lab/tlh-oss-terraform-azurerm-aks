@@ -1,8 +1,8 @@
 module "nodes" {
   source = "./modules/nodes"
 
-  cluster_name   = local.cluster_name
-  subnets        = var.subnets
+  cluster_name = local.cluster_name
+  subnets      = var.subnets
 
   node_pool_defaults = var.node_pool_defaults
   node_pool_taints   = var.node_pool_taints
@@ -34,13 +34,6 @@ module "kubernetes" {
   } : null)
 }
 
-provider "kubernetes" {
-  host                   = module.kubernetes.kube_config.host
-  client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
-  client_key             = base64decode(module.kubernetes.kube_config.client_key)
-  cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
-}
-
 module "priority_classes" {
   source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"
 
@@ -53,15 +46,10 @@ module "storage_classes" {
   additional_storage_classes = var.additional_storage_classes
 }
 
-module "kubectl_setup" {
-  source          = "./modules/kubectl-setup"
-  kubectl_version = null 
-  directory       = path.module
-  kubeconfig      = module.kubernetes.kube_config_raw
-}
-
 module "core-config" {
   source          = "./modules/core-config"
-  kubeconfig_path = module.kubectl_setup.kubeconfig_path
-  kubectl_bin     = module.kubectl_setup.kubectl_bin
+
+  namespaces = var.namespaces
+  configmaps = var.configmaps
+  secrets    = var.secrets
 }
