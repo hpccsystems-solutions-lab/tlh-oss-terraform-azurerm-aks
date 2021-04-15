@@ -170,3 +170,30 @@ variable "additional_storage_classes" {
     error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
   }
 }
+
+variable "namespaces" {
+  description = "List of namespaces to create on the cluster."
+  type        = list(string)
+  default     = []
+}
+
+variable "secrets" {
+  description = "Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable."
+  type = map(object({
+    name      = string
+    namespace = string
+    type      = string
+    data      = map(string)
+  }))
+  default = {}
+}
+
+variable "configmaps" {
+  description = "Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable."
+  type = map(object({
+    name      = string
+    namespace = string
+    data      = map(string)
+  }))
+  default = {}
+}

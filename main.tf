@@ -51,3 +51,11 @@ module "storage_classes" {
 
   additional_storage_classes = var.additional_storage_classes
 }
+
+module "core-config" {
+  source          = "./modules/core-config"
+
+  namespaces = var.namespaces
+  configmaps = var.configmaps
+  secrets    = var.secrets
+}
