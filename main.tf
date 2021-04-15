@@ -1,8 +1,8 @@
 module "nodes" {
   source = "./modules/nodes"
 
-  cluster_name   = local.cluster_name
-  subnets        = var.subnets
+  cluster_name = local.cluster_name
+  subnets      = var.subnets
 
   node_pool_defaults = var.node_pool_defaults
   node_pool_taints   = var.node_pool_taints
@@ -32,13 +32,6 @@ module "kubernetes" {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
   } : null)
-}
-
-provider "kubernetes" {
-  host                   = module.kubernetes.kube_config.host
-  client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
-  client_key             = base64decode(module.kubernetes.kube_config.client_key)
-  cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
 }
 
 module "priority_classes" {

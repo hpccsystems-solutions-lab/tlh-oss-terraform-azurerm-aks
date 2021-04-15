@@ -73,17 +73,17 @@ variable "node_pools" {
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
     error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
     error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if pool.lifecycle != "normal"]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if pool.lifecycle != "normal"]) == 0)
     error_message = "Only lifecycle type \"normal\" is currently supported."
   }
 }
@@ -147,20 +147,20 @@ variable "additional_storage_classes" {
   description = "A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information."
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
     error_message = "The reclaim policy setting must be set to 'Delete' or 'Reclaim'."
   }
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
     error_message = "The storage provisioner setting must be set to 'kubernetes.io/azure-file' or 'kubernetes.io/azure-disk'."
   }
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
     error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
   }
 }
