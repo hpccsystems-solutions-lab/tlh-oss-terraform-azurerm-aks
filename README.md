@@ -53,6 +53,7 @@ No provider.
 
 | Name | Description |
 |------|-------------|
+| aks\_cluster\_effective\_outbound\_ips\_ids | n/a |
 | aks\_cluster\_name | n/a |
 | kube\_config | n/a |
 
