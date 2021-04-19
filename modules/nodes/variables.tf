@@ -49,7 +49,6 @@ variable "node_pools" {
     lifecycle = string
     vm_size   = string
     os_type   = string
-    subnet    = string
     min_count = number
     max_count = number
     tags      = map(string)
