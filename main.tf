@@ -61,7 +61,7 @@ module "storage_classes" {
 }
 
 module "core-config" {
-  source          = "./modules/core-config"
+  source = "./modules/core-config"
 
   namespaces = var.namespaces
   configmaps = var.configmaps
