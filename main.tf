@@ -22,7 +22,7 @@ module "kubernetes" {
 
   kubernetes_version = local.cluster_version
 
-  network_plugin = var.network_plugin
+  network_plugin = local.network_plugin
 
   node_pool_subnets      = var.subnets
   custom_route_table_ids = var.custom_route_table_ids
@@ -38,6 +38,14 @@ module "kubernetes" {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
   } : null)
+}
+
+module "pod_identity" {
+  source = "./modules/pod_identity"
+
+  aks_identity            = module.kubernetes.kubelet_identity.object_id
+  aks_node_resource_group = module.kubernetes.node_resource_group
+  network_plugin          = local.network_plugin
 }
 
 module "priority_classes" {
