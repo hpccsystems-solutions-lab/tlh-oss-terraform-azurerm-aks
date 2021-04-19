@@ -8,4 +8,6 @@ locals {
   cluster_version = local.cluster_patch_version[var.cluster_version]
 
   cluster_name = var.cluster_name
+
+  network_plugin = lower(var.network_plugin)
 }
