@@ -23,7 +23,9 @@ This module is designed to provide a standard set of defaults for all node pools
 
 ## Providers
 
-No provider.
+| Name | Version |
+|------|---------|
+| azurerm | >= 2.51.0 |
 
 ## Inputs
 
@@ -38,7 +40,7 @@ No provider.
 | default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
-| network\_plugin | Kubernetes Network Plugin (kubenet or AzureCNI) | `string` | `"kubenet"` | no |
+| network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
 | node\_pool\_defaults | Override default values for the node pools, this will NOT override the values that the module sets directly. | `any` | `{}` | no |
 | node\_pool\_tags | Additional tags for all workers. | `map(string)` | `{}` | no |
 | node\_pool\_taints | Extend or overwrite the default node pool taints to apply based on the node pool tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden). | `map(string)` | `{}` | no |
