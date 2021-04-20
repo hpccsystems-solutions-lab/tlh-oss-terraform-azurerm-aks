@@ -106,14 +106,18 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    "iaas-private" = {
+    iaas-private = {
       cidrs                   = ["10.1.0.0/24"]
       allow_internet_outbound = true # Allow traffic to Internet for image download
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
     }
-    "iaas-public" = {
+    iaas-public = {
       cidrs                   = ["10.1.1.0/24"]
       allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
       allow_internet_outbound = true # Allow traffic to Internet for image download
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
     }
   }
 }
@@ -171,7 +175,7 @@ module "aks" {
     name-of-priority-class = {
       description = "A description for this priority class"
       value       = 1500 # lower number = lower priority
-      labels      = {
+      labels = {
         label1 = "foo"
         label2 = "bar"
       }
@@ -184,7 +188,7 @@ module "aks" {
 
   additional_storage_classes = {
     special-storage-class = {
-      labels              = {
+      labels = {
         "test" = "foo"
       }
       annotations         = {}
@@ -202,49 +206,49 @@ module "aks" {
   }
 }
 
-#resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
-#  name                        = "AllowNginx"
-#  priority                    = 100
-#  direction                   = "Inbound"
-#  access                      = "Allow"
-#  protocol                    = "tcp"
-#  source_port_range           = "*"
-#  destination_port_range      = "80"
-#  source_address_prefix       = "Internet"
-#  destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
-#  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-#  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
-#}
-#
-#resource "helm_release" "nginx" {
-#  depends_on = [module.aks]
-#  name       = "nginx"
-#  chart      = "./helm_charts/webserver"
-#
-#  values = [<<-EOT
-#    name: nginx
-#    image: nginx:latest
-#    nodeSelector:
-#      lnrs.io/tier: ingress
-#    tolerations:
-#    - key: "ingress"
-#      operator: "Equal"
-#      value: "true"
-#      effect: "NoSchedule"
-#    EOT
-#  ]
-#}
-#
-#data "kubernetes_service" "nginx" {
-#  depends_on = [helm_release.nginx]
-#  metadata {
-#    name = "nginx"
-#  }
-#}
+resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
+  name                        = "AllowNginx"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "80"
+  source_address_prefix       = "Internet"
+  destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
+  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
+  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
+}
 
-#output "nginx_url" {
-#  value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
-#}
+resource "helm_release" "nginx" {
+  depends_on = [module.aks]
+  name       = "nginx"
+  chart      = "./helm_charts/webserver"
+
+  values = [<<-EOT
+    name: nginx
+    image: nginx:latest
+    nodeSelector:
+      lnrs.io/tier: ingress
+    tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    EOT
+  ]
+}
+
+data "kubernetes_service" "nginx" {
+  depends_on = [helm_release.nginx]
+  metadata {
+    name = "nginx"
+  }
+}
+
+output "nginx_url" {
+  value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
+}
 
 output "aks_login" {
   value = "az aks get-credentials --name ${module.aks.aks_cluster_name} --resource-group ${module.resource_group.name}"

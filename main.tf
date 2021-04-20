@@ -22,7 +22,7 @@ module "kubernetes" {
 
   kubernetes_version = local.cluster_version
 
-  network_plugin = var.network_plugin
+  network_plugin = local.network_plugin
 
   node_pool_subnets      = var.subnets
   custom_route_table_ids = var.custom_route_table_ids
@@ -40,6 +40,14 @@ module "kubernetes" {
   } : null)
 }
 
+module "pod_identity" {
+  source = "./modules/pod_identity"
+
+  aks_identity            = module.kubernetes.kubelet_identity.object_id
+  aks_node_resource_group = module.kubernetes.node_resource_group
+  network_plugin          = local.network_plugin
+}
+
 module "priority_classes" {
   source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"
 
@@ -53,7 +61,7 @@ module "storage_classes" {
 }
 
 module "core-config" {
-  source          = "./modules/core-config"
+  source = "./modules/core-config"
 
   namespaces = var.namespaces
   configmaps = var.configmaps

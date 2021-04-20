@@ -89,7 +89,7 @@ variable "node_pools" {
 }
 
 variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or AzureCNI)"
+  description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string
   default     = "kubenet"
 
