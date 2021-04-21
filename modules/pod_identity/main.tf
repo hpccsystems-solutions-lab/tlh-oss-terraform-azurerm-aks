@@ -35,7 +35,8 @@ resource "kubectl_manifest" "aad_pod_identity_crd_azure_pod_identity_exceptions"
 resource "helm_release" "aad_pod_identity" {
   depends_on = [
     azurerm_role_assignment.k8s_virtual_machine_contributor,
-    azurerm_role_assignment.k8s_managed_identity_operator,
+    azurerm_role_assignment.k8s_managed_identity_operator_parent,
+    azurerm_role_assignment.k8s_managed_identity_operator_node,
     kubectl_manifest.aad_pod_identity_crd_azure_assigned_identities,
     kubectl_manifest.aad_pod_identity_crd_azure_identities,
     kubectl_manifest.aad_pod_identity_crd_azure_identity_bindings,
