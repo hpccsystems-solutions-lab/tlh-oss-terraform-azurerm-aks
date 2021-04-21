@@ -37,7 +37,6 @@ This module is designed to provide a standard set of defaults for all node pools
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
-| default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
