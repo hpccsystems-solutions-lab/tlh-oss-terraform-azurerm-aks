@@ -43,6 +43,8 @@ module "kubernetes" {
 module "pod_identity" {
   source = "./modules/pod_identity"
 
+  depends_on = [module.kubernetes]
+
   aks_identity            = module.kubernetes.kubelet_identity.object_id
   aks_node_resource_group = module.kubernetes.node_resource_group
   network_plugin          = local.network_plugin
