@@ -11,7 +11,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.4"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.1"
 
   location            = var.location
   tags                = var.tags
@@ -45,9 +45,10 @@ module "pod_identity" {
 
   depends_on = [module.kubernetes]
 
-  aks_identity            = module.kubernetes.kubelet_identity.object_id
-  aks_node_resource_group = module.kubernetes.node_resource_group
-  network_plugin          = local.network_plugin
+  aks_identity                 = module.kubernetes.kubelet_identity.object_id
+  aks_resource_group_name      = var.resource_group_name
+  aks_node_resource_group_name = module.kubernetes.node_resource_group
+  network_plugin               = local.network_plugin
 }
 
 module "priority_classes" {

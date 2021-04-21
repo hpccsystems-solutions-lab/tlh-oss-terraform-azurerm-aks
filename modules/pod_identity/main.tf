@@ -4,8 +4,14 @@ resource "azurerm_role_assignment" "k8s_virtual_machine_contributor" {
   principal_id         = var.aks_identity
 }
 
-resource "azurerm_role_assignment" "k8s_managed_identity_operator" {
-  scope                = data.azurerm_resource_group.node_rg.id
+resource "azurerm_role_assignment" "k8s_managed_identity_operator_parent" {
+  scope                = data.azurerm_resource_group.parent.id
+  role_definition_name = "Managed Identity Operator"
+  principal_id         = var.aks_identity
+}
+
+resource "azurerm_role_assignment" "k8s_managed_identity_operator_node" {
+  scope                = data.azurerm_resource_group.node.id
   role_definition_name = "Managed Identity Operator"
   principal_id         = var.aks_identity
 }
