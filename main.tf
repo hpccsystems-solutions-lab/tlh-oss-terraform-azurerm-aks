@@ -43,10 +43,10 @@ module "kubernetes" {
 module "pod_identity" {
   source = "./modules/pod_identity"
 
-  aks_identity            = module.kubernetes.kubelet_identity.object_id
-  aks_resource_group_id   = data.azurerm_resource_group.parent.id
-  aks_node_resource_group = module.kubernetes.node_resource_group
-  network_plugin          = local.network_plugin
+  aks_identity                 = module.kubernetes.kubelet_identity.object_id
+  aks_resource_group_name      = var.resource_group_name
+  aks_node_resource_group_name = module.kubernetes.node_resource_group
+  network_plugin               = local.network_plugin
 }
 
 module "priority_classes" {
