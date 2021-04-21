@@ -59,12 +59,6 @@ variable "node_pool_tags" {
   default     = {}
 }
 
-variable "default_node_pool" {
-  description = "Override default values for default node pool."
-  type        = any
-  default     = {}
-}
-
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
