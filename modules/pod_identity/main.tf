@@ -1,5 +1,5 @@
 resource "azurerm_role_assignment" "k8s_virtual_machine_contributor" {
-  scope                = data.azurerm_resource_group.node_rg.id
+  scope                = data.azurerm_resource_group.node.id
   role_definition_name = "Virtual Machine Contributor"
   principal_id         = var.aks_identity
 }
