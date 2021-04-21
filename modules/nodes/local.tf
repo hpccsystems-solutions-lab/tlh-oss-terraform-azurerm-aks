@@ -12,12 +12,11 @@ locals {
   }, var.vm_types)
 
   node_pool_defaults = merge({
-    availability_zones           = [1, 2, 3]
-    enable_auto_scaling          = true
-    max_pods                     = null
-    max_surge                    = "1"
-    only_critical_addons_enabled = false
-    orchestrator_version         = null
+    availability_zones   = [1, 2, 3]
+    enable_auto_scaling  = true
+    max_pods             = null
+    max_surge            = "1"
+    orchestrator_version = null
     },
     var.node_pool_defaults,
     { # These default settings cannot be overridden
@@ -29,6 +28,7 @@ locals {
       spot_max_price               = null
       os_disk_size_gb              = null
       os_disk_type                 = "Managed"
+      only_critical_addons_enabled = false
     },
     { # These settings are determinted by the node pool inputs
       vm_size               = null
@@ -87,14 +87,15 @@ locals {
           "lnrs.io/lifecycle" = "normal"
           "lnrs.io/size"      = pool.vm_size
         }
-        tags                  = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
-        min_count             = pool.min_count
-        max_count             = pool.max_count
-        availability_zones    = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
-        subnet                = (contains(local.public_tiers, pool.tier) ? "public" : "private")
-        enable_node_public_ip = (contains(local.public_tiers, pool.tier) ? true : false)
-        priority              = (pool.lifecycle == "normal" ? "Regular" : null)
-        mode                  = (pool.name == local.default_node_pool.name ? "System" : "User")
+        tags                         = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
+        min_count                    = pool.min_count
+        max_count                    = pool.max_count
+        availability_zones           = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        subnet                       = (contains(local.public_tiers, pool.tier) ? "public" : "private")
+        enable_node_public_ip        = (contains(local.public_tiers, pool.tier) ? true : false)
+        priority                     = (pool.lifecycle == "normal" ? "Regular" : null)
+        mode                         = (pool.name == local.default_node_pool.name ? "System" : "User")
+        only_critical_addons_enabled = (pool.name == local.default_node_pool ? true : false)
       })
     }
   })...)

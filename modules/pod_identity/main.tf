@@ -5,6 +5,8 @@ resource "azurerm_role_assignment" "k8s_virtual_machine_contributor" {
 }
 
 resource "azurerm_role_assignment" "k8s_managed_identity_operator" {
+  for_each = [var.aks_resource_group_id, data.azurerm_resource_group.node_rg.id]
+
   scope                = data.azurerm_resource_group.node_rg.id
   role_definition_name = "Managed Identity Operator"
   principal_id         = var.aks_identity

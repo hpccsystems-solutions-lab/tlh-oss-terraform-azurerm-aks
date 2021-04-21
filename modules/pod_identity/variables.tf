@@ -3,6 +3,11 @@ variable "aks_identity" {
   type        = string
 }
 
+variable "aks_resource_group_id" {
+  description = "resource group id containing AKS cluster"
+  type        = string
+}
+
 variable "aks_node_resource_group" {
   description = "resource group created by AKS"
   type        = string
