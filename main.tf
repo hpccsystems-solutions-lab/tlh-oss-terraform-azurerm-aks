@@ -11,7 +11,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.0.4"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.2"
 
   location            = var.location
   tags                = var.tags
@@ -33,6 +33,8 @@ module "kubernetes" {
     enabled        = true
     ad_integration = true
   }
+
+  rbac_admin_object_ids = var.rbac_admin_object_ids
 
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username

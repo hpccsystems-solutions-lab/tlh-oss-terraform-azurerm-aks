@@ -29,6 +29,12 @@ variable "cluster_version" {
   }
 }
 
+variable "rbac_admin_object_ids" {
+  description = "Admin group object ids for use with rbac active directory integration."
+  type        = map(string) # keys are only for documentation purposes
+  default     = {}
+}
+
 variable "vm_types" {
   description = "Extend or overwrite the default vm types map."
   type        = map(string)
