@@ -34,8 +34,6 @@ module "kubernetes" {
     ad_integration = true
   }
 
-  rbac_admin_object_ids = var.rbac_admin_object_ids
-
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
@@ -44,6 +42,8 @@ module "kubernetes" {
 
 module "pod_identity" {
   source = "./modules/pod_identity"
+
+  depends_on = [module.kubernetes]
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_resource_group_name      = var.resource_group_name
