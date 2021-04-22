@@ -17,9 +17,9 @@ resource "azurerm_role_assignment" "k8s_managed_identity_operator_node" {
 }
 
 resource "kubectl_manifest" "crds" {
-  for_each = local.crds
+  for_each = fileset(path.module, "crds/*.yaml")
 
-  yaml_body = local.crd_manifests[each.value]
+  yaml_body = file("${path.module}/${each.value}")
 }
 
 resource "helm_release" "aad_pod_identity" {
