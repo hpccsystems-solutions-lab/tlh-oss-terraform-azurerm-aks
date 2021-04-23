@@ -48,7 +48,8 @@ variable "node_pool_defaults" {
 }
 
 variable "node_pool_taints" {
-  description = "Extend or overwrite the default node pool taints to apply based on the node pool tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden)."
+  description = "Extend or overwrite the default worker group taints to apply based on the worker tier (by default ingress & egress taints are set but these can be overridden)."
+
   type        = map(string)
   default     = {}
 }

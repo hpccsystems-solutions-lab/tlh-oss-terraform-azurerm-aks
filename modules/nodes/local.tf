@@ -81,7 +81,7 @@ locals {
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         vm_size     = local.vm_types[pool.vm_size]
         os_type     = pool.os_type
-        node_taints = compact(split(",", local.node_pool_taints, pool.tier, "")))
+        node_taints = compact(split(",", local.node_pool_taints, pool.tier, ""))
         node_labels = {
           "lnrs.io/tier"      = pool.tier
           "lnrs.io/lifecycle" = "normal"
