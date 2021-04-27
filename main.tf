@@ -40,16 +40,31 @@ module "kubernetes" {
   } : null)
 }
 
-module "pod_identity" {
-  source = "./modules/pod_identity"
+# Manages core/shared components of aad-pod-identity such as role assignments and CRDs
+# module "pod_identity_core_components" {
+#   source = "./modules/pod-identity-core"
 
-  depends_on = [module.kubernetes]
+#   depends_on = [module.kubernetes]
 
-  aks_identity                 = module.kubernetes.kubelet_identity.object_id
-  aks_resource_group_name      = var.resource_group_name
-  aks_node_resource_group_name = module.kubernetes.node_resource_group
-  network_plugin               = local.network_plugin
-}
+#   aks_identity                 = module.kubernetes.kubelet_identity.object_id
+#   aks_resource_group_name      = var.resource_group_name
+#   aks_node_resource_group_name = module.kubernetes.node_resource_group
+#   network_plugin               = local.network_plugin
+# }
+
+# # Manages deployment of aad-pod-identity pods in all of a cluster's node pools
+# module "pod_identity_deployment" {
+#   source = "./modules/pod-identity-node-pool-deployment"
+
+#   depends_on = [module.pod_identity_core_components]
+
+#   for_each = merge(module.nodes.default_node_pool, module.nodes.node_pools)
+
+#   aks_identity                 = module.kubernetes.kubelet_identity.object_id
+#   aks_resource_group_name      = var.resource_group_name
+#   aks_node_resource_group_name = module.kubernetes.node_resource_group
+#   network_plugin               = local.network_plugin
+# }
 
 module "priority_classes" {
   source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"

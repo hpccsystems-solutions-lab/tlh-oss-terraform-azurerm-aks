@@ -21,29 +21,3 @@ resource "kubectl_manifest" "crds" {
 
   yaml_body = file("${path.module}/${each.value}")
 }
-
-resource "helm_release" "aad_pod_identity" {
-  depends_on = [
-    azurerm_role_assignment.k8s_virtual_machine_contributor,
-    azurerm_role_assignment.k8s_managed_identity_operator_parent,
-    azurerm_role_assignment.k8s_managed_identity_operator_node,
-    kubectl_manifest.crds
-  ]
-
-  name       = "aad-pod-identity"
-  namespace  = "kube-system"
-  repository = "https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts"
-  chart      = "aad-pod-identity"
-  version    = local.helm_chart_version
-
-  skip_crds = true
-
-  values = [<<-EOT
-    rbac:
-      allowAccessToSecrets: false
-    installCRDs: false
-    nmi:
-      allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
-  EOT
-  ]
-}

@@ -13,13 +13,13 @@ variable "aks_node_resource_group_name" {
   type        = string
 }
 
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or azure)"
-  type        = string
-  default     = "kubenet"
+# variable "network_plugin" {
+#   description = "Kubernetes Network Plugin (kubenet or azure)"
+#   type        = string
+#   default     = "kubenet"
 
-  validation {
-    condition     = contains(["kubenet", "azure"], var.network_plugin)
-    error_message = "Network plugin must be kubenet or azure."
-  }
-}
+#   validation {
+#     condition     = contains(["kubenet", "azure"], var.network_plugin)
+#     error_message = "Network plugin must be kubenet or azure."
+#   }
+# }
