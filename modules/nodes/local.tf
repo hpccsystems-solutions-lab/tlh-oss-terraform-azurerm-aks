@@ -23,7 +23,7 @@ locals {
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"
       eviction_policy              = null
-      enable_host_encryption       = true
+      enable_host_encryption       = var.enable_host_encryption
       proximity_placement_group_id = null
       spot_max_price               = null
       os_disk_size_gb              = null
@@ -81,7 +81,7 @@ locals {
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         vm_size     = local.vm_types[pool.vm_size]
         os_type     = pool.os_type
-        node_taints = compact(split(",", local.node_pool_taints, pool.tier, ""))
+        node_taints = compact(split(",", lookup(local.node_pool_taints, pool.tier, "")))
         node_labels = {
           "lnrs.io/tier"      = pool.tier
           "lnrs.io/lifecycle" = "normal"

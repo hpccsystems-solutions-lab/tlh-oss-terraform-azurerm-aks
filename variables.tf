@@ -35,6 +35,12 @@ variable "rbac_admin_object_ids" {
   default     = {}
 }
 
+variable "enable_host_encryption" {
+  description = "Should the nodes in this Node Pool have host encryption enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "vm_types" {
   description = "Extend or overwrite the default vm types map."
   type        = map(string)

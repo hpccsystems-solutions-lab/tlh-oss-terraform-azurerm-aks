@@ -4,6 +4,8 @@ module "nodes" {
   cluster_name = local.cluster_name
   subnets      = var.subnets
 
+  enable_host_encryption = var.enable_host_encryption
+
   node_pool_defaults = var.node_pool_defaults
   node_pool_taints   = var.node_pool_taints
   node_pool_tags     = merge(var.tags, var.node_pool_tags)
@@ -11,7 +13,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.1"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.3"
 
   location            = var.location
   tags                = var.tags
