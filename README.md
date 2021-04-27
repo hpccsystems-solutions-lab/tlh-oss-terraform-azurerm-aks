@@ -42,7 +42,7 @@ This module is designed to provide a standard set of defaults for all node pools
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
 | node\_pool\_defaults | Override default values for the node pools, this will NOT override the values that the module sets directly. | `any` | `{}` | no |
 | node\_pool\_tags | Additional tags for all workers. | `map(string)` | `{}` | no |
-| node\_pool\_taints | Extend or overwrite the default node pool taints to apply based on the node pool tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden). | `map(string)` | `{}` | no |
+| node\_pool\_taints | Extend or overwrite the default worker group taints to apply based on the worker tier (by default ingress & egress taints are set but these can be overridden). | `map(string)` | `{}` | no |
 | node\_pools | Node pool definitions. | <pre>list(object({<br>    name      = string<br>    tier      = string<br>    lifecycle = string<br>    vm_size   = string<br>    os_type   = string<br>    min_count = number<br>    max_count = number<br>    tags      = map(string)<br>  }))</pre> | n/a | yes |
 | rbac\_admin\_object\_ids | Admin group object ids for use with rbac active directory integration. | `map(string)` | `{}` | no |
 | resource\_group\_name | The name of the Resource Group where the Kubernetes Cluster should exist. | `string` | n/a | yes |
