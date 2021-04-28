@@ -27,7 +27,7 @@ resource "helm_release" "aad_pod_identity" {
     azurerm_role_assignment.k8s_virtual_machine_contributor,
     azurerm_role_assignment.k8s_managed_identity_operator_parent,
     azurerm_role_assignment.k8s_managed_identity_operator_node,
-    kubectl_manifest.crds,
+    kubectl_manifest.crds
   ]
 
   name       = "aad-pod-identity"
