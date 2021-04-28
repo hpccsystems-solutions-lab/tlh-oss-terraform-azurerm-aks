@@ -4,6 +4,6 @@ variable "aks_node_selector" {
 }
 
 variable "aks_node_tolerations" {
-  type = list(map(string))
-  default = [{}]
+  default = ""
 }
+
