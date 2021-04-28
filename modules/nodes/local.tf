@@ -73,6 +73,7 @@ locals {
     subnet    = "private"
     min_count = 2
     max_count = 3
+    labels    = {}
     tags      = {}
   }
 
@@ -82,11 +83,11 @@ locals {
         vm_size     = local.vm_types[pool.vm_size]
         os_type     = pool.os_type
         node_taints = compact(split(",", lookup(local.node_pool_taints, pool.tier, "")))
-        node_labels = {
+        node_labels = merge({
           "lnrs.io/tier"      = pool.tier
           "lnrs.io/lifecycle" = "normal"
           "lnrs.io/size"      = pool.vm_size
-        }
+        }, pool.labels)
         tags                         = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
         min_count                    = pool.min_count
         max_count                    = pool.max_count

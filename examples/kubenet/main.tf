@@ -144,6 +144,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     },
     {
@@ -154,6 +155,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = { "foo" = "bar" }
       tags      = {}
     }
   ]

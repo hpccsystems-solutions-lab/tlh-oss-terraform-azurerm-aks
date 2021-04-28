@@ -76,6 +76,7 @@ variable "node_pools" {
     os_type   = string
     min_count = number
     max_count = number
+    labels    = map(string)
     tags      = map(string)
   }))
 
