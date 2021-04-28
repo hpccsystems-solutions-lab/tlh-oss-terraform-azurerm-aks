@@ -41,7 +41,7 @@ module "kubernetes" {
 }
 
 module "pod_identity" {
-  source = "./modules/pod_identity"
+  source = "./modules/pod-identity"
 
   depends_on = [module.kubernetes]
 
