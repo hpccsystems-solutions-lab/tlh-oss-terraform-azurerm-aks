@@ -52,7 +52,7 @@ module "pod_identity" {
 }
 
 module "priority_classes" {
-  source = "./modules/prority-classes"
+  source = "./modules/priority-classes"
 
   additional_priority_classes = var.additional_priority_classes
 }
