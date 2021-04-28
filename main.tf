@@ -54,7 +54,7 @@ module "pod_identity" {
 }
 
 module "priority_classes" {
-  source = "github.com/LexisNexis-RBA/terraform-kubernetes-priority-class.git?ref=v0.2.0"
+  source = "./modules/priority-classes"
 
   additional_priority_classes = var.additional_priority_classes
 }
