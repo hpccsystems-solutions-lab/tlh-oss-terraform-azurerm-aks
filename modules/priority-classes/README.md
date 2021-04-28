@@ -40,7 +40,7 @@ provider "kubernetes" {
 
 ## Usage
 
-This module only has a single, optional output, `additional_priority_classes`. You can set it to create any number of priority classes on top of the ones provided by default.
+This module only has a single, optional input, `additional_priority_classes`. You can set it to create any number of priority classes on top of the ones provided by default.
 
 ### Standard usage
 
