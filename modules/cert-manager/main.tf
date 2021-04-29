@@ -64,24 +64,17 @@ resource "helm_release" "cert_manager" {
 ---
 global:
   priorityClassName: lnrs-platform-critical
-
 installCRDs: false
-
 replicaCount: 1
-
 podLabels:
   aadpodidbinding: ${azurerm_user_assigned_identity.main.name}
-
 nodeSelector:
   kubernetes.azure.com/mode: system
-
 securityContext:
   fsGroup: 65534
-
 extraArgs:
   - --dns01-recursive-nameservers-only
   - --dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53
-
 resources:
   requests:
     cpu: 100m
@@ -89,7 +82,6 @@ resources:
   limits:
     cpu: 500m
     memory: 256Mi
-
 # Enable this when we have Prometheus up and running in our clusters
 # prometheus:
 #   enabled: true
@@ -107,10 +99,8 @@ cainjector:
   replicaCount: 1
   nodeSelector:
     kubernetes.azure.com/mode: system
-
   extraArgs:
     - --leader-elect=false
-
   resources:
     requests:
       cpu: 200m
@@ -123,11 +113,8 @@ webhook:
   replicaCount: 2
   nodeSelector:
     kubernetes.azure.com/mode: system
-
   securePort: 10251
-
   hostNetwork: true
-
   resources:
     requests:
       cpu: 50m
