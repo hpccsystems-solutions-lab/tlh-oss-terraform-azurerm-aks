@@ -46,7 +46,7 @@ installCRDs: false
 forceNamespaced: "false"
 mic:
   nodeSelector:
-    agentpool: system
+    kubernetes.azure.com/mode: system
 nmi:
   allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
   tolerations:
