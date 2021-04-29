@@ -63,10 +63,24 @@ module "storage_classes" {
   additional_storage_classes = var.additional_storage_classes
 }
 
-module "core-config" {
+module "core_config" {
   source = "./modules/core-config"
 
   namespaces = var.namespaces
   configmaps = var.configmaps
   secrets    = var.secrets
+}
+
+module "cert_manager" {
+  depends_on = [module.core_config]
+
+  source = "./modules/cert-manager"
+
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+  names               = var.names
+
+  dns_zone_name                = var.cert_manager_dns_zone_name # "infrastructuresandbox.us.lnrisk.io"
+  dns_zone_resource_group_name = var.cert_manager_dns_zone_resource_group_name # "rg-iog-sandbox-eastus2-lnriskio"
 }

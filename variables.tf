@@ -13,6 +13,11 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "names" {
+  description = "Names to be applied to resources"
+  type        = map(string)
+}
+
 variable "cluster_name" {
   description = "The name of the AKS cluster to create, also used as a prefix in names of related resources."
   type        = string
@@ -196,4 +201,14 @@ variable "configmaps" {
     data      = map(string)
   }))
   default = {}
+}
+
+variable "cert_manager_dns_zone_name" {
+  type        = string
+  description = "The name of the DNS zone that cert-manager will use (only one is supported at this time)"
+}
+
+variable "cert_manager_dns_zone_resource_group_name" {
+  type        = string
+  description = "The name of the resource group containing the DNS zone that cert-manager will use"
 }
