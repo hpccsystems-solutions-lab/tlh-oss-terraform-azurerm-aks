@@ -38,6 +38,8 @@ module "kubernetes" {
     ad_integration = true
   }
 
+  rbac_admin_object_ids = var.rbac_admin_object_ids
+
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
