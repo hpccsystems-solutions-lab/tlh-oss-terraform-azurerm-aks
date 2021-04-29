@@ -54,9 +54,7 @@ mic:
 nmi:
   allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
   tolerations:
-    - key: "ingress"
-      operator: "Exists"
-      effect: "NoSchedule"
+    - operator: "Exists"
 EOT
   ]
 }
