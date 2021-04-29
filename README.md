@@ -33,12 +33,15 @@ This module is designed to provide a standard set of defaults for all node pools
 |------|-------------|------|---------|:--------:|
 | additional\_priority\_classes | A map defining additional priority classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-kubernetes-priority-class) for additional information. | <pre>map(object({<br>    description = string<br>    value       = number<br>    labels      = map(string)<br>    annotations = map(string)<br>  }))</pre> | `null` | no |
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
+| cert\_manager\_dns\_zone\_name | The name of the DNS zone that cert-manager will use (only one is supported at this time) | `string` | n/a | yes |
+| cert\_manager\_dns\_zone\_resource\_group\_name | The name of the resource group containing the DNS zone that cert-manager will use | `string` | n/a | yes |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
 | default\_node\_pool | Override default values for default node pool. | `any` | `{}` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
+| names | Names to be applied to resources | `map(string)` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
 | node\_pool\_defaults | Override default values for the node pools, this will NOT override the values that the module sets directly. | `any` | `{}` | no |
