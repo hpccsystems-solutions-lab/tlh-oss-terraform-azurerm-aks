@@ -43,6 +43,7 @@ resource "helm_release" "aad_pod_identity" {
 rbac:
   allowAccessToSecrets: false
 installCRDs: false
+forceNamespaced: "false"
 mic:
   nodeSelector:
     agentpool: system
