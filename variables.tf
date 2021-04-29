@@ -56,8 +56,8 @@ variable "node_pool_defaults" {
 variable "node_pool_taints" {
   description = "Extend or overwrite the default worker group taints to apply based on the worker tier (by default ingress & egress taints are set but these can be overridden)."
 
-  type        = map(string)
-  default     = {}
+  type    = map(string)
+  default = {}
 }
 
 variable "node_pool_tags" {
@@ -104,6 +104,26 @@ variable "network_plugin" {
   validation {
     condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
     error_message = "Network plugin must be kubenet or azure."
+  }
+}
+
+variable "pod_cidr" {
+  description = "used for pod IP addresses"
+  type        = string
+  default     = "100.65.0.0/16"
+}
+
+variable "network_profile_options" {
+  description = "docker_bridge_cidr, dns_service_ip and service_cidr should all be empty or all should be set"
+  type = object({
+    docker_bridge_cidr = string
+    dns_service_ip     = string
+    service_cidr       = string
+  })
+  default = {
+    docker_bridge_cidr = "172.17.0.1/16"
+    dns_service_ip     = "172.20.0.10"
+    service_cidr       = "172.20.0.0/16"
   }
 }
 

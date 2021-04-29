@@ -24,7 +24,9 @@ module "kubernetes" {
 
   kubernetes_version = local.cluster_version
 
-  network_plugin = local.network_plugin
+  network_plugin          = local.network_plugin
+  pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
+  network_profile_options = var.network_profile_options
 
   node_pool_subnets      = var.subnets
   custom_route_table_ids = var.custom_route_table_ids
