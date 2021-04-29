@@ -47,6 +47,10 @@ forceNamespaced: "false"
 mic:
   nodeSelector:
     kubernetes.azure.com/mode: system
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
 nmi:
   allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
   tolerations:
