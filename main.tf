@@ -87,6 +87,6 @@ module "cert_manager" {
   tags                = var.tags
   names               = var.names
 
-  dns_zone_name                = var.cert_manager_dns_zone_name # "infrastructuresandbox.us.lnrisk.io"
-  dns_zone_resource_group_name = var.cert_manager_dns_zone_resource_group_name # "rg-iog-sandbox-eastus2-lnriskio"
+  dns_zone_name                = var.cert_manager_dns_zone_name
+  dns_zone_resource_group_name = var.cert_manager_dns_zone_resource_group_name
 }
