@@ -69,7 +69,7 @@ module "storage_classes" {
   additional_storage_classes = var.additional_storage_classes
 }
 
-module "core_config" {
+module "core-config" {
   source = "./modules/core-config"
 
   namespaces = var.namespaces
@@ -78,7 +78,7 @@ module "core_config" {
 }
 
 module "cert_manager" {
-  depends_on = [module.core_config]
+  depends_on = [module.core-config]
 
   source = "./modules/cert-manager"
 
