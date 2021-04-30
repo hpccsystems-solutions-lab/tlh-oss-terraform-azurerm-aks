@@ -39,11 +39,22 @@ resource "helm_release" "aad_pod_identity" {
   skip_crds = true
 
   values = [<<-EOT
-    rbac:
-      allowAccessToSecrets: false
-    installCRDs: false
-    nmi:
-      allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
-  EOT
+---
+rbac:
+  allowAccessToSecrets: false
+installCRDs: false
+forceNamespaced: "false"
+mic:
+  nodeSelector:
+    kubernetes.azure.com/mode: system
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
+nmi:
+  allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
+  tolerations:
+    - operator: "Exists"
+EOT
   ]
 }
