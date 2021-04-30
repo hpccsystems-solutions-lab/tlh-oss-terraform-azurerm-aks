@@ -70,6 +70,10 @@ podLabels:
   aadpodidbinding: ${azurerm_user_assigned_identity.main.name}
 nodeSelector:
   kubernetes.azure.com/mode: system
+tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
 securityContext:
   fsGroup: 65534
 extraArgs:
@@ -99,6 +103,10 @@ cainjector:
   replicaCount: 1
   nodeSelector:
     kubernetes.azure.com/mode: system
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
   extraArgs:
     - --leader-elect=false
   resources:
@@ -113,6 +121,10 @@ webhook:
   replicaCount: 2
   nodeSelector:
     kubernetes.azure.com/mode: system
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
   securePort: 10251
   hostNetwork: true
   resources:
