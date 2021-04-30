@@ -96,7 +96,7 @@ locals {
         enable_node_public_ip        = (contains(local.public_tiers, pool.tier) ? true : false)
         priority                     = (pool.lifecycle == "normal" ? "Regular" : null)
         mode                         = (pool.name == local.default_node_pool.name ? "System" : "User")
-        only_critical_addons_enabled = (pool.name == local.default_node_pool ? true : false)
+        only_critical_addons_enabled = (pool.name == local.default_node_pool.name ? true : false)
       })
     }
   })...)
