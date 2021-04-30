@@ -16,7 +16,7 @@ This module is designed to provide a standard set of defaults for all node pools
 | Name | Version |
 |------|---------|
 | terraform | >= 0.14.8 |
-| azurerm | >= 2.56.0 |
+| azurerm | >= 2.57.0 |
 | helm | >= 2.1.1 |
 | kubectl | >= 1.10.0 |
 | kubernetes | >= 2.0.0 |
