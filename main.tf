@@ -4,6 +4,8 @@ module "nodes" {
   cluster_name = local.cluster_name
   subnets      = var.subnets
 
+  enable_host_encryption = var.enable_host_encryption
+
   node_pool_defaults = var.node_pool_defaults
   node_pool_taints   = var.node_pool_taints
   node_pool_tags     = merge(var.tags, var.node_pool_tags)
@@ -11,7 +13,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.1"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.4"
 
   location            = var.location
   tags                = var.tags
@@ -22,7 +24,9 @@ module "kubernetes" {
 
   kubernetes_version = local.cluster_version
 
-  network_plugin = local.network_plugin
+  network_plugin          = local.network_plugin
+  pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
+  network_profile_options = var.network_profile_options
 
   node_pool_subnets      = var.subnets
   custom_route_table_ids = var.custom_route_table_ids
@@ -33,6 +37,8 @@ module "kubernetes" {
     enabled        = true
     ad_integration = true
   }
+
+  rbac_admin_object_ids = var.rbac_admin_object_ids
 
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username

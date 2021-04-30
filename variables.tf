@@ -34,6 +34,18 @@ variable "cluster_version" {
   }
 }
 
+variable "rbac_admin_object_ids" {
+  description = "Admin group object ids for use with rbac active directory integration."
+  type        = map(string) # keys are only for documentation purposes
+  default     = {}
+}
+
+variable "enable_host_encryption" {
+  description = "Should the nodes in this Node Pool have host encryption enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "vm_types" {
   description = "Extend or overwrite the default vm types map."
   type        = map(string)
@@ -47,20 +59,15 @@ variable "node_pool_defaults" {
 }
 
 variable "node_pool_taints" {
-  description = "Extend or overwrite the default node pool taints to apply based on the node pool tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden)."
-  type        = map(string)
-  default     = {}
+  description = "Extend or overwrite the default worker group taints to apply based on the worker tier (by default ingress & egress taints are set but these can be overridden)."
+
+  type    = map(string)
+  default = {}
 }
 
 variable "node_pool_tags" {
   description = "Additional tags for all workers."
   type        = map(string)
-  default     = {}
-}
-
-variable "default_node_pool" {
-  description = "Override default values for default node pool."
-  type        = any
   default     = {}
 }
 
@@ -74,6 +81,7 @@ variable "node_pools" {
     os_type   = string
     min_count = number
     max_count = number
+    labels    = map(string)
     tags      = map(string)
   }))
 
@@ -101,6 +109,26 @@ variable "network_plugin" {
   validation {
     condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
     error_message = "Network plugin must be kubenet or azure."
+  }
+}
+
+variable "pod_cidr" {
+  description = "used for pod IP addresses"
+  type        = string
+  default     = "100.65.0.0/16"
+}
+
+variable "network_profile_options" {
+  description = "docker_bridge_cidr, dns_service_ip and service_cidr should all be empty or all should be set"
+  type = object({
+    docker_bridge_cidr = string
+    dns_service_ip     = string
+    service_cidr       = string
+  })
+  default = {
+    docker_bridge_cidr = "172.17.0.1/16"
+    dns_service_ip     = "172.20.0.10"
+    service_cidr       = "172.20.0.0/16"
   }
 }
 
