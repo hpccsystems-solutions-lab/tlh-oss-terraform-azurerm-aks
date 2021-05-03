@@ -23,6 +23,12 @@ variable "vm_types" {
   default     = {}
 }
 
+variable "enable_host_encryption" {
+  description = "Should the nodes in this Node Pool have host encryption enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "node_pool_defaults" {
   description = "Override default values for the nodes, this will NOT override the values that the module sets directly."
   type        = any
@@ -51,6 +57,7 @@ variable "node_pools" {
     os_type   = string
     min_count = number
     max_count = number
+    labels    = map(string)
     tags      = map(string)
   }))
 

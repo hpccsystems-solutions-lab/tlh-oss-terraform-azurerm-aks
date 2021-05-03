@@ -106,14 +106,18 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    "iaas-private" = {
+    iaas-private = {
       cidrs                   = ["10.1.0.0/24"]
       allow_internet_outbound = true # Allow traffic to Internet for image download
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
     }
-    "iaas-public" = {
+    iaas-public = {
       cidrs                   = ["10.1.1.0/24"]
       allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
       allow_internet_outbound = true # Allow traffic to Internet for image download
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
     }
   }
 }
@@ -184,7 +188,7 @@ module "aks" {
     name-of-priority-class = {
       description = "A description for this priority class"
       value       = 1500 # lower number = lower priority
-      labels      = {
+      labels = {
         label1 = "foo"
         label2 = "bar"
       }
@@ -197,7 +201,7 @@ module "aks" {
 
   additional_storage_classes = {
     special-storage-class = {
-      labels              = {
+      labels = {
         "test" = "foo"
       }
       annotations         = {}
@@ -291,7 +295,7 @@ data "kubernetes_service" "nginx" {
 }
 
 data "kubernetes_service" "iis" {
-  depends_on = [helm_release.iis] 
+  depends_on = [helm_release.iis]
   metadata {
     name = "iis"
   }

@@ -12,23 +12,23 @@ locals {
   }, var.vm_types)
 
   node_pool_defaults = merge({
-    availability_zones           = [1, 2, 3]
-    enable_auto_scaling          = true
-    max_pods                     = null
-    max_surge                    = "1"
-    only_critical_addons_enabled = false
-    orchestrator_version         = null
+    availability_zones   = [1, 2, 3]
+    enable_auto_scaling  = true
+    max_pods             = null
+    max_surge            = "1"
+    orchestrator_version = null
     },
     var.node_pool_defaults,
     { # These default settings cannot be overridden
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"
       eviction_policy              = null
-      enable_host_encryption       = true
+      enable_host_encryption       = var.enable_host_encryption
       proximity_placement_group_id = null
       spot_max_price               = null
       os_disk_size_gb              = null
       os_disk_type                 = "Managed"
+      only_critical_addons_enabled = false
     },
     { # These settings are determinted by the node pool inputs
       vm_size               = null
@@ -73,6 +73,7 @@ locals {
     subnet    = "private"
     min_count = 2
     max_count = 3
+    labels    = {}
     tags      = {}
   }
 
@@ -81,20 +82,21 @@ locals {
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         vm_size     = local.vm_types[pool.vm_size]
         os_type     = pool.os_type
-        node_taints = [lookup(local.node_pool_taints, pool.tier, "")]
-        node_labels = {
+        node_taints = compact(split(",", lookup(local.node_pool_taints, pool.tier, "")))
+        node_labels = merge({
           "lnrs.io/tier"      = pool.tier
           "lnrs.io/lifecycle" = "normal"
           "lnrs.io/size"      = pool.vm_size
-        }
-        tags                  = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
-        min_count             = pool.min_count
-        max_count             = pool.max_count
-        availability_zones    = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
-        subnet                = (contains(local.public_tiers, pool.tier) ? "public" : "private")
-        enable_node_public_ip = (contains(local.public_tiers, pool.tier) ? true : false)
-        priority              = (pool.lifecycle == "normal" ? "Regular" : null)
-        mode                  = (pool.name == local.default_node_pool.name ? "System" : "User")
+        }, pool.labels)
+        tags                         = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
+        min_count                    = pool.min_count
+        max_count                    = pool.max_count
+        availability_zones           = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        subnet                       = (contains(local.public_tiers, pool.tier) ? "public" : "private")
+        enable_node_public_ip        = (contains(local.public_tiers, pool.tier) ? true : false)
+        priority                     = (pool.lifecycle == "normal" ? "Regular" : null)
+        mode                         = (pool.name == local.default_node_pool.name ? "System" : "User")
+        only_critical_addons_enabled = (pool.name == local.default_node_pool.name ? true : false)
       })
     }
   })...)

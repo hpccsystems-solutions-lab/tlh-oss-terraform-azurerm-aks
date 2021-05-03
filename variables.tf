@@ -29,6 +29,18 @@ variable "cluster_version" {
   }
 }
 
+variable "rbac_admin_object_ids" {
+  description = "Admin group object ids for use with rbac active directory integration."
+  type        = map(string) # keys are only for documentation purposes
+  default     = {}
+}
+
+variable "enable_host_encryption" {
+  description = "Should the nodes in this Node Pool have host encryption enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "vm_types" {
   description = "Extend or overwrite the default vm types map."
   type        = map(string)
@@ -42,20 +54,15 @@ variable "node_pool_defaults" {
 }
 
 variable "node_pool_taints" {
-  description = "Extend or overwrite the default node pool taints to apply based on the node pool tier and/or lifecycle (by default ingress & egress taints are set but these can be overridden)."
-  type        = map(string)
-  default     = {}
+  description = "Extend or overwrite the default worker group taints to apply based on the worker tier (by default ingress & egress taints are set but these can be overridden)."
+
+  type    = map(string)
+  default = {}
 }
 
 variable "node_pool_tags" {
   description = "Additional tags for all workers."
   type        = map(string)
-  default     = {}
-}
-
-variable "default_node_pool" {
-  description = "Override default values for default node pool."
-  type        = any
   default     = {}
 }
 
@@ -69,33 +76,54 @@ variable "node_pools" {
     os_type   = string
     min_count = number
     max_count = number
+    labels    = map(string)
     tags      = map(string)
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
     error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if (length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
     error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools: pool.name if pool.lifecycle != "normal"]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if pool.lifecycle != "normal"]) == 0)
     error_message = "Only lifecycle type \"normal\" is currently supported."
   }
 }
 
 variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or AzureCNI)"
+  description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string
   default     = "kubenet"
 
   validation {
     condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
     error_message = "Network plugin must be kubenet or azure."
+  }
+}
+
+variable "pod_cidr" {
+  description = "used for pod IP addresses"
+  type        = string
+  default     = "100.65.0.0/16"
+}
+
+variable "network_profile_options" {
+  description = "docker_bridge_cidr, dns_service_ip and service_cidr should all be empty or all should be set"
+  type = object({
+    docker_bridge_cidr = string
+    dns_service_ip     = string
+    service_cidr       = string
+  })
+  default = {
+    docker_bridge_cidr = "172.17.0.1/16"
+    dns_service_ip     = "172.20.0.10"
+    service_cidr       = "172.20.0.0/16"
   }
 }
 
@@ -119,6 +147,12 @@ variable "subnets" {
       )
     }
   )
+}
+
+variable "custom_route_table_ids" {
+  description = "Custom route tables used by node pool subnets."
+  type        = map(string)
+  default     = {}
 }
 
 variable "additional_priority_classes" {
@@ -147,27 +181,24 @@ variable "additional_storage_classes" {
   description = "A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information."
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
     error_message = "The reclaim policy setting must be set to 'Delete' or 'Reclaim'."
   }
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
     error_message = "The storage provisioner setting must be set to 'kubernetes.io/azure-file' or 'kubernetes.io/azure-disk'."
   }
 
   validation {
-    condition     = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
-                    length([for strgclass in var.additional_storage_classes: strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
+    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
+    length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
     error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
   }
 }
 
-#
-# EXTERNAL-DNS SUBMODULE VARIABLES
-#
 variable "dns_zone_resource_group_name" {
   type        = string
   description = "The name of the resource group containing the DNS zone to manage with external-dns"
@@ -176,4 +207,31 @@ variable "dns_zone_resource_group_name" {
 variable "dns_zone_name" {
   type        = string
   description = "The name of the DNS zone to manage with external-dns"
+}
+
+variable "namespaces" {
+  description = "List of namespaces to create on the cluster."
+  type        = list(string)
+  default     = []
+}
+
+variable "secrets" {
+  description = "Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable."
+  type = map(object({
+    name      = string
+    namespace = string
+    type      = string
+    data      = map(string)
+  }))
+  default = {}
+}
+
+variable "configmaps" {
+  description = "Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable."
+  type = map(object({
+    name      = string
+    namespace = string
+    data      = map(string)
+  }))
+  default = {}
 }
