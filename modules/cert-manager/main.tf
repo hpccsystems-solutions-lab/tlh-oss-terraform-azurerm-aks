@@ -26,25 +26,40 @@ resource "azurerm_role_assignment" "main" {
 # Configure authentication with Azure DNS as described here:
 # https://cert-manager.io/docs/configuration/acme/dns01/azuredns/
 resource "kubectl_manifest" "azure_identity" {
-  yaml_body = templatefile("${path.module}/templates/azureidentity.yaml.template",{
-    identity_name = azurerm_user_assigned_identity.main.name
-    identity_id   = azurerm_user_assigned_identity.main.id
-    client_id     = azurerm_user_assigned_identity.main.client_id
-  })
+  yaml_body = <<-EOT
+---
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentity
+metadata:
+  annotations:
+    aadpodidentity.k8s.io/Behavior: namespaced
+  name: ${azurerm_user_assigned_identity.main.name}
+  namespace: ${var.namespace_name}
+spec:
+  type: 0
+  resourceID: ${azurerm_user_assigned_identity.main.id}
+  clientID: ${azurerm_user_assigned_identity.main.client_id}
+EOT
 }
 
 resource "kubectl_manifest" "azure_identity_binding" {
   depends_on = [kubectl_manifest.azure_identity]
 
-  yaml_body = templatefile("${path.module}/templates/azureidentitybinding.yaml.template",{
-    identity_name         = azurerm_user_assigned_identity.main.name
-    identity_binding_name = "${azurerm_user_assigned_identity.main.name}-binding"
-    selector_label        = azurerm_user_assigned_identity.main.name
-  })
+  yaml_body = <<-EOT
+---
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentityBinding
+metadata:
+  name: ${azurerm_user_assigned_identity.main.name}-binding
+  namespace: ${var.namespace_name}
+spec:
+  azureIdentity: ${azurerm_user_assigned_identity.main.name}
+  selector: ${azurerm_user_assigned_identity.main.name}
+EOT
 }
 
 # Now install cert-manager with Helm
-resource "helm_release" "cert_manager" {
+resource "helm_release" "main" {
   depends_on = [
     kubectl_manifest.crds,
     kubectl_manifest.azure_identity_binding,
@@ -54,7 +69,7 @@ resource "helm_release" "cert_manager" {
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   version    = "1.3.1"
-  namespace  = "cert-manager"
+  namespace  = var.namespace_name
   skip_crds  = true
 
   max_history = 20

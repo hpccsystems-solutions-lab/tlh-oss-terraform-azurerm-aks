@@ -231,12 +231,14 @@ variable "configmaps" {
   default = {}
 }
 
-variable "cert_manager_dns_zone_name" {
-  type        = string
-  description = "The name of the DNS zone that cert-manager will use (only one is supported at this time)"
-}
-
-variable "cert_manager_dns_zone_resource_group_name" {
-  type        = string
-  description = "The name of the resource group containing the DNS zone that cert-manager will use"
+variable "cert_manager_dns_zone" {
+  description = "The name and resource group of the DNS zone associated with your Azure subscription"
+  type = object({
+    name = string
+    resource_group_name = string
+  })
+  default = {
+    name = ""
+    resource_group_name = ""
+  }
 }

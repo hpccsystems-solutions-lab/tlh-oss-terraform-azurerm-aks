@@ -78,7 +78,10 @@ module "core-config" {
 }
 
 module "cert_manager" {
-  depends_on = [module.core-config]
+  depends_on = [
+    module.core-config,
+    module.pod_identity,
+  ]
 
   source = "./modules/cert-manager"
 
@@ -87,6 +90,5 @@ module "cert_manager" {
   tags                = var.tags
   names               = var.names
 
-  dns_zone_name                = var.cert_manager_dns_zone_name
-  dns_zone_resource_group_name = var.cert_manager_dns_zone_resource_group_name
+  dns_zone = var.cert_manager_dns_zone
 }
