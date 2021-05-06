@@ -26,8 +26,6 @@ resource "kubernetes_secret" "default" {
 
   type = each.value.type
   data = each.value.data
-
-  depends_on = [kubernetes_namespace.default]
 }
 
 resource "kubernetes_config_map" "default" {
@@ -41,8 +39,6 @@ resource "kubernetes_config_map" "default" {
   }
 
   data = each.value.data
-
-  depends_on = [kubernetes_namespace.default]
 }
 
 module "rbac" {
