@@ -2,19 +2,19 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=2.51.0"
+      version = ">=2.57.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "=2.3.0"
+      version = ">=2.3.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "=2.0.2"
+      version = ">=2.0.2"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "=2.0.3"
+      version = ">=2.0.3"
     }
   }
   required_version = ">=0.14.8"
@@ -127,6 +127,11 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
+  dns_zone = {
+    name                = var.dns_zone.name
+    resource_group_name = var.dns_zone.resource_group_name
+  }
+
   node_pool_tags     = {}
   node_pool_defaults = {}
   node_pool_taints   = {}
@@ -140,6 +145,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     },
     {
@@ -150,6 +156,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     }
   ]
@@ -200,6 +207,8 @@ module "aks" {
       allow_volume_expansion = true
     }
   }
+
+  rbac_admin_object_ids = var.rbac_admin_object_ids
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
@@ -224,6 +233,7 @@ resource "helm_release" "nginx" {
   values = [<<-EOT
     name: nginx
     image: nginx:latest
+    dns_name: ${random_string.random.result}.${var.dns_zone.name}
     nodeSelector:
       lnrs.io/tier: ingress
     tolerations:
@@ -243,6 +253,10 @@ data "kubernetes_service" "nginx" {
 }
 
 output "nginx_url" {
+  value = "http://${random_string.random.result}.${var.dns_zone.name}"
+}
+
+output "nginx_url_ip" {
   value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
 }
 

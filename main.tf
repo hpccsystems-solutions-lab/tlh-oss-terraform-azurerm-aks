@@ -46,10 +46,26 @@ module "kubernetes" {
   } : null)
 }
 
-module "pod_identity" {
-  source = "./modules/pod-identity"
-
+module "priority_classes" {
   depends_on = [module.kubernetes]
+
+  source = "./modules/priority-classes"
+
+  additional_priority_classes = var.additional_priority_classes
+}
+
+module "storage_classes" {
+  depends_on = [module.kubernetes]
+
+  source = "./modules/storage-classes"
+
+  additional_storage_classes = var.additional_storage_classes
+}
+
+module "pod_identity" {
+  depends_on = [module.priority_classes, module.storage_classes]
+
+  source = "./modules/pod-identity"
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_resource_group_name      = var.resource_group_name
@@ -57,20 +73,11 @@ module "pod_identity" {
   network_plugin               = local.network_plugin
 }
 
-module "priority_classes" {
-  source = "./modules/priority-classes"
-
-  additional_priority_classes = var.additional_priority_classes
-}
-
-module "storage_classes" {
-  source = "./modules/storage-classes"
-
-  additional_storage_classes = var.additional_storage_classes
-}
-
 module "core-config" {
+  depends_on = [module.pod_identity]
+
   source = "./modules/core-config"
+
   resource_group_name = var.resource_group_name
   cluster_name        = module.kubernetes.name
 

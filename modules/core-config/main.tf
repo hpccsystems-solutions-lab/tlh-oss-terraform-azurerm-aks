@@ -15,6 +15,8 @@ resource "kubernetes_namespace" "default" {
 }
 
 resource "kubernetes_secret" "default" {
+  depends_on = [kubernetes_namespace.default]
+
   for_each = var.secrets
 
   metadata {
@@ -29,6 +31,8 @@ resource "kubernetes_secret" "default" {
 }
 
 resource "kubernetes_config_map" "default" {
+  depends_on = [kubernetes_namespace.default]
+
   for_each = var.configmaps
 
   metadata {
@@ -42,6 +46,8 @@ resource "kubernetes_config_map" "default" {
 }
 
 module "rbac" {
+  depends_on = [kubernetes_namespace.default]
+
   source = "./modules/rbac"
 }
 

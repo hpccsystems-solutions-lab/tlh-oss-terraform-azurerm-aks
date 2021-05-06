@@ -200,11 +200,11 @@ variable "additional_storage_classes" {
 }
 
 variable "dns_zone" {
-   description = "DNS Zone details for external-dns."
-   type        =  object({
-     name = string
-     resource_group_name = string
-   })
+  description = "DNS Zone details for external-dns."
+  type = object({
+    name                = string
+    resource_group_name = string
+  })
 }
 
 variable "namespaces" {
