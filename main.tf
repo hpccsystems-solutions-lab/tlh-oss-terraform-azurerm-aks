@@ -57,15 +57,6 @@ module "pod_identity" {
   network_plugin               = local.network_plugin
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = module.kubernetes.kube_config.host
-    client_certificate     = base64decode(module.kubernetes.kube_config.client_certificate)
-    client_key             = base64decode(module.kubernetes.kube_config.client_key)
-    cluster_ca_certificate = base64decode(module.kubernetes.kube_config.cluster_ca_certificate)
-  }
-}
-
 module "priority_classes" {
   source = "./modules/priority-classes"
 
@@ -78,24 +69,19 @@ module "storage_classes" {
   additional_storage_classes = var.additional_storage_classes
 }
 
-module "external_dns" {
-  source = "./modules/external-dns"
+module "core-config" {
+  source = "./modules/core-config"
+  resource_group_name = var.resource_group_name
+  cluster_name        = module.kubernetes.name
 
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
-  resource_group_name          = var.resource_group_name
-  cluster_name                 = module.kubernetes.name
-  dns_zone_resource_group_name = var.dns_zone_resource_group_name
-  dns_zone_name                = var.dns_zone_name
-
-  tags = var.tags
-}
-
-module "core-config" {
-  source = "./modules/core-config"
-
   namespaces = var.namespaces
   configmaps = var.configmaps
   secrets    = var.secrets
+
+  dns_zone = var.dns_zone
+
+  tags = var.tags
 }

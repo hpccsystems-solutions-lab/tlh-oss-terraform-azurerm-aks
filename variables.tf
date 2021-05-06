@@ -199,14 +199,12 @@ variable "additional_storage_classes" {
   }
 }
 
-variable "dns_zone_resource_group_name" {
-  type        = string
-  description = "The name of the resource group containing the DNS zone to manage with external-dns"
-}
-
-variable "dns_zone_name" {
-  type        = string
-  description = "The name of the DNS zone to manage with external-dns"
+variable "dns_zone" {
+   description = "DNS Zone details for external-dns."
+   type        =  object({
+     name = string
+     resource_group_name = string
+   })
 }
 
 variable "namespaces" {

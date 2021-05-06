@@ -4,10 +4,15 @@ variable "tags" {
   default = {}
 }
 
-variable "namespace_name" {
+variable "namespace" {
   type        = string
   description = "The name of the Kubernetes namespace to contain the external-dns resources"
   default     = "dns"
+}
+
+variable "tolerations" {
+  type = list(any)
+  description = "Tolerations for the external-dns pods."
 }
 
 variable "helm_chart_version" {
@@ -32,14 +37,12 @@ variable "cluster_name" {
   description = "The name of your AKS cluster"
 }
 
-variable "dns_zone_resource_group_name" {
-  type        = string
-  description = "The name of the resource group containing the DNS zone to manage with external-dns"
-}
-
-variable "dns_zone_name" {
-  type        = string
-  description = "The name of the DNS zone to manage with external-dns"
+variable "dns_zone" {
+   description = "DNS Zone details for external-dns."
+   type        =  object({
+     name = string
+     resource_group_name = string
+   })
 }
 
 variable "dns_permissions" {

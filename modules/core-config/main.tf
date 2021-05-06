@@ -44,3 +44,25 @@ resource "kubernetes_config_map" "default" {
 module "rbac" {
   source = "./modules/rbac"
 }
+
+module "external_dns" {
+  depends_on = [kubernetes_namespace.default]
+
+  source = "./modules/external-dns"
+
+  azure_tenant_id       = var.azure_tenant_id
+  azure_subscription_id = var.azure_subscription_id
+
+  resource_group_name          = var.resource_group_name
+  cluster_name                 = var.cluster_name
+  dns_zone                     = var.dns_zone
+
+  tolerations = [ {
+    key   = "CriticalAddonsOnly"
+    operator = "Equal"
+    value    = "true"
+    effect = "NoSchedule"
+  }]
+
+  tags = var.tags
+}
