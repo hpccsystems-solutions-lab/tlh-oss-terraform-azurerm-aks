@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.56.0"
+      version = ">=2.57.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -14,7 +14,7 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">=2.1.1"
+      version = ">=2.0.3"
     }
   }
   required_version = ">=0.14.8"
@@ -106,18 +106,14 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    iaas-private = {
+    "iaas-private" = {
       cidrs                   = ["10.1.0.0/24"]
       allow_internet_outbound = true # Allow traffic to Internet for image download
-      allow_vnet_inbound      = true
-      allow_vnet_outbound     = true
     }
-    iaas-public = {
+    "iaas-public" = {
       cidrs                   = ["10.1.1.0/24"]
       allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
       allow_internet_outbound = true # Allow traffic to Internet for image download
-      allow_vnet_inbound      = true
-      allow_vnet_outbound     = true
     }
   }
 }
@@ -130,6 +126,8 @@ module "aks" {
   location            = module.metadata.location
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
+
+  external_dns_zones = var.external_dns_zones
 
   node_pool_tags     = {}
   node_pool_defaults = {}
@@ -155,7 +153,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
-      labels    = { "foo" = "bar" }
+      labels    = {}
       tags      = {}
     }
   ]
@@ -177,7 +175,7 @@ module "aks" {
     name-of-priority-class = {
       description = "A description for this priority class"
       value       = 1500 # lower number = lower priority
-      labels = {
+      labels      = {
         label1 = "foo"
         label2 = "bar"
       }
@@ -190,7 +188,7 @@ module "aks" {
 
   additional_storage_classes = {
     special-storage-class = {
-      labels = {
+      labels              = {
         "test" = "foo"
       }
       annotations         = {}
@@ -206,6 +204,8 @@ module "aks" {
       allow_volume_expansion = true
     }
   }
+
+  rbac_admin_object_ids = var.rbac_admin_object_ids
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
@@ -230,6 +230,7 @@ resource "helm_release" "nginx" {
   values = [<<-EOT
     name: nginx
     image: nginx:latest
+    dns_name: ${random_string.random.result}.${var.external_dns_zones.names.0}
     nodeSelector:
       lnrs.io/tier: ingress
     tolerations:
@@ -249,6 +250,10 @@ data "kubernetes_service" "nginx" {
 }
 
 output "nginx_url" {
+  value = "http://${random_string.random.result}.${var.external_dns_zones.names.0}"
+}
+
+output "nginx_url_ip" {
   value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
 }
 

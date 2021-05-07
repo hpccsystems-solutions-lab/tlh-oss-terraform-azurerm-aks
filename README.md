@@ -23,7 +23,9 @@ This module is designed to provide a standard set of defaults for all node pools
 
 ## Providers
 
-No provider.
+| Name | Version |
+|------|---------|
+| azurerm | >= 2.57.0 |
 
 ## Inputs
 
@@ -36,6 +38,7 @@ No provider.
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
+| external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | `null` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
