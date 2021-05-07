@@ -24,8 +24,8 @@ variable "cluster_version" {
   default     = "1.18"
 
   validation {
-    condition     = contains(["1.20", "1.19", "1.18", "1.17"], var.cluster_version)
-    error_message = "This module only supports EKS versions 1.20, 1.19, 1.18 & 1.17."
+    condition     = contains(["1.20", "1.19", "1.18"], var.cluster_version)
+    error_message = "This module only supports EKS versions 1.20, 1.19, & 1.18."
   }
 }
 
