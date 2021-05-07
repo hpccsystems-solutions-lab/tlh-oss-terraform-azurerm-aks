@@ -96,15 +96,14 @@ sources:
 
 provider: azure
 
-domainFilters:
-  - ${var.dns_zone.name}
+domainFilters:${indent(2, "\n${yamlencode([for name in var.dns_zones.names : name])}")}
 
 txtOwnerId: ${var.cluster_name}
 
 azure:
   tenantId: ${var.azure_tenant_id}
   subscriptionId: ${var.azure_subscription_id}
-  resourceGroup: ${data.azurerm_resource_group.dns_zone.name}
+  resourceGroup: ${var.dns_zones.resource_group_name}
   useManagedIdentityExtension: true
   userAssignedIdentityID: ${azurerm_user_assigned_identity.main.client_id}
 

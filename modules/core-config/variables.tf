@@ -57,10 +57,11 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "dns_zone" {
-   description = "DNS Zone details for external-dns."
-   type        =  object({
-     name = string
-     resource_group_name = string
-   })
+variable "external_dns_zones" {
+  description = "DNS Zone details for external-dns."
+  type = object({
+    names               = list(string)
+    resource_group_name = string
+  })
+  default = null
 }

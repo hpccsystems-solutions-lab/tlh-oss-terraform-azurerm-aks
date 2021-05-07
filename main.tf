@@ -88,7 +88,7 @@ module "core-config" {
   configmaps = var.configmaps
   secrets    = var.secrets
 
-  dns_zone = var.dns_zone
+  external_dns_zones = var.external_dns_zones
 
   tags = var.tags
 }

@@ -37,12 +37,13 @@ variable "cluster_name" {
   description = "The name of your AKS cluster"
 }
 
-variable "dns_zone" {
-   description = "DNS Zone details for external-dns."
-   type        =  object({
-     name = string
-     resource_group_name = string
-   })
+variable "dns_zones" {
+  description = "DNS Zone details for external-dns."
+  type = object({
+    names               = list(string)
+    resource_group_name = string
+  })
+  default = null
 }
 
 variable "dns_permissions" {
