@@ -15,8 +15,7 @@ resource "azurerm_user_assigned_identity" "main" {
 
   resource_group_name = data.azurerm_resource_group.cluster.name
   location            = data.azurerm_resource_group.cluster.location
-
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "azurerm_role_assignment" "main" {

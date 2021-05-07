@@ -10,10 +10,10 @@ resource "kubectl_manifest" "crds" {
 
 # cert-manager will use this identity to manage a DNS zone
 resource "azurerm_user_assigned_identity" "main" {
-  name                 = "${var.names.product_group}-${var.names.subscription_type}-cert-manager"
-  resource_group_name  = var.resource_group_name
-  location             = var.location
-  tags                 = var.tags
+  name                = "${var.cluster_name}-cert-manager"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
 }
 
 # Grant the above UAI access to the specified DNS zone
@@ -25,51 +25,27 @@ resource "azurerm_role_assignment" "main" {
 
 # Configure authentication with Azure DNS as described here:
 # https://cert-manager.io/docs/configuration/acme/dns01/azuredns/
-resource "kubectl_manifest" "azure_identity" {
-  yaml_body = <<-EOT
----
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentity
-metadata:
-  annotations:
-    aadpodidentity.k8s.io/Behavior: namespaced
-  name: ${azurerm_user_assigned_identity.main.name}
-  namespace: ${var.namespace_name}
-spec:
-  type: 0
-  resourceID: ${azurerm_user_assigned_identity.main.id}
-  clientID: ${azurerm_user_assigned_identity.main.client_id}
-EOT
-}
 
-resource "kubectl_manifest" "azure_identity_binding" {
-  depends_on = [kubectl_manifest.azure_identity]
+module "pod_identity" {
+  depends_on = [azurerm_role_assignment.main]
 
-  yaml_body = <<-EOT
----
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentityBinding
-metadata:
-  name: ${azurerm_user_assigned_identity.main.name}-binding
-  namespace: ${var.namespace_name}
-spec:
-  azureIdentity: ${azurerm_user_assigned_identity.main.name}
-  selector: ${azurerm_user_assigned_identity.main.name}
-EOT
+  source = "../../../pod-identity/identity"
+
+  namespace = var.namespace
+  identity_name = azurerm_user_assigned_identity.main.name
+  identity_client_id = azurerm_user_assigned_identity.main.client_id
+  identity_resource_id = azurerm_user_assigned_identity.main.id
 }
 
 # Now install cert-manager with Helm
 resource "helm_release" "main" {
-  depends_on = [
-    kubectl_manifest.crds,
-    kubectl_manifest.azure_identity_binding,
-  ]
+  depends_on = [module.pod_identity]
 
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   version    = "1.3.1"
-  namespace  = var.namespace_name
+  namespace  = var.namespace
   skip_crds  = true
 
   max_history = 20

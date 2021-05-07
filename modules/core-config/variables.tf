@@ -57,10 +57,24 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "location" {
+  description = "Azure region in which to build resources."
+  type        = string
+}
+
 variable "external_dns_zones" {
   description = "DNS Zone details for external-dns."
   type = object({
     names               = list(string)
+    resource_group_name = string
+  })
+  default = null
+}
+
+variable "cert_manager_dns_zone" {
+  description = "The name and resource group of the DNS zone associated with your Azure subscription"
+  type = object({
+    name = string
     resource_group_name = string
   })
   default = null

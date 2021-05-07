@@ -79,6 +79,7 @@ module "core-config" {
   source = "./modules/core-config"
 
   resource_group_name = var.resource_group_name
+  location            = var.location
   cluster_name        = module.kubernetes.name
 
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
@@ -88,23 +89,8 @@ module "core-config" {
   configmaps = var.configmaps
   secrets    = var.secrets
 
-  external_dns_zones = var.external_dns_zones
+  external_dns_zones    = var.external_dns_zones
+  cert_manager_dns_zone = var.cert_manager_dns_zone
 
   tags = var.tags
-}
-
-module "cert_manager" {
-  depends_on = [
-    module.core-config,
-    module.pod_identity,
-  ]
-
-  source = "./modules/cert-manager"
-
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
-  names               = var.names
-
-  dns_zone = var.cert_manager_dns_zone
 }

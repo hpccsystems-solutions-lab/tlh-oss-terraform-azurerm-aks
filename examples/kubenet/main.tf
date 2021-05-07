@@ -128,6 +128,7 @@ module "aks" {
   resource_group_name = module.resource_group.name
 
   external_dns_zones = var.external_dns_zones
+  cert_manager_dns_zone = var.cert_manager_dns_zone
 
   node_pool_tags     = {}
   node_pool_defaults = {}

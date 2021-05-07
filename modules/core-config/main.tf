@@ -68,3 +68,16 @@ module "external_dns" {
 
   tags = var.tags
 }
+
+module "cert_manager" {
+  depends_on = [kubernetes_namespace.default]
+
+  source = "./modules/cert-manager"
+
+  cluster_name        = var.cluster_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+
+  dns_zone = var.cert_manager_dns_zone
+}
