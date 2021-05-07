@@ -46,10 +46,26 @@ module "kubernetes" {
   } : null)
 }
 
-module "pod_identity" {
-  source = "./modules/pod-identity"
-
+module "priority_classes" {
   depends_on = [module.kubernetes]
+
+  source = "./modules/priority-classes"
+
+  additional_priority_classes = var.additional_priority_classes
+}
+
+module "storage_classes" {
+  depends_on = [module.kubernetes]
+
+  source = "./modules/storage-classes"
+
+  additional_storage_classes = var.additional_storage_classes
+}
+
+module "pod_identity" {
+  depends_on = [module.priority_classes, module.storage_classes]
+
+  source = "./modules/pod-identity"
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_resource_group_name      = var.resource_group_name
@@ -57,24 +73,24 @@ module "pod_identity" {
   network_plugin               = local.network_plugin
 }
 
-module "priority_classes" {
-  source = "./modules/priority-classes"
-
-  additional_priority_classes = var.additional_priority_classes
-}
-
-module "storage_classes" {
-  source = "./modules/storage-classes"
-
-  additional_storage_classes = var.additional_storage_classes
-}
-
 module "core-config" {
+  depends_on = [module.pod_identity]
+
   source = "./modules/core-config"
+
+  resource_group_name = var.resource_group_name
+  cluster_name        = module.kubernetes.name
+
+  azure_tenant_id       = data.azurerm_client_config.current.tenant_id
+  azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
   namespaces = var.namespaces
   configmaps = var.configmaps
   secrets    = var.secrets
+
+  external_dns_zones = var.external_dns_zones
+
+  tags = var.tags
 }
 
 module "cert_manager" {
