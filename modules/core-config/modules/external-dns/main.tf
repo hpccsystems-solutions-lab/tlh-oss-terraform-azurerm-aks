@@ -11,8 +11,7 @@ resource "azurerm_role_definition" "main" {
 }
 
 resource "azurerm_user_assigned_identity" "main" {
-  name = "${var.cluster_name}-external-dns"
-
+  name                = "${var.cluster_name}-external-dns"
   resource_group_name = data.azurerm_resource_group.cluster.name
   location            = data.azurerm_resource_group.cluster.location
   tags                = var.tags
@@ -50,7 +49,7 @@ resource "helm_release" "main" {
 replicas: 2
 
 nodeSelector:
-  agentpool: ${var.node_pool_name}
+  kubernetes.azure.com/mode: system
 
 podLabels:
   aadpodidbinding: ${azurerm_user_assigned_identity.main.name}

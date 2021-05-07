@@ -21,12 +21,6 @@ variable "helm_chart_version" {
   default     = "4.10.0"
 }
 
-variable "node_pool_name" {
-  type        = string
-  description = "The AKS node pool where external-dns should run"
-  default     = "system"
-}
-
 variable "resource_group_name" {
   type        = string
   description = "The name of the resource group of your AKS cluster"
