@@ -5,6 +5,7 @@ resource "helm_release" "main" {
   namespace = var.namespace
 
   values = [<<-EOT
+  namespace: "${var.namespace}"
   azureIdentity:
     name: "${var.identity_name}"
     type: 0

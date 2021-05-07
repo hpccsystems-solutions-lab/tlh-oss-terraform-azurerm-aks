@@ -43,7 +43,7 @@ resource "helm_release" "aad_pod_identity" {
 rbac:
   allowAccessToSecrets: false
 installCRDs: false
-forceNamespaced: "false"
+forceNamespaced: true
 mic:
   nodeSelector:
     kubernetes.azure.com/mode: system
