@@ -25,43 +25,19 @@ resource "azurerm_role_assignment" "main" {
   principal_id       = azurerm_user_assigned_identity.main.principal_id
 }
 
-resource "kubectl_manifest" "identity" {
+module "pod_identity" {
   depends_on = [azurerm_role_assignment.main]
 
-  yaml_body = <<EOT
----
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentity
-metadata:
-  annotations:
-    aadpodidentity.k8s.io/Behavior: namespaced 
-  name: ${azurerm_user_assigned_identity.main.name}
-  namespace: ${var.namespace}
-spec:
-  type: 0
-  resourceID: ${azurerm_user_assigned_identity.main.id}
-  clientID: ${azurerm_user_assigned_identity.main.client_id}
-EOT
-}
+  source = "../../../pod-identity/identity"
 
-resource "kubectl_manifest" "identity_binding" {
-  depends_on = [kubectl_manifest.identity]
-
-  yaml_body = <<EOT
----
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentityBinding
-metadata:
-  name: ${azurerm_user_assigned_identity.main.name}-binding
-  namespace: ${var.namespace}
-spec:
-  azureIdentity: ${azurerm_user_assigned_identity.main.name}
-  selector: ${azurerm_user_assigned_identity.main.name}
-EOT
+  namespace = var.namespace
+  identity_name = azurerm_user_assigned_identity.main.name
+  identity_client_id = azurerm_user_assigned_identity.main.client_id
+  identity_resource_id = azurerm_user_assigned_identity.main.id
 }
 
 resource "helm_release" "main" {
-  depends_on = [kubectl_manifest.identity_binding]
+  depends_on = [module.pod_identity]
 
   name       = "external-dns"
   namespace  = var.namespace
