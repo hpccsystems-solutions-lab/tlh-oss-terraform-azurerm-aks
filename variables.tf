@@ -25,7 +25,7 @@ variable "cluster_version" {
 
   validation {
     condition     = contains(["1.20", "1.19", "1.18"], var.cluster_version)
-    error_message = "This module only supports EKS versions 1.20, 1.19, & 1.18."
+    error_message = "This module only supports AKS versions 1.20, 1.19, & 1.18."
   }
 }
 
