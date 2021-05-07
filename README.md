@@ -33,7 +33,7 @@ This module is designed to provide a standard set of defaults for all node pools
 |------|-------------|------|---------|:--------:|
 | additional\_priority\_classes | A map defining additional priority classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-kubernetes-priority-class) for additional information. | <pre>map(object({<br>    description = string<br>    value       = number<br>    labels      = map(string)<br>    annotations = map(string)<br>  }))</pre> | `null` | no |
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
-| cert\_manager\_dns\_zone | The name and resource group of the DNS zone associated with your Azure subscription | <pre>object({<br>    name = string<br>    resource_group_name = string<br>  })</pre> | <pre>{<br>  "name": "",<br>  "resource_group_name": ""<br>}</pre> | no |
+| cert\_manager\_dns\_zone | The name and resource group of the DNS zone associated with your Azure subscription | <pre>object({<br>    name = string<br>    resource_group_name = string<br>  })</pre> | `null` | no |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.18"` | no |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
@@ -41,7 +41,6 @@ This module is designed to provide a standard set of defaults for all node pools
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | `null` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
-| names | Names to be applied to resources | `map(string)` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
 | network\_profile\_options | docker\_bridge\_cidr, dns\_service\_ip and service\_cidr should all be empty or all should be set | <pre>object({<br>    docker_bridge_cidr = string<br>    dns_service_ip     = string<br>    service_cidr       = string<br>  })</pre> | <pre>{<br>  "dns_service_ip": "172.20.0.10",<br>  "docker_bridge_cidr": "172.17.0.1/16",<br>  "service_cidr": "172.20.0.0/16"<br>}</pre> | no |
