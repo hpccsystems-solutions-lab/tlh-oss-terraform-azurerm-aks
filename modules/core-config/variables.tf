@@ -79,3 +79,20 @@ variable "cert_manager_dns_zone" {
   })
   default = null
 }
+
+variable "letsencrypt_environment" {
+  description = "Let's Encrypt enfironment to use, staging or production."
+  type        = string
+  default     = "staging"
+
+  validation {
+    condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
+    error_message = "The \"letsencrypt_environment\" variable must be either \"staging\" or \"production\"."
+  }
+}
+
+variable "letsencrypt_email" {
+  description = "Email address for expiration notifications."
+  type        = string
+  default     = ""
+}

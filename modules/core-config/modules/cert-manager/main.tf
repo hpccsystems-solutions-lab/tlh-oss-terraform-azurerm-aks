@@ -128,3 +128,14 @@ webhook:
 EOT
   ]
 }
+
+module "issuer" {
+  source = "./issuer"
+
+  namespace = var.namespace
+  azure_environment = var.azure_environment
+  azure_subscription_id = var.azure_subscription_id
+  dns_zone = var.dns_zone
+  letsencrypt_endpoint = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
+  letsencrypt_email = var.letsencrypt_email
+}

@@ -77,7 +77,7 @@ module "core-config" {
   depends_on = [module.pod_identity]
 
   source = "./modules/core-config"
-
+  
   resource_group_name = var.resource_group_name
   location            = var.location
   cluster_name        = module.kubernetes.name
@@ -89,8 +89,10 @@ module "core-config" {
   configmaps = var.configmaps
   secrets    = var.secrets
 
-  external_dns_zones    = var.external_dns_zones
-  cert_manager_dns_zone = var.cert_manager_dns_zone
+  external_dns_zones      = var.external_dns_zones
+  cert_manager_dns_zone   = var.cert_manager_dns_zone
+  letsencrypt_environment = var.letsencrypt_environment
+  letsencrypt_email       = var.letsencrypt_email
 
   tags = var.tags
 }
