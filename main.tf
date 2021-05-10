@@ -46,41 +46,22 @@ module "kubernetes" {
   } : null)
 }
 
-module "priority_classes" {
-  depends_on = [module.kubernetes]
-
-  source = "./modules/priority-classes"
-
-  additional_priority_classes = var.additional_priority_classes
-}
-
-module "storage_classes" {
-  depends_on = [module.kubernetes]
-
-  source = "./modules/storage-classes"
-
-  additional_storage_classes = var.additional_storage_classes
-}
-
-module "pod_identity" {
-  depends_on = [module.priority_classes, module.storage_classes]
-
-  source = "./modules/pod-identity"
-
-  aks_identity                 = module.kubernetes.kubelet_identity.object_id
-  aks_resource_group_name      = var.resource_group_name
-  aks_node_resource_group_name = module.kubernetes.node_resource_group
-  network_plugin               = local.network_plugin
-}
-
 module "core-config" {
-  depends_on = [module.pod_identity]
+  depends_on = [module.kubernetes]
 
   source = "./modules/core-config"
   
   resource_group_name = var.resource_group_name
   location            = var.location
-  cluster_name        = module.kubernetes.name
+
+  cluster_name                 = module.kubernetes.name
+
+  additional_priority_classes = var.additional_priority_classes
+  additional_storage_classes = var.additional_storage_classes
+
+  aks_identity                 = module.kubernetes.kubelet_identity.object_id
+  aks_node_resource_group_name = module.kubernetes.node_resource_group
+  network_plugin               = local.network_plugin
 
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id

@@ -1,3 +1,15 @@
+module "priority_classes" {
+  source = "./modules/priority-classes"
+
+  additional_priority_classes = var.additional_priority_classes
+}
+
+module "storage_classes" {
+  source = "./modules/storage-classes"
+
+  additional_storage_classes = var.additional_storage_classes
+}
+
 resource "kubernetes_namespace" "default" {
   for_each = toset(local.namespaces)
 
@@ -47,8 +59,24 @@ module "rbac" {
   source = "./modules/rbac"
 }
 
+module "pod_identity" {
+  depends_on = [
+    kubernetes_namespace.default,
+    module.priority_classes,
+    module.storage_classes
+  ]
+
+  source = "./modules/pod-identity"
+
+  resource_group_name          = var.resource_group_name
+  namespace                    = "kube-system"
+  aks_identity                 = var.aks_identity
+  aks_node_resource_group_name = var.aks_node_resource_group_name
+  network_plugin               = var.network_plugin
+}
+
 module "external_dns" {
-  depends_on = [kubernetes_namespace.default]
+  depends_on = [module.pod_identity]
 
   source = "./modules/external-dns"
 
@@ -70,7 +98,7 @@ module "external_dns" {
 }
 
 module "cert_manager" {
-  depends_on = [kubernetes_namespace.default]
+  depends_on = [module.pod_identity]
 
   source = "./modules/cert-manager"
 

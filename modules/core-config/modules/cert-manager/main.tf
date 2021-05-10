@@ -29,7 +29,7 @@ resource "azurerm_role_assignment" "main" {
 module "pod_identity" {
   depends_on = [azurerm_role_assignment.main]
 
-  source = "../../../pod-identity/identity"
+  source = "../pod-identity/identity"
 
   namespace = var.namespace
   identity_name = azurerm_user_assigned_identity.main.name
@@ -130,6 +130,11 @@ EOT
 }
 
 module "issuer" {
+  depends_on = [
+    helm_release.main,
+    kubectl_manifest.crds
+  ]
+
   source = "./issuer"
 
   namespace = var.namespace

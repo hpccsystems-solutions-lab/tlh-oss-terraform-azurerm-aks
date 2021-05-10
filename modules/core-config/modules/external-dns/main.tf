@@ -26,7 +26,7 @@ resource "azurerm_role_assignment" "main" {
 module "pod_identity" {
   depends_on = [azurerm_role_assignment.main]
 
-  source = "../../../pod-identity/identity"
+  source = "../pod-identity/identity"
 
   namespace = var.namespace
   identity_name = azurerm_user_assigned_identity.main.name
@@ -46,6 +46,8 @@ resource "helm_release" "main" {
 
   values = [<<-EOT
 ---
+namespace: ${var.namespace}
+
 replicas: 2
 
 nodeSelector:

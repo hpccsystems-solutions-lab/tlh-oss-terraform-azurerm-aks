@@ -1,5 +1,5 @@
 data "azurerm_resource_group" "parent" {
-  name = var.aks_resource_group_name
+  name = var.resource_group_name
 }
 
 data "azurerm_resource_group" "node" {
