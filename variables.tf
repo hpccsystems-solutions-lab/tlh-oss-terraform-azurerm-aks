@@ -21,7 +21,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "The Kubernetes version to use for the AKS cluster."
   type        = string
-  default     = "1.18"
+  default     = "1.19"
 
   validation {
     condition     = contains(["1.20", "1.19", "1.18"], var.cluster_version)
