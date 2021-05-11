@@ -46,6 +46,8 @@ resource "helm_release" "main" {
 
   values = [<<-EOT
 ---
+
+logLevel: debug
 namespace: ${var.namespace}
 
 replicas: 2
