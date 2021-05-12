@@ -63,56 +63,6 @@ module "identity" {
   )
 }
 
-#resource "azurerm_role_definition" "resource_group_reader" {
-#  name        = "${var.cluster_name}-cert-manager-rg"
-#  scope       = data.azurerm_resource_group.dns_zone.id
-#  description = "Custom role for external-dns to manage DNS records"
-#
-#  assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
-#
-#  permissions {
-#    actions = [
-#      "Microsoft.Resources/subscriptions/resourceGroups/read",
-#    ]
-#  }
-#}
-#
-#resource "azurerm_role_definition" "dns_zone_contributor" {
-#  name        = "${var.cluster_name}-cert-manager-dns"
-#  scope       = data.azurerm_resource_group.dns_zone.id
-#  description = "Custom role for external-dns to manage DNS records"
-#
-#  assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
-#
-#  permissions {
-#    actions = [
-#      "Microsoft.Network/dnsZones/*"
-#    ]
-#  }
-#}
-
-#module "identity" {
-#  source = "../../../identity"
-#
-#  identity_name       = "cert-manager"
-#  cluster_name        = var.cluster_name
-#  resource_group_name = var.resource_group_name
-#  location            = var.location
-#  tags                = var.tags
-#
-#  namespace                    = var.namespace
-#  roles = [
-#    {
-#      role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
-#      scope                       = data.azurerm_resource_group.dns_zone.id
-#    },
-#    {
-#      role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
-#      scope                       = data.azurerm_dns_zone.dns_zone.id
-#    }
-#  ]
-#}
-
 # Now install cert-manager with Helm
 resource "helm_release" "main" {
   depends_on = [module.identity]
@@ -134,7 +84,7 @@ global:
 installCRDs: false
 replicaCount: 1
 podLabels:
-  aadpodidbinding: ${module.identity.name}"
+  aadpodidbinding: ${module.identity.name}
 nodeSelector:
   kubernetes.azure.com/mode: system
 tolerations:

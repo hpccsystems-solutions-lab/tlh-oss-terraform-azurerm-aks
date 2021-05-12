@@ -6,15 +6,11 @@ resource "azurerm_user_assigned_identity" "main" {
 }
 
 resource "azurerm_role_assignment" "main" {
-  #for_each = var.roles
   count = length(var.roles)
 
   scope              = var.roles[count.index].scope
   role_definition_id = var.roles[count.index].role_definition_resource_id
   principal_id       = azurerm_user_assigned_identity.main.principal_id
-  #scope              = each.value.scope
-  #role_definition_id = each.value.role_definition_resource_id
-  #principal_id       = azurerm_user_assigned_identity.main.principal_id
 }
 
 resource "helm_release" "main" {
