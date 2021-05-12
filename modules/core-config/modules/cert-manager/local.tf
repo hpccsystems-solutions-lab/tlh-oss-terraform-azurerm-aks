@@ -50,7 +50,7 @@ locals {
     }
 
     podLabels = {
-      aadpodidbinding = azurerm_user_assigned_identity.main.name
+      aadpodidbinding = module.identity.name
     }
 
     resources = {

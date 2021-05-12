@@ -8,38 +8,26 @@ resource "kubectl_manifest" "crds" {
   yaml_body = file("${path.module}/${each.value}")
 }
 
-# cert-manager will use this identity to manage a DNS zone
-resource "azurerm_user_assigned_identity" "main" {
-  name                = "${var.cluster_name}-cert-manager"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
-}
-
-# Grant the above UAI access to the specified DNS zone
-resource "azurerm_role_assignment" "main" {
-  scope                = data.azurerm_dns_zone.dns_zone.id
-  role_definition_name = "DNS Zone Contributor"
-  principal_id         = azurerm_user_assigned_identity.main.principal_id
-}
-
 # Configure authentication with Azure DNS as described here:
 # https://cert-manager.io/docs/configuration/acme/dns01/azuredns/
 
-module "pod_identity" {
-  depends_on = [azurerm_role_assignment.main]
+module "identity" {
+  source = "../../../identity"
 
-  source = "../pod-identity/identity"
+  identity_name       = "cert-manager"
+  cluster_name        = var.cluster_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
 
-  namespace = var.namespace
-  identity_name = azurerm_user_assigned_identity.main.name
-  identity_client_id = azurerm_user_assigned_identity.main.client_id
-  identity_resource_id = azurerm_user_assigned_identity.main.id
+  namespace                   = var.namespace
+  role_definition_resource_id = data.azurerm_role_definition.dns_zone_contributor.id
+  scope                       = data.azurerm_dns_zone.dns_zone.id
 }
 
 # Now install cert-manager with Helm
 resource "helm_release" "main" {
-  depends_on = [module.pod_identity]
+  depends_on = [module.identity]
 
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
@@ -58,7 +46,7 @@ global:
 installCRDs: false
 replicaCount: 1
 podLabels:
-  aadpodidbinding: ${azurerm_user_assigned_identity.main.name}
+  aadpodidbinding: ${module.identity.name}"
 nodeSelector:
   kubernetes.azure.com/mode: system
 tolerations:
