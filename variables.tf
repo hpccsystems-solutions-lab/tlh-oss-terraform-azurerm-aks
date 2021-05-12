@@ -21,11 +21,11 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "The Kubernetes version to use for the AKS cluster."
   type        = string
-  default     = "1.18"
+  default     = "1.19"
 
   validation {
-    condition     = contains(["1.20", "1.19", "1.18", "1.17"], var.cluster_version)
-    error_message = "This module only supports EKS versions 1.20, 1.19, 1.18 & 1.17."
+    condition     = contains(["1.20", "1.19", "1.18"], var.cluster_version)
+    error_message = "This module only supports AKS versions 1.20, 1.19, & 1.18."
   }
 }
 
@@ -233,4 +233,30 @@ variable "configmaps" {
     data      = map(string)
   }))
   default = {}
+}
+
+variable "cert_manager_dns_zones" {
+  description = "The name and resource group of the DNS zone associated with your Azure subscription"
+  type = object({
+    names = list(string)
+    resource_group_name = string
+  })
+  default = null
+}
+
+variable "letsencrypt_environment" {
+  description = "Let's Encrypt enfironment to use, staging or production."
+  type        = string
+  default     = "staging"
+
+  validation {
+    condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
+    error_message = "The \"letsencrypt_environment\" variable must be either \"staging\" or \"production\"."
+  }
+}
+
+variable "letsencrypt_email" {
+  description = "Email address for expiration notifications."
+  type        = string
+  default     = ""
 }

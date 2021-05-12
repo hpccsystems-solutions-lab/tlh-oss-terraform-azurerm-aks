@@ -7,6 +7,15 @@ variable "external_dns_zones" {
   default = null
 }
 
+variable "cert_manager_dns_zone" {
+  description = "The name and resource group of the DNS zone associated with your Azure subscription"
+  type = object({
+    name = string
+    resource_group_name = string
+  })
+  default = null
+}
+
 variable "rbac_admin_object_ids" {
   description = "Admin group object ids for use with rbac active directory integration."
   type        = map(string) # keys are only for documentation purposes

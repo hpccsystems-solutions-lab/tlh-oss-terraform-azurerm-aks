@@ -1,10 +1,16 @@
-variable "aks_identity" {
-  description = "Kubelet identity client_id."
+variable "resource_group_name" {
+  description = "resource group containing AKS cluster"
   type        = string
 }
 
-variable "aks_resource_group_name" {
-  description = "resource group containing AKS cluster"
+variable "namespace" {
+  type        = string
+  description = "The name of the Kubernetes namespace to contain the external-dns resources"
+  default     = "dns"
+}
+
+variable "aks_identity" {
+  description = "Kubelet identity client_id."
   type        = string
 }
 

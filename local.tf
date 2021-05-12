@@ -1,8 +1,8 @@
 locals {
   cluster_patch_version = {
-    "1.19" = "1.19.7"
-    "1.18" = "1.18.14"
-    "1.17" = "1.17.16"
+    "1.20" = "1.20.5"
+    "1.19" = "1.19.9"
+    "1.18" = "1.18.17"
   }
 
   cluster_version = local.cluster_patch_version[var.cluster_version]

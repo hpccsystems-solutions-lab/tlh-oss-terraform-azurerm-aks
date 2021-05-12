@@ -1,43 +1,57 @@
-resource "azurerm_role_definition" "main" {
-  name        = "${var.cluster_name}-external-dns"
+resource "azurerm_role_definition" "resource_group_reader" {
+  name        = "${var.cluster_name}-external-dns-rg"
   scope       = data.azurerm_resource_group.dns_zone.id
   description = "Custom role for external-dns to manage DNS records"
 
   assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
 
   permissions {
-    actions = var.dns_permissions
+    actions = [
+      "Microsoft.Resources/subscriptions/resourceGroups/read",
+    ]
   }
 }
 
-resource "azurerm_user_assigned_identity" "main" {
-  name = "${var.cluster_name}-external-dns"
+resource "azurerm_role_definition" "dns_zone_contributor" {
+  name        = "${var.cluster_name}-external-dns-zone"
+  scope       = element([for zone in data.azurerm_dns_zone.dns_zone : zone.id], 0)
+  description = "Custom role for external-dns to manage DNS records"
 
+  assignable_scopes = [for zone in data.azurerm_dns_zone.dns_zone : zone.id]
+
+  permissions {
+    actions = [
+      "Microsoft.Network/dnsZones/*"
+    ]
+  }
+}
+
+module "identity" {
+  source = "../../../identity"
+
+  cluster_name        = var.cluster_name
+  identity_name       = "external-dns"
   resource_group_name = data.azurerm_resource_group.cluster.name
   location            = data.azurerm_resource_group.cluster.location
-
-  tags = var.tags
-}
-
-resource "azurerm_role_assignment" "main" {
-  scope              = data.azurerm_resource_group.dns_zone.id
-  role_definition_id = azurerm_role_definition.main.role_definition_resource_id
-  principal_id       = azurerm_user_assigned_identity.main.principal_id
-}
-
-module "pod_identity" {
-  depends_on = [azurerm_role_assignment.main]
-
-  source = "../../../pod-identity/identity"
+  tags                = var.tags
 
   namespace = var.namespace
-  identity_name = azurerm_user_assigned_identity.main.name
-  identity_client_id = azurerm_user_assigned_identity.main.client_id
-  identity_resource_id = azurerm_user_assigned_identity.main.id
+  roles = concat([
+    {
+      role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
+      scope                       = data.azurerm_resource_group.dns_zone.id
+    }],
+    [ for zone in data.azurerm_dns_zone.dns_zone :
+      {
+        role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
+        scope                       = zone.id
+      }
+    ]
+  )
 }
 
 resource "helm_release" "main" {
-  depends_on = [module.pod_identity]
+  depends_on = [module.identity]
 
   name       = "external-dns"
   namespace  = var.namespace
@@ -48,13 +62,17 @@ resource "helm_release" "main" {
 
   values = [<<-EOT
 ---
-replicas: 2
+
+logLevel: debug
+namespace: ${var.namespace}
+
+replicas: 1
 
 nodeSelector:
-  agentpool: ${var.node_pool_name}
+  kubernetes.azure.com/mode: system
 
 podLabels:
-  aadpodidbinding: ${azurerm_user_assigned_identity.main.name}
+  aadpodidbinding: ${module.identity.name}
 
 tolerations:
 ${yamlencode(var.tolerations)}
@@ -81,7 +99,7 @@ azure:
   subscriptionId: ${var.azure_subscription_id}
   resourceGroup: ${var.dns_zones.resource_group_name}
   useManagedIdentityExtension: true
-  userAssignedIdentityID: ${azurerm_user_assigned_identity.main.client_id}
+  userAssignedIdentityID: ${module.identity.client_id}
 
 resources:
   requests:
