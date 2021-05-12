@@ -1,12 +1,28 @@
-resource "azurerm_role_definition" "main" {
-  name        = "${var.cluster_name}-external-dns"
+resource "azurerm_role_definition" "resource_group_reader" {
+  name        = "${var.cluster_name}-external-dns-rg"
   scope       = data.azurerm_resource_group.dns_zone.id
   description = "Custom role for external-dns to manage DNS records"
 
   assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
 
   permissions {
-    actions = var.dns_permissions
+    actions = [
+      "Microsoft.Resources/subscriptions/resourceGroups/read",
+    ]
+  }
+}
+
+resource "azurerm_role_definition" "dns_zone_contributor" {
+  name        = "${var.cluster_name}-external-dns-zone"
+  scope       = element([for zone in data.azurerm_dns_zone.dns_zone : zone.id], 0)
+  description = "Custom role for external-dns to manage DNS records"
+
+  assignable_scopes = [for zone in data.azurerm_dns_zone.dns_zone : zone.id]
+
+  permissions {
+    actions = [
+      "Microsoft.Network/dnsZones/*"
+    ]
   }
 }
 
@@ -20,8 +36,18 @@ module "identity" {
   tags                = var.tags
 
   namespace = var.namespace
-  role_definition_resource_id = azurerm_role_definition.main.role_definition_resource_id
-  scope                       = data.azurerm_resource_group.dns_zone.id
+  roles = concat([
+    {
+      role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
+      scope                       = data.azurerm_resource_group.dns_zone.id
+    }],
+    [ for zone in data.azurerm_dns_zone.dns_zone :
+      {
+        role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
+        scope                       = zone.id
+      }
+    ]
+  )
 }
 
 resource "helm_release" "main" {

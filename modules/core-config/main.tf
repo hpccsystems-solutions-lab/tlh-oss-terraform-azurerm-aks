@@ -76,6 +76,7 @@ module "pod_identity" {
 }
 
 module "external_dns" {
+  count      = (var.external_dns_zones == null ? 0 : 1)
   depends_on = [module.pod_identity]
 
   source = "./modules/external-dns"
@@ -98,6 +99,7 @@ module "external_dns" {
 }
 
 module "cert_manager" {
+  count      = (var.cert_manager_dns_zones == null ? 0 : 1)
   depends_on = [module.pod_identity]
 
   source = "./modules/cert-manager"
@@ -108,7 +110,7 @@ module "cert_manager" {
   location            = var.location
   tags                = var.tags
 
-  dns_zone = var.cert_manager_dns_zone
+  dns_zones = var.cert_manager_dns_zones
 
   letsencrypt_environment = var.letsencrypt_environment
   letsencrypt_email       = var.letsencrypt_email

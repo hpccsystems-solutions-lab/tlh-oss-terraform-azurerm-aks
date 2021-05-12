@@ -45,16 +45,13 @@ variable "namespace" {
   default     = "cert-manager"
 }
 
-variable "dns_zone" {
+variable "dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
   type = object({
-    name = string
+    names = list(string)
     resource_group_name = string
   })
-  default = {
-    name = ""
-    resource_group_name = ""
-  }
+  default = null
 }
 
 variable "letsencrypt_environment" {

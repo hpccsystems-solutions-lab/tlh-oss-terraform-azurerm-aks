@@ -8,6 +8,11 @@ variable "azure_subscription_id" {
   }
 }
 
+variable "name" {
+   description = "name of clusterIssuer"
+   type        = string
+}
+
 variable "namespace" {
   description = "kubernetes namespace in which to create identity"
   type        = string

@@ -102,36 +102,4 @@ locals {
       ]
     }
   }
-
-  issuers = {
-    letsencrypt = {
-      apiVersion = "cert-manager.io/v1"
-      kind       = "ClusterIssuer"
-      metadata = {
-        name = "letsencrypt-issuer"
-      }
-      spec = {
-        acme = {
-          email  = "${var.letsencrypt_email}"
-          server = "${local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]}"
-          privateKeySecretRef = {
-            name = "letsencrypt-issuer-privatekey"
-          }
-          solvers = [{
-            dns01 = {
-              azuredns = {
-                subscriptionID = var.azure_subscription_id
-                resourceGroupName = var.dns_zone.resource_group_name
-                hostedZoneName = var.dns_zone.name
-                environment    = var.azure_environment
-              }
-            }
-            selector = {
-              dnsZones = tolist([var.dns_zone.name])
-            }
-          }]
-        }
-      }
-    }
-  }
 }
