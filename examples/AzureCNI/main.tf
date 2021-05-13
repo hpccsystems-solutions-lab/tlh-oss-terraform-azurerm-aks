@@ -2,19 +2,19 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=2.51.0"
+      version = ">=2.57.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "=2.3.0"
+      version = ">=2.3.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "=2.0.2"
+      version = ">=2.0.2"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "=2.0.3"
+      version = ">=2.0.3"
     }
   }
   required_version = ">=0.14.8"
@@ -94,7 +94,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.6.0"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.9.0"
 
   naming_rules = module.naming.yaml
 
@@ -103,21 +103,18 @@ module "virtual_network" {
   names               = module.metadata.names
   tags                = module.metadata.tags
 
+  enforce_subnet_names = false
+
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    iaas-private = {
+    aks-private = {
       cidrs                   = ["10.1.0.0/24"]
-      allow_internet_outbound = true # Allow traffic to Internet for image download
-      allow_vnet_inbound      = true
-      allow_vnet_outbound     = true
+      configure_nsg_rules     = false
     }
-    iaas-public = {
+    aks-public = {
       cidrs                   = ["10.1.1.0/24"]
-      allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
-      allow_internet_outbound = true # Allow traffic to Internet for image download
-      allow_vnet_inbound      = true
-      allow_vnet_outbound     = true
+      configure_nsg_rules     = false
     }
   }
 }
@@ -133,6 +130,9 @@ module "aks" {
 
   network_plugin = "azure"
 
+  external_dns_zones     = var.external_dns_zones
+  cert_manager_dns_zones = var.cert_manager_dns_zones
+
   node_pool_tags     = {}
   node_pool_defaults = {}
   node_pool_taints   = {}
@@ -146,6 +146,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     },
     {
@@ -156,6 +157,7 @@ module "aks" {
       os_type   = "Linux"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     },
     {
@@ -167,20 +169,21 @@ module "aks" {
       subnet    = "public"
       min_count = "1"
       max_count = "2"
+      labels    = {}
       tags      = {}
     }
   ]
 
   subnets = {
     private = {
-      id                          = module.virtual_network.subnets["iaas-private"].id
-      resource_group_name         = module.virtual_network.subnets["iaas-private"].resource_group_name
-      network_security_group_name = module.virtual_network.subnets["iaas-private"].network_security_group_name
+      id                          = module.virtual_network.subnets["aks-private"].id
+      resource_group_name         = module.virtual_network.subnets["aks-private"].resource_group_name
+      network_security_group_name = module.virtual_network.subnets["aks-private"].network_security_group_name
     }
     public = {
-      id                          = module.virtual_network.subnets["iaas-public"].id
-      resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-      network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
+      id                          = module.virtual_network.subnets["aks-public"].id
+      resource_group_name         = module.virtual_network.subnets["aks-public"].resource_group_name
+      network_security_group_name = module.virtual_network.subnets["aks-public"].network_security_group_name
     }
   }
 
@@ -229,8 +232,8 @@ resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
   destination_port_range      = "80"
   source_address_prefix       = "Internet"
   destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
-  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
+  resource_group_name         = module.virtual_network.subnets["aks-public"].resource_group_name
+  network_security_group_name = module.virtual_network.subnets["aks-public"].network_security_group_name
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_iis" {
@@ -243,8 +246,8 @@ resource "azurerm_network_security_rule" "ingress_public_allow_iis" {
   destination_port_range      = "80"
   source_address_prefix       = "Internet"
   destination_address_prefix  = data.kubernetes_service.iis.status.0.load_balancer.0.ingress.0.ip
-  resource_group_name         = module.virtual_network.subnets["iaas-public"].resource_group_name
-  network_security_group_name = module.virtual_network.subnets["iaas-public"].network_security_group_name
+  resource_group_name         = module.virtual_network.subnets["aks-public"].resource_group_name
+  network_security_group_name = module.virtual_network.subnets["aks-public"].network_security_group_name
 }
 
 resource "helm_release" "nginx" {

@@ -28,8 +28,10 @@ module "kubernetes" {
   pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
   network_profile_options = var.network_profile_options
 
-  node_pool_subnets      = var.subnets
-  custom_route_table_ids = var.custom_route_table_ids
+  node_pool_subnets          = var.subnets
+  custom_route_table_ids     = var.custom_route_table_ids
+  configure_subnet_nsg_rules = false
+
   node_pools             = module.nodes.node_pools
   default_node_pool      = module.nodes.default_node_pool
 
