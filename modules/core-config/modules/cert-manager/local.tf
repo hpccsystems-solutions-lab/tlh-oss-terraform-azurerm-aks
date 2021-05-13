@@ -36,8 +36,18 @@ locals {
           effect = "NoSchedule"
           key = "CriticalAddonsOnly"
           operator = "Exists"
-        },
+        }
       ]
+      resources = {
+        limits = {
+          cpu = "1000m"
+          memory = "500Mi"
+        }
+        requests = {
+          cpu = "200m"
+          memory = "256Mi"
+        }
+      }
     }
 
     extraArgs = [
@@ -101,5 +111,20 @@ locals {
         },
       ]
     }
+    # Enable this when we have Prometheus up and running in our clusters
+    #prometheus = {
+    #  enabled = true
+    #  servicemonitor = {
+    #    enabled = true
+    #    interval = "60s"
+    #    labels = {
+    #      "lnrs.io/monitoring-platform" = "core-prometheus"
+    #    }
+    #    path = "/metrics"
+    #    prometheusInstance = "Prometheus"
+    #    scrapeTimeout = "30s"
+    #    targetPort = 9402
+    #  }
+    #}
   }
 }

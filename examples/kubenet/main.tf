@@ -108,11 +108,15 @@ module "virtual_network" {
   subnets = {
     "iaas-private" = {
       cidrs                   = ["10.1.0.0/24"]
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
       allow_internet_outbound = true # Allow traffic to Internet for image download
     }
     "iaas-public" = {
       cidrs                   = ["10.1.1.0/24"]
       allow_lb_inbound        = true # Allow traffic from Azure Load Balancer to pods
+      allow_vnet_inbound      = true
+      allow_vnet_outbound     = true
       allow_internet_outbound = true # Allow traffic to Internet for image download
     }
   }
@@ -127,8 +131,8 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
-  external_dns_zones = var.external_dns_zones
-  cert_manager_dns_zone = var.cert_manager_dns_zone
+  external_dns_zones     = var.external_dns_zones
+  cert_manager_dns_zones = var.cert_manager_dns_zones
 
   node_pool_tags     = {}
   node_pool_defaults = {}
@@ -229,7 +233,7 @@ resource "helm_release" "nginx" {
   chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
-    name: nginx
+    name: nginx 
     image: nginx:latest
     dns_name: ${random_string.random.result}.${var.external_dns_zones.names.0}
     nodeSelector:
@@ -252,10 +256,6 @@ data "kubernetes_service" "nginx" {
 
 output "nginx_url" {
   value = "http://${random_string.random.result}.${var.external_dns_zones.names.0}"
-}
-
-output "nginx_url_ip" {
-  value = "http://${data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip}"
 }
 
 output "aks_login" {
