@@ -60,56 +60,7 @@ resource "helm_release" "main" {
   version    = var.helm_chart_version
   skip_crds  = true
 
-  values = [<<-EOT
----
-
-logLevel: debug
-namespace: ${var.namespace}
-
-replicas: 1
-
-nodeSelector:
-  kubernetes.azure.com/mode: system
-
-podLabels:
-  aadpodidbinding: ${module.identity.name}
-
-tolerations:
-${yamlencode(var.tolerations)}
-
-priorityClassName: lnrs-platform-critical
-
-policy: sync
-
-rbac:
-  create: 'true'
-
-sources:
-  - service
-  - ingress
-
-provider: azure
-
-domainFilters:${indent(2, "\n${yamlencode([for name in var.dns_zones.names : name])}")}
-
-txtOwnerId: ${var.cluster_name}
-
-azure:
-  tenantId: ${var.azure_tenant_id}
-  subscriptionId: ${var.azure_subscription_id}
-  resourceGroup: ${var.dns_zones.resource_group_name}
-  useManagedIdentityExtension: true
-  userAssignedIdentityID: ${module.identity.client_id}
-
-resources:
-  requests:
-    cpu: ${var.resources_request_cpu}
-    memory: ${var.resources_request_memory}
-  limits:
-    cpu: ${var.resources_limit_cpu}
-    memory: ${var.resources_limit_memory}
-
-logLevel: debug
-EOT
+  values = [
+    yamlencode(local.chart_values)
   ]
 }

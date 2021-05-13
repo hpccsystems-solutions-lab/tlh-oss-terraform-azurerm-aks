@@ -38,23 +38,7 @@ resource "helm_release" "aad_pod_identity" {
 
   skip_crds = true
 
-  values = [<<-EOT
----
-rbac:
-  allowAccessToSecrets: false
-installCRDs: false
-forceNamespaced: true
-mic:
-  nodeSelector:
-    kubernetes.azure.com/mode: system
-  tolerations:
-    - key: "CriticalAddonsOnly"
-      operator: "Exists"
-      effect: "NoSchedule"
-nmi:
-  allowNetworkPluginKubenet: ${(var.network_plugin == "kubenet" ? true : false)}
-  tolerations:
-    - operator: "Exists"
-EOT
+  values = [
+      yamlencode(local.chart_values)
   ]
 }
