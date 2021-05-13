@@ -133,7 +133,6 @@ variable "external_dns_zones" {
     names               = list(string)
     resource_group_name = string
   })
-  default = null
 }
 
 variable "cert_manager_dns_zones" {
@@ -142,7 +141,6 @@ variable "cert_manager_dns_zones" {
     names = list(string)
     resource_group_name = string
   })
-  default = null
 }
 
 variable "letsencrypt_environment" {
