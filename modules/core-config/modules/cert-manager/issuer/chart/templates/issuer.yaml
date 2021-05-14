@@ -16,6 +16,3 @@ spec:
           resourceGroupName: {{ .Values.resourceGroupName }}
           hostedZoneName: {{ .Values.hostedZoneName }}
           environment: {{ .Values.environment}}
-      selector:
-        dnsZones:
-        - {{ .Values.hostedZoneName }}
