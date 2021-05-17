@@ -5,7 +5,7 @@ resource "helm_release" "main" {
   namespace = var.namespace
 
   values = [<<-EOT
-    name: "letsentrypt-${var.name}"
+    name: "letsencrypt-${var.name}"
     namespace: "${var.namespace}"
     email: "${var.letsencrypt_email}"
     server: "${var.letsencrypt_endpoint}"
