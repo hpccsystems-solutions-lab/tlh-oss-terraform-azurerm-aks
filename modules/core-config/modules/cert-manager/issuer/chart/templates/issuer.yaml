@@ -8,7 +8,7 @@ spec:
     email: {{ .Values.email }}
     server: {{ .Values.server }}
     privateKeySecretRef:
-      name: letsencrypt-issuer-privatekey
+      name: letsencrypt-issuer-privatekey-{{ .Values.name }}
     solvers:
     - dns01:
         azureDNS:
