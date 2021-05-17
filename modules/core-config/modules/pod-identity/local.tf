@@ -1,5 +1,5 @@
 locals {
-  helm_chart_version = "4.0.0"
+  helm_chart_version = "4.1.0"
 
   chart_values = {
     forceNamespaced = true
