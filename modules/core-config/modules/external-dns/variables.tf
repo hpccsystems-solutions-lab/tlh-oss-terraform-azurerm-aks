@@ -37,7 +37,6 @@ variable "dns_zones" {
     names               = list(string)
     resource_group_name = string
   })
-  default = null
 }
 
 variable "dns_permissions" {
