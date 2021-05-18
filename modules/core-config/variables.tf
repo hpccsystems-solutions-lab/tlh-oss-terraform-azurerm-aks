@@ -137,10 +137,7 @@ variable "external_dns_zones" {
 
 variable "cert_manager_dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
-  type = object({
-    names = list(string)
-    resource_group_name = string
-  })
+  type = map(string)
 }
 
 variable "letsencrypt_environment" {

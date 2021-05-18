@@ -5,11 +5,13 @@ resource "kubectl_manifest" "crds" {
 }
 
 resource "azurerm_role_definition" "resource_group_reader" {
-  name        = "${var.cluster_name}-cert-manager-rg"
-  scope       = data.azurerm_resource_group.dns_zone.id
+  for_each    = var.dns_zones
+
+  name        = "${var.cluster_name}-cert-manager-rg-${replace(each.key, ".", "-")}"
+  scope       = data.azurerm_resource_group.dns_zone[each.key].id 
   description = "Custom role for cert-manager to manage DNS records"
 
-  assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
+  assignable_scopes = [data.azurerm_resource_group.dns_zone[each.key].id]
 
   permissions {
     actions = [
@@ -19,11 +21,13 @@ resource "azurerm_role_definition" "resource_group_reader" {
 }
 
 resource "azurerm_role_definition" "dns_zone_contributor" {
-  name        = "${var.cluster_name}-cert-manager-dns"
-  scope       = element([for zone in data.azurerm_dns_zone.dns_zone : zone.id], 0)
+  for_each    = var.dns_zones
+
+  name        = "${var.cluster_name}-cert-manager-dns-${replace(each.key, ".", "-")}"
+  scope       = data.azurerm_dns_zone.dns_zone[each.key].id
   description = "Custom role for cert-manager to manage DNS records"
 
-  assignable_scopes = [for zone in data.azurerm_dns_zone.dns_zone : zone.id]
+  assignable_scopes = [data.azurerm_dns_zone.dns_zone[each.key].id]
 
   permissions {
     actions = [
@@ -42,15 +46,17 @@ module "identity" {
   tags                = var.tags
 
   namespace = var.namespace
-  roles = concat([
-    {
-      role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
-      scope                       = data.azurerm_resource_group.dns_zone.id
-    }],
-    [ for zone in data.azurerm_dns_zone.dns_zone :
+  roles = concat(
+    [for zone,rg in var.dns_zones:
+      { 
+        role_definition_resource_id = azurerm_role_definition.resource_group_reader[zone].role_definition_resource_id
+        scope                       = data.azurerm_resource_group.dns_zone[zone].id
+      }
+    ],
+    [ for zone,rg in var.dns_zones:
       {
-        role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
-        scope                       = zone.id
+        role_definition_resource_id = azurerm_role_definition.dns_zone_contributor[zone].role_definition_resource_id
+        scope                       = data.azurerm_dns_zone.dns_zone[zone].id
       }
     ]
   )
@@ -80,17 +86,17 @@ module "issuer" {
     kubectl_manifest.crds
   ]
 
-  for_each = toset(var.dns_zones.names)
+  for_each = var.dns_zones
 
   source = "./issuer"
 
-  name      = each.value
+  name      = each.key
   namespace = var.namespace
   azure_environment = var.azure_environment
   azure_subscription_id = var.azure_subscription_id
   dns_zone = {
-    name = each.value
-    resource_group_name = var.dns_zones.resource_group_name
+    name = each.key
+    resource_group_name = each.value
   }
   letsencrypt_endpoint = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
   letsencrypt_email = var.letsencrypt_email

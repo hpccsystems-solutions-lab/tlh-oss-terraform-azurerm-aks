@@ -108,11 +108,11 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   subnets = {
-    "aks-private" = {
+    aks-private = {
       cidrs                   = ["10.1.0.0/24"]
       configure_nsg_rules     = false
     }
-    "aks-public" = {
+    aks-public = {
       cidrs                   = ["10.1.1.0/24"]
       configure_nsg_rules     = false
     }
