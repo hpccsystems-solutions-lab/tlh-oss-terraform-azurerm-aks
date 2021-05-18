@@ -14,7 +14,7 @@ locals {
       "kubernetes.azure.com/mode" = "system"
     }
     podLabels = {
-      aadpodidbinding = "module.identity.name"
+      aadpodidbinding = module.identity.name
     }
     policy = "sync"
     priorityClassName = "lnrs-platform-critical"
