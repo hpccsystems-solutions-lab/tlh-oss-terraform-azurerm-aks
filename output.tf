@@ -9,3 +9,7 @@ output "aks_cluster_name" {
 output "aks_cluster_effective_outbound_ips_ids" {
   value = module.kubernetes.effective_outbound_ips_ids
 }
+
+output "aks_cluster_outbound_ip" {
+  value = module.kubernetes.cluster_outbound_ip
+}
