@@ -18,3 +18,6 @@ output "kubelet_identity" {
   value = module.kubernetes.kubelet_identity
 }
  
+output "principal_id" {
+  value = module.kubernetes.principal_id
+}
