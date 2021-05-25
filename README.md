@@ -67,5 +67,6 @@ This module is designed to provide a standard set of defaults for all node pools
 | aks\_cluster\_outbound\_ip | n/a |
 | kube\_config | n/a |
 | kubelet\_identity | n/a |
+| principal\_id | n/a |
 
 <!--- END_TF_DOCS --->
