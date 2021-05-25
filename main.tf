@@ -56,7 +56,10 @@ module "core-config" {
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  cluster_name                 = module.kubernetes.name
+  cluster_name          = module.kubernetes.name
+  cluster_id            = module.kubernetes.id
+
+  azuread_k8s_role_map  = var.azuread_k8s_role_map
 
   additional_priority_classes = var.additional_priority_classes
   additional_storage_classes = var.additional_storage_classes

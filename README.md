@@ -8,6 +8,8 @@ This module is designed to provide a simple and opinionated way to build standar
 
 This module is designed to provide a standard set of defaults for all node pools and optimized instance type selection for a given size.
 
+See [examples](/examples) for general usage and the [documentation index](/docs) for in-depth details for each subsystem or service.
+
 ---
 
 <!--- BEGIN_TF_DOCS --->
@@ -33,6 +35,7 @@ This module is designed to provide a standard set of defaults for all node pools
 |------|-------------|------|---------|:--------:|
 | additional\_priority\_classes | A map defining additional priority classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-kubernetes-priority-class) for additional information. | <pre>map(object({<br>    description = string<br>    value       = number<br>    labels      = map(string)<br>    annotations = map(string)<br>  }))</pre> | `null` | no |
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
+|azuread_k8s_role_map|Map of Kubernetes roles to AAD user or group Ids|<pre>object({<br>    cluster_admin_users  = map(string)<br>    cluster_view_users   = map(string)<br>    standard_view_users  = map(string)<br>    standard_view_groups = map(string)<br>})</pre>|null|no|
 | cert\_manager\_dns\_zones | The names and associated resource groups of the DNS zones associated with your Azure subscription | `map(string)` | n/a | yes |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
