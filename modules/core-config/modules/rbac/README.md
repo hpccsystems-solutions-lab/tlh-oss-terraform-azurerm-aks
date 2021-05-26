@@ -4,10 +4,10 @@
 
 ### Cluster Roles
 
-To assign Kubernetes cluster roles to Azure AD users or groups, use the `azuread_k8s_role_map` as follows.
+To assign Kubernetes cluster roles to Azure AD users or groups, use the `azuread_clusterrole_map` as follows.
 
 ```yaml
-  azuread_k8s_role_map = {
+  azuread_clusterrole_map = {
     cluster_admin_users  = {
       "murtaghj@b2b.regn.net" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
     }
@@ -66,7 +66,7 @@ Azure AD Groups are not deployed via Terraform due to privileges required in the
 
 The [AKS Cluster User Role](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-cluster-user-role) is required to [download a kubeconfig](https://docs.microsoft.com/en-us/azure/aks/control-kubeconfig-access) for Azure AD integrated clusters.
 
-This is assigned to all AAD users or groups configured within `azuread_k8s_role_map`, directly on the AKS cluster resource.
+This is assigned to all AAD users or groups configured within `azuread_clusterrole_map`, directly on the AKS cluster resource.
 
 ### AKS Cluster Admin Role
 
@@ -81,4 +81,4 @@ This role in avalable to subscription Contributors and must only be used in brea
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 |cluster_id|AKS cluster resource Id|string|n/a|yes|
-|azuread_k8s_role_map|Map of Kubernetes roles to AAD user or group Ids|<pre>object({<br>    cluster_admin_users  = map(string)<br>    cluster_view_users   = map(string)<br>    standard_view_users  = map(string)<br>    standard_view_groups = map(string)<br>})</pre>|null|no|
+|azuread_clusterrole_map|Map of Kubernetes roles to AAD user or group Ids|<pre>object({<br>    cluster_admin_users  = map(string)<br>    cluster_view_users   = map(string)<br>    standard_view_users  = map(string)<br>    standard_view_groups = map(string)<br>})</pre>|null|no|

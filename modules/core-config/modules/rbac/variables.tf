@@ -3,7 +3,7 @@ variable "cluster_id" {
   type        = string
 }
 
-variable "azuread_k8s_role_map" {
+variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(
     {

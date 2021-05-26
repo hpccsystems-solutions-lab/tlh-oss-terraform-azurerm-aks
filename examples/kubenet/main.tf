@@ -208,7 +208,7 @@ module "aks" {
   }
 
   # see /modules/core-config/modules/rbac/README.md
-  azuread_k8s_role_map = {
+  azuread_clusterrole_map = {
     cluster_admin_users  = {
       "murtaghj@b2b.regn.net" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
     }
