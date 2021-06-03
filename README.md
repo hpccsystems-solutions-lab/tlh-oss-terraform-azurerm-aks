@@ -20,13 +20,14 @@ This module is designed to provide a standard set of defaults for all node pools
 | helm | >= 2.1.1 |
 | kubectl | >= 1.10.0 |
 | kubernetes | >= 2.0.0 |
+| time | >= 0.7.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | azurerm | >= 2.57.0 |
-| time | n/a |
+| time | >= 0.7.1 |
 
 ## Inputs
 
