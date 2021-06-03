@@ -26,6 +26,7 @@ This module is designed to provide a standard set of defaults for all node pools
 | Name | Version |
 |------|---------|
 | azurerm | >= 2.57.0 |
+| time | n/a |
 
 ## Inputs
 
