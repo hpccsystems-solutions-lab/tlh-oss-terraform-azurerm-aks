@@ -56,6 +56,9 @@ resource "kubernetes_config_map" "default" {
 module "rbac" {
   depends_on = [kubernetes_namespace.default]
 
+  cluster_id               = var.cluster_id
+  azuread_clusterrole_map  = var.azuread_clusterrole_map
+
   source = "./modules/rbac"
 }
 

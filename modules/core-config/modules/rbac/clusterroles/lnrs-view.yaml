@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.k8s.io/aggregate-to-view: "true"
+  - matchLabels:
+      lnrs.io/aggregate-to-view: "true"
+metadata:
+  name: lnrs:view
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    lnrs.io/k8s-platform : "true"
+rules: []

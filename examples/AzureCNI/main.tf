@@ -220,6 +220,21 @@ module "aks" {
       allow_volume_expansion = true
     }
   }
+
+  # see /modules/core-config/modules/rbac/README.md
+  azuread_clusterrole_map = {
+    cluster_admin_users  = {
+      "murtaghj@b2b.regn.net" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
+    }
+    cluster_view_users = {
+      "INS AKS-1 View MID"    = "ca55d5e2-99f6-4047-baef-333313edcf98"
+    }
+    standard_view_users  = {
+      "longm@b2b.regn.net"    = "d64e3f6b-6b16-4235-b4ce-67baa24a593d"
+      "patelp@b2b.regn.net"   = "60b29c0c-00bb-48b3-9b9a-cfc3213c5d7d"
+    }
+    standard_view_groups = {}
+  }
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
