@@ -9,7 +9,6 @@ locals {
     }
     domainFilters = [for name in var.dns_zones.names : name]
     logLevel = "debug"
-    namespace = var.namespace
     nodeSelector = {
       "kubernetes.azure.com/mode" = "system"
     }
