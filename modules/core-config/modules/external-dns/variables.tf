@@ -1,7 +1,7 @@
 variable "tags" {
-  type = map(string)
+  type        = map(string)
   description = "Tags to assign to Azure resources created by this module"
-  default = {}
+  default     = {}
 }
 
 variable "namespace" {
@@ -11,7 +11,7 @@ variable "namespace" {
 }
 
 variable "tolerations" {
-  type = list(any)
+  type        = list(any)
   description = "Tolerations for the external-dns pods."
 }
 
@@ -40,7 +40,7 @@ variable "dns_zones" {
 }
 
 variable "dns_permissions" {
-  type = list(string)
+  type        = list(string)
   description = "The default list of permissions granted to the MSI used by external-dns"
   default = [
     "Microsoft.Network/dnszones/read",
@@ -100,17 +100,17 @@ variable "resources_request_cpu" {
 variable "resources_request_memory" {
   type        = string
   description = "Request this amount of RAM from the cluster"
-  default     = "64Mi"  
+  default     = "64Mi"
 }
 
 variable "resources_limit_cpu" {
   type        = string
   description = "Limit CPU utilization to this value"
-  default     = "100m"  
+  default     = "100m"
 }
 
 variable "resources_limit_memory" {
   type        = string
   description = "Limit RAM utilization to this value"
-  default     = "128Mi"  
+  default     = "128Mi"
 }

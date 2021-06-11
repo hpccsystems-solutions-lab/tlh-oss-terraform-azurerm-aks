@@ -41,7 +41,7 @@ module "identity" {
       role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
       scope                       = data.azurerm_resource_group.dns_zone.id
     }],
-    [ for zone in data.azurerm_dns_zone.dns_zone :
+    [for zone in data.azurerm_dns_zone.dns_zone :
       {
         role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
         scope                       = zone.id

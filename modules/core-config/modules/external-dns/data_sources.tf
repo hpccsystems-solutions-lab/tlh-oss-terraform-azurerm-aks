@@ -10,5 +10,5 @@ data "azurerm_dns_zone" "dns_zone" {
 }
 
 data "azurerm_resource_group" "dns_zone" {
-  name                = var.dns_zones.resource_group_name
+  name = var.dns_zones.resource_group_name
 }
