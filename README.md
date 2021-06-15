@@ -21,7 +21,7 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | azurerm | >= 2.57.0 |
 | helm | >= 2.1.1 |
 | kubectl | >= 1.10.0 |
-| kubernetes | >= 2.0.0 |
+| kubernetes | ~> 1.13 |
 | time | >= 0.7.1 |
 
 ## Providers
@@ -29,7 +29,6 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | Name | Version |
 |------|---------|
 | azurerm | >= 2.57.0 |
-| time | >= 0.7.1 |
 
 ## Inputs
 
@@ -42,7 +41,6 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
-| custom\_route\_table\_ids | Custom route tables used by node pool subnets. | `map(string)` | `{}` | no |
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | n/a | yes |
 | letsencrypt\_email | Email address for expiration notifications. | `string` | `""` | no |
@@ -59,8 +57,8 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | rbac\_admin\_object\_ids | Admin group object ids for use with rbac active directory integration. | `map(string)` | `{}` | no |
 | resource\_group\_name | The name of the Resource Group where the Kubernetes Cluster should exist. | `string` | n/a | yes |
 | secrets | Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    type      = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
-| subnets | Subnet info. | <pre>object(<br>    {<br>      private = object(<br>        {<br>          id                          = string<br>          resource_group_name         = string<br>          network_security_group_name = string<br>        }<br>      )<br>      public = object(<br>        {<br>          id                          = string<br>          resource_group_name         = string<br>          network_security_group_name = string<br>        }<br>      )<br>    }<br>  )</pre> | n/a | yes |
 | tags | Tags to be applied to all resources. | `map(string)` | n/a | yes |
+| virtual\_network | Virtual network configuration. | <pre>object({<br>    subnets = object({<br>      private = object({ <br>        id = string<br>      })<br>      public = object({<br>        id = string<br>      })<br>    })<br>    route_table_id = string<br>  })</pre> | n/a | yes |
 | vm\_types | Extend or overwrite the default vm types map. | `map(string)` | `{}` | no |
 
 ## Outputs

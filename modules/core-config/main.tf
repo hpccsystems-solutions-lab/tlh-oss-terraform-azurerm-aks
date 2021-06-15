@@ -10,7 +10,13 @@ module "storage_classes" {
   additional_storage_classes = var.additional_storage_classes
 }
 
+resource "time_sleep" "namespace" {
+  destroy_duration = "30s"
+}
+
 resource "kubernetes_namespace" "default" {
+  depends_on = [time_sleep.namespace]
+
   for_each = toset(local.namespaces)
 
   metadata {

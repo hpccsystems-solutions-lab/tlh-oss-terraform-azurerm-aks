@@ -2,7 +2,10 @@ module "nodes" {
   source = "./modules/nodes"
 
   cluster_name = local.cluster_name
-  subnets      = var.subnets
+  subnets      = {
+      private = var.virtual_network.subnets.private
+      public  = var.virtual_network.subnets.public
+  }
 
   enable_host_encryption = var.enable_host_encryption
 
@@ -13,11 +16,11 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v3.2.4"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v4.0.0"
 
+  resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
-  resource_group_name = var.resource_group_name
 
   cluster_name = local.cluster_name
   dns_prefix   = local.cluster_name
@@ -28,9 +31,13 @@ module "kubernetes" {
   pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
   network_profile_options = var.network_profile_options
 
-  node_pool_subnets          = var.subnets
-  custom_route_table_ids     = var.custom_route_table_ids
-  configure_subnet_nsg_rules = false
+  virtual_network = {
+    subnets = {
+      private = var.virtual_network.subnets.private
+      public  = var.virtual_network.subnets.public
+    }
+    route_table_id = var.virtual_network.route_table_id
+  }
 
   node_pools             = module.nodes.node_pools
   default_node_pool      = module.nodes.default_node_pool

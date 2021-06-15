@@ -10,7 +10,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">=2.0.2"
+      version = "~> 1.13"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -29,6 +29,7 @@ provider "kubernetes" {
   client_certificate     = base64decode(module.aks.kube_config.client_certificate)
   client_key             = base64decode(module.aks.kube_config.client_key)
   cluster_ca_certificate = base64decode(module.aks.kube_config.cluster_ca_certificate)
+  load_config_file       = "false"
 }
 
 provider "helm" {
@@ -52,11 +53,6 @@ resource "random_string" "random" {
   upper   = false
   number  = false
   special = false
-}
-
-resource "random_password" "admin" {
-  length  = 14
-  special = true
 }
 
 module "subscription" {
@@ -86,7 +82,7 @@ module "metadata" {
 }
 
 module "resource_group" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-resource-group.git?ref=v1.0.0"
+  source = "github.com/Azure-Terraform/terraform-azurerm-resource-group.git?ref=v2.0.0"
 
   location = module.metadata.location
   names    = module.metadata.names
@@ -94,7 +90,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.9.0"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.10.0"
 
   naming_rules = module.naming.yaml
 
@@ -107,14 +103,32 @@ module "virtual_network" {
 
   address_space = ["10.1.0.0/22"]
 
-  subnets = {
-    aks-private = {
-      cidrs                   = ["10.1.0.0/24"]
-      configure_nsg_rules     = false
+  aks_subnets = {
+    private = {
+      cidrs = ["10.1.0.0/24"]
+      service_endpoints = []
     }
-    aks-public = {
-      cidrs                   = ["10.1.1.0/24"]
-      configure_nsg_rules     = false
+    public = {
+      cidrs = ["10.1.1.0/24"]
+      service_endpoints = []
+    }
+    route_table = "default"
+  }
+
+  route_tables = {
+    default = {
+      disable_bgp_route_propagation = true
+      use_inline_routes             = false
+      routes = {
+        internet = {
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "Internet"
+        }
+        local-vnet-10-1-0-0-22 = {
+          address_prefix         = "10.1.0.0/22"
+          next_hop_type          = "vnetlocal"
+        }
+      }
     }
   }
 }
@@ -122,11 +136,10 @@ module "virtual_network" {
 module "aks" {
   source = "../../"
 
-  cluster_name = random_string.random.result
-
-  location            = module.metadata.location
-  tags                = module.metadata.tags
-  resource_group_name = module.resource_group.name
+  cluster_name         = random_string.random.result
+  location             = module.metadata.location
+  tags                 = module.metadata.tags
+  resource_group_name  = module.resource_group.name
 
   external_dns_zones     = var.external_dns_zones
   cert_manager_dns_zones = var.cert_manager_dns_zones
@@ -160,17 +173,12 @@ module "aks" {
     }
   ]
 
-  subnets = {
-    private = {
-      id                          = module.virtual_network.subnets["aks-private"].id
-      resource_group_name         = module.virtual_network.subnets["aks-private"].resource_group_name
-      network_security_group_name = module.virtual_network.subnets["aks-private"].network_security_group_name
+  virtual_network = {
+    subnets = {
+      private = module.virtual_network.aks_subnets.private
+      public  = module.virtual_network.aks_subnets.public
     }
-    public = {
-      id                          = module.virtual_network.subnets["aks-public"].id
-      resource_group_name         = module.virtual_network.subnets["aks-public"].resource_group_name
-      network_security_group_name = module.virtual_network.subnets["aks-public"].network_security_group_name
-    }
+    route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
   additional_priority_classes = {
@@ -208,21 +216,8 @@ module "aks" {
   }
 
   # see /modules/core-config/modules/rbac/README.md
-  azuread_clusterrole_map = {
-    cluster_admin_users  = {
-      "murtaghj@b2b.regn.net" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
-    }
-    cluster_view_users = {
-      "INS AKS-1 View MID"    = "ca55d5e2-99f6-4047-baef-333313edcf98"
-    }
-    standard_view_users  = {
-      "longm@b2b.regn.net"    = "d64e3f6b-6b16-4235-b4ce-67baa24a593d"
-      "patelp@b2b.regn.net"   = "60b29c0c-00bb-48b3-9b9a-cfc3213c5d7d"
-    }
-    standard_view_groups = {}
-  }
-
-  rbac_admin_object_ids = var.rbac_admin_object_ids
+  azuread_clusterrole_map = var.azuread_clusterrole_map
+  rbac_admin_object_ids   = var.rbac_admin_object_ids
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
@@ -234,9 +229,9 @@ resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
   source_port_range           = "*"
   destination_port_range      = "80"
   source_address_prefix       = "Internet"
-  destination_address_prefix  = data.kubernetes_service.nginx.status.0.load_balancer.0.ingress.0.ip
-  resource_group_name         = module.virtual_network.subnets["aks-public"].resource_group_name
-  network_security_group_name = module.virtual_network.subnets["aks-public"].network_security_group_name
+  destination_address_prefix  = data.kubernetes_service.nginx.load_balancer_ingress.0.ip
+  resource_group_name         = module.virtual_network.aks_subnets.public.resource_group_name
+  network_security_group_name = module.virtual_network.aks_subnets.public.network_security_group_name
 }
 
 resource "helm_release" "nginx" {
@@ -245,7 +240,7 @@ resource "helm_release" "nginx" {
   chart      = "./helm_charts/webserver"
 
   values = [<<-EOT
-    name: nginx 
+    name: nginx
     image: nginx:latest
     dns_name: ${random_string.random.result}.${var.external_dns_zones.names.0}
     nodeSelector:

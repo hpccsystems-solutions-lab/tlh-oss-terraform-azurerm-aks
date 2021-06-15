@@ -96,6 +96,21 @@ variable "node_pools" {
   }
 }
 
+variable "virtual_network" {
+  description = "Virtual network configuration."
+  type        = object({
+    subnets = object({
+      private = object({ 
+        id = string
+      })
+      public = object({
+        id = string
+      })
+    })
+    route_table_id = string
+  })
+}
+
 variable "network_plugin" {
   description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string
@@ -125,34 +140,6 @@ variable "network_profile_options" {
     dns_service_ip     = "172.20.0.10"
     service_cidr       = "172.20.0.0/16"
   }
-}
-
-variable "subnets" {
-  description = "Subnet info."
-  type = object(
-    {
-      private = object(
-        {
-          id                          = string
-          resource_group_name         = string
-          network_security_group_name = string
-        }
-      )
-      public = object(
-        {
-          id                          = string
-          resource_group_name         = string
-          network_security_group_name = string
-        }
-      )
-    }
-  )
-}
-
-variable "custom_route_table_ids" {
-  description = "Custom route tables used by node pool subnets."
-  type        = map(string)
-  default     = {}
 }
 
 variable "additional_priority_classes" {

@@ -4,6 +4,8 @@ metadata:
   name: {{ .Values.name }}
   labels:
     app: {{ .Values.name }}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.dns_name }}
 spec:
   type: LoadBalancer
   ports:
