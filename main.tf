@@ -29,7 +29,7 @@ module "kubernetes" {
 
   network_plugin          = local.network_plugin
   pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
-  network_profile_options = var.network_profile_options
+  network_profile_options = local.network_profile_options
 
   virtual_network = {
     subnets = {
@@ -46,8 +46,6 @@ module "kubernetes" {
     enabled        = true
     ad_integration = true
   }
-
-  rbac_admin_object_ids = var.rbac_admin_object_ids
 
   windows_profile = (module.nodes.windows_config.enabled ? {
     admin_username = module.nodes.windows_config.admin_username

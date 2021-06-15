@@ -29,12 +29,6 @@ variable "cluster_version" {
   }
 }
 
-variable "rbac_admin_object_ids" {
-  description = "Admin group object ids for use with rbac active directory integration."
-  type        = map(string) # keys are only for documentation purposes
-  default     = {}
-}
-
 variable "enable_host_encryption" {
   description = "Should the nodes in this Node Pool have host encryption enabled?"
   type        = bool
@@ -126,20 +120,6 @@ variable "pod_cidr" {
   description = "used for pod IP addresses"
   type        = string
   default     = "100.65.0.0/16"
-}
-
-variable "network_profile_options" {
-  description = "docker_bridge_cidr, dns_service_ip and service_cidr should all be empty or all should be set"
-  type = object({
-    docker_bridge_cidr = string
-    dns_service_ip     = string
-    service_cidr       = string
-  })
-  default = {
-    docker_bridge_cidr = "172.17.0.1/16"
-    dns_service_ip     = "172.20.0.10"
-    service_cidr       = "172.20.0.0/16"
-  }
 }
 
 variable "additional_priority_classes" {

@@ -231,7 +231,6 @@ module "aks" {
 
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map
-  rbac_admin_object_ids   = var.rbac_admin_object_ids
 }
 
 resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {

@@ -11,12 +11,6 @@ variable "cert_manager_dns_zones" {
   type = map(string)
 }
 
-variable "rbac_admin_object_ids" {
-  description = "Admin group object ids for use with rbac active directory integration."
-  type        = map(string) # keys are only for documentation purposes
-  default     = {}
-}
-
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(
