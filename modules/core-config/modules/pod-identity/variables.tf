@@ -29,3 +29,13 @@ variable "network_plugin" {
     error_message = "Network plugin must be kubenet or azure."
   }
 }
+
+variable "azure_subscription_id" {
+  type        = string
+  description = "The GUID of your Azure subscription"
+
+  validation {
+    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
+    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
+  }
+}

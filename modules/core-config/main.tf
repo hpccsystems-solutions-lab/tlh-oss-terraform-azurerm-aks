@@ -81,6 +81,7 @@ module "pod_identity" {
   namespace                    = "kube-system"
   aks_identity                 = var.aks_identity
   aks_node_resource_group_name = var.aks_node_resource_group_name
+  azure_subscription_id        = var.azure_subscription_id
   network_plugin               = var.network_plugin
 }
 
