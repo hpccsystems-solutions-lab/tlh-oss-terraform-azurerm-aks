@@ -93,9 +93,10 @@ module "external_dns" {
   azure_tenant_id       = var.azure_tenant_id
   azure_subscription_id = var.azure_subscription_id
 
-  resource_group_name = var.resource_group_name
-  cluster_name        = var.cluster_name
-  dns_zones           = var.external_dns_zones
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
+  cluster_name            = var.cluster_name
+  dns_zones               = var.external_dns_zones
 
   tolerations = [{
     key      = "CriticalAddonsOnly"

@@ -1,4 +1,7 @@
 locals {
+  dns_zone_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.dns_zones.resource_group_name}"
+  dns_zone_ids = [for zone in toset(var.dns_zones.names) : "${local.dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"]
+
   chart_values = {
     azure = {
       resourceGroup               = var.dns_zones.resource_group_name
