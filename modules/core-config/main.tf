@@ -97,11 +97,11 @@ module "external_dns" {
   cluster_name        = var.cluster_name
   dns_zones           = var.external_dns_zones
 
-  tolerations = [ {
-    key   = "CriticalAddonsOnly"
+  tolerations = [{
+    key      = "CriticalAddonsOnly"
     operator = "Equal"
     value    = "true"
-    effect = "NoSchedule"
+    effect   = "NoSchedule"
   }]
 
   tags = var.tags
