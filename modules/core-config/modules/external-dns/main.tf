@@ -1,28 +1,34 @@
 resource "azurerm_role_definition" "resource_group_reader" {
   name        = "${var.cluster_name}-external-dns-rg"
-  scope       = data.azurerm_resource_group.dns_zone.id
+  scope       = local.dns_zone_resource_group_id
   description = "Custom role for external-dns to manage DNS records"
 
-  assignable_scopes = [data.azurerm_resource_group.dns_zone.id]
+  assignable_scopes = [local.dns_zone_resource_group_id]
 
   permissions {
     actions = [
       "Microsoft.Resources/subscriptions/resourceGroups/read",
     ]
+    data_actions     = []
+    not_actions      = []
+    not_data_actions = []
   }
 }
 
 resource "azurerm_role_definition" "dns_zone_contributor" {
   name        = "${var.cluster_name}-external-dns-zone"
-  scope       = element([for zone in data.azurerm_dns_zone.dns_zone : zone.id], 0)
+  scope       = element(local.dns_zone_ids, 0)
   description = "Custom role for external-dns to manage DNS records"
 
-  assignable_scopes = [for zone in data.azurerm_dns_zone.dns_zone : zone.id]
+  assignable_scopes = local.dns_zone_ids
 
   permissions {
     actions = [
       "Microsoft.Network/dnsZones/*"
     ]
+    data_actions     = []
+    not_actions      = []
+    not_data_actions = []
   }
 }
 
@@ -31,20 +37,22 @@ module "identity" {
 
   cluster_name        = var.cluster_name
   identity_name       = "external-dns"
-  resource_group_name = data.azurerm_resource_group.cluster.name
-  location            = data.azurerm_resource_group.cluster.location
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
   tags                = var.tags
 
   namespace = var.namespace
-  roles = concat([
-    {
-      role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
-      scope                       = data.azurerm_resource_group.dns_zone.id
-    }],
-    [for zone in data.azurerm_dns_zone.dns_zone :
+  roles = concat(
+    [
+      {
+        role_definition_resource_id = azurerm_role_definition.resource_group_reader.role_definition_resource_id
+        scope                       = local.dns_zone_resource_group_id
+      }
+    ],
+    [for zone in toset(var.dns_zones.names) :
       {
         role_definition_resource_id = azurerm_role_definition.dns_zone_contributor.role_definition_resource_id
-        scope                       = zone.id
+        scope                       = "${local.dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"
       }
     ]
   )

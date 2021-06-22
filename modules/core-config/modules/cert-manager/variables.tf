@@ -25,13 +25,13 @@ variable "cluster_name" {
 }
 
 variable "resource_group_name" {
-  description = "The name of the resource group containing your Kubernetes cluster"
   type        = string
+  description = "The name of the resource group of your AKS cluster"
 }
 
-variable "location" {
-  description = "Azure region in which to build resources"
+variable "resource_group_location" {
   type        = string
+  description = "The location of the resource group of your AKS cluster"
 }
 
 variable "tags" {

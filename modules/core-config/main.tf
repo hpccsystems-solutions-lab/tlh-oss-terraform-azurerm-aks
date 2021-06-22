@@ -81,6 +81,7 @@ module "pod_identity" {
   namespace                    = "kube-system"
   aks_identity                 = var.aks_identity
   aks_node_resource_group_name = var.aks_node_resource_group_name
+  azure_subscription_id        = var.azure_subscription_id
   network_plugin               = var.network_plugin
 }
 
@@ -92,15 +93,16 @@ module "external_dns" {
   azure_tenant_id       = var.azure_tenant_id
   azure_subscription_id = var.azure_subscription_id
 
-  resource_group_name = var.resource_group_name
-  cluster_name        = var.cluster_name
-  dns_zones           = var.external_dns_zones
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
+  cluster_name            = var.cluster_name
+  dns_zones               = var.external_dns_zones
 
-  tolerations = [ {
-    key   = "CriticalAddonsOnly"
+  tolerations = [{
+    key      = "CriticalAddonsOnly"
     operator = "Equal"
     value    = "true"
-    effect = "NoSchedule"
+    effect   = "NoSchedule"
   }]
 
   tags = var.tags
@@ -111,11 +113,11 @@ module "cert_manager" {
 
   source = "./modules/cert-manager"
 
-  azure_subscription_id = var.azure_subscription_id
-  cluster_name        = var.cluster_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
+  azure_subscription_id   = var.azure_subscription_id
+  cluster_name            = var.cluster_name
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
+  tags                    = var.tags
 
   dns_zones = var.cert_manager_dns_zones
 
