@@ -113,11 +113,11 @@ module "cert_manager" {
 
   source = "./modules/cert-manager"
 
-  azure_subscription_id = var.azure_subscription_id
-  cluster_name        = var.cluster_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
+  azure_subscription_id   = var.azure_subscription_id
+  cluster_name            = var.cluster_name
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
+  tags                    = var.tags
 
   dns_zones = var.cert_manager_dns_zones
 
