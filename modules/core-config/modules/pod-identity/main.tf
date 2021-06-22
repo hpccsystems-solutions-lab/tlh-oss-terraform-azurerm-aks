@@ -1,17 +1,17 @@
 resource "azurerm_role_assignment" "k8s_virtual_machine_contributor" {
-  scope                = data.azurerm_resource_group.node.id
+  scope                = local.node_resource_group_id
   role_definition_name = "Virtual Machine Contributor"
   principal_id         = var.aks_identity
 }
 
 resource "azurerm_role_assignment" "k8s_managed_identity_operator_parent" {
-  scope                = data.azurerm_resource_group.parent.id
+  scope                = local.parent_resource_group_id
   role_definition_name = "Managed Identity Operator"
   principal_id         = var.aks_identity
 }
 
 resource "azurerm_role_assignment" "k8s_managed_identity_operator_node" {
-  scope                = data.azurerm_resource_group.node.id
+  scope                = local.node_resource_group_id
   role_definition_name = "Managed Identity Operator"
   principal_id         = var.aks_identity
 }
