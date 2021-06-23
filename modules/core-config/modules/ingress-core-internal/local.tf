@@ -34,7 +34,7 @@ locals {
       config = {
         "server-name-hash-bucket-size" = "256"
         "server-tokens"                = "false"
-        "use-proxy-protocol"           = "true"
+        "use-proxy-protocol"           = "false"
         "use-forwarded-headers"        = "true"
         "proxy-real-ip-cidr"           = join(",", var.lb_cidrs)
       }
