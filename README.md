@@ -40,6 +40,7 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | cert\_manager\_dns\_zones | The names and associated resource groups of the DNS zones associated with your Azure subscription | `map(string)` | n/a | yes |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
+| config | Platform service configuration options | `any` | n/a | yes |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | n/a | yes |

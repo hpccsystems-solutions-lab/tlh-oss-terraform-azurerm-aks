@@ -25,7 +25,7 @@ module "kubernetes" {
   cluster_name = local.cluster_name
   dns_prefix   = local.cluster_name
 
-  kubernetes_version = local.cluster_version
+  kubernetes_version = local.cluster_patch_version
 
   network_plugin          = local.network_plugin
   pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
@@ -63,6 +63,7 @@ module "core-config" {
 
   cluster_name        = module.kubernetes.name
   cluster_id          = module.kubernetes.id
+  cluster_version     = var.cluster_version
 
   azuread_clusterrole_map     = var.azuread_clusterrole_map
 
@@ -79,6 +80,7 @@ module "core-config" {
   namespaces = var.namespaces
   configmaps = var.configmaps
   secrets    = var.secrets
+  config     = var.config
 
   external_dns_zones      = var.external_dns_zones
   cert_manager_dns_zones  = var.cert_manager_dns_zones

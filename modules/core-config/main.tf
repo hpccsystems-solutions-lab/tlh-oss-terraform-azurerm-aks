@@ -68,11 +68,24 @@ module "rbac" {
   source = "./modules/rbac"
 }
 
+##############################################################################################
+## Deploy separately as many services have a dependency on these CRDs, i.e. servicemonitors ##
+
+resource "kubectl_manifest" "kube_prometheus_stack_crds" {
+  for_each = { for x in fileset(path.module, "modules/kube-prometheus-stack/crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+
+  yaml_body = file(each.value)
+}
+
+###################################################################
+## Use pod_identity as the anchor module to enforce dependencies ##
+
 module "pod_identity" {
   depends_on = [
     kubernetes_namespace.default,
     module.priority_classes,
-    module.storage_classes
+    module.storage_classes,
+    kubectl_manifest.kube_prometheus_stack_crds
   ]
 
   source = "./modules/pod-identity"
@@ -123,4 +136,48 @@ module "cert_manager" {
 
   letsencrypt_environment = var.letsencrypt_environment
   letsencrypt_email       = var.letsencrypt_email
+}
+
+module "ingress_core_internal" {
+  depends_on = [module.pod_identity]
+
+  source = "./modules/ingress-core-internal"
+
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+
+  lb_cidrs         = local.ingress_core_internal.lb_cidrs
+  lb_source_cidrs  = local.ingress_core_internal.lb_source_cidrs
+  min_replicas     = local.ingress_core_internal.min_replicas
+  max_replicas     = local.ingress_core_internal.max_replicas
+}
+
+module "kube_prometheus_stack" {
+  depends_on = [module.pod_identity]
+
+  source = "./modules/kube-prometheus-stack"
+
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+
+  skip_crds = true
+
+  prometheus_storage_class_name = local.prometheus.storage_class_name
+  prometheus_remote_write       = local.prometheus.remote_write
+
+  alertmanager_storage_class_name = local.alertmanager.storage_class_name
+  alertmanager_smtp_host          = local.alertmanager.smtp_host
+  alertmanager_smtp_from          = local.alertmanager.smtp_from
+  alertmanager_receivers          = local.alertmanager.receivers
+  alertmanager_routes             = local.alertmanager.routes
+
+  grafana_admin_password          = local.grafana.admin_password
+  grafana_plugins                 = local.grafana.plugins
+  grafana_additional_data_sources = local.grafana.additional_data_sources
+
+  create_ingress      = local.internal_ingress_enabled
+  ingress_domain      = local.internal_ingress_domain
+  ingress_annotations = local.internal_ingress_annotations
+
+  loki_enabled = local.loki.enabled
 }

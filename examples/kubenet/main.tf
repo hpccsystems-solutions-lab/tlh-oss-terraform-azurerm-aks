@@ -181,6 +181,18 @@ module "aks" {
     route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
+  config = {
+    alertmanager = {
+      smtp_host = var.smtp_host
+      smtp_from = var.smtp_from
+      receivers = [{ name = "alerts", email_configs = [{ to = var.alerts_mailto, require_tls = false }]}]
+    }
+
+    internal_ingress = {
+      domain    = "private.zone.azure.lnrsg.io"
+    }
+  }
+
   additional_priority_classes = {
     name-of-priority-class = {
       description = "A description for this priority class"
