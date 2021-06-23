@@ -1,5 +1,15 @@
 name: nginx
 image: nginx
+namespace: default
 dns_name:
 nodeSelector:
 tolerations:
+azureIdentity:
+  name:
+  type: 0
+  resourceID:
+  clientID:
+azureIdentityBinding:
+  name:
+  selector:
+blob_url:

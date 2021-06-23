@@ -271,6 +271,7 @@ resource "helm_release" "nginx" {
   depends_on = [module.aks]
   name       = "nginx"
   chart      = "./helm_charts/webserver"
+  timeout = 180
 
   values = [<<-EOT
     name: nginx
@@ -283,6 +284,16 @@ resource "helm_release" "nginx" {
       operator: "Equal"
       value: "true"
       effect: "NoSchedule"
+    namespace: default
+    azureIdentity:
+      name: ${azurerm_user_assigned_identity.nginx.name}
+      type: 0
+      resourceID: ${azurerm_user_assigned_identity.nginx.id}
+      clientID: ${azurerm_user_assigned_identity.nginx.client_id}
+    azureIdentityBinding:
+      name: ${azurerm_user_assigned_identity.nginx.name}-binding
+      selector: ${azurerm_user_assigned_identity.nginx.name}
+    blob_url: ${azurerm_storage_blob.custom.url}
     EOT
   ]
 }
