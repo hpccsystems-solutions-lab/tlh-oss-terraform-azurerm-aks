@@ -28,3 +28,18 @@ variable "azuread_clusterrole_map" {
     standard_view_groups = {}
   }
 }
+
+variable "smtp_host" {
+  description = "SMTP host and optionally appended port to send alerts to"
+  type = string
+}
+
+variable "smtp_from" {
+  description = "Email address alerts are sent from"
+  type = string
+}
+
+variable "alerts_mailto" {
+  description = "Email address alerts are sent to"
+  type = string
+}

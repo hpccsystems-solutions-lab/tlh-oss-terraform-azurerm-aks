@@ -111,6 +111,11 @@ variable "cluster_id" {
   type        = string
 }
 
+variable "cluster_version" {
+  description = "The Kubernetes minor version of the cluster (e.g. x.y)"
+  type        = string
+}
+
 variable "aks_identity" {
   description = "Kubelet identity client_id."
   type        = string
@@ -172,4 +177,9 @@ variable "azuread_clusterrole_map" {
       standard_view_groups  = map(string)
     }
   )
+}
+
+variable "config" {
+  description = "Platform service configuration options"
+  type        = any
 }

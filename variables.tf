@@ -240,3 +240,8 @@ variable "azuread_clusterrole_map" {
     standard_view_groups = {}
   }
 }
+
+variable "config" {
+  description = "Platform service configuration options"
+  type        = any
+}

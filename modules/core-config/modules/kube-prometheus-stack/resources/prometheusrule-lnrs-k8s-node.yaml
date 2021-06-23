@@ -1,0 +1,99 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: lnrs-k8s-node
+  labels:
+    lnrs.io/monitoring-platform: core-prometheus
+  namespace: monitoring
+spec:
+  groups:
+    - name: lnrs-k8s-node.rules
+      rules:
+        - alert: KubernetesNodeNotReady
+          expr: kube_node_status_condition{condition="Ready", status="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node not ready"
+            description: "Node {{ $labels.node }} has been unready for 5 minutes.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubeNodeUnreachable
+          expr: (kube_node_spec_taint{key="node.kubernetes.io/unreachable", effect="NoSchedule"} unless ignoring(key, value) kube_node_spec_taint{key=~"ToBeDeletedByClusterAutoscaler|cloud.google.com/impending-node-termination|aws-node-termination-handler/spot-itn"}) == 1
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node unreachable)"
+            description: "Node {{ $labels.node }} is unreachable and some workloads may be rescheduled.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubeNodeReadinessFlapping
+          expr: sum(changes(kube_node_status_condition{condition="Ready", status="true"}[15m])) by(node) > 2
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node readyness flapping"
+            description: The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15 minutes.
+
+        - alert: KubeletPlegDurationHigh
+          expr: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile{quantile="0.99"} >= 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kubelet PLEG duration high"
+            description: "The Kubelet Pod Lifecycle Event Generator has a 99th percentile duration of {{ $value }} seconds on node {{ $labels.node }}.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubeletPodStartUpLatencyHigh
+          expr: histogram_quantile(0.99, sum(rate(kubelet_pod_worker_duration_seconds_bucket{job="kubelet", metrics_path="/metrics"}[5m])) by (instance, le)) * on(instance) group_left(node) kubelet_node_name{job="kubelet", metrics_path="/metrics"} > 60
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kubelet Pod startup latency high"
+            description: "Kubelet Pod startup 99th percentile latency is {{ $value }} seconds on node {{ $labels.node }}.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubeletDown
+          expr: absent(up{job="kubelet", metrics_path="/metrics"} == 1)
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubelet down"
+            description: "Kubelet has disappeared from Prometheus target discovery.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubernetesNodeCPUPressure
+          expr: instance:node_cpu:ratio > 0.8
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node CPU pressure"
+            description: "Node {{ $labels.node }} has been unready for 5 minutes.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubernetesMemoryPressure
+          expr: kube_node_status_condition{condition="MemoryPressure", status="true"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node memory pressure"
+            description: "Node {{ $labels.node }} has MemoryPressure condition.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubernetesDiskPressure
+          expr: kube_node_status_condition{condition="DiskPressure", status="true"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node disk pressure"
+            description: "Node {{ $labels.node }} has DiskPressure condition.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+        - alert: KubernetesOutOfDisk
+          expr: kube_node_status_condition{condition="OutOfDisk", status="true"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubernetes node out of disk"
+            description: "Node {{ $labels.node }} has OutOfDisk condition.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"

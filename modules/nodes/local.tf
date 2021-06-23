@@ -71,7 +71,7 @@ locals {
     vm_size   = "medium"
     os_type   = "Linux"
     subnet    = "private"
-    min_count = 2
+    min_count = 3
     max_count = 3
     labels    = {}
     tags      = {}
