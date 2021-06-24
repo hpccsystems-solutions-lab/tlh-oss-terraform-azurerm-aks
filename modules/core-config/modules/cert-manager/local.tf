@@ -1,4 +1,8 @@
 locals {
+
+  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+
   letsencrypt_endpoint = {
     staging    = "https://acme-staging-v02.api.letsencrypt.org/directory"
     production = "https://acme-v02.api.letsencrypt.org/directory"

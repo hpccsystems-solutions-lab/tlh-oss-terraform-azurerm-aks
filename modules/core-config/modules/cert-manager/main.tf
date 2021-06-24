@@ -1,7 +1,17 @@
 resource "kubectl_manifest" "crds" {
-  for_each = fileset(path.module, "crds/customresourcedefinition*.yaml")
+  for_each = local.crd_files
 
-  yaml_body = file("${path.module}/${each.value}")
+  yaml_body = file(each.value)
+}
+
+resource "kubectl_manifest" "resources" {
+  for_each = local.resource_files
+
+  yaml_body = file(each.value)
+
+  depends_on = [
+    kubectl_manifest.crds
+  ]
 }
 
 resource "azurerm_role_definition" "resource_group_reader" {
