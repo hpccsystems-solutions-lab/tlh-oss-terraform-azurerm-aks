@@ -66,3 +66,9 @@ variable "letsencrypt_email" {
   type        = string
   default     = ""
 }
+
+variable "additional_issuers" {
+  description = "Issuers in addition to the default Let's Encrypt cluster issuer to add to the cluster."
+  type        = map(any)
+  default     = {}
+}
