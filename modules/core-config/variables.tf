@@ -153,7 +153,7 @@ variable "cert_manager_dns_zones" {
 variable "letsencrypt_environment" {
   description = "Let's Encrypt enfironment to use, staging or production."
   type        = string
-  default     = "staging"
+  default     = "production"
 
   validation {
     condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
