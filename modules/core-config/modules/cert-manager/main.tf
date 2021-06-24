@@ -86,24 +86,10 @@ resource "helm_release" "main" {
   ]
 }
 
-module "issuer" {
-  depends_on = [
-    helm_release.main,
-    kubectl_manifest.crds
-  ]
+resource "kubectl_manifest" "issuers" {
+  for_each = local.issuers
 
-  for_each = var.dns_zones
+  depends_on = [helm_release.main]
 
-  source = "./issuer"
-
-  name      = each.key
-  namespace = var.namespace
-  azure_environment = var.azure_environment
-  azure_subscription_id = var.azure_subscription_id
-  dns_zone = {
-    name = each.key
-    resource_group_name = each.value
-  }
-  letsencrypt_endpoint = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
-  letsencrypt_email = var.letsencrypt_email
+  yaml_body = yamlencode(each.value)
 }

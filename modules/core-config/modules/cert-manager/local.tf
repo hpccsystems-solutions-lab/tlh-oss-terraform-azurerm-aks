@@ -112,38 +112,6 @@ locals {
       ]
     }
 
-    # This should replace the "issuer" module in main.tf
-    #issuers = merge(var.additional_issuers, {
-    #letsencrypt = {
-    #  apiVersion = "cert-manager.io/v1"
-    #  kind       = "ClusterIssuer"
-    #  metadata = {
-    #    name = "letsencrypt-issuer"
-    #  }
-    #  spec = {
-    #    acme = {
-    #      email  = var.letsencrypt_email
-    #      server = var.letsencrypt_endpoint
-    #      privateKeySecretRef = {
-    #        name = "letsencrypt-issuer-privatekey"
-    #      }
-    #      solvers = [ for zone,rg in var.dns_zones : {
-    #        selector = {
-    #          dnsNames = [ zone ]
-    #        }
-    #        dns01 = {
-    #          azureDNS = {
-    #            subscriptionID = var.subscription_id
-    #            resourceGroupName = rg
-    #            hostedZoneName = zone 
-    #            environment: var.azure_environment
-    #          }
-    #        }
-    #      }]
-    #    }
-    #  }
-    #}
-
     prometheus = {
       enabled = true
       servicemonitor = {
@@ -159,4 +127,36 @@ locals {
       }
     }
   }
+
+  issuers = merge(var.additional_issuers, {
+    letsencrypt = {
+      apiVersion = "cert-manager.io/v1"
+      kind       = "ClusterIssuer"
+      metadata = {
+        name = "letsencrypt-issuer"
+      }
+      spec = {
+        acme = {
+          email  = var.letsencrypt_email
+          server = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
+          privateKeySecretRef = {
+            name = "letsencrypt-issuer-privatekey"
+          }
+          solvers = [ for zone,rg in var.dns_zones : {
+            selector = {
+              dnsNames = [ zone ]
+            }
+            dns01 = {
+              azureDNS = {
+                subscriptionID = var.azure_subscription_id
+                resourceGroupName = rg
+                hostedZoneName = zone 
+                environment: var.azure_environment
+              }
+            }
+          }]
+        }
+      }
+    }
+  })
 }
