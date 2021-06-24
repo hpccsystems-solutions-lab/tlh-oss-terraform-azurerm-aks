@@ -45,7 +45,7 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | n/a | yes |
 | letsencrypt\_email | Email address for expiration notifications. | `string` | `""` | no |
-| letsencrypt\_environment | Let's Encrypt enfironment to use, staging or production. | `string` | `"staging"` | no |
+| letsencrypt\_environment | Let's Encrypt enfironment to use, staging or production. | `string` | `"production"` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
