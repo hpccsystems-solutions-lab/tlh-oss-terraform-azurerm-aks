@@ -1,4 +1,8 @@
 locals {
+
+  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+
   letsencrypt_endpoint = {
     staging    = "https://acme-staging-v02.api.letsencrypt.org/directory"
     production = "https://acme-v02.api.letsencrypt.org/directory"
@@ -111,20 +115,52 @@ locals {
         },
       ]
     }
-    # Enable this when we have Prometheus up and running in our clusters
-    #prometheus = {
-    #  enabled = true
-    #  servicemonitor = {
-    #    enabled = true
-    #    interval = "60s"
-    #    labels = {
-    #      "lnrs.io/monitoring-platform" = "core-prometheus"
-    #    }
-    #    path = "/metrics"
-    #    prometheusInstance = "Prometheus"
-    #    scrapeTimeout = "30s"
-    #    targetPort = 9402
-    #  }
-    #}
+
+    prometheus = {
+      enabled = true
+      servicemonitor = {
+        enabled = true
+        interval = "60s"
+        labels = {
+          "lnrs.io/monitoring-platform" = "core-prometheus"
+        }
+        path = "/metrics"
+        prometheusInstance = "Prometheus"
+        scrapeTimeout = "30s"
+        targetPort = 9402
+      }
+    }
   }
+
+  issuers = merge(var.additional_issuers, {
+    letsencrypt = {
+      apiVersion = "cert-manager.io/v1"
+      kind       = "ClusterIssuer"
+      metadata = {
+        name = "letsencrypt-issuer"
+      }
+      spec = {
+        acme = {
+          email  = var.letsencrypt_email
+          server = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
+          privateKeySecretRef = {
+            name = "letsencrypt-issuer-privatekey"
+          }
+          solvers = [ for zone,rg in var.dns_zones : {
+            selector = {
+              dnsNames = [ zone ]
+            }
+            dns01 = {
+              azureDNS = {
+                subscriptionID = var.azure_subscription_id
+                resourceGroupName = rg
+                hostedZoneName = zone 
+                environment: var.azure_environment
+              }
+            }
+          }]
+        }
+      }
+    }
+  })
 }

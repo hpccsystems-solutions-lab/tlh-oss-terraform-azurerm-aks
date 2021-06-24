@@ -1,7 +1,17 @@
 resource "kubectl_manifest" "crds" {
-  for_each = fileset(path.module, "crds/customresourcedefinition*.yaml")
+  for_each = local.crd_files
 
-  yaml_body = file("${path.module}/${each.value}")
+  yaml_body = file(each.value)
+}
+
+resource "kubectl_manifest" "resources" {
+  for_each = local.resource_files
+
+  yaml_body = file(each.value)
+
+  depends_on = [
+    kubectl_manifest.crds
+  ]
 }
 
 resource "azurerm_role_definition" "resource_group_reader" {
@@ -74,7 +84,7 @@ resource "helm_release" "main" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "1.3.1"
+  version    = "1.4.0"
   namespace  = var.namespace
   skip_crds  = true
 
@@ -86,24 +96,10 @@ resource "helm_release" "main" {
   ]
 }
 
-module "issuer" {
-  depends_on = [
-    helm_release.main,
-    kubectl_manifest.crds
-  ]
+resource "kubectl_manifest" "issuers" {
+  for_each = local.issuers
 
-  for_each = var.dns_zones
+  depends_on = [helm_release.main]
 
-  source = "./issuer"
-
-  name      = each.key
-  namespace = var.namespace
-  azure_environment = var.azure_environment
-  azure_subscription_id = var.azure_subscription_id
-  dns_zone = {
-    name = each.key
-    resource_group_name = each.value
-  }
-  letsencrypt_endpoint = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
-  letsencrypt_email = var.letsencrypt_email
+  yaml_body = yamlencode(each.value)
 }
