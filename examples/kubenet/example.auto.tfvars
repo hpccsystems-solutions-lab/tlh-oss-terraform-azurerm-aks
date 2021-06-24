@@ -15,3 +15,7 @@ azuread_clusterrole_map = {
   standard_view_users  = {}
   standard_view_groups = {}
 }
+
+smtp_host     = "smptp.foo.bar"
+smtp_from     = "foo@bar.com"
+alerts_mailto = "bar@foo.com"
