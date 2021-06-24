@@ -111,20 +111,52 @@ locals {
         },
       ]
     }
-    # Enable this when we have Prometheus up and running in our clusters
-    #prometheus = {
-    #  enabled = true
-    #  servicemonitor = {
-    #    enabled = true
-    #    interval = "60s"
-    #    labels = {
-    #      "lnrs.io/monitoring-platform" = "core-prometheus"
+
+    # This should replace the "issuer" module in main.tf
+    #issuers = merge(var.additional_issuers, {
+    #letsencrypt = {
+    #  apiVersion = "cert-manager.io/v1"
+    #  kind       = "ClusterIssuer"
+    #  metadata = {
+    #    name = "letsencrypt-issuer"
+    #  }
+    #  spec = {
+    #    acme = {
+    #      email  = var.letsencrypt_email
+    #      server = var.letsencrypt_endpoint
+    #      privateKeySecretRef = {
+    #        name = "letsencrypt-issuer-privatekey"
+    #      }
+    #      solvers = [ for zone,rg in var.dns_zones : {
+    #        selector = {
+    #          dnsNames = [ zone ]
+    #        }
+    #        dns01 = {
+    #          azureDNS = {
+    #            subscriptionID = var.subscription_id
+    #            resourceGroupName = rg
+    #            hostedZoneName = zone 
+    #            environment: var.azure_environment
+    #          }
+    #        }
+    #      }]
     #    }
-    #    path = "/metrics"
-    #    prometheusInstance = "Prometheus"
-    #    scrapeTimeout = "30s"
-    #    targetPort = 9402
     #  }
     #}
+
+    prometheus = {
+      enabled = true
+      servicemonitor = {
+        enabled = true
+        interval = "60s"
+        labels = {
+          "lnrs.io/monitoring-platform" = "core-prometheus"
+        }
+        path = "/metrics"
+        prometheusInstance = "Prometheus"
+        scrapeTimeout = "30s"
+        targetPort = 9402
+      }
+    }
   }
 }
