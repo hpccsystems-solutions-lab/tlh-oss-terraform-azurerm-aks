@@ -6,11 +6,6 @@ variable "external_dns_zones" {
   })
 }
 
-variable "cert_manager_dns_zones" {
-  description = "The name and resource group of the DNS zone associated with your Azure subscription"
-  type = map(string)
-}
-
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(
@@ -27,4 +22,25 @@ variable "azuread_clusterrole_map" {
     standard_view_users  = {}
     standard_view_groups = {}
   }
+}
+
+variable "config" {
+  description = "cluster config"
+  type        = map(any)
+  default     = {}
+}
+
+variable "smtp_host" {
+  description = "SMTP host and optionally appended port to send alerts to"
+  type = string
+}
+
+variable "smtp_from" {
+  description = "Email address alerts are sent from"
+  type = string
+}
+
+variable "alerts_mailto" {
+  description = "Email address alerts are sent to"
+  type = string
 }

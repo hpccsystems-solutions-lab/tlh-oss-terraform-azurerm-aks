@@ -139,7 +139,6 @@ module "aks" {
   resource_group_name  = module.resource_group.name
 
   external_dns_zones     = var.external_dns_zones
-  cert_manager_dns_zones = var.cert_manager_dns_zones
 
   node_pool_tags     = {}
   node_pool_defaults = {}
@@ -171,6 +170,22 @@ module "aks" {
   ]
 
   virtual_network = module.virtual_network.aks
+
+  config = merge({
+    alertmanager = {
+      smtp_host = var.smtp_host
+      smtp_from = var.smtp_from
+      receivers = [{ name = "alerts", email_configs = [{ to = var.alerts_mailto, require_tls = false }]}]
+    }
+
+    internal_ingress = {
+      domain    = "private.zone.azure.lnrsg.io"
+    }
+
+    cert_manager = {
+      letsencrypt_environment = "staging"
+    }
+  }, var.config)
 
   additional_priority_classes = {
     name-of-priority-class = {
