@@ -37,15 +37,12 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | additional\_priority\_classes | A map defining additional priority classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-kubernetes-priority-class) for additional information. | <pre>map(object({<br>    description = string<br>    value       = number<br>    labels      = map(string)<br>    annotations = map(string)<br>  }))</pre> | `null` | no |
 | additional\_storage\_classes | A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information. | <pre>map(object({<br>    labels                 = map(string)<br>    annotations            = map(string)<br>    storage_provisioner    = string<br>    parameters             = map(string)<br>    reclaim_policy         = string<br>    mount_options          = list(string)<br>    volume_binding_mode    = string<br>    allow_volume_expansion = bool<br>  }))</pre> | `null` | no |
 | azuread\_clusterrole\_map | Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings | <pre>object(<br>    {<br>      cluster_admin_users   = map(string)<br>      cluster_view_users    = map(string)<br>      standard_view_users   = map(string)<br>      standard_view_groups  = map(string)<br>    }<br>  )</pre> | <pre>{<br>  "cluster_admin_users": {},<br>  "cluster_view_users": {},<br>  "standard_view_groups": {},<br>  "standard_view_users": {}<br>}</pre> | no |
-| cert\_manager\_dns\_zones | The names and associated resource groups of the DNS zones associated with your Azure subscription | `map(string)` | n/a | yes |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
 | config | Platform service configuration options | `any` | n/a | yes |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | external\_dns\_zones | DNS Zone details for external-dns. | <pre>object({<br>    names               = list(string)<br>    resource_group_name = string<br>  })</pre> | n/a | yes |
-| letsencrypt\_email | Email address for expiration notifications. | `string` | `""` | no |
-| letsencrypt\_environment | Let's Encrypt enfironment to use, staging or production. | `string` | `"production"` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
