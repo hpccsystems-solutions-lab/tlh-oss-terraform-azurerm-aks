@@ -47,13 +47,12 @@ variable "namespace" {
 
 variable "dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
-  type = map(string)
+  type        = map(string)
 }
 
 variable "letsencrypt_environment" {
   description = "Let's Encrypt enfironment to use, staging or production."
   type        = string
-  default     = "staging"
 
   validation {
     condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
@@ -64,11 +63,9 @@ variable "letsencrypt_environment" {
 variable "letsencrypt_email" {
   description = "Email address for expiration notifications."
   type        = string
-  default     = ""
 }
 
 variable "additional_issuers" {
   description = "Issuers in addition to the default Let's Encrypt cluster issuer to add to the cluster."
   type        = map(any)
-  default     = {}
 }

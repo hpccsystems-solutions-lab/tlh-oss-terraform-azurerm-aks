@@ -132,10 +132,12 @@ module "cert_manager" {
   resource_group_location = var.location
   tags                    = var.tags
 
-  dns_zones = var.cert_manager_dns_zones
+  letsencrypt_environment = local.cert_manager.letsencrypt_environment
+  letsencrypt_email       = local.cert_manager.letsencrypt_email
 
-  letsencrypt_environment = var.letsencrypt_environment
-  letsencrypt_email       = var.letsencrypt_email
+  dns_zones = local.cert_manager.dns_zones
+
+  additional_issuers = local.cert_manager.additional_issuers
 }
 
 module "ingress_core_internal" {

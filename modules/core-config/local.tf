@@ -40,6 +40,13 @@ locals {
   ##############
   ## Services ##
 
+  cert_manager = merge({
+    letsencrypt_environment = ""
+    letsencrypt_email       = ""
+    dns_zones               = {}
+    additional_issuers      = {}
+  }, lookup(var.config, "cert_manager", {}))
+
   loki = merge({
     enabled = false
   }, lookup(var.config, "loki", {}))
