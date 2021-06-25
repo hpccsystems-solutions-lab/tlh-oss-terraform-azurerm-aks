@@ -109,7 +109,11 @@ module "external_dns" {
   resource_group_name     = var.resource_group_name
   resource_group_location = var.location
   cluster_name            = var.cluster_name
-  dns_zones               = var.external_dns_zones
+
+  dns_zones = {
+    names               = local.external_dns.zones
+    resource_group_name = local.external_dns.resource_group_name
+  }
 
   tolerations = [{
     key      = "CriticalAddonsOnly"
@@ -182,4 +186,13 @@ module "kube_prometheus_stack" {
   ingress_annotations = local.internal_ingress_annotations
 
   loki_enabled = local.loki.enabled
+}
+
+module "fluent-bit" {
+  source = "./modules/fluent-bit"
+
+  loki_enabled = local.loki.enabled
+
+  tags = var.tags
+
 }

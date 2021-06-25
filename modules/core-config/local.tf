@@ -40,6 +40,11 @@ locals {
   ##############
   ## Services ##
 
+  external_dns = merge({
+    resource_group_name = ""
+    zones = []
+  }, lookup(var.config, "external_dns", {}))
+
   cert_manager = merge({
     letsencrypt_environment = ""
     letsencrypt_email       = ""
