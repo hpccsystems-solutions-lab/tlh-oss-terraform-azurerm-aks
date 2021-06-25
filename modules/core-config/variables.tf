@@ -137,14 +137,6 @@ variable "network_plugin" {
   }
 }
 
-variable "external_dns_zones" {
-  description = "DNS Zone details for external-dns."
-  type = object({
-    names               = list(string)
-    resource_group_name = string
-  })
-}
-
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(

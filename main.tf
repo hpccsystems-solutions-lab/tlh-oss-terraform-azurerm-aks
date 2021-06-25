@@ -82,7 +82,5 @@ module "core-config" {
   secrets    = var.secrets
   config     = var.config
 
-  external_dns_zones      = var.external_dns_zones
-
   tags = var.tags
 }
