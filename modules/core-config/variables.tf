@@ -137,14 +137,6 @@ variable "network_plugin" {
   }
 }
 
-variable "external_dns_zones" {
-  description = "DNS Zone details for external-dns."
-  type = object({
-    names               = list(string)
-    resource_group_name = string
-  })
-}
-
 variable "cert_manager_dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
   type = map(string)

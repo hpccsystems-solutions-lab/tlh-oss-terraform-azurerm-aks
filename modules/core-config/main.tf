@@ -109,7 +109,11 @@ module "external_dns" {
   resource_group_name     = var.resource_group_name
   resource_group_location = var.location
   cluster_name            = var.cluster_name
-  dns_zones               = var.external_dns_zones
+
+  dns_zones = {
+    names               = local.config.external_dns.zones
+    resource_group_name = local.config.external_dns.resource_group_name
+  }
 
   tolerations = [{
     key      = "CriticalAddonsOnly"

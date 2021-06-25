@@ -166,14 +166,6 @@ variable "additional_storage_classes" {
   }
 }
 
-variable "external_dns_zones" {
-  description = "DNS Zone details for external-dns."
-  type = object({
-    names               = list(string)
-    resource_group_name = string
-  })
-}
-
 variable "namespaces" {
   description = "List of namespaces to create on the cluster."
   type        = list(string)

@@ -141,7 +141,6 @@ module "aks" {
   tags                 = module.metadata.tags
   resource_group_name  = module.resource_group.name
 
-  external_dns_zones     = var.external_dns_zones
   cert_manager_dns_zones = var.cert_manager_dns_zones
 
   node_pool_tags     = {}
@@ -181,7 +180,7 @@ module "aks" {
     route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
-  config = {
+  config = merge({
     alertmanager = {
       smtp_host = var.smtp_host
       smtp_from = var.smtp_from
@@ -191,7 +190,7 @@ module "aks" {
     internal_ingress = {
       domain    = "private.zone.azure.lnrsg.io"
     }
-  }
+  }, var.config)
 
   additional_priority_classes = {
     name-of-priority-class = {

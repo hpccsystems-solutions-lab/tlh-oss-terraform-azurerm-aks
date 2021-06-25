@@ -40,6 +40,11 @@ locals {
   ##############
   ## Services ##
 
+  external_dns = merge({
+    resource_group_name = ""
+    zones = []
+  }, lookup(var.config, "external_dns", {}))
+
   loki = merge({
     enabled = false
   }, lookup(var.config, "loki", {}))
