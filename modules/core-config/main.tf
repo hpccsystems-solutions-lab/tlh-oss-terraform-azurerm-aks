@@ -111,8 +111,8 @@ module "external_dns" {
   cluster_name            = var.cluster_name
 
   dns_zones = {
-    names               = local.config.external_dns.zones
-    resource_group_name = local.config.external_dns.resource_group_name
+    names               = local.external_dns.zones
+    resource_group_name = local.external_dns.resource_group_name
   }
 
   tolerations = [{

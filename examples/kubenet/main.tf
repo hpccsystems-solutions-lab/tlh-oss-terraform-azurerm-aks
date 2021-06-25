@@ -141,12 +141,6 @@ module "aks" {
   tags                 = module.metadata.tags
   resource_group_name  = module.resource_group.name
 
-<<<<<<< HEAD
-  cert_manager_dns_zones = var.cert_manager_dns_zones
-=======
-  external_dns_zones     = var.external_dns_zones
->>>>>>> main
-
   node_pool_tags     = {}
   node_pool_defaults = {}
   node_pool_taints   = {}
@@ -194,13 +188,10 @@ module "aks" {
     internal_ingress = {
       domain    = "private.zone.azure.lnrsg.io"
     }
-<<<<<<< HEAD
-=======
 
     cert_manager = {
       letsencrypt_environment = "staging"
     }
->>>>>>> main
   }, var.config)
 
   additional_priority_classes = {
@@ -263,7 +254,7 @@ resource "helm_release" "nginx" {
   values = [<<-EOT
     name: nginx
     image: nginx:latest
-    dns_name: ${random_string.random.result}.${var.external_dns_zones.names.0}
+    dns_name: ${random_string.random.result}.${var.config.external_dns.zones.0}
     nodeSelector:
       lnrs.io/tier: ingress
     tolerations:
@@ -283,7 +274,7 @@ data "kubernetes_service" "nginx" {
 }
 
 output "nginx_url" {
-  value = "http://${random_string.random.result}.${var.external_dns_zones.names.0}"
+  value = "http://${random_string.random.result}.${var.config.external_dns.zones.0}"
 }
 
 output "aks_login" {
