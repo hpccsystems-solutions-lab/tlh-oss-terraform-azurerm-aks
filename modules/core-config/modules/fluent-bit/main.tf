@@ -1,7 +1,7 @@
 resource "kubectl_manifest" "resources" {
-  for_each = fileset(path.module, "resources/*.yaml")
+  for_each = local.resource_files
 
-  yaml_body = file("${path.module}/${each.key}")
+  yaml_body = file(each.value)
 }
 
 resource "helm_release" "default" {
