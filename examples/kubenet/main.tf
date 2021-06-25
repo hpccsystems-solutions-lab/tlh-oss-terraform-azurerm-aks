@@ -141,7 +141,11 @@ module "aks" {
   tags                 = module.metadata.tags
   resource_group_name  = module.resource_group.name
 
+<<<<<<< HEAD
   cert_manager_dns_zones = var.cert_manager_dns_zones
+=======
+  external_dns_zones     = var.external_dns_zones
+>>>>>>> main
 
   node_pool_tags     = {}
   node_pool_defaults = {}
@@ -190,6 +194,13 @@ module "aks" {
     internal_ingress = {
       domain    = "private.zone.azure.lnrsg.io"
     }
+<<<<<<< HEAD
+=======
+
+    cert_manager = {
+      letsencrypt_environment = "staging"
+    }
+>>>>>>> main
   }, var.config)
 
   additional_priority_classes = {

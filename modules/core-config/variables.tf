@@ -137,28 +137,6 @@ variable "network_plugin" {
   }
 }
 
-variable "cert_manager_dns_zones" {
-  description = "The name and resource group of the DNS zone associated with your Azure subscription"
-  type = map(string)
-}
-
-variable "letsencrypt_environment" {
-  description = "Let's Encrypt enfironment to use, staging or production."
-  type        = string
-  default     = "staging"
-
-  validation {
-    condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
-    error_message = "The \"letsencrypt_environment\" variable must be either \"staging\" or \"production\"."
-  }
-}
-
-variable "letsencrypt_email" {
-  description = "Email address for expiration notifications."
-  type        = string
-  default     = ""
-}
-
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(

@@ -82,9 +82,5 @@ module "core-config" {
   secrets    = var.secrets
   config     = var.config
 
-  cert_manager_dns_zones  = var.cert_manager_dns_zones
-  letsencrypt_environment = var.letsencrypt_environment
-  letsencrypt_email       = var.letsencrypt_email
-
   tags = var.tags
 }
