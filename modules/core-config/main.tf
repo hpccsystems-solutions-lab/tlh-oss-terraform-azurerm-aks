@@ -183,3 +183,12 @@ module "kube_prometheus_stack" {
 
   loki_enabled = local.loki.enabled
 }
+
+module "fluent-bit" {
+  source = "./modules/fluent-bit"
+
+  loki_enabled = local.loki.enabled
+
+  tags = var.tags
+
+}
