@@ -4,7 +4,7 @@
 
 ### Cluster Roles
 
-To assign Kubernetes cluster roles to Azure AD users or groups, use the `azuread_clusterrole_map` as follows.
+To assign Azure AD users or groups to Kubernetes cluster roles, use the `azuread_clusterrole_map` as follows.
 
 ```yaml
   azuread_clusterrole_map = {
@@ -24,13 +24,20 @@ To assign Kubernetes cluster roles to Azure AD users or groups, use the `azuread
   }
 ```
 
-> map keys (*e.g. IOB AKS Viewers*) are only implemented for audit & transparency purposes, they are not used within the code
+* Map keys - descriptive names for audit & transparency purposes (not used within the code)
+* Map Values - Azure AD user and group UIDs, see [Object Id Lookup](#object-id-lookup) to find them
+
+> It is recommended to use the AD UPN (*e.g. murtaghj@b2b.regn.net*) or display name (*e.g. IOB AKS Viewers*) as a key for clarity
+
+---
 
 #### Object Id Lookup
 
-In the Azure Portal select Azure Active Directory then either *Users* or *Groups*, select the resource then copy the *Object Id* field.
+Azure AD user and group Object Ids can be found within the Azure Portal or API in the **`RBAHosting tenant`**.
 
-To lookup via the `az` cli:
+Azure Portal - select *Azure Active Directory* then either *Users* or *Groups*, select the resource then copy the *Object Id* field.
+
+API - example using the `az` cli:
 
 ```bash
 $ az ad user show --id murtaghj_b2b.regn.net#EXT#@RBAHosting.onmicrosoft.com --query objectId -o tsv
@@ -39,24 +46,31 @@ $ az ad group show --group "IOB AKS Viewers" --query objectId -o tsv
 3494a2b5-d6e5-49f2-9cf7-542004cbe44d
 ```
 
+---
+
 #### Role Assignment
 
-Only user based assignment is supported for privileged roles for the following reasons:
+Role assignment for all but basic view permissions is only supported for Azure AD users (not groups), for the following reasons.
 
-* To provide more transparency for cluster operators and InfoSec teams reviewing the Terraform code or Azure role assignments
-* To ensure role assignments are managed in tandem with cluster lifecycle (*e.g. roles will be unassigned on cluster deletion*)
+* To provide more transparency for cluster operators or InfoSec teams reviewing the Terraform code or Azure role assignments
+* To ensure role assignment is managed in tandem with cluster lifecycle (*e.g. roles will be unassigned on cluster deletion*)
 
-Azure AD Groups are not deployed via Terraform due to privileges required in the tenant, so groups must be managed independently.
+The latter is due to Azure AD Groups not being managed by Terraform due to the high level of privileges required in the Azure AD tenant. 
 
-> Group assignment is only supported for the standard view role for the use case of multi-cluster visibility
+This necessitates groups be managed independently, however there isn't a robust mechanism to manage this currently.
+
+---
 
 #### Role Mapping
 
-`cluster_admin_users` is bound to the built-in _**cluster-admin**_ clusterrole, providing full access to the cluster.
+The `azuread_clusterrole_map` roles map to the following Kubernetes clusterroles.
 
-`cluster_view_users` is bound to the `lnrs:cluster-view` role with full read access to the cluster, including secrets.
+* `cluster_admin_users` - bound to the built-in _**cluster-admin**_ clusterrole, providing full access to the cluster
+* `cluster_view_users` - bound to the _**lnrs:cluster-view**_ role with full read access to the cluster, including sensitive data (*e.g. secrets*)
+* `standard_view_users` - bound to the _**lnrs:view**_ role, inherited from the built-in _**view**_ clusterrole with custom added permissions
+* `standard_view_groups` - bound to the _**lnrs:view**_ role, inherited from the built-in _**view**_ clusterrole with custom added permissions
 
-`standard_view_[users|groups]` is bound to the `lnrs:view` role, inherited from the built-in _**view**_ clusterrole with custom permissions.
+Additional roles may be added if there is a valid use case across all clusters.
 
 <br>
 
@@ -64,7 +78,7 @@ Azure AD Groups are not deployed via Terraform due to privileges required in the
 
 ### AKS Cluster User Role
 
-The [AKS Cluster User Role](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-cluster-user-role) is required to [download a kubeconfig](https://docs.microsoft.com/en-us/azure/aks/control-kubeconfig-access) for Azure AD integrated clusters.
+The [AKS Cluster User Role](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-cluster-user-role) is required to [download the cluster kubeconfig](https://docs.microsoft.com/en-us/azure/aks/control-kubeconfig-access) for Azure AD integrated clusters.
 
 This is assigned to all AAD users or groups configured within `azuread_clusterrole_map`, directly on the AKS cluster resource.
 
