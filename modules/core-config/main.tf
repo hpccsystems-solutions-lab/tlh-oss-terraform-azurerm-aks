@@ -189,9 +189,27 @@ module "kube_prometheus_stack" {
 }
 
 module "fluent-bit" {
+  depends_on = [module.pod_identity]
+
   source = "./modules/fluent-bit"
 
   loki_enabled = local.loki.enabled
+
+  tags = var.tags
+
+}
+
+module "fluentd" {
+  depends_on = [module.pod_identity]
+
+  source = "./modules/fluentd"
+
+  additional_env     = local.fluentd.additional_env
+  debug              = local.fluentd.debug
+  podlabels          = local.fluentd.podlabels
+  filter_config      = local.fluentd.filter_config
+  route_config       = local.fluentd.route_config
+  output_config      = local.fluentd.output_config
 
   tags = var.tags
 
