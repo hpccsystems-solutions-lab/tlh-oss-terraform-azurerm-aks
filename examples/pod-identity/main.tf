@@ -90,9 +90,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  #source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.10.0"
-  #source = "github.com/dutsmiller/terraform-azurerm-virtual-network.git?ref=aks_route_table"
-  source = "/Users/tmiller/git-repos/tfe/terraform-azurerm-virtual-network"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v4.0.1"
 
   naming_rules = module.naming.yaml
 
