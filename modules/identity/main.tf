@@ -13,23 +13,12 @@ resource "azurerm_role_assignment" "main" {
   principal_id       = azurerm_user_assigned_identity.main.principal_id
 }
 
-resource "helm_release" "main" {
-  name  = "pod-id-${var.identity_name}"
-  chart = "${path.module}/chart"
+resource "kubectl_manifest" "identity" {
+  yaml_body = yamlencode(local.identity)
+}
 
-  namespace = var.namespace
+resource "kubectl_manifest" "identity_binding" {
+  depends_on = [kubectl_manifest.identity]
 
-  values = [<<-EOT
-  namespace: "${var.namespace}"
-  azureIdentity:
-    name: "${azurerm_user_assigned_identity.main.name}"
-    type: 0
-    resourceID: "${azurerm_user_assigned_identity.main.id}"
-    clientID: "${azurerm_user_assigned_identity.main.client_id}"
-  
-  azureIdentityBinding:
-    name: "${azurerm_user_assigned_identity.main.name}-binding"
-    selector: "${azurerm_user_assigned_identity.main.name}"
-  EOT
-  ]
+  yaml_body = yamlencode(local.identity_binding)
 }
