@@ -47,6 +47,10 @@ Deploy an ingress controller with a custom ingress class (*e.g. private-ingress*
 
 * it tolerates the `ingress=true:NoSchedule` taint automatically applied to this tier
 * it uses the `lnrs.io/tier=ingress` nodeselector via the label automatically applied to this tier
+* [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip) is set to _**Local**_ to ensure traffic is routed directly to ingress nodes
+* the ingress service [service.beta.kubernetes.io/azure-load-balancer-internal](https://docs.microsoft.com/en-us/azure/aks/internal-lb#create-an-internal-load-balancer) annotation is set to _**true**_
+
+Private load balancers are hosted within the Vnet, by default in the AKS private subnet but this can be changed using annotations.
 
 > the same nodepool can be used for both private and public ingress controllers
 
@@ -76,6 +80,8 @@ Deploy an ingress controller with a custom ingress class (*e.g. public-ingress*)
 
 * it tolerates the `ingress=true:NoSchedule` taint automatically applied to this tier
 * it uses the `lnrs.io/tier=ingress` nodeselector via the label automatically applied to this tier
+* [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip) is set to _**Local**_ to ensure traffic is routed directly to ingress nodes
+
+Public Load balancers are hosted outside the Vnet, NSG rules must accomodate this.
 
 > the same nodepool can be used for both private and public ingress controllers
-
