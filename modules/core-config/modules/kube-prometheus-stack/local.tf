@@ -282,6 +282,16 @@ locals {
       enabled = false
     }
 
+    kubeProxy = {
+      enabled = true
+
+      service = {
+        selector = {
+          component = "kube-proxy"
+        }
+      }
+    }
+
     defaultRules = {
       rules = {
         kubernetesSystem    = false

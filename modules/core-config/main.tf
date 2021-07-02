@@ -145,7 +145,7 @@ module "cert_manager" {
 }
 
 module "ingress_core_internal" {
-  depends_on = [module.pod_identity]
+  depends_on = [module.cert_manager]
 
   source = "./modules/ingress-core-internal"
 
@@ -159,7 +159,7 @@ module "ingress_core_internal" {
 }
 
 module "kube_prometheus_stack" {
-  depends_on = [module.pod_identity]
+  depends_on = [module.ingress_core_internal]
 
   source = "./modules/kube-prometheus-stack"
 

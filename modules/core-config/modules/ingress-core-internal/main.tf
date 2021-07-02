@@ -6,6 +6,7 @@ resource "helm_release" "default" {
   chart      = "ingress-nginx"
   version    = local.chart_version
   skip_crds  = true
+  timeout    = local.chart_timeout
 
   values = [
     yamlencode(local.chart_values)

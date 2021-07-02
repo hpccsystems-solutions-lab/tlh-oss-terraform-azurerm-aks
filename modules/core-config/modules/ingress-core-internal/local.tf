@@ -2,6 +2,7 @@ locals {
   namespace = "ingress-core-internal"
 
   chart_version = "3.33.0"
+  chart_timeout = 3600
 
   chart_values = {
 
