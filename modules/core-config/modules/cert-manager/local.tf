@@ -148,7 +148,7 @@ locals {
           }
           solvers = [ for zone,rg in var.dns_zones : {
             selector = {
-              dnsNames = [ zone ]
+              dnsZones = [ zone ]
             }
             dns01 = {
               azureDNS = {
