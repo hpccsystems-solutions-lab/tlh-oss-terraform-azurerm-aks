@@ -74,4 +74,31 @@ locals {
     receivers          = [{ name = "alerts" }]
     routes             = [{ match_re = { severity = "warning|critical" }, receiver = "alerts" }]
   }, lookup(var.config, "alertmanager", {}))
+
+  fluentd = merge({
+    additional_env     = []
+    debug              = true
+    podlabels          = {}
+    filter_config      = ""
+    route_config       = <<-EOT
+      <match **>
+        @type route
+        <route **>
+          copy
+          @label @PROMETHEUS
+        </route>
+        <route **>
+          copy
+          @label @DEFAULT
+        </route>
+      </match>
+    EOT
+    output_config      = <<-EOT
+      <label @DEFAULT>
+        <match **>
+          @type null
+        </match>
+      </label>
+    EOT
+  }, lookup(var.config, "fluentd", {}))
 }
