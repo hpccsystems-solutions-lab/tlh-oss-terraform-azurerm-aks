@@ -2,7 +2,7 @@ locals {
   node_resource_group_id   = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.aks_node_resource_group_name}"
   parent_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.resource_group_name}"
 
-  helm_chart_version = "4.1.0"
+  helm_chart_version = "4.1.1"
 
   chart_values = {
     forceNamespaced = true
