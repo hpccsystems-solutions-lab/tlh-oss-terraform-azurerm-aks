@@ -8,8 +8,8 @@ locals {
     }
     spec = {
       type       = 0
-      resourceId = azurerm_user_assigned_identity.main.id
-      clientId   = azurerm_user_assigned_identity.main.client_id
+      resourceID = azurerm_user_assigned_identity.main.id
+      clientID   = azurerm_user_assigned_identity.main.client_id
     }
   }
 
