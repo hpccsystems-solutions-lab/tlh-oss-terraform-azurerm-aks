@@ -3,7 +3,7 @@ locals {
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 
-  chart_version = "0.15.15"
+  chart_version = "0.15.14"
 
   chart_values = {
     serviceMonitor = {
