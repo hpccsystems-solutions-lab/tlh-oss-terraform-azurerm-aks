@@ -19,29 +19,18 @@ What that means is if you create a persistent volume (PV) and don't specify a st
 
 In short, avoid using this built-in default storage class, unless its settings meet your needs and you understand the implications of its reclaim policy being set to "Delete". 
 
-## Usage
+### Adding custom storage classes
 
-This module only has a single, optional output, `additional_storage_classes`. You can set it to create any number of storage classes on top of the ones provided by default.
-
-### Standard usage
-
-If you don't need to create additional storage classes, you can call the module simply like this:
-
-```hcl
-module "storage_classes" {
-  source = "./storage-classes"
-}
-```
-
-This'll just create the four standard storage classes.
-
-### Usage with custom storage classes
+You can use the `additional_storage_classes` input variable to create/manage extra classes. The same variable also exists as a top-level input in the AKS module (to which this is a submodule) so you can create your extra classes when creating your cluster, and manage them the same way on an ongoing basis.
 
 Here's an example of how to create a custom storage class:
 
 ```hcl
-module "storage_classes" {
-  source = "./storage-classes"
+module "aks" {
+  source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
+
+  ...
+  ...
 
   additional_storage_classes = {
     special-storage-class = {
