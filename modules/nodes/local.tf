@@ -44,19 +44,21 @@ locals {
       mode                  = null
   })
 
-  node_pool_tags = merge(var.node_pool_tags, {
+  tags = merge(var.tags, {
     "k8s.io|cluster-autoscaler|enabled"             = "true"
     "k8s.io|cluster-autoscaler|${var.cluster_name}" = "owned"
   })
 
-  node_pool_taints = merge({
-    ingress = "ingress=true:NoSchedule"
-    egress  = "egress=true:NoSchedule"
-  }, var.node_pool_taints)
+  taint_effects = {
+    "NO_SCHEDULE"        = "NoSchedule"
+    "NO_EXECUTE"         = "NoExecute"
+    "PREFER_NO_SCHEDULE" = "PreferNoSchedule"
+  }
 
   multi_az_node_pool_tiers = [
     "ingress",
-    "egress"
+    "egress",
+    "system"
   ]
 
   public_tiers = [
@@ -64,39 +66,47 @@ locals {
     "egress"
   ]
 
-  default_node_pool = {
-    name      = "system"
-    tier      = "standard"
-    lifecycle = "normal"
-    vm_size   = "medium"
-    os_type   = "Linux"
-    subnet    = "private"
-    min_count = 3
-    max_count = 3
+  system_node_pool = {
+    name        = "system"
+    single_vmss = false
+    public      = false
+    vm_size     = "medium"
+    os_type     = "Linux"
+    subnet      = "private"
+    min_count   = 1
+    max_count   = 1
+    taints      = [
+      {
+        key = "CriticalAddonsOnly"
+        value = true
+        effect = "NO_SCHEDULE"
+      }
+    ]
     labels    = {}
     tags      = {}
   }
 
-  node_pools = merge(values({ for pool in concat([local.default_node_pool], var.node_pools) :
-    pool.name => { for zone in(contains(local.multi_az_node_pool_tiers, pool.tier) ? local.node_pool_defaults.availability_zones : [0]) :
+  node_pools = merge(values({ for pool in concat([local.system_node_pool], var.node_pools) :
+    pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         vm_size     = local.vm_types[pool.vm_size]
         os_type     = pool.os_type
-        node_taints = compact(split(",", lookup(local.node_pool_taints, pool.tier, "")))
+        node_taints = [ for taint in pool.taints:
+              "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
+        ]
         node_labels = merge({
-          "lnrs.io/tier"      = pool.tier
-          "lnrs.io/lifecycle" = "normal"
+          "lnrs.io/lifecycle" = "ondemand"
           "lnrs.io/size"      = pool.vm_size
         }, pool.labels)
-        tags                         = merge(local.node_pool_tags, { "lnrs.io|tier" = pool.tier }, pool.tags)
+        tags                         = merge(local.tags, pool.tags)
         min_count                    = pool.min_count
         max_count                    = pool.max_count
         availability_zones           = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
-        subnet                       = (contains(local.public_tiers, pool.tier) ? "public" : "private")
-        enable_node_public_ip        = (contains(local.public_tiers, pool.tier) ? true : false)
-        priority                     = (pool.lifecycle == "normal" ? "Regular" : null)
-        mode                         = (pool.name == local.default_node_pool.name ? "System" : "User")
-        only_critical_addons_enabled = (pool.name == local.default_node_pool.name ? true : false)
+        subnet                       = (pool.public ? "public" : "private")
+        enable_node_public_ip        = (pool.public ? true : false)
+        priority                     = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
+        mode                         = (pool.name == local.system_node_pool.name ? "System" : "User")
+        only_critical_addons_enabled = ((pool.name == local.system_node_pool.name && zone == 1) ? true : false)
       })
     }
   })...)
