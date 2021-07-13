@@ -5,7 +5,7 @@ output "node_pools" {
 
 output "default_node_pool" {
   description = "Default node pool (from definition list)"
-  value       = local.default_node_pool.name
+  value       = "${local.system_node_pool.name}1"
 }
 
 output "windows_config" {

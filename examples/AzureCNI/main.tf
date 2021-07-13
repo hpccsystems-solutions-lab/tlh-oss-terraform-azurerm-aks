@@ -143,47 +143,60 @@ module "aks" {
 
   network_plugin = "azure"
 
-  external_dns_zones     = var.external_dns_zones
-  cert_manager_dns_zones = var.cert_manager_dns_zones
-
-  node_pool_tags     = {}
   node_pool_defaults = {}
-  node_pool_taints   = {}
 
-  node_pools = [
+node_pools = [
     {
-      name      = "private"
-      tier      = "standard"
-      lifecycle = "normal"
-      vm_size   = "large"
-      os_type   = "Linux"
-      min_count = "1"
-      max_count = "2"
-      labels    = {}
-      tags      = {}
+      name        = "ingress"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "2"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
     },
     {
-      name      = "publ"
-      tier      = "ingress"
-      lifecycle = "normal"
-      vm_size   = "medium"
-      os_type   = "Linux"
-      min_count = "1"
-      max_count = "2"
-      labels    = {}
-      tags      = {}
+      name        = "pubw"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Windows"
+      subnet      = "public"
+      min_count   = "1"
+      max_count   = "2"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
     },
     {
-      name      = "pubw"
-      tier      = "ingress"
-      lifecycle = "normal"
-      vm_size   = "medium"
-      os_type   = "Windows"
-      subnet    = "public"
-      min_count = "1"
-      max_count = "2"
-      labels    = {}
-      tags      = {}
+      name        = "workers"
+      single_vmss = false
+      public      = false
+      vm_size     = "large"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "2"
+      taints      = []
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+
+      tags        = {}
     }
   ]
 
@@ -195,7 +208,7 @@ module "aks" {
     route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
-  config = {
+  config = merge({
     alertmanager = {
       smtp_host = var.smtp_host
       smtp_from = var.smtp_from
@@ -205,7 +218,11 @@ module "aks" {
     internal_ingress = {
       domain    = "private.zone.azure.lnrsg.io"
     }
-  }
+
+    cert_manager = {
+      letsencrypt_environment = "staging"
+    }
+  }, var.config)
 
   additional_priority_classes = {
     name-of-priority-class = {
@@ -281,7 +298,7 @@ resource "helm_release" "nginx" {
   values = [<<-EOT
     name: nginx
     image: nginx:latest
-    dns_name: ${random_string.random.result}-nginx.${var.external_dns_zones.names.0}
+    dns_name: ${random_string.random.result}-nginx.${var.config.external_dns.zones.0}
     nodeSelector:
       lnrs.io/tier: ingress
       kubernetes.io/os: linux
@@ -302,7 +319,7 @@ resource "helm_release" "iis" {
   values = [<<-EOT
     name: iis
     image: microsoft/iis:latest
-    dns_name: ${random_string.random.result}-iis.${var.external_dns_zones.names.0}
+    dns_name: ${random_string.random.result}-iis.${var.config.external_dns.zones.0}
     nodeSelector:
       lnrs.io/tier: ingress
       kubernetes.io/os: windows
@@ -330,11 +347,11 @@ data "kubernetes_service" "iis" {
 }
 
 output "nginx_url" {
-  value = "http://${random_string.random.result}-nginx.${var.external_dns_zones.names.0}"
+  value = "http://${random_string.random.result}-nginx.${var.config.external_dns.zones.0}"
 }
 
 output "iis_url" {
-  value = "http://${random_string.random.result}-iis.${var.external_dns_zones.names.0}"
+  value = "http://${random_string.random.result}-iis.${var.config.external_dns.zones.0}"
 }
 
 output "aks_login" {

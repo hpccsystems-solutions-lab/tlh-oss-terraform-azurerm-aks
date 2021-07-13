@@ -8,11 +8,11 @@ module "nodes" {
   }
 
   enable_host_encryption = var.enable_host_encryption
+  orchestrator_version   = local.cluster_patch_version
 
   node_pool_defaults = var.node_pool_defaults
-  node_pool_taints   = var.node_pool_taints
-  node_pool_tags     = merge(var.tags, var.node_pool_tags)
   node_pools         = var.node_pools
+  tags               = var.tags
 }
 
 module "kubernetes" {

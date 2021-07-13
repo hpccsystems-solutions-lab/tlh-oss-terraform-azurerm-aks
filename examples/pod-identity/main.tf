@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.57.0"
+      version = ">=2.67.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -136,32 +136,40 @@ module "aks" {
   tags                 = module.metadata.tags
   resource_group_name  = module.resource_group.name
 
-  node_pool_tags     = {}
   node_pool_defaults = {}
-  node_pool_taints   = {}
 
   node_pools = [
     {
-      name      = "private"
-      tier      = "standard"
-      lifecycle = "normal"
-      vm_size   = "large"
-      os_type   = "Linux"
-      min_count = "1"
-      max_count = "2"
-      labels    = {}
-      tags      = {}
+      name        = "ingress"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "2"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
     },
     {
-      name      = "public"
-      tier      = "ingress"
-      lifecycle = "normal"
-      vm_size   = "medium"
-      os_type   = "Linux"
-      min_count = "1"
-      max_count = "2"
-      labels    = {}
-      tags      = {}
+      name        = "workers"
+      single_vmss = false
+      public      = false
+      vm_size     = "large"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "2"
+      taints      = []
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+      tags        = {}
     }
   ]
 
