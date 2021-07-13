@@ -55,17 +55,6 @@ locals {
     "PREFER_NO_SCHEDULE" = "PreferNoSchedule"
   }
 
-  multi_az_node_pool_tiers = [
-    "ingress",
-    "egress",
-    "system"
-  ]
-
-  public_tiers = [
-    "ingress",
-    "egress"
-  ]
-
   system_node_pool = {
     name        = "system"
     single_vmss = false
