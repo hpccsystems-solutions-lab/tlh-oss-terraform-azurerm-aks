@@ -16,7 +16,7 @@ locals {
     enable_auto_scaling  = true
     max_pods             = null
     max_surge            = "1"
-    orchestrator_version = null
+    orchestrator_version = var.orchestrator_version
     },
     var.node_pool_defaults,
     { # These default settings cannot be overridden
@@ -70,7 +70,7 @@ locals {
     name        = "system"
     single_vmss = false
     public      = false
-    vm_size     = "medium"
+    vm_size     = "large"
     os_type     = "Linux"
     subnet      = "private"
     min_count   = 1

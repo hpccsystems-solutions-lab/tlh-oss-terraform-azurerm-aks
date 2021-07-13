@@ -29,6 +29,12 @@ variable "enable_host_encryption" {
   default     = false
 }
 
+variable "orchestrator_version" {
+  description = "Version of Kubernetes used for the Agents"
+  type        = string
+  default     = null
+}
+
 variable "node_pool_defaults" {
   description = "Override default values for the nodes, this will NOT override the values that the module sets directly."
   type        = any

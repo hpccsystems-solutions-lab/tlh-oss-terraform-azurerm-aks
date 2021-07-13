@@ -8,6 +8,7 @@ module "nodes" {
   }
 
   enable_host_encryption = var.enable_host_encryption
+  orchestrator_version   = local.cluster_patch_version
 
   node_pool_defaults = var.node_pool_defaults
   node_pools         = var.node_pools
