@@ -63,7 +63,7 @@ locals {
     os_type     = "Linux"
     subnet      = "private"
     min_count   = 1
-    max_count   = 1
+    max_count   = 2
     taints      = [
       {
         key = "CriticalAddonsOnly"
