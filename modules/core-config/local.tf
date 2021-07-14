@@ -32,9 +32,7 @@ locals {
 
   internal_ingress_domain  = local.internal_ingress_tmp.domain
   internal_ingress_enabled = length(local.internal_ingress_domain) > 0
-  internal_ingress_annotations = {
-    "cert-manager.io/cluster-issuer" = "letsencrypt-issuer"
-  }
+  internal_ingress_annotations = {}
 
 
   ##############

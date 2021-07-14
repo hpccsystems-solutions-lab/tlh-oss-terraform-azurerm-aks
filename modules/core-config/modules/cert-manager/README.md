@@ -49,3 +49,39 @@ module "aks" {
 ```
 
 For additional issuers, see the cert-manager documentation as the implementation will vary. See also [this chunk of code](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/429f46386cbcf355e437aec74d234029e0ff1981/modules/core-config/modules/cert-manager/local.tf#L136-L164) showing how the default LetsEncrypt issuer is configured, you can use that as a base for configuring your own issuer if needed.
+
+## Wildcard Certificate
+
+When deploying the cert-manager module a wilcard certificate is generated to overcome the [rate limits](https://letsencrypt.org/docs/rate-limits/) for new certifcate requests imposed by lets-encrypt.
+
+A wilcard certiificate is generated that contains a list of wildcard entries listed from the `dns_zones` map of domains.
+
+This uses the `letsencrypt-issuer` cluster issuer to generate a certificate and secret named `default-wildcard-cert-tls` in the cert-manager namespace.
+
+The ingress-core-internal nginx controller is configured to use this as the [default ssl certificate](https://kubernetes.github.io/ingress-nginx/user-guide/tls/#default-ssl-certificate).
+
+The default certificate will be used for ingress tls: sections that do not have a secretName option.
+
+```
+      extraArgs = {
+        "default-ssl-certificate" = "cert-manager/default-wildcard-cert-tls"
+      }
+```
+
+Below is an example of an ingress object that uses the default wildcard certificate.
+
+```
+grafana:
+  ingress:
+    enabled: true
+    hosts:
+    - grafana-iob-dev-westeurope-akstest.test.iob.azure.lnrsg.io
+    ingressClassName: core-internal
+    path: /
+    pathType: Prefix
+    tls:
+    - hosts:
+      - grafana-iob-dev-westeurope-akstest.test.iob.azure.lnrsg.io
+```
+
+Notice that the `secretName` option is missing under the ingress tls section and there is no annotation needed for `cert-manager.io/cluster-issuer`

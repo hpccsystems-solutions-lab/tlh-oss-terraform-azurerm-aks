@@ -96,6 +96,14 @@ resource "helm_release" "main" {
   ]
 }
 
+resource "kubectl_manifest" "certificates" {
+  for_each = local.certificates
+
+  depends_on = [helm_release.main, kubectl_manifest.issuers]
+
+  yaml_body = yamlencode(each.value)
+}
+
 resource "kubectl_manifest" "issuers" {
   for_each = local.issuers
 

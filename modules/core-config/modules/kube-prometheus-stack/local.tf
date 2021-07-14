@@ -34,7 +34,6 @@ locals {
 
         hosts = [ "prometheus-${var.cluster_name}.${var.ingress_domain}" ]
         tls   = [{
-          "secretName" = "prometheus-cert"
           "hosts"      = [ "prometheus-${var.cluster_name}.${var.ingress_domain}" ]
         }]
       }
@@ -179,7 +178,6 @@ locals {
 
         hosts = [ "alertmanager-${var.cluster_name}.${var.ingress_domain}" ]
         tls   = [{
-          "secretName" = "alertmanager-cert"
           "hosts"      = [ "alertmanager-${var.cluster_name}.${var.ingress_domain}" ]
         }]
       }
@@ -234,7 +232,6 @@ locals {
 
         hosts = [ "grafana-${var.cluster_name}.${var.ingress_domain}" ]
         tls   = [{
-          "secretName" = "grafana-cert"
           "hosts"      = [ "grafana-${var.cluster_name}.${var.ingress_domain}" ]
         }]
       }

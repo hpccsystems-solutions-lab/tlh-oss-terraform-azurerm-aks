@@ -132,6 +132,28 @@ locals {
     }
   }
 
+  zones          = keys(var.dns_zones)
+  wildcard_zones = [for zone in local.zones : "*.${zone}"]
+  certificates = {
+    wildcard = {
+      apiVersion = "cert-manager.io/v1"
+      kind       = "Certificate"
+      metadata = {
+        name      = "default-wildcard-cert"
+        namespace = "cert-manager"
+      }
+      spec = {
+        commonName = "*.${element(local.zones, 0)}"
+        dnsNames   = concat(local.zones, local.wildcard_zones)
+        issuerRef = {
+          kind = "ClusterIssuer"
+          name = "letsencrypt-issuer"
+        }
+        secretName = "default-wildcard-cert-tls"
+      }
+    }
+  }
+
   issuers = merge(var.additional_issuers, {
     letsencrypt = {
       apiVersion = "cert-manager.io/v1"
