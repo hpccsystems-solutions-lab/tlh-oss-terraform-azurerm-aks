@@ -40,8 +40,8 @@ module "identity" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   tags                = var.tags
+  namespace           = local.namespace
 
-  namespace = var.namespace
   roles = concat(
     [
       {
@@ -62,10 +62,11 @@ resource "helm_release" "main" {
   depends_on = [module.identity]
 
   name       = "external-dns"
-  namespace  = var.namespace
+  namespace  = local.namespace
+
   repository = "https://charts.bitnami.com/bitnami/"
   chart      = "external-dns"
-  version    = var.helm_chart_version
+  version    = local.chart_version
   skip_crds  = true
 
   values = [

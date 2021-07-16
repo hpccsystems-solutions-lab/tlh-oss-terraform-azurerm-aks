@@ -4,23 +4,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "namespace" {
-  type        = string
-  description = "The name of the Kubernetes namespace to contain the external-dns resources"
-  default     = "dns"
-}
-
-variable "tolerations" {
-  type        = list(any)
-  description = "Tolerations for the external-dns pods."
-}
-
-variable "helm_chart_version" {
-  type        = string
-  description = "The version of the external-dns Helm chart to use"
-  default     = "4.10.0"
-}
-
 variable "resource_group_name" {
   type        = string
   description = "The name of the resource group of your AKS cluster"
@@ -95,27 +78,8 @@ variable "azure_subscription_id" {
   }
 }
 
-# See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for what the next four variables mean
-variable "resources_request_cpu" {
-  type        = string
-  description = "Request this amount of CPU from the cluster"
-  default     = "10m"
+variable "additional_sources" {
+  description = "Additional Kubernetes sources to handle."
+  type        = list(string)
 }
 
-variable "resources_request_memory" {
-  type        = string
-  description = "Request this amount of RAM from the cluster"
-  default     = "64Mi"
-}
-
-variable "resources_limit_cpu" {
-  type        = string
-  description = "Limit CPU utilization to this value"
-  default     = "100m"
-}
-
-variable "resources_limit_memory" {
-  type        = string
-  description = "Limit RAM utilization to this value"
-  default     = "128Mi"
-}

@@ -1,19 +1,3 @@
-module "priority_classes" {
-  source = "./modules/priority-classes"
-
-  additional_priority_classes = var.additional_priority_classes
-}
-
-module "storage_classes" {
-  source = "./modules/storage-classes"
-
-  additional_storage_classes = var.additional_storage_classes
-}
-
-resource "time_sleep" "namespace" {
-  destroy_duration = "30s"
-}
-
 resource "kubernetes_namespace" "default" {
   depends_on = [time_sleep.namespace]
 
@@ -57,6 +41,22 @@ resource "kubernetes_config_map" "default" {
   }
 
   data = each.value.data
+}
+
+module "priority_classes" {
+  source = "./modules/priority-classes"
+
+  additional_priority_classes = var.additional_priority_classes
+}
+
+module "storage_classes" {
+  source = "./modules/storage-classes"
+
+  additional_storage_classes = var.additional_storage_classes
+}
+
+resource "time_sleep" "namespace" {
+  destroy_duration = "30s"
 }
 
 module "rbac" {
@@ -115,12 +115,7 @@ module "external_dns" {
     resource_group_name = local.external_dns.resource_group_name
   }
 
-  tolerations = [{
-    key      = "CriticalAddonsOnly"
-    operator = "Equal"
-    value    = "true"
-    effect   = "NoSchedule"
-  }]
+  additional_sources = local.external_dns.additional_sources
 
   tags = var.tags
 }

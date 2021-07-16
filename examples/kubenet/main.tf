@@ -186,7 +186,7 @@ module "aks" {
     route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
-  config = merge({
+  core_services_config = merge({
     alertmanager = {
       smtp_host = var.smtp_host
       smtp_from = var.smtp_from

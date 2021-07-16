@@ -8,13 +8,13 @@ In Azure, every Azure subscription should be pre-provisioned with an Azure DNS z
 
 ## Usage
 
-When creating your cluster, you'll have to use the `config` input variable to pass external-dns configuration down to the agent. Example:
+When creating your cluster, you'll have to use the `core_services_config` input variable to pass external-dns configuration down to the agent. Example:
 
 ```
 module "aks" {
   source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
   ...
-  config = {
+  core_services_config = {
     external_dns = {
       resource_group_name = "azure-resource-group-name"
       zones               = ["staging.app.lnrsg.io", "dev.app.lnrsg.io"]

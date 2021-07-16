@@ -60,8 +60,8 @@ module "identity" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   tags                = var.tags
+  namespace           = local.namespace
 
-  namespace = var.namespace
   roles = concat(
     [for zone,rg in var.dns_zones:
       { 
@@ -82,10 +82,11 @@ resource "helm_release" "main" {
   depends_on = [module.identity]
 
   name       = "cert-manager"
+  namespace  = local.namespace
+
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "1.4.0"
-  namespace  = var.namespace
+  version    = local.chart_version
   skip_crds  = true
 
   max_history = 20

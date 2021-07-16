@@ -16,7 +16,7 @@ locals {
 
       ingressClass = "core-internal"
 
-      priorityClassName = "lnrs-platform-critical"
+      priorityClassName = "system-cluster-critical"
 
       service = {
         annotations = {
@@ -152,7 +152,7 @@ locals {
       replicaCount = 3
       minAvailable = 1
 
-      priorityClassName = "lnrs-cluster-default"
+      priorityClassName = ""
 
       nodeSelector = {
         "kubernetes.azure.com/mode" = "system"

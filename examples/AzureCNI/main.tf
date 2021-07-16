@@ -145,7 +145,7 @@ module "aks" {
 
   node_pool_defaults = {}
 
-node_pools = [
+  node_pools = [
     {
       name        = "ingress"
       single_vmss = true
@@ -208,7 +208,7 @@ node_pools = [
     route_table_id = module.virtual_network.aks_subnets.route_table_id
   }
 
-  config = merge({
+  core_services_config = merge({
     alertmanager = {
       smtp_host = var.smtp_host
       smtp_from = var.smtp_from

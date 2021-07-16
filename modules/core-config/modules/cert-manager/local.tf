@@ -8,50 +8,23 @@ locals {
     production = "https://acme-v02.api.letsencrypt.org/directory"
   }
 
+  namespace = "cert-manager"
+
+  chart_version = "1.4.0"
+
   chart_values = {
     installCRDs = false
 
     global = {
-      priorityClassName = "lnrs-platform-critical"
+      priorityClassName = "system-cluster-critical"
     }
 
-    resources = {
-      limits = {
-        cpu = "1000m"
-        memory = "500Mi"
-      }
-      requests = {
-        cpu = "200m"
-        memory = "256Mi"
-      }
+    securityContext = {
+      fsGroup = 65534
     }
 
-    cainjector = {
-      replicaCount = 1
-      extraArgs = [
-        "--leader-elect=false",
-      ]
-      nodeSelector = {
-        "kubernetes.azure.com/mode" = "system"
-      }
-      replicaCount = 1
-      tolerations = [
-        {
-          effect = "NoSchedule"
-          key = "CriticalAddonsOnly"
-          operator = "Exists"
-        }
-      ]
-      resources = {
-        limits = {
-          cpu = "1000m"
-          memory = "500Mi"
-        }
-        requests = {
-          cpu = "200m"
-          memory = "256Mi"
-        }
-      }
+    podLabels = {
+      aadpodidbinding = module.identity.name
     }
 
     extraArgs = [
@@ -60,76 +33,116 @@ locals {
     ]
 
     nodeSelector = {
+      "kubernetes.io/os"          = "linux"
       "kubernetes.azure.com/mode" = "system"
     }
 
-    podLabels = {
-      aadpodidbinding = module.identity.name
-    }
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+      effect   = "NoSchedule"
+    }]
 
     resources = {
-      limits = {
-        cpu = "500m"
-        memory = "256Mi"
-      }
       requests = {
-        cpu = "100m"
+        cpu    = "100m"
         memory = "128Mi"
       }
-    }
 
-    securityContext = {
-      fsGroup = 65534
-    }
-
-    tolerations = [
-      {
-        effect = "NoSchedule"
-        key = "CriticalAddonsOnly"
-        operator = "Exists"
-      },
-    ]
-
-    webhook = {
-      hostNetwork = true
-      nodeSelector = {
-        "kubernetes.azure.com/mode" = "system"
+      limits = {
+        cpu    = "500m"
+        memory = "256Mi"
       }
-      replicaCount = 2
-      resources = {
-        limits = {
-          cpu = "200m"
-          memory = "128Mi"
-        }
-        requests = {
-          cpu = "50m"
-          memory = "64Mi"
-        }
-      }
-      securePort = 10251
-      tolerations = [
-        {
-          effect = "NoSchedule"
-          key = "CriticalAddonsOnly"
-          operator = "Exists"
-        },
-      ]
     }
 
     prometheus = {
       enabled = true
       servicemonitor = {
-        enabled = true
-        interval = "60s"
+        enabled            = true
+        prometheusInstance = "Prometheus"
+        targetPort         = 9402
+        path               = "/metrics"
+        interval           = "60s"
+        scrapeTimeout      = "30s"
         labels = {
           "lnrs.io/monitoring-platform" = "core-prometheus"
         }
-        path = "/metrics"
-        prometheusInstance = "Prometheus"
-        scrapeTimeout = "30s"
-        targetPort = 9402
       }
     }
+
+    ###########################################
+    ### Caininjector ##########################
+
+    cainjector = {
+
+      replicaCount = 1
+
+      extraArgs = [
+        "--leader-elect=false",
+      ]
+
+      nodeSelector = {
+        "kubernetes.io/os"          = "linux"
+        "kubernetes.azure.com/mode" = "system"
+      }
+
+      replicaCount = 1
+
+      tolerations = [{
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+        effect   = "NoSchedule"
+      }]
+
+      resources = {
+        requests = {
+          cpu    = "100m"
+          memory = "128Mi"
+        }
+
+        limits = {
+          cpu    = "500m"
+          memory = "256Mi"
+        }
+      }
+    }
+    ### End of Caininjector ###################
+    ###########################################
+
+    ###########################################
+    ### Webhook ###############################
+
+    webhook = {
+      securePort  = 10251
+      hostNetwork = true
+
+      nodeSelector = {
+        "kubernetes.io/os"          = "linux"
+        "kubernetes.azure.com/mode" = "system"
+      }
+
+      replicaCount = 2
+
+      tolerations = [{
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+        effect   = "NoSchedule"
+      }]
+
+      resources = {
+        requests = {
+          cpu    = "100m"
+          memory = "64Mi"
+        }
+
+        limits = {
+          cpu    = "200m"
+          memory = "128Mi"
+        }
+      }
+    }
+    ### End of Webhook ########################
+    ###########################################
   }
 
   zones          = keys(var.dns_zones)

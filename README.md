@@ -39,8 +39,8 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | azuread\_clusterrole\_map | Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings | <pre>object(<br>    {<br>      cluster_admin_users   = map(string)<br>      cluster_view_users    = map(string)<br>      standard_view_users   = map(string)<br>      standard_view_groups  = map(string)<br>    }<br>  )</pre> | <pre>{<br>  "cluster_admin_users": {},<br>  "cluster_view_users": {},<br>  "standard_view_groups": {},<br>  "standard_view_users": {}<br>}</pre> | no |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
-| config | Platform service configuration options | `any` | n/a | yes |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
+| core\_services\_config | Configuration options for core platform services | `any` | n/a | yes |
 | enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |

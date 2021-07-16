@@ -2,7 +2,53 @@ locals {
   dns_zone_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.dns_zones.resource_group_name}"
   dns_zone_ids               = [for zone in toset(var.dns_zones.names) : "${local.dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"]
 
+  namespace = "dns"
+
+  chart_version = "5.2.0"
+
   chart_values = {
+
+    rbac = {
+      create = "true"
+    }
+
+    replicas = 1
+
+    priorityClassName = "system-cluster-critical"
+
+    nodeSelector = {
+      "kubernetes.io/os"          = "linux"
+      "kubernetes.azure.com/mode" = "system"
+    }
+
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+      effect   = "NoSchedule"
+    }]
+
+    resources = {
+      requests = {
+        cpu    = "10m"
+        memory = "64Mi"
+      }
+
+      limits = {
+        cpu    = "100m"
+        memory = "128Mi"
+      }
+    }
+
+    sources = concat(["service", "ingress"], var.additional_sources)
+
+    policy = "sync"
+
+    logLevel = "debug"
+
+    txtOwnerId : var.cluster_name
+
+    provider = "azure"
+
     azure = {
       resourceGroup               = var.dns_zones.resource_group_name
       subscriptionId              = var.azure_subscription_id
@@ -10,36 +56,11 @@ locals {
       useManagedIdentityExtension = true
       userAssignedIdentityID      = module.identity.client_id
     }
+
     domainFilters = [for name in var.dns_zones.names : name]
-    logLevel      = "debug"
-    nodeSelector = {
-      "kubernetes.azure.com/mode" = "system"
-    }
+
     podLabels = {
       aadpodidbinding = module.identity.name
     }
-    policy            = "sync"
-    priorityClassName = "lnrs-platform-critical"
-    provider          = "azure"
-    rbac = {
-      create = "true"
-    }
-    replicas = 1
-    resources = {
-      limits = {
-        cpu    = var.resources_limit_cpu
-        memory = var.resources_limit_memory
-      }
-      requests = {
-        cpu    = var.resources_request_cpu
-        memory = var.resources_request_memory
-      }
-    }
-    sources = [
-      "service",
-      "ingress"
-    ]
-    tolerations = var.tolerations
-    txtOwnerId  = var.cluster_name
   }
 }

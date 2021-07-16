@@ -1,17 +1,9 @@
 locals {
   namespace = "monitoring"
 
-  chart_version = "16.8.0"
-
-  kube_state_metrics_image_versions = {
-    "1.20" = "v2.0.0"
-    "1.19" = "v2.0.0"
-    "1.18" = "v1.9.8"
-  }
+  chart_version = "16.12.1"
 
   chart_values = {
-    kubeVersionOverride = "v${var.cluster_version}.0"
-
     global = {
       rbac = {
         create     = true
@@ -23,6 +15,10 @@ locals {
       "lnrs.io/monitoring-platform" = "core-prometheus"
       "lnrs.io/k8s-platform"        = "true"
     }
+
+
+    ###############################################
+    ### Prometheus ################################
 
     prometheus = {
       ingress = {
@@ -41,7 +37,7 @@ locals {
       prometheusSpec = {
         retention = "28d"
 
-        priorityClassName = "lnrs-platform-critical"
+        priorityClassName = "system-cluster-critical"
 
         remoteWrite = var.prometheus_remote_write
 
@@ -64,8 +60,15 @@ locals {
         }
 
         nodeSelector = {
-          "kubernetes.io/os"  = "linux"
+          "kubernetes.io/os"          = "linux"
+          "kubernetes.azure.com/mode" = "system"
         }
+
+        tolerations = [{
+          key      = "CriticalAddonsOnly"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        }]
 
         storageSpec = {
           volumeClaimTemplate = {
@@ -88,26 +91,38 @@ locals {
         resources = {
           requests = {
             cpu    = "1000m"
-            memory = "2048Mi"
+            memory = "4096Mi"
           }
 
           limits = {
-            cpu    = "4000m"
-            memory = "8192Mi"
+            cpu    = "2000m"
+            memory = "6144Mi"
           }
         }
       }
     }
+    ### End of Prometheus #########################
+    ###############################################
+
+    ###############################################
+    ### AlertManager ##############################
 
     alertmanager = {
       alertmanagerSpec = {
-        priorityClassName = "lnrs-platform-critical"
+        priorityClassName = "system-cluster-critical"
 
         retention = "120h"
 
         nodeSelector = {
-          "kubernetes.io/os" = "linux"
+          "kubernetes.io/os"          = "linux"
+          "kubernetes.azure.com/mode" = "system"
         }
+
+        tolerations = [{
+          key      = "CriticalAddonsOnly"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        }]
 
         storage = {
           volumeClaimTemplate = {
@@ -182,9 +197,19 @@ locals {
         }]
       }
     }
+    ### End of AlertManager #######################
+    ###############################################
+
+    ###############################################
+    ### Grafana ###################################
 
     grafana = {
       enabled = true
+
+      rbac = {
+        create     = true
+        pspEnabled = false
+      }
 
       admin = {
         existingSecret = local.grafana_auth_secret_name
@@ -207,9 +232,10 @@ locals {
 
       additionalDataSources = concat(var.loki_enabled ? [local.grafana_loki_data_source] : [], var.grafana_additional_data_sources)
 
-      priorityClassName = "lnrs-platform-critical"
+      priorityClassName = ""
 
       nodeSelector = {
+        "kubernetes.io/os"          = "linux"
         "kubernetes.azure.com/mode" = "system"
       }
 
@@ -266,6 +292,8 @@ locals {
         }
       }
     }
+    ### End of Grafana ############################
+    ###############################################
 
     kubeScheduler = {
       enabled = false
@@ -298,12 +326,17 @@ locals {
       }
     }
 
+
+    ###############################################
+    ### Prometheus Operator #######################
+
     prometheusOperator = {
       enabled = true
 
-      priorityClassName = "lnrs-platform-critical"
+      priorityClassName = "system-cluster-critical"
 
       nodeSelector = {
+        "kubernetes.io/os"          = "linux"
         "kubernetes.azure.com/mode" = "system"
       }
 
@@ -345,6 +378,11 @@ locals {
         }
       }
     }
+    ### End of Prometheus Operator ################
+    ###############################################
+
+    ###############################################
+    ### Node Exporter #############################
 
     ## Deploy servicemonitor
     nodeExporter = {
@@ -352,7 +390,7 @@ locals {
     }
 
     prometheus-node-exporter = {
-      priorityClassName = "lnrs-platform-critical"
+      priorityClassName = "system-node-critical"
 
       nodeSelector = {
         "kubernetes.io/os" = "linux"
@@ -376,6 +414,11 @@ locals {
         }
       }
     }
+    ### End of Node Exporter ######################
+    ###############################################
+
+    ###############################################
+    ### Kube-state-metrics ########################
 
     ## Deploy servicemonitor
     kubeStateMetrics = {
@@ -383,17 +426,14 @@ locals {
     }
 
     kube-state-metrics = {
-      priorityClassName = "lnrs-platform-critical"
-
-      image = {
-        tag = local.kube_state_metrics_image_versions[var.cluster_version]
-      }
+      priorityClassName = "system-cluster-critical"
 
       podSecurityPolicy = {
         enabled = false
       }
 
       nodeSelector = {
+        "kubernetes.io/os"          = "linux"
         "kubernetes.azure.com/mode" = "system"
       }
 
@@ -407,27 +447,59 @@ locals {
       ]
 
       ## Avoid duplicate kube-state-metrics servicemonitor
-      #prometheus = {
-      #  monitor = {
-      #    enabled = true
-      #    additionalLabels = {
-      #      "lnrs.io/monitoring-platform" = "core-prometheus"
-      #    }
-      #  }
-      #}
+      prometheus = {
+        monitor = {
+          enabled = false
+          additionalLabels = {
+            "lnrs.io/monitoring-platform" = "core-prometheus"
+          }
+        }
+      }
 
       resources = {
         requests = {
-          cpu    = "10m"
-          memory = "64Mi"
+          cpu    = "100m"
+          memory = "256Mi"
         }
 
         limits = {
-          cpu    = "200m"
-          memory = "128Mi"
+          cpu    = "500m"
+          memory = "512Mi"
         }
       }
+
+      collectors = [
+        "certificatesigningrequests",
+        "configmaps",
+        "cronjobs",
+        "daemonsets",
+        "deployments",
+        "endpoints",
+        "horizontalpodautoscalers",
+        "ingresses",
+        "jobs",
+        "limitranges",
+        "mutatingwebhookconfigurations",
+        "namespaces",
+        "networkpolicies",
+        "nodes",
+        "persistentvolumeclaims",
+        "persistentvolumes",
+        "poddisruptionbudgets",
+        "pods",
+        "replicasets",
+        "replicationcontrollers",
+        "resourcequotas",
+        "secrets",
+        "services",
+        "statefulsets",
+        "storageclasses",
+        "validatingwebhookconfigurations",
+        "volumeattachments"
+      ]
     }
+    ### End of Kube-state-metrics #################
+    ###############################################
   }
 
   grafana_auth_secret_name = "grafana-auth"

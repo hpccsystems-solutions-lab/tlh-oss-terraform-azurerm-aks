@@ -1,7 +1,7 @@
 locals {
   namespace = "logging"
 
-  chart_version = "2.4.0"
+  chart_version = "2.5.0"
 
   chart_values = {
     nameOverride = "fluentd"
@@ -11,8 +11,6 @@ locals {
     podAnnotations = {
       "fluentbit.io/exclude" = "true"
     }
-
-    priorityClassName = "lnrs-platform-critical"
 
     metrics = {
       enabled = true
@@ -35,6 +33,40 @@ locals {
       size         = "50Gi"
     }
 
+    replicaCount = 3
+
+    podDisruptionBudget = {
+      enabled        = true
+      maxUnavailable = 1
+    }
+
+    priorityClassName = "system-cluster-critical"
+
+    nodeSelector = {
+      "kubernetes.io/os"          = "linux"
+      "kubernetes.azure.com/mode" = "system"
+    }
+
+    tolerations = [{
+      key      = "CriticalAddonsOnly"
+      operator = "Exists"
+      effect   = "NoSchedule"
+    }]
+
+    affinity = {
+      podAntiAffinity = {
+        requiredDuringSchedulingIgnoredDuringExecution = [{
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"     = "fluentd"
+              "app.kubernetes.io/instance" = "fluentd"
+            }
+          }
+          topologyKey = "topology.kubernetes.io/zone"
+        }]
+      }
+    }
+
     resources = {
       requests = {
         cpu    = "100m"
@@ -44,29 +76,6 @@ locals {
       limits = {
         cpu    = "500m"
         memory = "512Mi"
-      }
-    }
-
-    replicaCount = 3
-
-    nodeSelector = {
-      "kubernetes.io/os" = "linux"
-    }
-
-    affinity = {
-      podAntiAffinity = {
-        requiredDuringSchedulingIgnoredDuringExecution = [{
-          labelSelector = {
-            matchExpressions = [{
-              key      = "app"
-              operator = "In"
-              values = [
-                "fluentd"
-              ]
-            }]
-          }
-          topologyKey = "topology.kubernetes.io/zone"
-        }]
       }
     }
 

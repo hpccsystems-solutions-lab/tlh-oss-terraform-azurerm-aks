@@ -39,12 +39,6 @@ variable "tags" {
   type        = map(string)
 }
 
-variable "namespace" {
-  type        = string
-  description = "The name of the namespace to contain cert-manager resources"
-  default     = "cert-manager"
-}
-
 variable "dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
   type        = map(string)

@@ -1,7 +1,6 @@
 locals {
   core_namespaces = [
     "cert-manager",
-    "cluster-health",
     "dns",
     "logging",
     "ingress-core-internal",
@@ -39,8 +38,9 @@ locals {
   ## Services ##
 
   external_dns = merge({
+    additional_sources  = []
     resource_group_name = ""
-    zones = []
+    zones               = []
   }, lookup(var.config, "external_dns", {}))
 
   cert_manager = merge({

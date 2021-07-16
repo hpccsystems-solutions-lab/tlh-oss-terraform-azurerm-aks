@@ -33,17 +33,15 @@ locals {
       "kubernetes.io/os" = "linux"
     }
 
-    tolerations = [
-      {
-        operator = "Exists"
-      }
-    ]
+    tolerations = [{
+      operator = "Exists"
+    }]
 
     podAnnotations = {
       "fluentbit.io/exclude" = "true"
     }
 
-    priorityClassName = "lnrs-platform-critical"
+    priorityClassName = "system-node-critical"
 
     config = {
       service = local.service_config

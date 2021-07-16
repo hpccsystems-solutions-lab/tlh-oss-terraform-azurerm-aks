@@ -198,7 +198,7 @@ variable "azuread_clusterrole_map" {
   }
 }
 
-variable "config" {
-  description = "Platform service configuration options"
+variable "core_services_config" {
+  description = "Configuration options for core platform services"
   type        = any
 }

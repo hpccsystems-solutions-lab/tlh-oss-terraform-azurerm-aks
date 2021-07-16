@@ -80,7 +80,7 @@ module "core-config" {
   namespaces = var.namespaces
   configmaps = var.configmaps
   secrets    = var.secrets
-  config     = var.config
+  config     = var.core_services_config
 
   tags = var.tags
 }
