@@ -41,12 +41,11 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |
 | configmaps | Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
 | core\_services\_config | Configuration options for core platform services | `any` | n/a | yes |
-| enable\_host\_encryption | Should the nodes in this Node Pool have host encryption enabled? | `bool` | `false` | no |
 | location | Azure region in which to build resources. | `string` | n/a | yes |
 | namespaces | List of namespaces to create on the cluster. | `list(string)` | `[]` | no |
 | network\_plugin | Kubernetes Network Plugin (kubenet or azure) | `string` | `"kubenet"` | no |
 | node\_pool\_defaults | Override default values for the node pools, this will NOT override the values that the module sets directly. | `any` | `{}` | no |
-| node\_pools | Node pool definitions. | <pre>list(object({<br>    name        = string<br>    single_vmss = bool<br>    public      = bool<br>    vm_size     = string<br>    os_type     = string<br>    min_count   = number<br>    max_count   = number<br>    labels      = map(string)<br>    taints      = list(object({<br>      key    = string<br>      value  = string<br>      effect = string<br>    }))<br>    tags        = map(string)<br>  }))</pre> | n/a | yes |
+| node\_pools | Node pool definitions. | <pre>list(object({<br>    name            = string<br>    single_vmss     = bool<br>    public          = bool<br>    vm_size         = string<br>    os_type         = string<br>    host_encryption = bool<br>    min_count       = number<br>    max_count       = number<br>    labels          = map(string)<br>    taints          = list(object({<br>      key    = string<br>      value  = string<br>      effect = string<br>    }))<br>    tags            = map(string)<br>  }))</pre> | n/a | yes |
 | pod\_cidr | used for pod IP addresses | `string` | `"100.65.0.0/16"` | no |
 | resource\_group\_name | The name of the Resource Group where the Kubernetes Cluster should exist. | `string` | n/a | yes |
 | secrets | Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable. | <pre>map(object({<br>    name      = string<br>    namespace = string<br>    type      = string<br>    data      = map(string)<br>  }))</pre> | `{}` | no |
