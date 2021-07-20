@@ -90,7 +90,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v2.10.0"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v5.0.0"
 
   naming_rules = module.naming.yaml
 
@@ -104,29 +104,24 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   aks_subnets = {
-    private = {
-      cidrs             = ["10.1.0.0/24"]
-      service_endpoints = []
-    }
-    public = {
-      cidrs             = ["10.1.1.0/24"]
-      service_endpoints = []
-    }
-    route_table = "default"
-  }
-
-  route_tables = {
-    default = {
-      disable_bgp_route_propagation = true
-      use_inline_routes             = false
-      routes = {
-        internet = {
-          address_prefix = "0.0.0.0/0"
-          next_hop_type  = "Internet"
-        }
-        local-vnet-10-1-0-0-22 = {
-          address_prefix = "10.1.0.0/22"
-          next_hop_type  = "vnetlocal"
+    demo = {
+      private = {
+        cidrs = ["10.1.0.0/24"]
+      }
+      public = {
+        cidrs = ["10.1.1.0/24"]
+      }
+      route_table = {
+        disable_bgp_route_propagation = true
+        routes = {
+          internet = {
+            address_prefix = "0.0.0.0/0"
+            next_hop_type  = "Internet"
+          }
+          local-vnet-10-1-0-0-21 = {
+            address_prefix = "10.1.0.0/21"
+            next_hop_type  = "vnetlocal"
+          }
         }
       }
     }
@@ -147,13 +142,14 @@ module "aks" {
 
   node_pools = [
     {
-      name        = "ingress"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
+      name            = "ingress"
+      single_vmss     = true
+      public          = true
+      vm_size         = "medium"
+      os_type         = "Linux"
+      host_encryption = true
+      min_count       = "1"
+      max_count       = "2"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -162,17 +158,18 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags            = {}
     },
     {
-      name        = "pubw"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Windows"
-      subnet      = "public"
-      min_count   = "1"
-      max_count   = "2"
+      name            = "pubw"
+      single_vmss     = true
+      public          = true
+      vm_size         = "medium"
+      os_type         = "Windows"
+      host_encryption = true
+      subnet          = "public"
+      min_count       = "1"
+      max_count       = "2"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -181,32 +178,27 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags            = {}
     },
     {
-      name        = "workers"
-      single_vmss = false
-      public      = false
-      vm_size     = "large"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
-      taints      = []
+      name            = "workers"
+      single_vmss     = false
+      public          = false
+      vm_size         = "large"
+      os_type         = "Linux"
+      host_encryption = true
+      min_count       = "1"
+      max_count       = "2"
+      taints          = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
 
-      tags        = {}
+      tags            = {}
     }
   ]
 
-  virtual_network = {
-    subnets = {
-      private = module.virtual_network.aks_subnets.private
-      public  = module.virtual_network.aks_subnets.public
-    }
-    route_table_id = module.virtual_network.aks_subnets.route_table_id
-  }
+  virtual_network = module.virtual_network.aks["demo"]
 
   core_services_config = merge({
     alertmanager = {
@@ -260,98 +252,6 @@ module "aks" {
 
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map
-}
-
-resource "azurerm_network_security_rule" "ingress_public_allow_nginx" {
-  name                        = "AllowNginx"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = data.kubernetes_service.nginx.load_balancer_ingress.0.ip
-  resource_group_name         = module.virtual_network.aks_subnets.public.resource_group_name
-  network_security_group_name = module.virtual_network.aks_subnets.public.network_security_group_name
-}
-
-resource "azurerm_network_security_rule" "ingress_public_allow_iis" {
-  name                        = "AllowIIS"
-  priority                    = 101
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = data.kubernetes_service.iis.load_balancer_ingress.0.ip
-  resource_group_name         = module.virtual_network.aks_subnets.public.resource_group_name
-  network_security_group_name = module.virtual_network.aks_subnets.public.network_security_group_name
-}
-
-resource "helm_release" "nginx" {
-  depends_on = [module.aks]
-  name       = "nginx"
-  chart      = "./helm_charts/webserver"
-
-  values = [<<-EOT
-    name: nginx
-    image: nginx:latest
-    dns_name: ${random_string.random.result}-nginx.${var.config.external_dns.zones.0}
-    nodeSelector:
-      lnrs.io/tier: ingress
-      kubernetes.io/os: linux
-    tolerations:
-    - key: "ingress"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
-    EOT
-  ]
-}
-
-resource "helm_release" "iis" {
-  depends_on = [module.aks]
-  name       = "iis"
-  chart      = "./helm_charts/webserver"
-
-  values = [<<-EOT
-    name: iis
-    image: microsoft/iis:latest
-    dns_name: ${random_string.random.result}-iis.${var.config.external_dns.zones.0}
-    nodeSelector:
-      lnrs.io/tier: ingress
-      kubernetes.io/os: windows
-    tolerations:
-    - key: "ingress"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
-    EOT
-  ]
-}
-
-data "kubernetes_service" "nginx" {
-  depends_on = [helm_release.nginx]
-  metadata {
-    name = "nginx"
-  }
-}
-
-data "kubernetes_service" "iis" {
-  depends_on = [helm_release.iis]
-  metadata {
-    name = "iis"
-  }
-}
-
-output "nginx_url" {
-  value = "http://${random_string.random.result}-nginx.${var.config.external_dns.zones.0}"
-}
-
-output "iis_url" {
-  value = "http://${random_string.random.result}-iis.${var.config.external_dns.zones.0}"
 }
 
 output "aks_login" {

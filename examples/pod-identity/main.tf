@@ -42,7 +42,7 @@ provider "helm" {
 }
 
 data "http" "my_ip" {
-  url = "https://ipv4.icanhazip.com"
+  url = "https://ifconfig.me"
 }
 
 data "azurerm_subscription" "current" {
@@ -90,7 +90,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v4.0.1"
+  source = "github.com/Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v5.0.0"
 
   naming_rules = module.naming.yaml
 
@@ -104,24 +104,24 @@ module "virtual_network" {
   address_space = ["10.1.0.0/22"]
 
   aks_subnets = {
-    private = {
-      cidrs = ["10.1.0.0/24"]
-      service_endpoints = []
-    }
-    public = {
-      cidrs = ["10.1.1.0/24"]
-      service_endpoints = ["Microsoft.Storage"]
-    }
-    route_table = {
-      disable_bgp_route_propagation = true
-      routes = {
-        internet = {
-          address_prefix         = "0.0.0.0/0"
-          next_hop_type          = "Internet"
-        }
-        local-vnet-10-1-0-0-22 = {
-          address_prefix         = "10.1.0.0/22"
-          next_hop_type          = "vnetlocal"
+    demo = {
+      private = {
+        cidrs = ["10.1.0.0/24"]
+      }
+      public = {
+        cidrs = ["10.1.1.0/24"]
+      }
+      route_table = {
+        disable_bgp_route_propagation = true
+        routes = {
+          internet = {
+            address_prefix = "0.0.0.0/0"
+            next_hop_type  = "Internet"
+          }
+          local-vnet-10-1-0-0-21 = {
+            address_prefix = "10.1.0.0/21"
+            next_hop_type  = "vnetlocal"
+          }
         }
       }
     }
@@ -140,13 +140,14 @@ module "aks" {
 
   node_pools = [
     {
-      name        = "ingress"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
+      name            = "ingress"
+      single_vmss     = true
+      public          = true
+      vm_size         = "medium"
+      os_type         = "Linux"
+      host_encryption = true
+      min_count       = "1"
+      max_count       = "2"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -155,25 +156,26 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags            = {}
     },
     {
-      name        = "workers"
-      single_vmss = false
-      public      = false
-      vm_size     = "large"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
-      taints      = []
+      name            = "workers"
+      single_vmss     = false
+      public          = false
+      vm_size         = "large"
+      os_type         = "Linux"
+      host_encryption = true
+      min_count       = "1"
+      max_count       = "2"
+      taints          = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags        = {}
+      tags            = {}
     }
   ]
 
-  virtual_network = module.virtual_network.aks
+  virtual_network = module.virtual_network.aks["demo"]
 
   core_services_config = merge({
     alertmanager = {
@@ -241,11 +243,11 @@ module "storage_account" {
   replication_type = "LRS"
 
   access_list = {
-    "my_ip" = chomp(data.http.my_ip.body)
+    "my_ip" = data.http.my_ip.body
   }
 
   service_endpoints = {
-    "aks-public" = module.virtual_network.aks.subnets.public.id
+    "aks-public" = module.virtual_network.aks["demo"].subnets.public.id
   }
 }
 
