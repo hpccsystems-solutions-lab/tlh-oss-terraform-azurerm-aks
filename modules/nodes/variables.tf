@@ -49,7 +49,6 @@ variable "node_pools" {
     public          = bool
     vm_size         = string
     os_type         = string
-    host_encryption = bool
     min_count       = number
     max_count       = number
     labels          = map(string)

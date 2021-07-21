@@ -22,6 +22,7 @@ locals {
     { # These default settings cannot be overridden
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"
+      enable_host_encryption       = true
       eviction_policy              = null
       proximity_placement_group_id = null
       spot_max_price               = null
@@ -32,7 +33,6 @@ locals {
     { # These settings are determinted by the node pool inputs
       vm_size                = null
       os_type                = null
-      enable_host_encryption = null 
       node_count             = null
       min_count              = null
       max_count              = null
@@ -61,7 +61,6 @@ locals {
     public          = false
     vm_size         = "large"
     os_type         = "Linux"
-    host_encryption = true
     min_count       = 1
     max_count       = 2
     subnet          = "private"
@@ -83,7 +82,6 @@ locals {
         priority               = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
         vm_size                = local.vm_types[pool.vm_size]
         os_type                = pool.os_type
-        enable_host_encryption = pool.host_encryption
         min_count              = pool.min_count
         max_count              = pool.max_count
 
