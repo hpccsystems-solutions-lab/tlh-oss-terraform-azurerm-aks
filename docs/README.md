@@ -11,7 +11,6 @@
   * [Services](/modules/core-config/modules/pod-identity/README.md#Services)
   * [Identities](/modules/core-config/modules/pod-identity/README.md#Identities)
   * [CRD Updates](/modules/core-config/modules/pod-identity/README.md#CRD%20Updates)
-* [Priority classes](/modules/core-config/modules/priority-classes/README.md)
 * [Storage classes](/modules/core-config/modules/storage-classes/README.md)
 * [cert-manager](/modules/core-config/modules/cert-manager/README.md)
 * [external-dns](/modules/core-config/modules/external-dns/README.md)

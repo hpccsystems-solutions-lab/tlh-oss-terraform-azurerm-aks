@@ -67,9 +67,6 @@ module "core-config" {
 
   azuread_clusterrole_map     = var.azuread_clusterrole_map
 
-  additional_priority_classes = var.additional_priority_classes
-  additional_storage_classes  = var.additional_storage_classes
-
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_node_resource_group_name = module.kubernetes.node_resource_group
   network_plugin               = local.network_plugin

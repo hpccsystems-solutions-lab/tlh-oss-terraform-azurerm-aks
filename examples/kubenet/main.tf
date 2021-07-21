@@ -202,40 +202,6 @@ module "aks" {
     }
   }, var.config)
 
-  additional_priority_classes = {
-    name-of-priority-class = {
-      description = "A description for this priority class"
-      value       = 1500 # lower number = lower priority
-      labels      = {
-        label1 = "foo"
-        label2 = "bar"
-      }
-      annotations = {
-        "lnrs.io/foo" = "bar"
-        "lnrs.io/baz" = "qux"
-      }
-    }
-  }
-
-  additional_storage_classes = {
-    special-storage-class = {
-      labels              = {
-        "test" = "foo"
-      }
-      annotations         = {}
-      storage_provisioner = "kubernetes.io/azure-disk"
-      parameters = {
-        cachingmode        = "ReadOnly"
-        kind               = "Managed"
-        storageaccounttype = "StandardSSD_LRS"
-      }
-      reclaim_policy         = "Delete"
-      mount_options          = ["debug"]
-      volume_binding_mode    = "WaitForFirstConsumer"
-      allow_volume_expansion = true
-    }
-  }
-
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map
 }

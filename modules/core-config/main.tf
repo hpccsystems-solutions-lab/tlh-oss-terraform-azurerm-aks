@@ -43,16 +43,8 @@ resource "kubernetes_config_map" "default" {
   data = each.value.data
 }
 
-module "priority_classes" {
-  source = "./modules/priority-classes"
-
-  additional_priority_classes = var.additional_priority_classes
-}
-
 module "storage_classes" {
   source = "./modules/storage-classes"
-
-  additional_storage_classes = var.additional_storage_classes
 }
 
 resource "time_sleep" "namespace" {
@@ -83,7 +75,6 @@ resource "kubectl_manifest" "kube_prometheus_stack_crds" {
 module "pod_identity" {
   depends_on = [
     kubernetes_namespace.default,
-    module.priority_classes,
     module.storage_classes,
     kubectl_manifest.kube_prometheus_stack_crds
   ]
