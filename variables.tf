@@ -103,50 +103,6 @@ variable "pod_cidr" {
   default     = "100.65.0.0/16"
 }
 
-variable "additional_priority_classes" {
-  type = map(object({
-    description = string
-    value       = number
-    labels      = map(string)
-    annotations = map(string)
-  }))
-  default     = null
-  description = "A map defining additional priority classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-kubernetes-priority-class) for additional information."
-}
-
-variable "additional_storage_classes" {
-  type = map(object({
-    labels                 = map(string)
-    annotations            = map(string)
-    storage_provisioner    = string
-    parameters             = map(string)
-    reclaim_policy         = string
-    mount_options          = list(string)
-    volume_binding_mode    = string
-    allow_volume_expansion = bool
-  }))
-  default     = null
-  description = "A map defining additional storage classes. Refer to [this link](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/storage-classes/README.md) for additional information."
-
-  validation {
-    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Retain"]) == 0 ||
-    length([for strgclass in var.additional_storage_classes : strgclass.reclaim_policy if strgclass.reclaim_policy != "Delete"]) == 0)
-    error_message = "The reclaim policy setting must be set to 'Delete' or 'Reclaim'."
-  }
-
-  validation {
-    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-file"]) == 0 ||
-    length([for strgclass in var.additional_storage_classes : strgclass.storage_provisioner if strgclass.storage_provisioner != "kubernetes.io/azure-disk"]) == 0)
-    error_message = "The storage provisioner setting must be set to 'kubernetes.io/azure-file' or 'kubernetes.io/azure-disk'."
-  }
-
-  validation {
-    condition = var.additional_storage_classes == null ? true : (length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "Immediate"]) == 0 ||
-    length([for strgclass in var.additional_storage_classes : strgclass.volume_binding_mode if strgclass.volume_binding_mode != "WaitForFirstConsumer"]) == 0)
-    error_message = "The volume binding mode setting must be set to 'Immediate' or 'WaitForFirstConsumer'."
-  }
-}
-
 variable "namespaces" {
   description = "List of namespaces to create on the cluster."
   type        = list(string)

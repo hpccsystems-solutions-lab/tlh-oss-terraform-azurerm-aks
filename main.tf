@@ -15,7 +15,7 @@ module "nodes" {
 }
 
 module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v4.0.0"
+  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v4.2.0"
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -65,9 +65,6 @@ module "core-config" {
   cluster_version     = var.cluster_version
 
   azuread_clusterrole_map     = var.azuread_clusterrole_map
-
-  additional_priority_classes = var.additional_priority_classes
-  additional_storage_classes  = var.additional_storage_classes
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_node_resource_group_name = module.kubernetes.node_resource_group

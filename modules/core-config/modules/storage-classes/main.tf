@@ -1,10 +1,9 @@
-resource "kubernetes_storage_class" "merged_storage_classes" {
-  for_each = local.merged_storage_classes
+resource "kubernetes_storage_class" "default" {
+  for_each = local.default_storage_classes
 
   metadata {
     name        = each.key
     labels      = each.value.labels
-    annotations = each.value.annotations
   }
   storage_provisioner    = each.value.storage_provisioner
   parameters             = each.value.parameters
