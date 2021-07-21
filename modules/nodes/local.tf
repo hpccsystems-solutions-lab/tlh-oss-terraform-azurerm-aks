@@ -22,8 +22,8 @@ locals {
     { # These default settings cannot be overridden
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"
+      enable_host_encryption       = true
       eviction_policy              = null
-      enable_host_encryption       = var.enable_host_encryption
       proximity_placement_group_id = null
       spot_max_price               = null
       os_disk_size_gb              = null
@@ -31,17 +31,17 @@ locals {
       only_critical_addons_enabled = false
     },
     { # These settings are determinted by the node pool inputs
-      vm_size               = null
-      os_type               = null
-      node_taints           = null
-      node_labels           = null
-      tags                  = null
-      node_count            = null
-      min_count             = null
-      max_count             = null
-      subnet                = null
-      enable_node_public_ip = null
-      mode                  = null
+      vm_size                = null
+      os_type                = null
+      node_count             = null
+      min_count              = null
+      max_count              = null
+      node_taints            = null
+      node_labels            = null
+      tags                   = null
+      subnet                 = null
+      enable_node_public_ip  = null
+      mode                   = null
   })
 
   tags = merge(var.tags, {
@@ -56,44 +56,47 @@ locals {
   }
 
   system_node_pool = {
-    name        = "system"
-    single_vmss = false
-    public      = false
-    vm_size     = "large"
-    os_type     = "Linux"
-    subnet      = "private"
-    min_count   = 1
-    max_count   = 2
-    taints      = [
+    name            = "system"
+    single_vmss     = false
+    public          = false
+    vm_size         = "large"
+    os_type         = "Linux"
+    min_count       = 1
+    max_count       = 2
+    subnet          = "private"
+    labels          = {}
+    taints          = [
       {
         key = "CriticalAddonsOnly"
         value = true
         effect = "NO_SCHEDULE"
       }
     ]
-    labels    = {}
-    tags      = {}
+    tags            = {}
   }
 
   node_pools = merge(values({ for pool in concat([local.system_node_pool], var.node_pools) :
     pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
-        vm_size     = local.vm_types[pool.vm_size]
-        os_type     = pool.os_type
-        node_taints = [ for taint in pool.taints:
-              "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
-        ]
+        availability_zones     = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        priority               = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
+        vm_size                = local.vm_types[pool.vm_size]
+        os_type                = pool.os_type
+        min_count              = pool.min_count
+        max_count              = pool.max_count
+
         node_labels = merge({
           "lnrs.io/lifecycle" = "ondemand"
           "lnrs.io/size"      = pool.vm_size
         }, pool.labels)
-        tags                         = merge(local.tags, pool.tags)
-        min_count                    = pool.min_count
-        max_count                    = pool.max_count
-        availability_zones           = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        node_taints = [ for taint in pool.taints:
+              "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
+        ]
+        tags        = merge(local.tags, pool.tags)
+
         subnet                       = (pool.public ? "public" : "private")
         enable_node_public_ip        = (pool.public ? true : false)
-        priority                     = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
+
         mode                         = (pool.name == local.system_node_pool.name ? "System" : "User")
         only_critical_addons_enabled = ((pool.name == local.system_node_pool.name && zone == 1) ? true : false)
       })

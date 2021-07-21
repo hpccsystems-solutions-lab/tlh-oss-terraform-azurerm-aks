@@ -29,12 +29,6 @@ variable "cluster_version" {
   }
 }
 
-variable "enable_host_encryption" {
-  description = "Should the nodes in this Node Pool have host encryption enabled?"
-  type        = bool
-  default     = false
-}
-
 variable "vm_types" {
   description = "Extend or overwrite the default vm types map."
   type        = map(string)
@@ -50,20 +44,20 @@ variable "node_pool_defaults" {
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
-    name        = string
-    single_vmss = bool
-    public      = bool
-    vm_size     = string
-    os_type     = string
-    min_count   = number
-    max_count   = number
-    labels      = map(string)
-    taints      = list(object({
+    name            = string
+    single_vmss     = bool
+    public          = bool
+    vm_size         = string
+    os_type         = string
+    min_count       = number
+    max_count       = number
+    labels          = map(string)
+    taints          = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags        = map(string)
+    tags            = map(string)
   }))
 
   validation {
