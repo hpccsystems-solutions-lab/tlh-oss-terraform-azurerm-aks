@@ -86,6 +86,12 @@ variable "virtual_network" {
   })
 }
 
+variable "api_server_authorized_ip_ranges" {
+  description = "authorized IP ranges to communicate with K8s API"
+  type = map(string)
+  default = null
+}
+
 variable "network_plugin" {
   description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string
