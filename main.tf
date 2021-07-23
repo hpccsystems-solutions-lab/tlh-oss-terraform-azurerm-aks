@@ -38,6 +38,8 @@ module "kubernetes" {
     route_table_id = var.virtual_network.route_table_id
   }
 
+  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
+
   node_pools             = module.nodes.node_pools
   default_node_pool      = module.nodes.default_node_pool
 

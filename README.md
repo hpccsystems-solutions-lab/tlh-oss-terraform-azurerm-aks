@@ -34,6 +34,7 @@ See [examples](/examples) for general usage and the [documentation index](/docs)
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| api\_server\_authorized\_ip\_ranges | authorized IP ranges to communicate with K8s API | `map(string)` | `null` | no |
 | azuread\_clusterrole\_map | Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings | <pre>object(<br>    {<br>      cluster_admin_users   = map(string)<br>      cluster_view_users    = map(string)<br>      standard_view_users   = map(string)<br>      standard_view_groups  = map(string)<br>    }<br>  )</pre> | <pre>{<br>  "cluster_admin_users": {},<br>  "cluster_view_users": {},<br>  "standard_view_groups": {},<br>  "standard_view_users": {}<br>}</pre> | no |
 | cluster\_name | The name of the AKS cluster to create, also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_version | The Kubernetes version to use for the AKS cluster. | `string` | `"1.19"` | no |

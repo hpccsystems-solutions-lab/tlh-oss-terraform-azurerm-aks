@@ -78,12 +78,12 @@ locals {
   node_pools = merge(values({ for pool in concat([local.system_node_pool], var.node_pools) :
     pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
-        availability_zones     = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
-        priority               = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
-        vm_size                = local.vm_types[pool.vm_size]
-        os_type                = pool.os_type
-        min_count              = pool.min_count
-        max_count              = pool.max_count
+        availability_zones = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
+        vm_size            = local.vm_types[pool.vm_size]
+        os_type            = pool.os_type
+        min_count          = pool.min_count
+        max_count          = pool.max_count
 
         node_labels = merge({
           "lnrs.io/lifecycle" = "ondemand"
