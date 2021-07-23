@@ -13,19 +13,9 @@ variable "skip_crds" {
   type        = bool
 }
 
-variable "prometheus_storage_class_name" {
-  description = "The storage class name to use for Prometheus."
-  type        = string
-}
-
 variable "prometheus_remote_write" {
   description = "Remote Prometheus endpoints to write metrics to."
   type        = list(any)
-}
-
-variable "alertmanager_storage_class_name" {
-  description = "The storage class name to use for Alert Manager."
-  type        = string
 }
 
 variable "alertmanager_smtp_host" {
@@ -63,19 +53,14 @@ variable "grafana_additional_data_sources" {
   type        = list(any)
 }
 
-variable "create_ingress" {
-  description = "If ingress resources should be created."
-  type        = bool
-}
-
 variable "ingress_domain" {
   description = "The domain to use for ingress resources."
   type        = string
 }
 
-variable "ingress_annotations" {
-  description = "The annotations for ingress resources."
-  type        = map(string)
+variable "ingress_subdomain_suffix" {
+  description = "The suffix for the ingress subdomain."
+  type        = string
 }
 
 variable "loki_enabled" {

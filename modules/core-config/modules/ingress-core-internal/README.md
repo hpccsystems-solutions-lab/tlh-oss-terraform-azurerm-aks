@@ -30,15 +30,22 @@ Deploy an ingress nodepool to host the ingress controller.
 ```yaml
   node_pools = [
     {
-      name = "public"
-      tier = "ingress"
-      lifecycle = "normal"
-      vm_size = "medium"
-      os_type = "Linux"
-      min_count = "3"
-      max_count = "6"
-      labels = {}
-      tags = {}
+      name        = "ingress"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Linux"
+      min_count   = "3"
+      max_count   = "6"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
     }
   ]
 ```
@@ -63,15 +70,22 @@ Deploy an ingress nodepool to host the ingress controller.
 ```yaml
   node_pools = [
     {
-      name = "public"
-      tier = "ingress"
-      lifecycle = "normal"
-      vm_size = "medium"
-      os_type = "Linux"
-      min_count = "3"
-      max_count = "6"
-      labels = {}
-      tags = {}
+      name        = "ingress"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Linux"
+      min_count   = "3"
+      max_count   = "6"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
     }
   ]
 ```

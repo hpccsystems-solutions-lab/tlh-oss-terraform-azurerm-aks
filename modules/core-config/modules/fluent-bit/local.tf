@@ -37,6 +37,10 @@ locals {
       operator = "Exists"
     }]
 
+    podLabels = {
+      "lnrs.io/k8s-platform" = "true"
+    }
+
     podAnnotations = {
       "fluentbit.io/exclude" = "true"
     }

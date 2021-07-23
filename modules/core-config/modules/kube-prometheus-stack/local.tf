@@ -4,6 +4,10 @@ locals {
   chart_version = "16.12.1"
 
   chart_values = {
+    commonLabels = {
+      "lnrs.io/k8s-platform" = "true"
+    }
+
     global = {
       rbac = {
         create     = true
@@ -22,20 +26,25 @@ locals {
 
     prometheus = {
       ingress = {
-        enabled          = var.create_ingress
-        annotations      = var.ingress_annotations
+        enabled = true
 
         ingressClassName = "core-internal"
         pathType         = "Prefix"
 
-        hosts = [ "prometheus-${var.cluster_name}.${var.ingress_domain}" ]
+        hosts = [ "prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         tls   = [{
-          "hosts"      = [ "prometheus-${var.cluster_name}.${var.ingress_domain}" ]
+          "hosts" = [ "prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         }]
       }
 
       prometheusSpec = {
         retention = "28d"
+
+        podMetadata = {
+          labels = {
+            "lnrs.io/k8s-platform"        = "true"
+          }
+        }
 
         priorityClassName = "system-cluster-critical"
 
@@ -73,7 +82,7 @@ locals {
         storageSpec = {
           volumeClaimTemplate = {
             spec = {
-              storageClassName = var.prometheus_storage_class_name
+              storageClassName = "azure-disk-premium-ssd-retain"
 
               accessModes : [
                 "ReadWriteOnce"
@@ -109,6 +118,12 @@ locals {
 
     alertmanager = {
       alertmanagerSpec = {
+        podMetadata = {
+          labels = {
+            "lnrs.io/k8s-platform"        = "true"
+          }
+        }
+
         priorityClassName = "system-cluster-critical"
 
         retention = "120h"
@@ -127,7 +142,7 @@ locals {
         storage = {
           volumeClaimTemplate = {
             spec = {
-              storageClassName = var.alertmanager_storage_class_name
+              storageClassName = "azure-disk-premium-ssd-retain"
 
               accessModes : [
                 "ReadWriteOnce"
@@ -185,15 +200,14 @@ locals {
       }
 
       ingress = {
-        enabled          = var.create_ingress
-        annotations      = var.ingress_annotations
+        enabled = true
 
         ingressClassName = "core-internal"
         pathType         = "Prefix"
 
-        hosts = [ "alertmanager-${var.cluster_name}.${var.ingress_domain}" ]
+        hosts = [ "alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         tls   = [{
-          "hosts"      = [ "alertmanager-${var.cluster_name}.${var.ingress_domain}" ]
+          "hosts" = [ "alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         }]
       }
     }
@@ -249,16 +263,15 @@ locals {
       ]
 
       ingress = {
-        enabled          = var.create_ingress
-        annotations      = var.ingress_annotations
+        enabled = true
 
         ingressClassName = "core-internal"
         pathType         = "Prefix"
-        path             = var.cluster_version == "1.18" ? "/*" : "/"
+        path             = "/"
 
-        hosts = [ "grafana-${var.cluster_name}.${var.ingress_domain}" ]
+        hosts = [ "grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         tls   = [{
-          "hosts"      = [ "grafana-${var.cluster_name}.${var.ingress_domain}" ]
+          "hosts" = [ "grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
         }]
       }
 
@@ -333,6 +346,10 @@ locals {
     prometheusOperator = {
       enabled = true
 
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
       priorityClassName = "system-cluster-critical"
 
       nodeSelector = {
@@ -390,6 +407,10 @@ locals {
     }
 
     prometheus-node-exporter = {
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
       priorityClassName = "system-node-critical"
 
       nodeSelector = {
