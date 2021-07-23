@@ -147,7 +147,6 @@ module "aks" {
       public          = true
       vm_size         = "medium"
       os_type         = "Linux"
-      host_encryption = true
       min_count       = "1"
       max_count       = "2"
       taints = [{
@@ -161,15 +160,14 @@ module "aks" {
       tags            = {}
     },
     {
-      name            = "pubw"
-      single_vmss     = true
-      public          = true
-      vm_size         = "medium"
-      os_type         = "Windows"
-      host_encryption = true
-      subnet          = "public"
-      min_count       = "1"
-      max_count       = "2"
+      name        = "pubw"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Windows"
+      subnet      = "public"
+      min_count   = "1"
+      max_count   = "2"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -178,23 +176,22 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags            = {}
+      tags        = {}
     },
     {
-      name            = "workers"
-      single_vmss     = false
-      public          = false
-      vm_size         = "large"
-      os_type         = "Linux"
-      host_encryption = true
-      min_count       = "1"
-      max_count       = "2"
-      taints          = []
+      name        = "workers"
+      single_vmss = false
+      public      = false
+      vm_size     = "large"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "2"
+      taints      = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
 
-      tags            = {}
+      tags        = {}
     }
   ]
 
