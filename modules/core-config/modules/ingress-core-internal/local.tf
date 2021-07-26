@@ -10,6 +10,10 @@ locals {
     ### controller ###
 
     controller = {
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
       podAnnotations = {
         "fluentbit.io/parser"  = "k8s-nginx-ingress"
       }
@@ -37,7 +41,6 @@ locals {
         "server-tokens"                = "false"
         "use-proxy-protocol"           = "false"
         "use-forwarded-headers"        = "true"
-        "proxy-real-ip-cidr"           = join(",", var.lb_cidrs)
       }
 
       proxySetHeaders = {
@@ -64,8 +67,8 @@ locals {
 
       autoscaling = {
         enabled                           = true
-        minReplicas                       = var.min_replicas
-        maxReplicas                       = var.max_replicas
+        minReplicas                       = 3
+        maxReplicas                       = 6
         targetCPUUtilizationPercentage    = 80
         targetMemoryUtilizationPercentage = 80
       }
@@ -151,6 +154,10 @@ locals {
       enabled      = true
       replicaCount = 3
       minAvailable = 1
+
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
 
       priorityClassName = ""
 

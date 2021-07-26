@@ -125,9 +125,9 @@ module "cert_manager" {
   letsencrypt_environment = local.cert_manager.letsencrypt_environment
   letsencrypt_email       = local.cert_manager.letsencrypt_email
 
-  dns_zones = local.cert_manager.dns_zones
+  dns_zones               = local.cert_manager.dns_zones
 
-  additional_issuers = local.cert_manager.additional_issuers
+  additional_issuers      = local.cert_manager.additional_issuers
 }
 
 module "ingress_core_internal" {
@@ -135,13 +135,10 @@ module "ingress_core_internal" {
 
   source = "./modules/ingress-core-internal"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  cluster_name     = var.cluster_name
+  cluster_version  = var.cluster_version
 
-  lb_cidrs         = local.ingress_core_internal.lb_cidrs
   lb_source_cidrs  = local.ingress_core_internal.lb_source_cidrs
-  min_replicas     = local.ingress_core_internal.min_replicas
-  max_replicas     = local.ingress_core_internal.max_replicas
 }
 
 module "kube_prometheus_stack" {
@@ -154,22 +151,19 @@ module "kube_prometheus_stack" {
 
   skip_crds = true
 
-  prometheus_storage_class_name = local.prometheus.storage_class_name
-  prometheus_remote_write       = local.prometheus.remote_write
+  prometheus_remote_write         = local.prometheus.remote_write
 
-  alertmanager_storage_class_name = local.alertmanager.storage_class_name
   alertmanager_smtp_host          = local.alertmanager.smtp_host
   alertmanager_smtp_from          = local.alertmanager.smtp_from
   alertmanager_receivers          = local.alertmanager.receivers
   alertmanager_routes             = local.alertmanager.routes
 
   grafana_admin_password          = local.grafana.admin_password
-  grafana_plugins                 = local.grafana.plugins
+  grafana_plugins                 = local.grafana.additional_plugins
   grafana_additional_data_sources = local.grafana.additional_data_sources
 
-  create_ingress      = local.internal_ingress_enabled
-  ingress_domain      = local.internal_ingress_domain
-  ingress_annotations = local.internal_ingress_annotations
+  ingress_domain                  = local.ingress_core_internal.domain
+  ingress_subdomain_suffix        = local.ingress_core_internal.subdomain_suffix
 
   loki_enabled = local.loki.enabled
 }
@@ -182,7 +176,6 @@ module "fluent-bit" {
   loki_enabled = local.loki.enabled
 
   tags = var.tags
-
 }
 
 module "fluentd" {
@@ -192,11 +185,10 @@ module "fluentd" {
 
   additional_env     = local.fluentd.additional_env
   debug              = local.fluentd.debug
-  podlabels          = local.fluentd.podlabels
+  pod_labels         = local.fluentd.pod_labels
   filter_config      = local.fluentd.filter_config
   route_config       = local.fluentd.route_config
   output_config      = local.fluentd.output_config
 
   tags = var.tags
-
 }

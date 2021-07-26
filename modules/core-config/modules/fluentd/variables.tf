@@ -1,8 +1,3 @@
-variable "podlabels" {
-  type = map
-  description = "Pod labels for the fluentd pods."
-}
-
 variable "additional_env" {
   description = "Additional environment variables."
   type        = list(any)
@@ -11,6 +6,11 @@ variable "additional_env" {
 variable "debug" {
   description = "If Fluentd should write all processed log entries to stdout."
   type        = bool
+}
+
+variable "pod_labels" {
+  description = "labels to assign to fluentd pods, used for pod-identity and cloud storage integration."
+  type        = map
 }
 
 variable "filter_config" {

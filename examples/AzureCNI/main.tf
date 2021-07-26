@@ -204,7 +204,7 @@ module "aks" {
       receivers = [{ name = "alerts", email_configs = [{ to = var.alerts_mailto, require_tls = false }]}]
     }
 
-    internal_ingress = {
+    ingress_core_internal = {
       domain    = "private.zone.azure.lnrsg.io"
     }
 

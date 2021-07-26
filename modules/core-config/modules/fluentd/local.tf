@@ -1,12 +1,14 @@
 locals {
   namespace = "logging"
 
-  chart_version = "2.5.0"
+  chart_version = "2.5.1"
 
   chart_values = {
     nameOverride = "fluentd"
 
-    podLabels: var.podlabels
+    podLabels = merge({
+      "lnrs.io/k8s-platform" = "true"
+    }, var.pod_labels)
 
     podAnnotations = {
       "fluentbit.io/exclude" = "true"

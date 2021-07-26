@@ -14,6 +14,11 @@ locals {
 
     replicas = 1
 
+    podLabels = {
+      aadpodidbinding        = module.identity.name
+      "lnrs.io/k8s-platform" = "true"
+    }
+
     priorityClassName = "system-cluster-critical"
 
     nodeSelector = {
@@ -58,9 +63,5 @@ locals {
     }
 
     domainFilters = [for name in var.dns_zones.names : name]
-
-    podLabels = {
-      aadpodidbinding = module.identity.name
-    }
   }
 }

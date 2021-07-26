@@ -1,8 +1,5 @@
 locals {
 
-  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
-  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
-
   letsencrypt_endpoint = {
     staging    = "https://acme-staging-v02.api.letsencrypt.org/directory"
     production = "https://acme-v02.api.letsencrypt.org/directory"
@@ -24,7 +21,8 @@ locals {
     }
 
     podLabels = {
-      aadpodidbinding = module.identity.name
+      aadpodidbinding        = module.identity.name
+      "lnrs.io/k8s-platform" = "true"
     }
 
     extraArgs = [
@@ -77,6 +75,10 @@ locals {
 
       replicaCount = 1
 
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
       extraArgs = [
         "--leader-elect=false",
       ]
@@ -115,6 +117,10 @@ locals {
     webhook = {
       securePort  = 10251
       hostNetwork = true
+
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
 
       nodeSelector = {
         "kubernetes.io/os"          = "linux"
@@ -198,4 +204,7 @@ locals {
       }
     }
   })
+
+  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }
