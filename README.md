@@ -4,11 +4,135 @@
 
 This module is designed to provide a simple and opinionated way to build standard AKS clusters and is based on the open-source [terraform-azurerm-kubernetes](https://github.com/Azure-Terraform/terraform-azurerm-kubernetes) module. This module takes a set of configuration options and creates a fully functional Kubernetes cluster with a common set of services.
 
-### Behavior
+---
+
+## Support Policy
+
+Support and use of this module.
+
+* RSG core engineering and architecture teams only support clusters deployed using this module
+  * It is not supported to use the open-source module directly, or any other method
+* Clusters **must** be updated by periodically applying this module within 1 month of the latest release
+* Operating system support:
+  * Linux - beta
+  * Windows - experimental (currently lacks daemonset support)
+
+---
+
+## Requirements
+
+See the [documentation index](/docs) for system architecture, dependencies and documentation for internal services.
+
+In particular, carefully review networking and DNS requirements.
+
+---
+
+## Usage
 
 This module is designed to provide a standard set of defaults for all node pools and optimized instance type selection for a given size.
 
-See [examples](/examples) for general usage and the [documentation index](/docs) for in-depth details for each subsystem or service.
+See [examples](/examples) for general usage and how to integrate AKS with other **mandatory** IOG modules (*e.g. Vnet, naming*). 
+
+<details>
+<summary markdown="span">AKS cluster with private and ingress node pools</summary>
+<br />
+A standalone configuration simply to highlight minimum requirements, plus describe core object structures.
+
+DO NOT copy this directly, see the examples folder for production cluster setup.
+<br />
+
+```terraform
+module "aks" {
+  source = ""github.com/LexisNexis-RBA/terraform-azurerm-aks?ref=v1"
+
+  cluster_name    = "ioa-aks-1"
+  cluster_version = "1.20"
+  
+  location            = "eastus"
+  resource_group_name = "IOA-AKS-1"
+  
+  virtual_network = {
+    subnets = {
+      private = { id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/virtualNetworks/AKS-1-vnet/subnets/private" }
+      public  = { id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/virtualNetworks/AKS-1-vnet/subnets/public" }
+    }
+    route_table_id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/routeTables/AKS-1-route-table"
+  }
+
+  node_pools = [
+    {
+      name        = "workers"
+      single_vmss = false
+      public      = false
+      vm_size     = "large"
+      os_type     = "Linux"
+      min_count   = "1"
+      max_count   = "3"
+      taints      = []
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+      tags        = {}
+    },
+    {
+      name        = "ingress"
+      single_vmss = true
+      public      = true
+      vm_size     = "medium"
+      os_type     = "Linux"
+      min_count   = "3"
+      max_count   = "6"
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      tags        = {}
+    }
+  ]
+
+  core_services_config = {
+    alertmanager = {
+      smtp_host = "smtp.lexisnexisrisk.com:25"
+      smtp_from = "ioa-eks-1@lexisnexisrisk.com"
+      receivers = [{ name = "alerts", email_configs = [{ to = "ioa-sre@lexisnexisrisk.com", require_tls = false }]}]
+    }
+  
+    cert_manager = {
+      dns_zones               = [ "ioa.useast.azure.lnrsg.io" ]
+      letsencrypt_environment = "production"
+    }
+
+    external_dns = {
+      zones               = [ "ioa.useast.azure.lnrsg.io" ]
+      resource_group_name = "IOA-DNS-ZONES"
+    }
+
+    ingress_core_internal = {
+      domain = "ioa.useast.azure.lnrsg.io"
+    }
+  }
+  
+  azuread_clusterrole_map = {
+    cluster_admin_users  = {
+      "James Murtagh" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
+    }
+    cluster_view_users   = {}
+    standard_view_users  = {}
+    standard_view_groups = {}
+  }
+
+  tags = {
+    "my-tag" = "tag value"
+  }
+}
+```
+
+</details>
+<br />
 
 ---
 
