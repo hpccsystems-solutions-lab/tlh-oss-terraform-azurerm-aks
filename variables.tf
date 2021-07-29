@@ -38,16 +38,6 @@ variable "cluster_version" {
   }
 }
 
-variable "configmaps" {
-  description = "Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable."
-  type = map(object({
-    name      = string
-    namespace = string
-    data      = map(string)
-  }))
-  default = {}
-}
-
 variable "core_services_config" {
   description = "Configuration options for core platform services"
   type        = any
@@ -56,12 +46,6 @@ variable "core_services_config" {
 variable "location" {
   description = "Azure region in which to build resources."
   type        = string
-}
-
-variable "namespaces" {
-  description = "List of namespaces to create on the cluster."
-  type        = list(string)
-  default     = []
 }
 
 variable "network_plugin" {
@@ -84,20 +68,20 @@ variable "node_pool_defaults" {
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
-    name            = string
-    single_vmss     = bool
-    public          = bool
-    vm_size         = string
-    os_type         = string
-    min_count       = number
-    max_count       = number
-    labels          = map(string)
-    taints          = list(object({
+    name         = string
+    single_vmss  = bool
+    public       = bool
+    node_type    = string
+    node_size    = string
+    min_capacity = number
+    max_capacity = number
+    labels       = map(string)
+    taints       = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags            = map(string)
+    tags         = map(string)
   }))
 
   validation {
@@ -120,17 +104,6 @@ variable "pod_cidr" {
 variable "resource_group_name" {
   description = "The name of the Resource Group to deploy the AKS cluster service to, must already exist."
   type        = string
-}
-
-variable "secrets" {
-  description = "Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable."
-  type = map(object({
-    name      = string
-    namespace = string
-    type      = string
-    data      = map(string)
-  }))
-  default = {}
 }
 
 variable "tags" {

@@ -76,9 +76,6 @@ module "core-config" {
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
-  namespaces = var.namespaces
-  configmaps = var.configmaps
-  secrets    = var.secrets
   config     = var.core_services_config
 
   tags = var.tags
