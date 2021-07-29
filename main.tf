@@ -28,7 +28,7 @@ module "kubernetes" {
 
   network_plugin          = local.network_plugin
   network_policy          = "calico"
-  pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
+  pod_cidr                = (local.network_plugin == "kubenet" ? var.podnet_cidr : null)
   network_profile_options = local.network_profile_options
 
   virtual_network = {

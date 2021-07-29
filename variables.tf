@@ -95,7 +95,7 @@ variable "node_pools" {
   }
 }
 
-variable "pod_cidr" {
+variable "podnet_cidr" {
   description = "CIDR range for pod IP addresses when using the `kubenet` network plugin."
   type        = string
   default     = "100.65.0.0/16"
