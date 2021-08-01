@@ -44,29 +44,29 @@ variable "tags" {
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
-    name            = string
-    single_vmss     = bool
-    public          = bool
-    vm_size         = string
-    os_type         = string
-    min_count       = number
-    max_count       = number
-    labels          = map(string)
-    taints          = list(object({
+    name         = string
+    single_vmss  = bool
+    public       = bool
+    node_type    = string
+    node_size    = string
+    min_capacity = number
+    max_capacity = number
+    labels       = map(string)
+    taints       = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags            = map(string)
+    tags         = map(string)
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && length(regexall("-win", pool.node_type)) == 0)]) == 0)
     error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && length(regexall("-win", pool.node_type)) > 0)]) == 0)
     error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
   }
 }
