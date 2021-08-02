@@ -1,5 +1,5 @@
 locals {
-  core_namespaces = [
+  namespaces = [
     "cert-manager",
     "dns",
     "logging",
@@ -7,16 +7,14 @@ locals {
     "monitoring"
   ]
 
-  namespaces = concat(local.core_namespaces, var.namespaces)
-
   #############
   ## Ingress ##
 
-  ingress_core_internal = merge({
+  ingress_internal_core = merge({
     domain             = ""
     subdomain_suffix   = var.cluster_name
     lb_source_cidrs    = [ "10.0.0.0/8", "100.65.0.0/16" ]
-  }, lookup(var.config, "ingress_core_internal", {}))
+  }, lookup(var.config, "ingress_internal_core", {}))
 
 
   ##############
@@ -29,10 +27,11 @@ locals {
   }, lookup(var.config, "external_dns", {}))
 
   cert_manager = merge({
-    letsencrypt_environment = ""
-    letsencrypt_email       = ""
+    letsencrypt_environment = "Staging"
     dns_zones               = {}
     additional_issuers      = {}
+    default_issuer_kind     = "ClusterIssuer"
+    default_issuer_name     = "letsencrypt-issuer"
   }, lookup(var.config, "cert_manager", {}))
 
   loki = merge({

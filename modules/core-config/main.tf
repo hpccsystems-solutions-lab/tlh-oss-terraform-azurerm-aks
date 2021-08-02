@@ -16,33 +16,6 @@ resource "kubernetes_namespace" "default" {
   }
 }
 
-resource "kubernetes_secret" "default" {
-  depends_on = [kubernetes_namespace.default]
-
-  for_each = var.secrets
-
-  metadata {
-    name      = each.value.name
-    namespace = each.value.namespace
-  }
-
-  type = each.value.type
-  data = each.value.data
-}
-
-resource "kubernetes_config_map" "default" {
-  depends_on = [kubernetes_namespace.default]
-
-  for_each = var.configmaps
-
-  metadata {
-    name      = each.value.name
-    namespace = each.value.namespace
-  }
-
-  data = each.value.data
-}
-
 module "storage_classes" {
   source = "./modules/storage-classes"
 }
@@ -123,11 +96,13 @@ module "cert_manager" {
   tags                    = var.tags
 
   letsencrypt_environment = local.cert_manager.letsencrypt_environment
-  letsencrypt_email       = local.cert_manager.letsencrypt_email
-
   dns_zones               = local.cert_manager.dns_zones
-
   additional_issuers      = local.cert_manager.additional_issuers
+  default_issuer_kind     = local.cert_manager.default_issuer_kind
+  default_issuer_name     = local.cert_manager.default_issuer_name
+
+
+  ingress_internal_core_domain = local.ingress_internal_core.domain
 }
 
 module "ingress_core_internal" {
@@ -138,7 +113,7 @@ module "ingress_core_internal" {
   cluster_name     = var.cluster_name
   cluster_version  = var.cluster_version
 
-  lb_source_cidrs  = local.ingress_core_internal.lb_source_cidrs
+  lb_source_cidrs  = local.ingress_internal_core.lb_source_cidrs
 }
 
 module "kube_prometheus_stack" {
@@ -162,8 +137,8 @@ module "kube_prometheus_stack" {
   grafana_plugins                 = local.grafana.additional_plugins
   grafana_additional_data_sources = local.grafana.additional_data_sources
 
-  ingress_domain                  = local.ingress_core_internal.domain
-  ingress_subdomain_suffix        = local.ingress_core_internal.subdomain_suffix
+  ingress_domain                  = local.ingress_internal_core.domain
+  ingress_subdomain_suffix        = local.ingress_internal_core.subdomain_suffix
 
   loki_enabled = local.loki.enabled
 }

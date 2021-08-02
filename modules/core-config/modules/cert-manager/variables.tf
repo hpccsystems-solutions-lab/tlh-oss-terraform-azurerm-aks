@@ -34,11 +34,6 @@ variable "resource_group_location" {
   description = "The location of the resource group of your AKS cluster"
 }
 
-variable "tags" {
-  description = "Tags to be applied to all resources"
-  type        = map(string)
-}
-
 variable "dns_zones" {
   description = "The name and resource group of the DNS zone associated with your Azure subscription"
   type        = map(string)
@@ -54,12 +49,27 @@ variable "letsencrypt_environment" {
   }
 }
 
-variable "letsencrypt_email" {
-  description = "Email address for expiration notifications."
-  type        = string
-}
-
 variable "additional_issuers" {
   description = "Issuers in addition to the default Let's Encrypt cluster issuer to add to the cluster."
   type        = map(any)
+}
+
+variable "default_issuer_kind" {
+  description = "The default issuer kind."
+  type        = string
+}
+
+variable "default_issuer_name" {
+  description = "The default issuer."
+  type        = string
+}
+
+variable "ingress_internal_core_domain" {
+  description = "The domain to use for internal ingress resources."
+  type        = string
+}
+
+variable "tags" {
+  description = "Tags to be applied to all resources"
+  type        = map(string)
 }
