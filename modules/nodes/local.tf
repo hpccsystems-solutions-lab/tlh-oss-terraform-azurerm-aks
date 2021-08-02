@@ -34,7 +34,6 @@ locals {
     max_surge            = "1"
     orchestrator_version = var.orchestrator_version
     },
-    var.node_pool_defaults,
     { # These default settings cannot be overridden
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"

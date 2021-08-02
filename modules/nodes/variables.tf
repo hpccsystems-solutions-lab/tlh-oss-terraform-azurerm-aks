@@ -29,12 +29,6 @@ variable "orchestrator_version" {
   default     = null
 }
 
-variable "node_pool_defaults" {
-  description = "Override default values for the nodes, this will NOT override the values that the module sets directly."
-  type        = any
-  default     = {}
-}
-
 variable "tags" {
   description = "Additional tags for all nodes."
   type        = map(string)
