@@ -136,8 +136,6 @@ module "aks" {
   tags                 = module.metadata.tags
   resource_group_name  = module.resource_group.name
 
-  node_pool_defaults = {}
-
   node_pools = [
     {
       name         = "ingress"
