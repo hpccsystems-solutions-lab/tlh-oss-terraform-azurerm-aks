@@ -55,11 +55,11 @@ variable "core_services_config" {
     error_message = "The config variable for ingress_internal_core doesn't have all the required fields, please check the module README."
   }
 
-  #validation {
-  #  condition     = (lookup(var.core_services_config, "ingress_internal_core", null) != null &&
-  #                   length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "letsencrypt_dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
-  #  error_message = "The domain attribute of ingress_internal_core must be a key of the letsencrypt_dns_zones attribute of cert_manager, please check the module README."
-  #}
+  validation {
+    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+                     length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
+    error_message = "The domain attribute of ingress_internal_core must be a key of the dns_zones attribute of cert_manager, please check the module README."
+  }
 }
 
 variable "location" {
