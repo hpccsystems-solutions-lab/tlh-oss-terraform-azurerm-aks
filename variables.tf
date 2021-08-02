@@ -41,6 +41,25 @@ variable "cluster_version" {
 variable "core_services_config" {
   description = "Configuration options for core platform services"
   type        = any
+
+  validation {
+    condition     = (lookup(var.core_services_config, "alertmanager", null) == null ||
+                     (length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 &&
+                      length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0))
+    error_message = "The config variable for alertmanager doesn't have all the required fields, please check the module README."
+  }
+
+  validation {
+    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+                     length(lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", "")) > 0)
+    error_message = "The config variable for ingress_internal_core doesn't have all the required fields, please check the module README."
+  }
+
+  #validation {
+  #  condition     = (lookup(var.core_services_config, "ingress_internal_core", null) != null &&
+  #                   length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "letsencrypt_dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
+  #  error_message = "The domain attribute of ingress_internal_core must be a key of the letsencrypt_dns_zones attribute of cert_manager, please check the module README."
+  #}
 }
 
 variable "location" {
@@ -57,12 +76,6 @@ variable "network_plugin" {
     condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
     error_message = "Network plugin must be kubenet or azure."
   }
-}
-
-variable "node_pool_defaults" {
-  description = "Override default values for the node pools, this will NOT override the values that the module sets directly."
-  type        = any
-  default     = {}
 }
 
 variable "node_pools" {
@@ -125,10 +138,4 @@ variable "virtual_network" {
     })
     route_table_id = string
   })
-}
-
-variable "vm_types" {
-  description = "Extend or overwrite the default vm types map."
-  type        = map(string)
-  default     = {}
 }
