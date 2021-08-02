@@ -7,11 +7,20 @@ azuread_clusterrole_map = {
   standard_view_groups = {}
 }
 
-smtp_host     = "smptp.foo.bar"
-smtp_from     = "foo@bar.com"
-alerts_mailto = "bar@foo.com"
-
-config = {
+core_services_config = {
+  alertmanager = {
+      smtp_host = "smptp.foo.bar"
+      smtp_from = "foo@bar.com"
+      receivers = [
+        { name = "alerts", 
+          email_configs = [
+            { to          = "bar@foo.com"
+              require_tls = false
+            }
+          ]
+        }
+      ]
+  }
   external_dns = {
     resource_group_name = "app-dns-prod-eastus2" 
     zones               = ["us-infrastructure-dev.azure.lnrsg.io"]
@@ -21,5 +30,8 @@ config = {
     dns_zones = {
       "us-infrastructure-dev.azure.lnrsg.io" = "app-dns-prod-eastus2"
     }
+  }
+  ingress_internal_core = {
+    domain = "us-infrastructure-dev.azure.lnrsg.io"
   }
 }

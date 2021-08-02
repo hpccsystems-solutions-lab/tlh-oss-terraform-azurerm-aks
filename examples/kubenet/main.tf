@@ -140,13 +140,13 @@ module "aks" {
 
   node_pools = [
     {
-      name        = "ingress"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
+      name         = "ingress"
+      single_vmss  = true
+      public       = true
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = 1
+      max_capacity = 2
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -155,41 +155,27 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags         = {}
     },
     {
-      name        = "workers"
-      single_vmss = false
-      public      = false
-      vm_size     = "large"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
-      taints      = []
+      name         = "workers"
+      single_vmss  = false
+      public       = false
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = 1
+      max_capacity = 2
+      taints       = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags        = {}
+      tags         = {}
     }
   ]
 
   virtual_network = module.virtual_network.aks["demo"]
 
-  core_services_config = merge({
-    alertmanager = {
-      smtp_host = var.smtp_host
-      smtp_from = var.smtp_from
-      receivers = [{ name = "alerts", email_configs = [{ to = var.alerts_mailto, require_tls = false }]}]
-    }
-
-    ingress_core_internal = {
-      domain    = "private.zone.azure.lnrsg.io"
-    }
-
-    cert_manager = {
-      letsencrypt_environment = "staging"
-    }
-  }, var.config)
+  core_services_config = var.core_services_config
 
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map

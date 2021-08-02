@@ -16,23 +16,8 @@ variable "azuread_clusterrole_map" {
   }
 }
 
-variable "config" {
+variable "core_services_config" {
   description = "cluster config"
   type        = any
   default     = {}
-}
-
-variable "smtp_host" {
-  description = "SMTP host and optionally appended port to send alerts to"
-  type = string
-}
-
-variable "smtp_from" {
-  description = "Email address alerts are sent from"
-  type = string
-}
-
-variable "alerts_mailto" {
-  description = "Email address alerts are sent to"
-  type = string
 }
