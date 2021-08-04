@@ -9,7 +9,6 @@ module "nodes" {
 
   orchestrator_version   = local.cluster_patch_version
 
-  node_pool_defaults = var.node_pool_defaults
   node_pools         = var.node_pools
   tags               = var.tags
 }
@@ -28,7 +27,7 @@ module "kubernetes" {
 
   network_plugin          = local.network_plugin
   network_policy          = "calico"
-  pod_cidr                = (local.network_plugin == "kubenet" ? var.pod_cidr : null)
+  pod_cidr                = (local.network_plugin == "kubenet" ? var.podnet_cidr : null)
   network_profile_options = local.network_profile_options
 
   virtual_network = {
@@ -76,9 +75,6 @@ module "core-config" {
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
-  namespaces = var.namespaces
-  configmaps = var.configmaps
-  secrets    = var.secrets
   config     = var.core_services_config
 
   tags = var.tags

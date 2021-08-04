@@ -2,11 +2,11 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.57.0"
+      version = "~>2.66.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = ">=2.3.0"
+      version = "~>2.3.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -14,10 +14,10 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">=2.0.3"
+      version = "~>2.0.3"
     }
   }
-  required_version = ">=0.14.8"
+  required_version = "~>1.0.0"
 }
 
 provider "azurerm" {
@@ -42,7 +42,7 @@ provider "helm" {
 }
 
 data "http" "my_ip" {
-  url = "https://icanhazip.com"
+  url = "https://ifconfig.me"
 }
 
 data "azurerm_subscription" "current" {
@@ -101,15 +101,15 @@ module "virtual_network" {
 
   enforce_subnet_names = false
 
-  address_space = ["10.1.0.0/22"]
+  address_space = ["10.1.0.0/21"]
 
   aks_subnets = {
     demo = {
       private = {
-        cidrs = ["10.1.0.0/24"]
+        cidrs = ["10.1.0.0/22"]
       }
       public = {
-        cidrs = ["10.1.1.0/24"]
+        cidrs = ["10.1.4.0/22"]
       }
       route_table = {
         disable_bgp_route_propagation = true
@@ -131,24 +131,22 @@ module "virtual_network" {
 module "aks" {
   source = "../../"
 
-  cluster_name        = random_string.random.result
-  location            = module.metadata.location
-  tags                = module.metadata.tags
-  resource_group_name = module.resource_group.name
+  cluster_name         = random_string.random.result
+  location             = module.metadata.location
+  tags                 = module.metadata.tags
+  resource_group_name  = module.resource_group.name
 
   network_plugin = "azure"
 
-  node_pool_defaults = {}
-
   node_pools = [
     {
-      name            = "ingress"
-      single_vmss     = true
-      public          = true
-      vm_size         = "medium"
-      os_type         = "Linux"
-      min_count       = "1"
-      max_count       = "2"
+      name         = "ingress"
+      single_vmss  = true
+      public       = true
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = 1
+      max_capacity = 2
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -157,61 +155,41 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags            = {}
+      tags         = {}
     },
     {
-      name        = "pubw"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Windows"
-      subnet      = "public"
-      min_count   = "1"
-      max_count   = "2"
-      taints = [{
-        key    = "ingress"
-        value  = "true"
-        effect = "NO_SCHEDULE"
-      }]
-      labels = {
-        "lnrs.io/tier" = "ingress"
-      }
-      tags        = {}
-    },
-    {
-      name        = "workers"
-      single_vmss = false
-      public      = false
-      vm_size     = "large"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "2"
-      taints      = []
+      name         = "winw"
+      single_vmss  = false
+      public       = false
+      node_type    = "x64-gp-win"
+      node_size    = "medium"
+      min_capacity = 1
+      max_capacity = 2
+      taints       = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-
-      tags        = {}
+      tags         = {}
+    },
+    {
+      name         = "workers"
+      single_vmss  = false
+      public       = false
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = 1
+      max_capacity = 2
+      taints       = []
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+      tags         = {}
     }
   ]
 
   virtual_network = module.virtual_network.aks["demo"]
 
-  core_services_config = merge({
-    alertmanager = {
-      smtp_host = var.smtp_host
-      smtp_from = var.smtp_from
-      receivers = [{ name = "alerts", email_configs = [{ to = var.alerts_mailto, require_tls = false }]}]
-    }
-
-    ingress_core_internal = {
-      domain    = "private.zone.azure.lnrsg.io"
-    }
-
-    cert_manager = {
-      letsencrypt_environment = "staging"
-    }
-  }, var.config)
+  core_services_config = var.core_services_config
 
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map

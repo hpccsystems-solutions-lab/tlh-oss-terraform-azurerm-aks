@@ -30,38 +30,41 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "The Kubernetes minor version to use for the AKS cluster."
   type        = string
-  default     = "1.20"
+  default     = "1.21"
 
   validation {
-    condition     = contains(["1.20", "1.19"], var.cluster_version)
-    error_message = "This module only supports AKS versions 1.20 & 1.19."
+    condition     = contains(["1.21", "1.20", "1.19"], var.cluster_version)
+    error_message = "This module only supports AKS versions 1.21, 1.20 & 1.19."
   }
-}
-
-variable "configmaps" {
-  description = "Map of configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable."
-  type = map(object({
-    name      = string
-    namespace = string
-    data      = map(string)
-  }))
-  default = {}
 }
 
 variable "core_services_config" {
   description = "Configuration options for core platform services"
   type        = any
+
+  validation {
+    condition     = (lookup(var.core_services_config, "alertmanager", null) == null ||
+                     (length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 &&
+                      length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0))
+    error_message = "The config variable for alertmanager doesn't have all the required fields, please check the module README."
+  }
+
+  validation {
+    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+                     length(lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", "")) > 0)
+    error_message = "The config variable for ingress_internal_core doesn't have all the required fields, please check the module README."
+  }
+
+  validation {
+    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+                     length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
+    error_message = "The domain attribute of ingress_internal_core must be a key of the dns_zones attribute of cert_manager, please check the module README."
+  }
 }
 
 variable "location" {
   description = "Azure region in which to build resources."
   type        = string
-}
-
-variable "namespaces" {
-  description = "List of namespaces to create on the cluster."
-  type        = list(string)
-  default     = []
 }
 
 variable "network_plugin" {
@@ -75,43 +78,37 @@ variable "network_plugin" {
   }
 }
 
-variable "node_pool_defaults" {
-  description = "Override default values for the node pools, this will NOT override the values that the module sets directly."
-  type        = any
-  default     = {}
-}
-
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
-    name            = string
-    single_vmss     = bool
-    public          = bool
-    vm_size         = string
-    os_type         = string
-    min_count       = number
-    max_count       = number
-    labels          = map(string)
-    taints          = list(object({
+    name         = string
+    single_vmss  = bool
+    public       = bool
+    node_type    = string
+    node_size    = string
+    min_capacity = number
+    max_capacity = number
+    labels       = map(string)
+    taints       = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags            = map(string)
+    tags         = map(string)
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && lower(pool.os_type) == "linux")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && length(regexall("-win", pool.node_type)) == 0)]) == 0)
     error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && lower(pool.os_type) == "windows")]) == 0)
+    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && length(regexall("-win", pool.node_type)) > 0)]) == 0)
     error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
   }
 }
 
-variable "pod_cidr" {
+variable "podnet_cidr" {
   description = "CIDR range for pod IP addresses when using the `kubenet` network plugin."
   type        = string
   default     = "100.65.0.0/16"
@@ -120,17 +117,6 @@ variable "pod_cidr" {
 variable "resource_group_name" {
   description = "The name of the Resource Group to deploy the AKS cluster service to, must already exist."
   type        = string
-}
-
-variable "secrets" {
-  description = "Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable."
-  type = map(object({
-    name      = string
-    namespace = string
-    type      = string
-    data      = map(string)
-  }))
-  default = {}
 }
 
 variable "tags" {
@@ -152,10 +138,4 @@ variable "virtual_network" {
     })
     route_table_id = string
   })
-}
-
-variable "vm_types" {
-  description = "Extend or overwrite the default vm types map."
-  type        = map(string)
-  default     = {}
 }

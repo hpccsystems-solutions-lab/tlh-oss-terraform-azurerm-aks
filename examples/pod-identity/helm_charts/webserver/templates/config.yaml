@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scripts
-data:
-  startup: {{ (tpl (.Files.Get "scripts/startup.sh") . | quote ) }}
