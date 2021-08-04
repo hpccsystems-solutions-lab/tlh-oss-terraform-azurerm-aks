@@ -27,7 +27,7 @@ locals {
   }, lookup(var.config, "external_dns", {}))
 
   cert_manager = merge({
-    letsencrypt_environment = "Production"
+    letsencrypt_environment = "production"
     dns_zones               = {}
     additional_issuers      = {}
     default_issuer_kind     = "ClusterIssuer"
