@@ -140,17 +140,17 @@ module "aks" {
 
 | Version   |
 |-----------|
-| ~> 1.0 |
+| >= 1.0 |
 
 ## Providers
 
 | Name       | Version   |
 |------------|-----------|
-| azurerm    | ~> 2.66 |
-| helm       | ~> 2.1  |
-| kubectl    | ~> 1.10 |
-| kubernetes | ~> 1.13 |
-| time       | ~> 0.7  |
+| azurerm    | >= 2.71   |
+| helm       | >= 2.1.2  |
+| kubectl    | >= 1.10.1 |
+| kubernetes | ~> 1.13   |
+| time       | >= 0.7.2  |
 
 ## Inputs
 
