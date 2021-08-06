@@ -140,17 +140,17 @@ module "aks" {
 
 | Version   |
 |-----------|
-| >= 0.14.8 |
+| ~> 1.0 |
 
 ## Providers
 
 | Name       | Version   |
 |------------|-----------|
-| azurerm    | >= 2.65.0 |
-| helm       | >= 2.1.1  |
-| kubectl    | >= 1.10.0 |
-| kubernetes | ~> 1.13   |
-| time       | >= 0.7.1  |
+| azurerm    | ~> 2.66 |
+| helm       | ~> 2.1  |
+| kubectl    | ~> 1.10 |
+| kubernetes | ~> 1.13 |
+| time       | ~> 0.7  |
 
 ## Inputs
 
@@ -160,16 +160,12 @@ module "aks" {
 | `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                           | `object(map(string))` _(see appendix a)_ | `{}`              | `no`         |
 | `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                              | `string`                                 | `nil`             | `yes`        |
 | `cluster_version`                 | The Kubernetes minor version. Versions `1.19` & `1.20` supported.                                          | `string`                                 | `"1.20"`          | `no`         |
-| `configmaps`                      | Configmaps to apply to the cluster, the namespace must already exist or be in the namespaces variable.     | `map(object)` _(see appendix f)_         | `{}`              | `no`         |
 | `core_services_config`            | Configuration options for core platform services                                                           | `any` _(see appendix h)_                 | `nil`             | `yes`        |
 | `location`                        | Azure region in which to build resources.                                                                  | `string`                                 | `nil`             | `yes`        |
-| `namespaces`                      | List of additional namespaces to create on the cluster.                                                    | `list(string)`                           | `[]`              | `no`         |
 | `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                               | `string`                                 | `"kubenet"`       | `no`         |
-| `node_pool_defaults`              | Override default values for node pools, this will NOT override the values that the module sets directly.   | `any`                                    | `{}`              | `no`         |
 | `node_pools`                      | Node pool definitions.                                                                                     | `list(object())` _(see appendix b)_      | `nil`             | `yes`        |
-| `pod_cidr`                        | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                   | `string`                                 | `"100.65.0.0/16"` | `no`         |
+| `podnet_cidr`                        | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                   | `string`                                 | `"100.65.0.0/16"` | `no`         |
 | `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                  | `string`                                 | `nil`             | `yes`        |
-| `secrets`                         | Map of secrets to apply to the cluster, the namespace must already exist or be in the namespaces variable. | `map(object)` _(see appendix g)_         | `nil`             | `no`         |
 | `tags`                            | Tags to be applied to cloud resources.                                                                     | `map(string)`                            | `{}`              | `no`         |
 | `virtual_network`                 | Virtual network configuration.                                                                             | `object(map)` _(see appendix d)_         | `nil`             | `yes`        |
 | `vm_types`                        | Extend or overwrite the default vm types map.                                                              | `map(string)`                            | `nil`             | `no`         |
@@ -237,40 +233,19 @@ module "aks" {
 
 ### Appendix F
 
-`configmaps` object specification.
-
-| **Variable**| **Description**           | **Type**      | **Default** |
-| :---------- | :------------------------ | :------------ | :---------- |
-| `name`      | Name of the configmap.    | `string`      | `nil`       |
-| `namespace` | Namespace to apply to.    | `string`      | `nil`       |
-| `data`      | Content.                  | `map(string)` | `nil`       |
-
-### Appendix G
-
-`secrets` object specification.
-
-| **Variable**| **Description**           | **Type**      | **Default** |
-| :---------- | :------------------------ | :------------ | :---------- |
-| `name`      | Name of the secret.       | `string`      | `nil`       |
-| `namespace` | Namespace to apply to.    | `string`      | `nil`       |
-| `type`      | Type of secret.           | `string`      | `nil`       |
-| `data`      | Content.                  | `map(string)` | `nil`       |
-
-### Appendix H
-
 `core_services_config` object specification.
 
 | **Variable**            | **Description**                             | **Type**                 |
 | :---------------------- | :------------------------------------------ | :----------------------- |
-| `alertmanager`          | _Alert Manager_ configuration.              | `any` _(see appendix i)_ |
-| `cert_manager`          | _Cert Manager_ configuration.               | `any` _(see appendix j)_ |
-| `external_dns`          | _External DNS_ configuration.               | `any` _(see appendix k)_ |
-| `fluentd`               | _Fluentd_ configuration.                    | `any` _(see appendix l)_ |
-| `grafana`               | _Grafana_ configuration.                    | `any` _(see appendix m)_ |
-| `ingress_core_internal` | Ingress configuration.                      | `any` _(see appendix n)_ |
-| `prometheus`            | _Prometheus_ configuration.                 | `any` _(see appendix o)_ |
+| `alertmanager`          | _Alert Manager_ configuration.              | `any` _(see appendix G)_ |
+| `cert_manager`          | _Cert Manager_ configuration.               | `any` _(see appendix H)_ |
+| `external_dns`          | _External DNS_ configuration.               | `any` _(see appendix I)_ |
+| `fluentd`               | _Fluentd_ configuration.                    | `any` _(see appendix J)_ |
+| `grafana`               | _Grafana_ configuration.                    | `any` _(see appendix K)_ |
+| `ingress_internal_core` | _Ingress_ configuration.                    | `any` _(see appendix L)_ |
+| `prometheus`            | _Prometheus_ configuration.                 | `any` _(see appendix M)_ |
 
-### Appendix I
+### Appendix G
 
 `alertmanager` object specification.
 
@@ -281,7 +256,7 @@ module "aks" {
 | `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `any`    | No           |
 | `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `any`    | No           |
 
-### Appendix J
+### Appendix H
 
 `cert_manager` object specification.
 
@@ -292,7 +267,7 @@ module "aks" {
 | `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`       | No           |
 | `additional_issuers`      | Additional issuers to install into the cluster.                                                                               | `map(any)`     | No           |
 
-### Appendix K
+### Appendix I
 
 `external_dns` object specification.
 
@@ -302,7 +277,7 @@ module "aks" {
 | `resource_group_name` | Name of the Azure Resource Group hosting DNZ zones, zones managed by external-dns must be in the same group. | `string`       | No           |
 | `zones`               | A list of DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
 
-### Appendix L
+### Appendix J
 
 `fluentd` object specification.
 
@@ -315,7 +290,7 @@ module "aks" {
 | `route_config`   | _Fluentd_ route configuration\_.                                                     | `string`      | No           |
 | `output_config`  | _Fluentd_ output configuration\_.                                                    | `string`      | No           |
 
-### Appendix M
+### Appendix K
 
 `grafana` object specification.
 
@@ -325,9 +300,9 @@ module "aks" {
 | `additional_data_sources` | Additional data sources.       | `list(any)`    | No           |
 | `additional_plugins`      | Additional plugins to install. | `list(string)` | No           |
 
-### Appendix N
+### Appendix L
 
-`ingress_core_internal` object specification.
+`ingress_internal_core` object specification.
 
 | **Variable**       | **Description**                                                                                                  | **Type**      | **Required** |
 | :----------------- | :--------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
@@ -335,7 +310,7 @@ module "aks" {
 | `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                              | `string`      | No           |
 | `lb_source_cidrs`  | Source CIDR ranges accepted by the ingress load balancer, defaults to `10.0.0.0/8` & `100.65.0.0/16` (POD CIDR). | `list(string)`| No           |
 
-### Appendix O
+### Appendix M
 
 `prometheus` object specification.
 
