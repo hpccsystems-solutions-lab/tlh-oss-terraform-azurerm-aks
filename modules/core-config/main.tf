@@ -105,10 +105,10 @@ module "cert_manager" {
   ingress_internal_core_domain = local.ingress_internal_core.domain
 }
 
-module "ingress_core_internal" {
+module "ingress_internal_core" {
   depends_on = [module.cert_manager]
 
-  source = "./modules/ingress-core-internal"
+  source = "./modules/ingress_internal_core"
 
   cluster_name     = var.cluster_name
   cluster_version  = var.cluster_version
@@ -117,7 +117,7 @@ module "ingress_core_internal" {
 }
 
 module "kube_prometheus_stack" {
-  depends_on = [module.ingress_core_internal]
+  depends_on = [module.ingress_internal_core]
 
   source = "./modules/kube-prometheus-stack"
 
