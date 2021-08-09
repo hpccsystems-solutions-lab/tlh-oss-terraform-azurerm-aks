@@ -14,7 +14,6 @@ variable "subnets" {
 variable "availability_zones" {
   description = "Availability zones to use for cluster."
   type        = list(number)
-  default     = [1, 2, 3]
 }
 
 variable "vm_types" {
