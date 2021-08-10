@@ -61,27 +61,27 @@ module "aks" {
 
   node_pools = [
     {
-      name        = "workers"
-      single_vmss = false
-      public      = false
+      name         = "workers"
+      single_vmss  = false
+      public       = false
       node_type    = "x64-gp"
       node_size    = "medium"
-      min_count   = "3"
-      max_count   = "6"
-      taints      = []
+      min_capacity = "3"
+      max_capacity = "6"
+      taints = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags        = {}
+      tags         = {}
     },
     {
-      name        = "ingress"
-      single_vmss = true
-      public      = true
+      name         = "ingress"
+      single_vmss  = true
+      public       = true
       node_type    = "x64-gp"
       node_size    = "medium"
-      min_count   = "2"
-      max_count   = "4"
+      min_capacity = "2"
+      max_capacity = "4"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -90,7 +90,7 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags         = {}
     }
   ]
 
