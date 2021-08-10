@@ -28,7 +28,7 @@ locals {
   }
 
   node_pool_defaults = merge({
-    availability_zones   = var.availability_zones
+    availability_zones   = [1,2,3]
     enable_auto_scaling  = true
     max_pods             = null
     max_surge            = "1"

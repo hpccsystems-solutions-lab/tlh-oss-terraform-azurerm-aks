@@ -67,12 +67,6 @@ variable "location" {
   type        = string
 }
 
-variable "availability_zones" {
-  description = "Azure availability zones to use."
-  type        = list(number)
-  default     = [1, 2, 3]
-}
-
 variable "network_plugin" {
   description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string

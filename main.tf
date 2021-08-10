@@ -1,7 +1,6 @@
 module "nodes" {
   source = "./modules/nodes"
 
-  availability_zones   = var.availability_zones
   cluster_name         = local.cluster_name
   orchestrator_version = local.cluster_patch_version
 
