@@ -38,6 +38,7 @@ locals {
       priority                     = "Regular"
       type                         = "VirtualMachineScaleSets"
       enable_host_encryption       = true
+      enable_node_public_ip        = false
       eviction_policy              = null
       proximity_placement_group_id = null
       spot_max_price               = null
@@ -53,7 +54,6 @@ locals {
       node_labels           = null
       tags                  = null
       subnet                = null
-      enable_node_public_ip = null
       mode                  = null
   })
 
@@ -107,8 +107,7 @@ locals {
         ]
         tags        = merge(local.tags, pool.tags)
 
-        subnet                       = (pool.public ? "public" : "private")
-        enable_node_public_ip        = (pool.public ? true : false)
+        subnet = (pool.public ? "public" : "private")
 
         mode                         = (pool.name == local.system_node_pool.name ? "System" : "User")
         only_critical_addons_enabled = ((pool.name == local.system_node_pool.name && zone == 1) ? true : false)
