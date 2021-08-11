@@ -80,8 +80,8 @@ module "aks" {
       public       = true
       node_type    = "x64-gp"
       node_size    = "medium"
-      min_capacity = "2"
-      max_capacity = "4"
+      min_capacity = "1"
+      max_capacity = "3"
       taints = [{
         key    = "ingress"
         value  = "true"
