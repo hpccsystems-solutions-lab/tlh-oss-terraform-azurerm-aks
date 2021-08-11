@@ -161,8 +161,8 @@ module "aks" {
       public       = false
       node_type    = "x64-gp"
       node_size    = "medium"
-      min_capacity = 1
-      max_capacity = 2
+      min_capacity = 3
+      max_capacity = 6
       taints       = []
       labels = {
         "lnrs.io/tier" = "standard"

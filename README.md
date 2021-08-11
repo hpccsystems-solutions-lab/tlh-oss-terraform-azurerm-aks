@@ -61,27 +61,27 @@ module "aks" {
 
   node_pools = [
     {
-      name        = "workers"
-      single_vmss = false
-      public      = false
-      vm_size     = "large"
-      os_type     = "Linux"
-      min_count   = "1"
-      max_count   = "3"
-      taints      = []
+      name         = "workers"
+      single_vmss  = false
+      public       = false
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = "3"
+      max_capacity = "6"
+      taints = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags        = {}
+      tags         = {}
     },
     {
-      name        = "ingress"
-      single_vmss = true
-      public      = true
-      vm_size     = "medium"
-      os_type     = "Linux"
-      min_count   = "3"
-      max_count   = "6"
+      name         = "ingress"
+      single_vmss  = true
+      public       = true
+      node_type    = "x64-gp"
+      node_size    = "medium"
+      min_capacity = "1"
+      max_capacity = "3"
       taints = [{
         key    = "ingress"
         value  = "true"
@@ -90,7 +90,7 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags        = {}
+      tags         = {}
     }
   ]
 
@@ -159,7 +159,7 @@ module "aks" {
 | `api_server_authorized_ip_ranges` | Public IP or CIDR ranges to apply as a whitelist to the K8S API server, if not set defaults to `0.0.0.0/0`.| `map(string)`                            | `nil`             | `no`         |
 | `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                           | `object(map(string))` _(see appendix a)_ | `{}`              | `no`         |
 | `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                              | `string`                                 | `nil`             | `yes`        |
-| `cluster_version`                 | The Kubernetes minor version. Versions `1.19` & `1.20` supported.                                          | `string`                                 | `"1.20"`          | `no`         |
+| `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                          | `string`                                 | `"1.21"`          | `no`         |
 | `core_services_config`            | Configuration options for core platform services                                                           | `any` _(see appendix h)_                 | `nil`             | `yes`        |
 | `location`                        | Azure region in which to build resources.                                                                  | `string`                                 | `nil`             | `yes`        |
 | `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                               | `string`                                 | `"kubenet"`       | `no`         |
@@ -168,7 +168,6 @@ module "aks" {
 | `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                  | `string`                                 | `nil`             | `yes`        |
 | `tags`                            | Tags to be applied to cloud resources.                                                                     | `map(string)`                            | `{}`              | `no`         |
 | `virtual_network`                 | Virtual network configuration.                                                                             | `object(map)` _(see appendix d)_         | `nil`             | `yes`        |
-| `vm_types`                        | Extend or overwrite the default vm types map.                                                              | `map(string)`                            | `nil`             | `no`         |
 
 ### Appendix A
 
@@ -192,11 +191,11 @@ module "aks" {
 | :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- | :---------- |
 | `name`        | Node pool name.                                                                                                                                     | `string`                          | `nil`       |
 | `single_vmss` | `false` creates a single node pool across all zones, `true` creates node pools of the same specification in all zones to support stateful services. | `bool`                            | `nil`       |
-| `public`      | Set to `true` to deploy the node pool in a public subnet.                                                                                           | `bool`                            | `nil`       |
-| `vm_size`     | Virtual machine instance size, see [VM types](/modules/nodes/local.tf). The default classes can be extended via the `vm_types` variable.            | `string`                          | `nil`       |
-| `os_type`     | Operating system type, `Linux` or `Windows`.                                                                                                        | `string`                          | `nil`       |
-| `min_count`   | Minimum size of the node pool, starting from `0`.                                                                                                   | `number`                          | `nil`       |
-| `max_count`   | Maximum size of the node pool, must be greater or equal to `min_count`.                                                                             | `number`                          | `nil`       |
+| `public`      | Set to `true` to assign a public IP to nodes in the pool.                                                                                           | `bool`                            | `nil`       |
+| `node_type`     | Type of instance being created in the node group(s), currently only x64-gp is supported.  Append "-win" for Windows node pools (example: "x64-gp-win"). Windows are nodes only supported when network_plugin set to "azure".            | `string`                          | `nil`       |
+| `node_size`     | Size of instance being created in the node pool(s) using generic sizes and based on the node_type.  | `string`                          | `nil`       |
+| `min_capacity`   | Minimum number of instances the resultant node pool(s) should have.  If single_vmss is set to false, this number must be divisible by the number of Availability Zones (3).                                                                                                 | `number`                          | `nil`       |
+| `max_capacity`   | Maximum number of instances the resultant node pool(s) should have. If single_vmss is set to false, this number must be divisible by the number of Availability Zones (3).                                                                             | `number`                          | `nil`       |
 | `labels   `   | Kubernetes node labels to apply to nodes in the pool.                                                                                               | `map(string)`                     | `nil`       |
 | `taints   `   | Kubernetes taints to apply to nodes in the pool.                                                                                                    | `list(object)` _(see appendix c)_ | `nil`       |
 | `tags    `    | Additional cloud tags to apply to the node pool.                                                                                                    | `map(string)`                     | `nil`       |

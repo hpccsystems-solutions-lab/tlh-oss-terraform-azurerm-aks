@@ -28,7 +28,7 @@ locals {
   }
 
   node_pool_defaults = merge({
-    availability_zones   = [1, 2, 3]
+    availability_zones   = [1,2,3]
     enable_auto_scaling  = true
     max_pods             = null
     max_surge            = "1"
@@ -74,8 +74,8 @@ locals {
     public       = false
     node_type    = "x64-gp"
     node_size    = "large"
-    min_capacity = 1
-    max_capacity = 2
+    min_capacity = length(local.node_pool_defaults.availability_zones)
+    max_capacity = (length(local.node_pool_defaults.availability_zones)*2)
     subnet       = "private"
     labels       = {}
     taints       = [
@@ -95,8 +95,8 @@ locals {
         priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
         vm_size            = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+", pool.node_type)][pool.node_size]
         os_type            = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
-        min_count          = pool.min_capacity
-        max_count          = pool.max_capacity
+        min_count          = (pool.single_vmss ? pool.min_capacity : (pool.min_capacity/length(local.node_pool_defaults.availability_zones)))
+        max_count          = (pool.single_vmss ? pool.max_capacity : (pool.max_capacity/length(local.node_pool_defaults.availability_zones)))
 
         node_labels = merge({
           "lnrs.io/lifecycle" = (lookup(pool, "use_spot", false) ? "spot" : "ondemand")

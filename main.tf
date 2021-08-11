@@ -1,13 +1,13 @@
 module "nodes" {
   source = "./modules/nodes"
 
-  cluster_name = local.cluster_name
-  subnets      = {
-      private = var.virtual_network.subnets.private
-      public  = var.virtual_network.subnets.public
-  }
+  cluster_name         = local.cluster_name
+  orchestrator_version = local.cluster_patch_version
 
-  orchestrator_version   = local.cluster_patch_version
+  subnets = {
+    private = var.virtual_network.subnets.private
+    public  = var.virtual_network.subnets.public
+  }
 
   node_pools         = var.node_pools
   tags               = var.tags
