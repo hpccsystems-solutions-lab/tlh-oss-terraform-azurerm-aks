@@ -2,8 +2,8 @@ resource "kubernetes_storage_class" "default" {
   for_each = local.default_storage_classes
 
   metadata {
-    name        = each.key
-    labels      = each.value.labels
+    name   = each.key
+    labels = each.value.labels
   }
   storage_provisioner    = each.value.storage_provisioner
   parameters             = each.value.parameters

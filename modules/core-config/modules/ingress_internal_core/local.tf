@@ -15,7 +15,7 @@ locals {
       }
 
       podAnnotations = {
-        "fluentbit.io/parser"  = "k8s-nginx-ingress"
+        "fluentbit.io/parser" = "k8s-nginx-ingress"
       }
 
       ingressClass = "core-internal"
@@ -27,7 +27,7 @@ locals {
           "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
         }
 
-        type = "LoadBalancer"
+        type                  = "LoadBalancer"
         externalTrafficPolicy = "Local"
 
         loadBalancerSourceRanges = var.lb_source_cidrs
@@ -49,7 +49,7 @@ locals {
 
       extraArgs = {
         "enable-ssl-chain-completion" = "false"
-        "default-ssl-certificate" = "cert-manager/default-wildcard-cert-tls"
+        "default-ssl-certificate"     = "cert-manager/default-wildcard-cert-tls"
       }
 
       nodeSelector = {
@@ -172,7 +172,7 @@ locals {
           value    = "true"
           effect   = "NoSchedule"
         }
-      ]      
+      ]
 
       resources = {
         requests = {

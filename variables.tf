@@ -1,17 +1,17 @@
 variable "api_server_authorized_ip_ranges" {
   description = "Public CIDR ranges to whitelist access to the Kubernetes API server, if not set defaults to `0.0.0.0/0`."
-  type = map(string)
-  default = null
+  type        = map(string)
+  default     = null
 }
 
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(
     {
-      cluster_admin_users   = map(string)
-      cluster_view_users    = map(string)
-      standard_view_users   = map(string)
-      standard_view_groups  = map(string)
+      cluster_admin_users  = map(string)
+      cluster_view_users   = map(string)
+      standard_view_users  = map(string)
+      standard_view_groups = map(string)
     }
   )
   default = {
@@ -43,21 +43,21 @@ variable "core_services_config" {
   type        = any
 
   validation {
-    condition     = (lookup(var.core_services_config, "alertmanager", null) == null ||
-                     (length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 &&
-                      length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0))
+    condition = (lookup(var.core_services_config, "alertmanager", null) == null ||
+      (length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 &&
+    length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0))
     error_message = "The config variable for alertmanager doesn't have all the required fields, please check the module README."
   }
 
   validation {
-    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
-                     length(lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", "")) > 0)
+    condition = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+    length(lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", "")) > 0)
     error_message = "The config variable for ingress_internal_core doesn't have all the required fields, please check the module README."
   }
 
   validation {
-    condition     = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
-                     length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
+    condition = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
+    length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
     error_message = "The domain attribute of ingress_internal_core must be a key of the dns_zones attribute of cert_manager, please check the module README."
   }
 }
@@ -89,12 +89,12 @@ variable "node_pools" {
     min_capacity = number
     max_capacity = number
     labels       = map(string)
-    taints       = list(object({
+    taints = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags         = map(string)
+    tags = map(string)
   }))
 
   validation {
@@ -127,9 +127,9 @@ variable "tags" {
 
 variable "virtual_network" {
   description = "Virtual network configuration."
-  type        = object({
+  type = object({
     subnets = object({
-      private = object({ 
+      private = object({
         id = string
       })
       public = object({

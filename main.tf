@@ -9,8 +9,8 @@ module "nodes" {
     public  = var.virtual_network.subnets.public
   }
 
-  node_pools         = var.node_pools
-  tags               = var.tags
+  node_pools = var.node_pools
+  tags       = var.tags
 }
 
 module "kubernetes" {
@@ -40,8 +40,8 @@ module "kubernetes" {
 
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
 
-  node_pools             = module.nodes.node_pools
-  default_node_pool      = module.nodes.default_node_pool
+  node_pools        = module.nodes.node_pools
+  default_node_pool = module.nodes.default_node_pool
 
   rbac = {
     enabled        = true
@@ -58,15 +58,15 @@ module "core-config" {
   depends_on = [module.kubernetes]
 
   source = "./modules/core-config"
-  
+
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  cluster_name        = module.kubernetes.name
-  cluster_id          = module.kubernetes.id
-  cluster_version     = var.cluster_version
+  cluster_name    = module.kubernetes.name
+  cluster_id      = module.kubernetes.id
+  cluster_version = var.cluster_version
 
-  azuread_clusterrole_map     = var.azuread_clusterrole_map
+  azuread_clusterrole_map = var.azuread_clusterrole_map
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id
   aks_node_resource_group_name = module.kubernetes.node_resource_group
@@ -75,7 +75,7 @@ module "core-config" {
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
-  config     = var.core_services_config
+  config = var.core_services_config
 
   tags = var.tags
 }

@@ -40,12 +40,12 @@ variable "node_pools" {
     min_capacity = number
     max_capacity = number
     labels       = map(string)
-    taints       = list(object({
+    taints = list(object({
       key    = string
       value  = string
       effect = string
     }))
-    tags         = map(string)
+    tags = map(string)
   }))
 
   validation {

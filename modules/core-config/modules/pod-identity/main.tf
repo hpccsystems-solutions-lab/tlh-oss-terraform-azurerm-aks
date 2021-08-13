@@ -30,8 +30,8 @@ resource "helm_release" "aad_pod_identity" {
     kubectl_manifest.crds
   ]
 
-  name       = "aad-pod-identity"
-  namespace  = "kube-system"
+  name      = "aad-pod-identity"
+  namespace = "kube-system"
 
   repository = "https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts"
   chart      = "aad-pod-identity"
@@ -40,6 +40,6 @@ resource "helm_release" "aad_pod_identity" {
   skip_crds = true
 
   values = [
-      yamlencode(local.chart_values)
+    yamlencode(local.chart_values)
   ]
 }

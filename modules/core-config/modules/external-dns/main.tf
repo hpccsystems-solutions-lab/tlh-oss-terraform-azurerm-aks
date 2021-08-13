@@ -61,8 +61,8 @@ module "identity" {
 resource "helm_release" "main" {
   depends_on = [module.identity]
 
-  name       = "external-dns"
-  namespace  = local.namespace
+  name      = "external-dns"
+  namespace = local.namespace
 
   repository = "https://charts.bitnami.com/bitnami/"
   chart      = "external-dns"

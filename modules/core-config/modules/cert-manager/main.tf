@@ -15,7 +15,7 @@ resource "kubectl_manifest" "resources" {
 }
 
 resource "azurerm_role_definition" "resource_group_reader" {
-  for_each    = var.dns_zones
+  for_each = var.dns_zones
 
   name        = "${var.cluster_name}-cert-manager-rg-${replace(each.key, ".", "-")}"
   scope       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}"
@@ -34,7 +34,7 @@ resource "azurerm_role_definition" "resource_group_reader" {
 }
 
 resource "azurerm_role_definition" "dns_zone_contributor" {
-  for_each    = var.dns_zones
+  for_each = var.dns_zones
 
   name        = "${var.cluster_name}-cert-manager-dns-${replace(each.key, ".", "-")}"
   scope       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}/providers/Microsoft.Network/dnszones/${each.key}"
@@ -63,13 +63,13 @@ module "identity" {
   namespace           = local.namespace
 
   roles = concat(
-    [for zone,rg in var.dns_zones:
-      { 
+    [for zone, rg in var.dns_zones :
+      {
         role_definition_resource_id = azurerm_role_definition.resource_group_reader[zone].role_definition_resource_id
         scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${rg}"
       }
     ],
-    [for zone,rg in var.dns_zones:
+    [for zone, rg in var.dns_zones :
       {
         role_definition_resource_id = azurerm_role_definition.dns_zone_contributor[zone].role_definition_resource_id
         scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${rg}/providers/Microsoft.Network/dnszones/${zone}"
@@ -81,8 +81,8 @@ module "identity" {
 resource "helm_release" "main" {
   depends_on = [module.identity]
 
-  name       = "cert-manager"
-  namespace  = local.namespace
+  name      = "cert-manager"
+  namespace = local.namespace
 
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"

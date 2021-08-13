@@ -10,7 +10,7 @@ variable "debug" {
 
 variable "pod_labels" {
   description = "labels to assign to fluentd pods, used for pod-identity and cloud storage integration."
-  type        = map
+  type        = map(any)
 }
 
 variable "filter_config" {

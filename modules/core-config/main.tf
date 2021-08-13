@@ -27,8 +27,8 @@ resource "time_sleep" "namespace" {
 module "rbac" {
   depends_on = [kubernetes_namespace.default]
 
-  cluster_id               = var.cluster_id
-  azuread_clusterrole_map  = var.azuread_clusterrole_map
+  cluster_id              = var.cluster_id
+  azuread_clusterrole_map = var.azuread_clusterrole_map
 
   source = "./modules/rbac"
 }
@@ -110,10 +110,10 @@ module "ingress_internal_core" {
 
   source = "./modules/ingress_internal_core"
 
-  cluster_name     = var.cluster_name
-  cluster_version  = var.cluster_version
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
-  lb_source_cidrs  = local.ingress_internal_core.lb_source_cidrs
+  lb_source_cidrs = local.ingress_internal_core.lb_source_cidrs
 }
 
 module "kube_prometheus_stack" {
@@ -126,19 +126,19 @@ module "kube_prometheus_stack" {
 
   skip_crds = true
 
-  prometheus_remote_write         = local.prometheus.remote_write
+  prometheus_remote_write = local.prometheus.remote_write
 
-  alertmanager_smtp_host          = local.alertmanager.smtp_host
-  alertmanager_smtp_from          = local.alertmanager.smtp_from
-  alertmanager_receivers          = local.alertmanager.receivers
-  alertmanager_routes             = local.alertmanager.routes
+  alertmanager_smtp_host = local.alertmanager.smtp_host
+  alertmanager_smtp_from = local.alertmanager.smtp_from
+  alertmanager_receivers = local.alertmanager.receivers
+  alertmanager_routes    = local.alertmanager.routes
 
   grafana_admin_password          = local.grafana.admin_password
   grafana_plugins                 = local.grafana.additional_plugins
   grafana_additional_data_sources = local.grafana.additional_data_sources
 
-  ingress_domain                  = local.ingress_internal_core.domain
-  ingress_subdomain_suffix        = local.ingress_internal_core.subdomain_suffix
+  ingress_domain           = local.ingress_internal_core.domain
+  ingress_subdomain_suffix = local.ingress_internal_core.subdomain_suffix
 
   loki_enabled = local.loki.enabled
 }
@@ -158,12 +158,12 @@ module "fluentd" {
 
   source = "./modules/fluentd"
 
-  additional_env     = local.fluentd.additional_env
-  debug              = local.fluentd.debug
-  pod_labels         = local.fluentd.pod_labels
-  filter_config      = local.fluentd.filter_config
-  route_config       = local.fluentd.route_config
-  output_config      = local.fluentd.output_config
+  additional_env = local.fluentd.additional_env
+  debug          = local.fluentd.debug
+  pod_labels     = local.fluentd.pod_labels
+  filter_config  = local.fluentd.filter_config
+  route_config   = local.fluentd.route_config
+  output_config  = local.fluentd.output_config
 
   tags = var.tags
 }

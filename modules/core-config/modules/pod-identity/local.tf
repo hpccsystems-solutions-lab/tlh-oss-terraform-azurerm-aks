@@ -49,7 +49,7 @@ locals {
       priorityClassName = "system-node-critical"
 
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
+        "kubernetes.io/os" = "linux"
       }
 
       allowNetworkPluginKubenet = (var.network_plugin == "kubenet" ? true : false)

@@ -28,7 +28,7 @@ locals {
   }
 
   node_pool_defaults = merge({
-    availability_zones   = [1,2,3]
+    availability_zones   = [1, 2, 3]
     enable_auto_scaling  = true
     max_pods             = null
     max_surge            = "1"
@@ -47,14 +47,14 @@ locals {
       only_critical_addons_enabled = false
     },
     { # These settings are determinted by the node pool inputs
-      node_count            = null
-      min_count             = null
-      max_count             = null
-      node_taints           = null
-      node_labels           = null
-      tags                  = null
-      subnet                = null
-      mode                  = null
+      node_count  = null
+      min_count   = null
+      max_count   = null
+      node_taints = null
+      node_labels = null
+      tags        = null
+      subnet      = null
+      mode        = null
   })
 
   tags = merge(var.tags, {
@@ -75,37 +75,37 @@ locals {
     node_type    = "x64-gp"
     node_size    = "large"
     min_capacity = length(local.node_pool_defaults.availability_zones)
-    max_capacity = (length(local.node_pool_defaults.availability_zones)*2)
+    max_capacity = (length(local.node_pool_defaults.availability_zones) * 2)
     subnet       = "private"
     labels       = {}
-    taints       = [
+    taints = [
       {
-        key = "CriticalAddonsOnly"
-        value = true
+        key    = "CriticalAddonsOnly"
+        value  = true
         effect = "NO_SCHEDULE"
       }
     ]
-    tags         = {}
+    tags = {}
   }
 
   node_pools = merge(values({ for pool in concat([local.system_node_pool], var.node_pools) :
-    pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
+    pool.name => { for zone in(pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         availability_zones = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
         priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
         vm_size            = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+", pool.node_type)][pool.node_size]
         os_type            = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
-        min_count          = (pool.single_vmss ? pool.min_capacity : (pool.min_capacity/length(local.node_pool_defaults.availability_zones)))
-        max_count          = (pool.single_vmss ? pool.max_capacity : (pool.max_capacity/length(local.node_pool_defaults.availability_zones)))
+        min_count          = (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones)))
+        max_count          = (pool.single_vmss ? pool.max_capacity : (pool.max_capacity / length(local.node_pool_defaults.availability_zones)))
 
         node_labels = merge({
           "lnrs.io/lifecycle" = (lookup(pool, "use_spot", false) ? "spot" : "ondemand")
           "lnrs.io/size"      = pool.node_size
         }, pool.labels)
-        node_taints = [ for taint in pool.taints:
-              "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
+        node_taints = [for taint in pool.taints :
+          "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
         ]
-        tags        = merge(local.tags, pool.tags)
+        tags = merge(local.tags, pool.tags)
 
         subnet = (pool.public ? "public" : "private")
 

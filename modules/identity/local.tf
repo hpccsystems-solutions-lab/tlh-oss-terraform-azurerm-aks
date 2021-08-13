@@ -3,7 +3,7 @@ locals {
     apiVersion = "aadpodidentity.k8s.io/v1"
     kind       = "AzureIdentity"
     metadata = {
-      name      = azurerm_user_assigned_identity.main.name	
+      name      = azurerm_user_assigned_identity.main.name
       namespace = var.namespace
     }
     spec = {

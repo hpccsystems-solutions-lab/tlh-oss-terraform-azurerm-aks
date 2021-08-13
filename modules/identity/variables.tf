@@ -30,7 +30,7 @@ variable "namespace" {
 
 variable "roles" {
   description = "Role definitions to apply to the identity."
-  type        = list(object({
+  type = list(object({
     role_definition_resource_id = string
     scope                       = string
   }))

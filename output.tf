@@ -13,7 +13,7 @@ output "aks_cluster_effective_outbound_ips_ids" {
 output "kubelet_identity" {
   value = module.kubernetes.kubelet_identity
 }
- 
+
 output "principal_id" {
   value = module.kubernetes.principal_id
 }

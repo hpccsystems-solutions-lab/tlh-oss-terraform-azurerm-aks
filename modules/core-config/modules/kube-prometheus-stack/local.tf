@@ -31,9 +31,9 @@ locals {
         ingressClassName = "core-internal"
         pathType         = "Prefix"
 
-        hosts = [ "prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
-        tls   = [{
-          "hosts" = [ "prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
+        hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        tls = [{
+          "hosts" = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
 
@@ -42,7 +42,7 @@ locals {
 
         podMetadata = {
           labels = {
-            "lnrs.io/k8s-platform"        = "true"
+            "lnrs.io/k8s-platform" = "true"
           }
         }
 
@@ -120,7 +120,7 @@ locals {
       alertmanagerSpec = {
         podMetadata = {
           labels = {
-            "lnrs.io/k8s-platform"        = "true"
+            "lnrs.io/k8s-platform" = "true"
           }
         }
 
@@ -205,9 +205,9 @@ locals {
         ingressClassName = "core-internal"
         pathType         = "Prefix"
 
-        hosts = [ "alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
-        tls   = [{
-          "hosts" = [ "alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
+        hosts = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        tls = [{
+          "hosts" = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
     }
@@ -253,7 +253,7 @@ locals {
         "kubernetes.azure.com/mode" = "system"
       }
 
-      tolerations = [ 
+      tolerations = [
         {
           key      = "CriticalAddonsOnly"
           operator = "Equal"
@@ -269,9 +269,9 @@ locals {
         pathType         = "Prefix"
         path             = "/"
 
-        hosts = [ "grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
-        tls   = [{
-          "hosts" = [ "grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}" ]
+        hosts = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        tls = [{
+          "hosts" = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
 

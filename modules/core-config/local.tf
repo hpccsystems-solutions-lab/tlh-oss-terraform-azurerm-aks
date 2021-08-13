@@ -11,9 +11,9 @@ locals {
   ## Ingress ##
 
   ingress_internal_core = merge({
-    domain             = ""
-    subdomain_suffix   = var.cluster_name
-    lb_source_cidrs    = [ "10.0.0.0/8", "100.65.0.0/16" ]
+    domain           = ""
+    subdomain_suffix = var.cluster_name
+    lb_source_cidrs  = ["10.0.0.0/8", "100.65.0.0/16"]
   }, lookup(var.config, "ingress_internal_core", {}))
 
 
@@ -39,7 +39,7 @@ locals {
   }, lookup(var.config, "loki", {}))
 
   prometheus = merge({
-    remote_write       = []
+    remote_write = []
   }, lookup(var.config, "prometheus", {}))
 
   grafana = merge({
@@ -49,18 +49,18 @@ locals {
   }, lookup(var.config, "grafana", {}))
 
   alertmanager = merge({
-    smtp_host          = ""
-    smtp_from          = ""
-    receivers          = [{ name = "alerts" }]
-    routes             = [{ match_re = { severity = "warning|critical" }, receiver = "alerts" }]
+    smtp_host = ""
+    smtp_from = ""
+    receivers = [{ name = "alerts" }]
+    routes    = [{ match_re = { severity = "warning|critical" }, receiver = "alerts" }]
   }, lookup(var.config, "alertmanager", {}))
 
   fluentd = merge({
-    additional_env     = []
-    debug              = true
-    pod_labels         = {}
-    filter_config      = ""
-    route_config       = <<-EOT
+    additional_env = []
+    debug          = true
+    pod_labels     = {}
+    filter_config  = ""
+    route_config   = <<-EOT
       <match **>
         @type route
         <route **>
@@ -73,7 +73,7 @@ locals {
         </route>
       </match>
     EOT
-    output_config      = <<-EOT
+    output_config  = <<-EOT
       <label @DEFAULT>
         <match **>
           @type null

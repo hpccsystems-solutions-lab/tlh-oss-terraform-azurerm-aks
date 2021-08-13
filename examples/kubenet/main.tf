@@ -131,10 +131,10 @@ module "virtual_network" {
 module "aks" {
   source = "../../"
 
-  cluster_name         = random_string.random.result
-  location             = module.metadata.location
-  tags                 = module.metadata.tags
-  resource_group_name  = module.resource_group.name
+  cluster_name        = random_string.random.result
+  location            = module.metadata.location
+  tags                = module.metadata.tags
+  resource_group_name = module.resource_group.name
 
   node_pools = [
     {
@@ -153,7 +153,7 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "ingress"
       }
-      tags         = {}
+      tags = {}
     },
     {
       name         = "workers"
@@ -167,7 +167,7 @@ module "aks" {
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags         = {}
+      tags = {}
     }
   ]
 

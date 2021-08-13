@@ -5,7 +5,7 @@ locals {
     production = "https://acme-v02.api.letsencrypt.org/directory"
   }
 
-  zones          = keys(var.dns_zones)
+  zones = keys(var.dns_zones)
 
   namespace = "cert-manager"
 
@@ -154,16 +154,16 @@ locals {
           privateKeySecretRef = {
             name = "letsencrypt-issuer-privatekey"
           }
-          solvers = [ for zone,rg in var.dns_zones : {
+          solvers = [for zone, rg in var.dns_zones : {
             selector = {
-              dnsZones = [ zone ]
+              dnsZones = [zone]
             }
             dns01 = {
               azureDNS = {
-                subscriptionID = var.azure_subscription_id
+                subscriptionID    = var.azure_subscription_id
                 resourceGroupName = rg
-                hostedZoneName = zone 
-                environment: var.azure_environment
+                hostedZoneName    = zone
+                environment : var.azure_environment
               }
             }
           }]
