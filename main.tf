@@ -9,8 +9,9 @@ module "nodes" {
     public  = var.virtual_network.subnets.public
   }
 
-  node_pools = var.node_pools
-  tags       = var.tags
+  ingress_node_pool  = var.ingress_node_pool
+  node_pools         = var.node_pools
+  tags               = var.tags
 }
 
 module "kubernetes" {

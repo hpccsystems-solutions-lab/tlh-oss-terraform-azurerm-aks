@@ -136,25 +136,9 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
+  ingress_node_pool = true
+
   node_pools = [
-    {
-      name         = "ingress"
-      single_vmss  = true
-      public       = true
-      node_type    = "x64-gp"
-      node_size    = "medium"
-      min_capacity = 1
-      max_capacity = 2
-      taints = [{
-        key    = "ingress"
-        value  = "true"
-        effect = "NO_SCHEDULE"
-      }]
-      labels = {
-        "lnrs.io/tier" = "ingress"
-      }
-      tags = {}
-    },
     {
       name         = "workers"
       single_vmss  = false

@@ -78,6 +78,12 @@ variable "network_plugin" {
   }
 }
 
+variable "ingress_node_pool" {
+  description = "Specifies if a cluster managed ingress node group is required, if true the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to true or you need to follow the instructions for managing your own ingress node group."
+  type        = bool
+  default     = false
+}
+
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({

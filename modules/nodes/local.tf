@@ -68,6 +68,25 @@ locals {
     "PREFER_NO_SCHEDULE" = "PreferNoSchedule"
   }
 
+  ingress_node_pool = {
+    name         = "ingress"
+    single_vmss  = true
+    public       = true
+    node_type    = "x64-gp"
+    node_size    = "large"
+    min_capacity = 0
+    max_capacity = 6
+    labels = {
+      "lnrs.io/tier" = "ingress"
+    }
+    taints = [{
+      key    = "ingress"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }]
+    tags = {}
+  }
+
   system_node_pool = {
     name         = "system"
     single_vmss  = false
@@ -88,8 +107,8 @@ locals {
     tags = {}
   }
 
-  node_pools = merge(values({ for pool in concat([local.system_node_pool], var.node_pools) :
-    pool.name => { for zone in(pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
+  node_pools = merge(values({ for pool in concat([local.system_node_pool], (var.ingress_node_pool ? [local.ingress_node_pool] : []), var.node_pools) :
+    pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         availability_zones = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
         priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
