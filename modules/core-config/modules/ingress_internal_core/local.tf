@@ -49,7 +49,7 @@ locals {
 
       extraArgs = {
         "enable-ssl-chain-completion" = "false"
-        "default-ssl-certificate"     = "cert-manager/default-wildcard-cert-tls"
+        "default-ssl-certificate"     = "cert-manager/internal-ingress-wildcard-cert"
       }
 
       nodeSelector = {
