@@ -53,6 +53,8 @@ module "kubernetes" {
     admin_username = module.nodes.windows_config.admin_username
     admin_password = module.nodes.windows_config.admin_password
   } : null)
+
+  log_analytics_workspace_id = var.log_analytics_workspace_id
 }
 
 module "core-config" {

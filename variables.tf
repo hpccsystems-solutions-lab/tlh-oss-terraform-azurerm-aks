@@ -131,6 +131,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "log_analytics_workspace_id" {
+  description = "ID of the Azure Log Analytics Workspace"
+  type        = string
+  default     = null
+}
+    
 variable "virtual_network" {
   description = "Virtual network configuration."
   type = object({
@@ -145,3 +151,4 @@ variable "virtual_network" {
     route_table_id = string
   })
 }
+
