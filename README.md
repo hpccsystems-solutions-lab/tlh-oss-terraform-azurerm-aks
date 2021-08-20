@@ -21,9 +21,7 @@ Support and use of this module.
 
 ## Requirements
 
-See the [documentation index](/docs) for system architecture, dependencies and documentation for internal services.
-
-In particular, carefully review networking and DNS requirements.
+See [documentation](/docs) for system architecture, requirements and user guides for cluster services.
 
 ---
 
@@ -43,13 +41,13 @@ DO NOT copy this directly, see the examples folder for production cluster setup.
 
 ```terraform
 module "aks" {
-  source = ""github.com/LexisNexis-RBA/terraform-azurerm-aks?ref=v1"
+  source = "github.com/LexisNexis-RBA/terraform-azurerm-aks?ref=v1"
 
   cluster_name    = "ioa-aks-1"
-  cluster_version = "1.20"
+  cluster_version = "1.21"
   
   location            = "eastus"
-  resource_group_name = "IOA-AKS-1"
+  resource_group_name = "ioa-aks-1-rg"
   
   virtual_network = {
     subnets = {
@@ -73,26 +71,9 @@ module "aks" {
         "lnrs.io/tier" = "standard"
       }
       tags         = {}
-    },
-    {
-      name         = "ingress"
-      single_vmss  = true
-      public       = true
-      node_type    = "x64-gp"
-      node_size    = "medium"
-      min_capacity = "1"
-      max_capacity = "3"
-      taints = [{
-        key    = "ingress"
-        value  = "true"
-        effect = "NO_SCHEDULE"
-      }]
-      labels = {
-        "lnrs.io/tier" = "ingress"
-      }
-      tags         = {}
     }
   ]
+  ingress_node_group = true
 
   core_services_config = {
     alertmanager = {
@@ -102,13 +83,14 @@ module "aks" {
     }
   
     cert_manager = {
-      dns_zones               = [ "ioa.useast.azure.lnrsg.io" ]
-      letsencrypt_environment = "production"
+      dns_zones = { 
+        "ioa.useast.azure.lnrsg.io" = "ioa-dns-zones-rg"
+      }
     }
 
     external_dns = {
       zones               = [ "ioa.useast.azure.lnrsg.io" ]
-      resource_group_name = "IOA-DNS-ZONES"
+      resource_group_name = "ioa-dns-zones-rg"
     }
 
     ingress_core_internal = {
@@ -163,6 +145,7 @@ module "aks" {
 | `core_services_config`            | Configuration options for core platform services                                                           | `any` _(see appendix h)_                 | `nil`             | `yes`        |
 | `ingress_node_group`              | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                            | `false`             | `no`   |
 | `location`                        | Azure region in which to build resources.                                                                  | `string`                                 | `nil`             | `yes`        |
+| `log_analytics_workspace_id`      | ID of an existing Log Analytics Workspace to be used for the Azure Monitor Container Insights add-on. By setting this option, you are agreeing that Azure will deploy and manage a service on the cluster to send metrics and logs to Log Analytics                           | `string`                                 | `nil`             | `no`        |
 | `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                               | `string`                                 | `"kubenet"`       | `no`         |
 | `node_pools`                      | Node pool definitions.                                                                                     | `list(object())` _(see appendix b)_      | `nil`             | `yes`        |
 | `podnet_cidr`                        | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                   | `string`                                 | `"100.65.0.0/16"` | `no`         |
@@ -262,7 +245,7 @@ module "aks" {
 
 | **Variable**              | **Description**                                                                                                               | **Type**       | **Required** |
 | :------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `dns_zones`               | DNS zones that _Lets Encrypt_ can manage certificates for, must be set up as an _Azure DNS_ public zones in the subscription. | `list(string)` | No           |
+| `dns_zones`               | DNS zones that _Lets Encrypt_ can manage certificates for, must be set up as an _Azure DNS_ public zones in the subscription. | `map(string)` | No           |
 | `letsencrypt_environment` | _Lets Encrypt_ environment, supported values `staging` or `production`.                                                       | `string`       | No           |
 | `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`       | No           |
 | `additional_issuers`      | Additional issuers to install into the cluster.                                                                               | `map(any)`     | No           |
