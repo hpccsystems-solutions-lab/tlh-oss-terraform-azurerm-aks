@@ -394,6 +394,26 @@ locals {
           }
         }
       }
+
+      admissionWebhooks = {
+        patch = {
+          priorityClassName = "system-cluster-critical"
+
+          nodeSelector = {
+            "kubernetes.io/os"          = "linux"
+            "kubernetes.azure.com/mode" = "system"
+          }
+
+          tolerations = [
+            {
+              key      = "CriticalAddonsOnly"
+              operator = "Equal"
+              value    = "true"
+              effect   = "NoSchedule"
+            }
+          ]
+        }
+      }
     }
     ### End of Prometheus Operator ################
     ###############################################

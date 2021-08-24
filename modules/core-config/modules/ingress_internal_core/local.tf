@@ -1,8 +1,8 @@
 locals {
   namespace = "ingress-core-internal"
 
-  chart_version = "3.33.0"
-  chart_timeout = 3600
+  chart_version = "3.34.0"
+  chart_timeout = 1800
 
   chart_values = {
 
@@ -142,6 +142,26 @@ locals {
         limits = {
           cpu    = "200m"
           memory = "256Mi"
+        }
+      }
+
+      admissionWebhooks = {
+        patch = {
+          priorityClassName = "system-cluster-critical"
+
+          nodeSelector = {
+            "kubernetes.io/os"          = "linux"
+            "kubernetes.azure.com/mode" = "system"
+          }
+
+          tolerations = [
+            {
+              key      = "CriticalAddonsOnly"
+              operator = "Equal"
+              value    = "true"
+              effect   = "NoSchedule"
+            }
+          ]
         }
       }
     }
