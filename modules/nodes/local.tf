@@ -30,7 +30,7 @@ locals {
   node_pool_defaults = merge({
     availability_zones   = [1, 2, 3]
     enable_auto_scaling  = true
-    max_pods             = 30
+    max_pods             = null
     max_surge            = "1"
     orchestrator_version = var.orchestrator_version
     },
