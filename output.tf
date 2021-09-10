@@ -2,8 +2,12 @@ output "kube_config" {
   value = module.kubernetes.kube_config
 }
 
-output "aks_cluster_name" {
+output "cluster_name" {
   value = module.kubernetes.name
+}
+
+output "cluster_id" {
+  value = module.kubernetes.id
 }
 
 output "aks_cluster_effective_outbound_ips_ids" {

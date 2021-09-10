@@ -308,7 +308,8 @@ module "aks" {
 | Name                                     | Description |
 |------------------------------------------|-------------|
 | `aks_cluster_effective_outbound_ips_ids` | n/a         |
-| `aks_cluster_name`                       | n/a         |
+| `cluster_id`                             | n/a         |
+| `cluster_name`                           | n/a         |
 | `kube_config`                            | n/a         |
 | `kubelet_identity`                       | n/a         |
 | `principal_id`                           | n/a         |
