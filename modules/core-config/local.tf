@@ -22,8 +22,10 @@ locals {
 
   external_dns = merge({
     additional_sources  = []
-    resource_group_name = ""
-    zones               = []
+    private_resource_group_name = ""
+    public_resource_group_name = ""
+    public_zones        = []
+    private_zones       = []
   }, lookup(var.config, "external_dns", {}))
 
   cert_manager = merge({

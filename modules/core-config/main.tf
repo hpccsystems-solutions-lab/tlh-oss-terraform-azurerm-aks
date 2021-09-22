@@ -74,9 +74,14 @@ module "external_dns" {
   resource_group_location = var.location
   cluster_name            = var.cluster_name
 
-  dns_zones = {
-    names               = local.external_dns.zones
-    resource_group_name = local.external_dns.resource_group_name
+  private_domain_filters = {
+    names               = local.external_dns.private_zones
+    resource_group_name = local.external_dns.private_resource_group_name
+  }
+
+  public_domain_filters = {
+    names               = local.external_dns.public_zones
+    resource_group_name = local.external_dns.public_resource_group_name
   }
 
   additional_sources = local.external_dns.additional_sources

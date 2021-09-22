@@ -73,7 +73,7 @@ module "aks" {
       tags         = {}
     }
   ]
-  ingress_node_group = true
+  ingress_node_pool = true
 
   core_services_config = {
     alertmanager = {
@@ -89,8 +89,8 @@ module "aks" {
     }
 
     external_dns = {
-      zones               = [ "ioa.useast.azure.lnrsg.io" ]
-      resource_group_name = "ioa-dns-zones-rg"
+      public_zones               = [ "ioa.useast.azure.lnrsg.io" ]
+      public_resource_group_name = "ioa-dns-zones-rg"
     }
 
     ingress_core_internal = {
@@ -143,7 +143,7 @@ module "aks" {
 | `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                              | `string`                                 | `nil`             | `yes`        |
 | `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                          | `string`                                 | `"1.21"`          | `no`         |
 | `core_services_config`            | Configuration options for core platform services                                                           | `any` _(see appendix h)_                 | `nil`             | `yes`        |
-| `ingress_node_group`              | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                            | `false`             | `no`   |
+| `ingress_node_pool`              | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                            | `false`             | `no`   |
 | `location`                        | Azure region in which to build resources.                                                                  | `string`                                 | `nil`             | `yes`        |
 | `log_analytics_workspace_id`      | ID of an existing Log Analytics Workspace to be used for the Azure Monitor Container Insights add-on. By setting this option, you are agreeing that Azure will deploy and manage a service on the cluster to send metrics and logs to Log Analytics                           | `string`                                 | `nil`             | `no`        |
 | `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                               | `string`                                 | `"kubenet"`       | `no`         |
@@ -257,8 +257,10 @@ module "aks" {
 | **Variable**          | **Description**                                                                                              | **Type**       | **Required** |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
 | `additional_sources`  | Additional _Kubernetes_ objects to be watched.                                                               | `list(string)` | No           |
-| `resource_group_name` | Name of the Azure Resource Group hosting DNZ zones, zones managed by external-dns must be in the same group. | `string`       | No           |
-| `zones`               | A list of DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
+| `public_resource_group_name` | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group. | `string`       | No           |
+| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group. | `string`       | No           |
+| `public_zones`               | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
+| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
 
 ### Appendix J
 

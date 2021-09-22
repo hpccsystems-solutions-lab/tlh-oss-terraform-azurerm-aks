@@ -1,22 +1,28 @@
 locals {
-  dns_zone_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.dns_zones.resource_group_name}"
-  dns_zone_ids               = [for zone in toset(var.dns_zones.names) : "${local.dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"]
+  private_dns_zone_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.private_domain_filters.resource_group_name}"
+  public_dns_zone_resource_group_id  = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.public_domain_filters.resource_group_name}"
+  private_dns_zone_ids               = [for zone in toset(var.private_domain_filters.names) : "${local.private_dns_zone_resource_group_id}/providers/Microsoft.Network/privateDnsZones/${zone}"]
+  public_dns_zone_ids                = [for zone in toset(var.public_domain_filters.names) : "${local.public_dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"] 
 
   namespace = "dns"
 
-  chart_version = "5.2.0"
+  azure-private-secret-name = "azure-private-config-file"
+  azure-public-secret-name = "azure-public-config-file"
+
+  azure-private-json = "azure-private.json"
+  azure-public-json = "azure-public.json"
+
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  
+  chart_version = "1.2.0"
 
   chart_values = {
 
-    rbac = {
-      create = "true"
-    }
-
-    replicas = 1
-
-    podLabels = {
-      aadpodidbinding        = module.identity.name
-      "lnrs.io/k8s-platform" = "true"
+    serviceMonitor = {
+      enabled = true
+      additionalLabels = {
+        "lnrs.io/monitoring-platform" = "core-prometheus"
+      }
     }
 
     priorityClassName = "system-cluster-critical"
@@ -51,17 +57,73 @@ locals {
     logLevel = "debug"
 
     txtOwnerId : var.cluster_name
+  }
+
+  chart_values_private = merge(local.chart_values, {
+    nameOverride = "external-dns-private"
+
+    podLabels = {
+      aadpodidbinding        = "${var.cluster_name}-external-dns-private"
+      "lnrs.io/k8s-platform" = "true"
+    }
+
+    extraVolumeMounts = [{
+      name = local.azure-private-secret-name
+      mountPath = "/etc/kubernetes"
+      readOnly = true
+    }]
+
+    extraVolumes = [{
+      name = local.azure-private-secret-name
+      secret = {
+        secretName = local.azure-private-secret-name
+        items = [{
+          key  = local.azure-private-json
+          path = local.azure-private-json
+        }]
+      }
+    }]
+
+    provider = "azure-private-dns"
+
+    domainFilters = var.private_domain_filters.names
+
+    extraArgs = [
+      "--azure-config-file=/etc/kubernetes/${local.azure-private-json}"
+    ]
+  })
+
+  chart_values_public = merge(local.chart_values, {
+    nameOverride = "external-dns-public"
+
+    podLabels = {
+      aadpodidbinding        = "${var.cluster_name}-external-dns-public"
+      "lnrs.io/k8s-platform" = "true"
+    }
+
+    extraVolumeMounts = [{
+      name = local.azure-public-secret-name
+      mountPath = "/etc/kubernetes"
+      readOnly = true
+    }]
+
+    extraVolumes = [{
+      name = local.azure-public-secret-name
+      secret = {
+        secretName = local.azure-public-secret-name
+        items = [{
+          key  = local.azure-public-json
+          path = local.azure-public-json
+        }]
+      }
+    }]
 
     provider = "azure"
 
-    azure = {
-      resourceGroup               = var.dns_zones.resource_group_name
-      subscriptionId              = var.azure_subscription_id
-      tenantId                    = var.azure_tenant_id
-      useManagedIdentityExtension = true
-      userAssignedIdentityID      = module.identity.client_id
-    }
+    domainFilters = var.public_domain_filters.names
 
-    domainFilters = [for name in var.dns_zones.names : name]
-  }
+    extraArgs = [
+      "--azure-config-file=/etc/kubernetes/${local.azure-public-json}"
+    ]
+  })
 }
