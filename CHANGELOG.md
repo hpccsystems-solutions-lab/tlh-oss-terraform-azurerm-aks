@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0-beta.3 - Unreleased
+
+> **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
+
+### Added
+- Helm chart for external-dns to create dns records in Azure private dns-zones [@sossickd](url)
+- Grafana dashboard for external-dns [@sossickd](url)
+- Grafana dashboard for ingress_internal_core [@sossickd](url)
+
+### Changed
+- Helm chart renamed from external-dns to external-dns-public [@sossickd](url)
+- External dns helm chart moved from [bitnami external-dns](https://github.com/bitnami/charts/tree/master/bitnami/external-dns) to [kubernetes-sigs external-dns](https://github.com/kubernetes-sigs/external-dns/tree/master/charts/external-dns) [@sossickd](url)
+- Updated ingress_internal_core to helm version 4.0.2 [@sossickd](url)
+
+> **IMPORTANT** - Please change the core_services_config input for external_dns.
+
+
 ## v1.0.0-beta.2 - 2021-09-10
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.

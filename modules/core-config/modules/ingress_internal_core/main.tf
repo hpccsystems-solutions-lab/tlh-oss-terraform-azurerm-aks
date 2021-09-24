@@ -1,3 +1,9 @@
+resource "kubectl_manifest" "resources" {
+  for_each = local.resource_files
+
+  yaml_body = file(each.value)
+}
+
 resource "helm_release" "default" {
   name      = "ingress-core-internal"
   namespace = "ingress-core-internal"

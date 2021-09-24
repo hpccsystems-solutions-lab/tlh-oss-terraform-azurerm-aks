@@ -14,7 +14,7 @@ There are three types of ingress controllers typically deployed in a cluster.
 
 The ingress for core platform services (*e.g. Prometheus, Grafana, Alertmanager*).
 
-* Ingress Class: `core-internal`
+* ingressClassName: `core-internal`
 * Namespace: `ingress-core-internal`
 
 The ingress controller is hosted on the `system` nodepool to optimise resource usage, it is exposed via a private load balancer, to access it there must be internal connectivity from the client to the VNet. The URL for these services will depend on inputs to the `core_services_config` variable.

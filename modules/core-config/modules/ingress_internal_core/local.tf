@@ -1,7 +1,10 @@
 locals {
   namespace = "ingress-core-internal"
 
-  chart_version = "3.34.0"
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+
+  chart_version = "4.0.2"
+
   chart_timeout = 1800
 
   chart_values = {
@@ -18,7 +21,13 @@ locals {
         "fluentbit.io/parser" = "k8s-nginx-ingress"
       }
 
-      ingressClass = "core-internal"
+      ingressClassResource = {
+        enabled = true
+        name = "core-internal"
+        default = false
+        controllerValue = "k8s.io/nginx-core-internal"
+        parameters = {}
+      }
 
       priorityClassName = "system-cluster-critical"
 
