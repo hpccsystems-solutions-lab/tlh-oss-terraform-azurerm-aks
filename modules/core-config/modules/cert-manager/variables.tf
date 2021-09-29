@@ -14,9 +14,9 @@ variable "azure_environment" {
   default     = "AzurePublicCloud"
 
   validation {
-    condition     = contains(["AzurePublicCloud"], var.azure_environment)
-    error_message = "The \"azure_environment\" variable must be a \"AzurePublicCloud\"."
-  }
+    condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
+    error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
+  } 
 }
 
 variable "cluster_name" {

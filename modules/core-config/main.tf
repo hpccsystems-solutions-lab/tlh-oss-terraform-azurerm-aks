@@ -105,7 +105,7 @@ module "cert_manager" {
   additional_issuers      = local.cert_manager.additional_issuers
   default_issuer_kind     = local.cert_manager.default_issuer_kind
   default_issuer_name     = local.cert_manager.default_issuer_name
-
+  azure_environment       = local.cert_manager.azure_environment
 
   ingress_internal_core_domain = local.ingress_internal_core.domain
 }
