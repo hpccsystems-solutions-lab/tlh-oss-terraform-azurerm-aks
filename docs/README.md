@@ -7,6 +7,7 @@
   * [Kubernetes RBAC](#kubernetes-rbac)
   * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
   * [ACR Access](#acr-access)
+  * [External Persistent Disks](#external-persistent-disks)
   * [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
 * [Service User Guide](#services)
   * [Azure AD Pod Identity](#azure-ad-pod-identity)
@@ -162,6 +163,116 @@ resource "azurerm_role_assignment" "accurint_acr" {
 ```
 
 The code above requires the ACR and AKS resources be deployed in the same project/subscription and the Terraform user has access to modify them. In many cases, an ACR could be shared by many clusters and deployed in a central subscription, hence the role assignment would need to happen there (this is the reason ACR access is not supported by the module directly).
+
+---
+
+### External Persistent Disks
+
+In many cases it is useful to re-use a storage volume, whether moving between clusters or re-assigning to a cluster that has been destroyed and recreated. The storage classes supplied in the module create disks in the cluster managed resource group (named `MC_<cluster-name>`) by default. An implication is if a cluster is destroyed, all disks (and indeed all resources) in the managed resource group are deleted, even if the StorageClass `ReclaimPolicy` is set to `Retain`. 
+
+To avoid this behaviour disks must be created in an external resource group, either via Kubernetes through a StorageClass, or via the Azure API then imported. The former method has the advantage that everything is managed within Kubernetes and a default set of tags is applied to Azure storage. The latter supports custom tags, plus doesn't require any changes to Kubernetes manifests between source and target systems.
+
+This guide assumes an external resource group `aks-shared-storage-rg` has already been deployed.
+
+**Option 1 - Dynamic StorageClass Provisioning**
+
+* Create a new StorageClass configured to write to the external resource group
+* Configure Azure Role assignments for any cluster that is to access the resource group
+* On the source cluster, deploy a `PersistentVolumeClaim` using the StorageClass
+* On the target cluster, import the storage via a PersistentVolume definition
+
+Configure and deploy the the StorageClass - **note the `resourceGroup` parameter**:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azure-disk-remote-ssd-retain
+mountOptions:
+- debug
+parameters:
+  cachingmode: ReadOnly
+  kind: Managed
+  storageaccounttype: Premium_LRS
+  resourceGroup: aks-shared-storage-rg
+provisioner: kubernetes.io/azure-disk
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+```
+
+Use the control plane managed identity (AKS module `principal_id` output) in the Azure Role assignment for the external resource group. **Repeat for every cluster that needs access to it**.
+
+```yaml
+resource "azurerm_role_assignment" "shared_storage_cluster_1" {
+  scope                = azurerm_resource_group.shared_storage.id
+  role_definition_name = "Disk Restore Operator"
+  principal_id         = module.aks.principal_id
+}
+```
+
+Create the Kubernetes resource with a PersistentVolumeClaim, then take a note of the Azure name and resource Id. 
+
+> this information can also be found in the Azure console via `disk Properties`
+
+```bash
+$ kubectl get pvc
+NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS                   AGE
+pvc-external   Bound    pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334   2Gi        RWO            azure-disk-remote-ssd-retain   19h
+
+$ kubectl describe pv pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334 | grep Disk
+    Type:         AzureDisk (an Azure Data Disk mount on the host and bind mount to the pod)
+    DiskName:     pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334
+    DiskURI:      /subscriptions/bbe8caed-4d35-41e2-9ffd-4a771708c341/resourceGroups/iob-dev-westeurope-akstest-rg-shared-storage/providers/Microsoft.Compute/disks/pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334
+```
+
+The disk can now be deleted on the cluster (or the cluster deleted).
+
+On the remote cluster, the same Kubernetes manifest can be applied with one change; a `PersistentVolume` resource must be specified using the `DiskName` & `DiskURI` properties above. The PersistentVolume will also link to the PersistentVolumeClaim (which doesn't need to be changed) via a `claimRef`.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334
+spec:
+  storageClassName: "azure-disk-remote-ssd-retain"
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    namespace: default
+    name: pvc-external
+  azureDisk:
+    diskName: pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334
+    diskURI: /subscriptions/bbe8caed-4d35-41e2-9ffd-4a771708c341/resourceGroups/iob-dev-westeurope-akstest-rg-shared-storage/providers/Microsoft.Compute/disks/pvc-4a479495-3ea6-4f41-97d7-e462d0ae1334
+    kind: Managed
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-external
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: azure-disk-remote-ssd-retain
+```
+
+Any `storageClassName` can be used on the remote cluster, however it is useful to replicate settings from the source so it retains any other capabilities, i.e. volume expansion or cloning.
+
+**Option 2 - Manual Disk Provisioning**
+
+* Create a new storage volume via Terraform or the Azure API
+* Configure Azure Role assignments for any cluster that is to access the resource group
+* Create a `PersistentVolume` definition within the Kubernetes manifest, specifying the `DiskName` & `DiskURI` properties
+
+As an example, use the [azurerm_managed_disk](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk) resource to create a disk in the external resource group. Repeat the steps above to add the Azure Role assignment to this group. Use the same Kubernetes manifest above specifying the `DiskName` & `DiskURI` properties to target the disk on any cluster, which has the advantage the same manifest can be used throughout the workflow without modification.
+
+> for this reason this is the recommended approach
 
 ---
 
