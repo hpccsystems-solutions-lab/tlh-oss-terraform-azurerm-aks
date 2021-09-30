@@ -248,7 +248,8 @@ module "aks" {
 | `dns_zones`               | DNS zones that _Lets Encrypt_ can manage certificates for, must be set up as an _Azure DNS_ public zones in the subscription. | `map(string)` | No           |
 | `letsencrypt_environment` | _Lets Encrypt_ environment, supported values `staging` or `production`.                                                       | `string`       | No           |
 | `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`       | No           |
-| `additional_issuers`      | Additional issuers to install into the cluster.                                                                               | `map(any)`     | No           |
+| `additional_issuers`      | Additional issuers to install into the cluster.                                                                                 | `map(any)`     | No           |
+| `azure_environment`       | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                                                | `string  `     | No           |
 
 ### Appendix I
 

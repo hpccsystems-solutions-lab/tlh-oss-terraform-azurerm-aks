@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+- AzureUSGovernmentCloud support in cert-manager [@jhisc](url)
 - Helm chart for external-dns to create dns records in Azure private dns-zones [@sossickd](url)
 - Grafana dashboard for external-dns [@sossickd](url)
 - Grafana dashboard for ingress_internal_core [@sossickd](url)
