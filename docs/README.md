@@ -3,6 +3,7 @@
 * [Architecture](#Architecture)
   * [Prerequisites](#prerequisites)
   * [CNI Options](#cni-options)
+  * [Node Memory Allocation](#node-memory-allocation)
 * [Module User Guide](#module-user-guide)
   * [Kubernetes RBAC](#kubernetes-rbac)
   * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
@@ -44,6 +45,8 @@ To enable the [encryption at host](https://docs.microsoft.com/en-us/azure/virtua
 ```bash
 $ az account set --subscription <subscription_name>
 $ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
+$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (verify until registered)
+$ az provider register -n Microsoft.Compute
 ```
 
 A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and route table for each AKS cluster (use the [terraform-azure-virtual-network](https://github.com/Azure-Terraform/terraform-azurerm-virtual-network) module `aks_subnets` variable to meet this requirement, see [examples](/examples) for usage). While it is technically possible to host multiple AKS cluster node pools in a subnet, see [guidance](#multiple-clusters-per-subnet) on why this is not recommended.
@@ -76,6 +79,27 @@ Also see the [official comparison table](https://docs.microsoft.com/en-us/azure/
 Subnets must be sized to accommodate node pool upgrade and scaling events.
 
 It is recommended to use the `kubenet` plugin unless Windows node pools are required or the application has extremely low latency requirements (where sub-millisecond latency is a significant factor).
+
+---
+
+### Node Memory Allocation
+
+It's important to understand memory available to user workloads (versus system reserved) and how this affects node sizing.
+
+With the introduction of System Node Pools, most core platform services are hosted in a dedicated node pool, so these requirements don't have to be considered for user node pools. However, [AKS reserves resources](https://docs.microsoft.com/en-us/azure/aks/concepts-clusters-workloads#resource-reservations) for the `kubelet` service, while platform `daemonset` reservations also need to be considered. 
+
+AKS reserves 750MB on each node, plus a variable rate depending on the node size (`25% of first 4GB, 20% of next 4GB, 10% of next 8GB and 6% up to 128GB*`). In addition, platform `daemonsets` use or reserve ~650MB of RAM, plus there will be a relatively small amount required by the kernel.
+
+| **Node Size**     | **AKS Reserved** | **Daemonsets** | **Allocatable** |
+| :-----------------| :----------------| :--------------| :---------------|
+| medium (4 GB)     | 1.75 GB          | 650 MB         | 1.6 GB          |
+| large (8 GB)      | 2.55 GB          | 650 MB         | 4.8 GB          |
+| xlarge (16 GB)    | 3.35 GB          | 650 MB         | 12 GB           |
+| 2xlarge (32 GB)   | 4.15 GB          | 650 MB         | 27.2 GB         |
+
+Expanding to node pool memory usage, a 6-node large pool will reserve 19.2 GB versus 12 GB for a 3-node xlarge pool, both providing the same 48 GB to total RAM. **Almost a full node's memory is wasted on the smaller node type in this scenario**. Using larger nodes provides better memory density, however this should be balanced against user workload requirements and anticipated scaling events.
+
+The platform team are constantly reviewing `daemonset` reservations to reduce the memory footprint. In future, the platform will scale reservations based on the total cluster size and how services scale in response to load. It is likely platform resources will increase in the short-term due to new requirements, i.e. to add security services, so ensure this is regularly reviewed during resource planning.
 
 <br>
 ---
@@ -176,10 +200,10 @@ This guide assumes an external resource group `aks-shared-storage-rg` has alread
 
 **Option 1 - Dynamic StorageClass Provisioning**
 
-* Create a new StorageClass configured to write to the external resource group
+* Create a new `StorageClass` configured to write to the external resource group
 * Configure Azure Role assignments for any cluster that is to access the resource group
 * On the source cluster, deploy a `PersistentVolumeClaim` using the StorageClass
-* On the target cluster, import the storage via a PersistentVolume definition
+* On the target cluster, import the storage via a `PersistentVolume` definition
 
 Configure and deploy the the StorageClass - **note the `resourceGroup` parameter**:
 
