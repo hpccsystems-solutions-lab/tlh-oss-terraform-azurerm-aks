@@ -163,7 +163,7 @@ locals {
                 subscriptionID    = var.azure_subscription_id
                 resourceGroupName = rg
                 hostedZoneName    = zone
-                environment : var.azure_environment
+                environment       = var.azure_environment
               }
             }
           }]
