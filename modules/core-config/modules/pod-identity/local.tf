@@ -1,6 +1,6 @@
 locals {
 
-  chart_version = "4.1.2"
+  chart_version = "4.1.5"
 
   chart_values = {
 
@@ -38,6 +38,18 @@ locals {
       podDisruptionBudget = {
         minAvailable = 1
       }
+
+      resources = {
+        requests = {
+          cpu    = "20m"
+          memory = "64Mi"
+        }
+
+        limits = {
+          cpu    = "100m"
+          memory = "128Mi"
+        }
+      }
     }
     ## End of Managed Identity Controller ####
     ##########################################
@@ -60,6 +72,18 @@ locals {
 
       podLabels = {
         "lnrs.io/k8s-platform" = "true"
+      }
+
+      resources = {
+        requests = {
+          cpu    = "20m"
+          memory = "48Mi"
+        }
+
+        limits = {
+          cpu    = "100m"
+          memory = "128Mi"
+        }
       }
     }
     ## End of Node Managed Identity ##########

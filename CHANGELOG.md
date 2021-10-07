@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0-beta.4 - UNRELEASED
+
+> **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
+
+### Changed
+- aad-pod-identity chart updated to version 4.1.5 [@jamurtag](url)
+- aad-pod-identity requests and limits lowered for both NMI and MIC pods [@jamurtag](url)
+- Default to AzurePublicCloud in cert-manager config [@jamurtag](url)
+- Minor formatting change to cert-manager cluster-issuer config [@sossickd](url)
+
 ## v1.0.0-beta.3 - 2021-09-29
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
