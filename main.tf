@@ -26,6 +26,9 @@ module "kubernetes" {
 
   kubernetes_version = local.cluster_patch_version
 
+  enable_azure_policy   = false
+  enable_kube_dashboard = false
+
   network_plugin          = local.network_plugin
   network_policy          = "calico"
   pod_cidr                = (local.network_plugin == "kubenet" ? var.podnet_cidr : null)
