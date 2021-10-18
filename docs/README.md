@@ -4,6 +4,7 @@
   * [Prerequisites](#prerequisites)
   * [CNI Options](#cni-options)
   * [Node Memory Allocation](#node-memory-allocation)
+  * [Platform Resource Settings](#platform-resource-settings)
 * [Module User Guide](#module-user-guide)
   * [Kubernetes RBAC](#kubernetes-rbac)
   * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
@@ -100,6 +101,18 @@ AKS reserves 750MB on each node, plus a variable rate depending on the node size
 Expanding to node pool memory usage, a 6-node large pool will reserve 19.2 GB versus 12 GB for a 3-node xlarge pool, both providing the same 48 GB to total RAM. **Almost a full node's memory is wasted on the smaller node type in this scenario**. Using larger nodes provides better memory density, however this should be balanced against user workload requirements and anticipated scaling events.
 
 The platform team are constantly reviewing `daemonset` reservations to reduce the memory footprint. In future, the platform will scale reservations based on the total cluster size and how services scale in response to load. It is likely platform resources will increase in the short-term due to new requirements, i.e. to add security services, so ensure this is regularly reviewed during resource planning.
+
+---
+
+### Platform Resource Settings
+
+The system node pools hosts services for a variety of functions (i.e. metrics, logs, certificates, cloud integration). Some have a static resource profile, others will vary considerably under load on the cluster or number of resources (i.e. nodes, pods). In addition, the topology of Azure subscriptions makes it likely there will be a high number of small clusters, while on the other hand the platform must also support large HPCC clusters. These conditions together make it very difficult to set resource requests and limits to meet all use cases and achieve a balance of cost efficiency and scaling.
+
+In general, resources that scale due to load or resource density will have lower requests but higher limits to try and account for more scenarios. In the event of node saturation, the system node pools support limited horizontal scaling.
+
+It is the collective responsibility of all teams to monitor system service metrics and report back to the engineering team when either requests or limits are exceeded on an extended basis. This will very much be an ongoing effort to refine and tune these settings, ideally to the point where the platform can scale them automatically for different conditions.
+
+> commands such as `kubectl top`, `kubectl describe node` and Grafana dashboards can help to track resource usage
 
 <br>
 ---

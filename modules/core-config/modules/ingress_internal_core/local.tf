@@ -3,7 +3,7 @@ locals {
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 
-  chart_version = "4.0.2"
+  chart_version = "4.0.6"
 
   chart_timeout = 1800
 
@@ -144,8 +144,8 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "200m"
-          memory = "256Mi"
+          cpu    = "50m"
+          memory = "128Mi"
         }
 
         limits = {

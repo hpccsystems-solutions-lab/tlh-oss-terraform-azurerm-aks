@@ -10,10 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Changed
+- ingress-nginx chart updated to version 4.0.6 [@jamurtag](url)
 - aad-pod-identity chart updated to version 4.1.5 [@jamurtag](url)
 - aad-pod-identity requests and limits lowered for both NMI and MIC pods [@jamurtag](url)
 - Default to AzurePublicCloud in cert-manager config [@jamurtag](url)
 - Minor formatting change to cert-manager cluster-issuer config [@sossickd](url)
+- Reduced ingress-nginx cpu / memory requests to 50m / 128MB (from 200m / 256MB) [@jamurtag](url)
+- Changed prometheus-operator memory requests / limits to 128MB / 512 MB (from 256MB / 256MB) [@jamurtag](url)
+- Changed kube-state-metrics memory requests / limits to 128MB / 1024MB (from 256MB / 512MB) [@jamurtag](url)
+- Added documentation for system node pool service resource tracking and reporting [@jamurtag](url)
+- Explicitly set Azure Policy and Dashboard add-on status to avoid noise in plans [@dutsmiller](url)
 
 ## v1.0.0-beta.3 - 2021-09-29
 
