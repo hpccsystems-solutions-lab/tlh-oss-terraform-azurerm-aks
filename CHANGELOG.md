@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added documentation for system node pool service resource tracking and reporting [@jamurtag](url)
 - Explicitly set Azure Policy and Dashboard add-on status to avoid noise in plans [@dutsmiller](url)
 - Improve Virtual Network documentation [@dutsmiller](url)
+- Explicitly set max_pods for kubenet/AzureCNI [@dutsmiller](url)
 
 ## v1.0.0-beta.3 - 2021-09-29
 

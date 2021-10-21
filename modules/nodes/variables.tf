@@ -3,6 +3,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "network_plugin" {
+  description = "Kubernetes Network Plugin (kubenet or azure)"
+  type        = string
+}
+
 variable "subnets" {
   description = "The primary subnets to be used for the nodes."
   type = object({

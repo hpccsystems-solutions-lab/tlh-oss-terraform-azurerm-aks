@@ -4,6 +4,8 @@ module "nodes" {
   cluster_name         = local.cluster_name
   orchestrator_version = local.cluster_patch_version
 
+  network_plugin = local.network_plugin
+
   subnets = {
     private = var.virtual_network.subnets.private
     public  = var.virtual_network.subnets.public

@@ -27,10 +27,15 @@ locals {
     }
   }
 
+  max_pods = {
+    azure   = 30
+    kubenet = 110
+  }
+
   node_pool_defaults = merge({
     availability_zones   = [1, 2, 3]
     enable_auto_scaling  = true
-    max_pods             = null
+    max_pods             = local.max_pods[var.network_plugin]
     max_surge            = "1"
     orchestrator_version = var.orchestrator_version
     },
