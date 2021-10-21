@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed kube-state-metrics memory requests / limits to 128MB / 1024MB (from 256MB / 512MB) [@jamurtag](url)
 - Added documentation for system node pool service resource tracking and reporting [@jamurtag](url)
 - Explicitly set Azure Policy and Dashboard add-on status to avoid noise in plans [@dutsmiller](url)
+- Improve Virtual Network documentation [@dutsmiller](url)
 
 ## v1.0.0-beta.3 - 2021-09-29
 

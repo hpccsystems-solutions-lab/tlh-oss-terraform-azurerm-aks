@@ -1,7 +1,8 @@
 # AKS Documentation
 
-* [Architecture](#Architecture)
+* [Architecture](#architecture)
   * [Prerequisites](#prerequisites)
+  * [Virtual Network Requirements](#virtual-network-requirements)
   * [CNI Options](#cni-options)
   * [Node Memory Allocation](#node-memory-allocation)
   * [Platform Resource Settings](#platform-resource-settings)
@@ -50,15 +51,21 @@ $ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (ve
 $ az provider register -n Microsoft.Compute
 ```
 
-A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and route table for each AKS cluster (use the [terraform-azure-virtual-network](https://github.com/Azure-Terraform/terraform-azurerm-virtual-network) module `aks_subnets` variable to meet this requirement, see [examples](/examples) for usage). While it is technically possible to host multiple AKS cluster node pools in a subnet, see [guidance](#multiple-clusters-per-subnet) on why this is not recommended.
-
 Node pools are split into 3 classifications; the `system node pools` hosts cluster services and is completely managed by the module; `user node pools` host user workloads, multiple pools can be deployed and then targeted or isolated using node labels and taints respectively; `ingress node pools` are used to route external traffic into the cluster and are the only pool to be deployed into a public subnet. NSG rules prohibit routing of internet traffic directly to private subnets.
-
-Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used, see [CNI Options](#cni-options) below.
 
 The module `resource_group_name` variable specifies the resource group to deploy the `AKS service` into. This could share the VNet resource group  or be deployed into a dedicated pool. Consideration should be given if multiple VNets and clusters are to be deployed to a subscription and hence Azure RBAC isolation between teams. 
 
-> in addition, Azure creates a fully managed `MC_<cluster-name>` resource group to host AKS managed resources
+> in addition, Azure creates a fully managed `MC_<cluster-name>` resource group to host AKS managed resources. No user-managed resources should be created in this resource group.
+
+---
+
+### Virtual Network Requirements
+
+A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and a unique route table for each AKS cluster (use the [terraform-azure-virtual-network](https://github.com/Azure-Terraform/terraform-azurerm-virtual-network) module `aks_subnets` variable to meet this requirement, see [examples](/examples) for usage). While it is technically possible to host multiple AKS cluster node pools in a subnet, see [guidance](#multiple-clusters-per-subnet) on why this is not recommended.
+
+Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used, see [CNI Options](#cni-options) below.
+
+If the [dns_servers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network#dns_servers) attribute is set for the virtual network, the Azure DNS server "168.63.129.16" must be included in the list of values.
 
 ---
 
