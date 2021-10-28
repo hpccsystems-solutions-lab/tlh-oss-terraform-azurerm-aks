@@ -13,6 +13,8 @@ locals {
     ### controller ###
 
     controller = {
+      allowSnippetAnnotations = "false"
+
       podLabels = {
         "lnrs.io/k8s-platform" = "true"
       }
