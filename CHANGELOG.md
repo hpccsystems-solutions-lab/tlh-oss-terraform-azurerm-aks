@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
+### Changed
+
+- kubectl provider updated to 1.12.1 [@dutsmiller](url)
+
 ## v1.0.0-beta.4 - 2021-11-02
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.

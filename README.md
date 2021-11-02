@@ -135,7 +135,7 @@ module "aks" {
 |------------|-----------|
 | azurerm    | >= 2.71   |
 | helm       | >= 2.1.2  |
-| kubectl    | >= 1.10.1 |
+| kubectl    | >= 1.12.1 |
 | kubernetes | ~> 1.13   |
 | time       | >= 0.7.2  |
 
