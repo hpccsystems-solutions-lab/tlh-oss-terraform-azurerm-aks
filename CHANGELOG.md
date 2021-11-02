@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Virtual Network documentation [@dutsmiller](url)
 - Explicitly set max_pods for kubenet/AzureCNI [@dutsmiller](url)
 - Set `allowSnippetAnnotations` to `false` on ingress-nginx chart to mitigate [security vulnerability](https://www.armosec.io/blog/new-kubernetes-high-severity-vulnerability-alert-cve-2021-25742) [@prikesh-patel](url)
+- Updated support policy regarding Windows node pools and nested Terraform modules [@jamurtag](url)
 
 ## v1.0.0-beta.3 - 2021-09-29
 

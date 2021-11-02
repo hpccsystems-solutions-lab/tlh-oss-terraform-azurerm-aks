@@ -10,12 +10,17 @@ This module is designed to provide a simple and opinionated way to build standar
 
 Support and use of this module.
 
+* Clusters **must** be updated by periodically applying this module within 1 month of the latest release
 * RSG core engineering and architecture teams only support clusters deployed using this module
   * It is not supported to use the open-source module directly, or any other method
-* Clusters **must** be updated by periodically applying this module within 1 month of the latest release
+  * Issues must be demonstrated by calling the module directly, not nesting within multi-layer modules
 * Operating system support:
   * Linux - beta
-  * Windows - experimental (currently lacks daemonset support)
+  * Windows - none 
+    * There is no `daemonset` support so core metrics and logging capabilities are missing
+    * Windows node pools may be provisioned solely for testing Windows container deployment
+
+> a timeline for Windows support has yet to be established, given the engineering effort required and focus on Linux support
 
 ---
 
