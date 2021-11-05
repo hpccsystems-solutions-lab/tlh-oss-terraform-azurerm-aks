@@ -13,7 +13,7 @@ module "nodes" {
 
   ingress_node_pool  = var.ingress_node_pool
   node_pools         = var.node_pools
-  tags               = var.tags
+  tags               = local.tags
 }
 
 module "kubernetes" {
@@ -21,7 +21,7 @@ module "kubernetes" {
 
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.tags
+  tags                = local.tags
 
   cluster_name = local.cluster_name
   dns_prefix   = local.cluster_name
@@ -85,5 +85,5 @@ module "core-config" {
 
   config = var.core_services_config
 
-  tags = var.tags
+  tags = local.tags
 }

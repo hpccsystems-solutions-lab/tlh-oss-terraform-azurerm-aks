@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - kubectl provider updated to 1.12.1 [@dutsmiller](url)
+- Add cloud tags to all provisioned resources [@prikesh-patel](url)
 
 ## v1.0.0-beta.4 - 2021-11-02
 

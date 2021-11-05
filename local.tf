@@ -1,4 +1,6 @@
 locals {
+  module_version = "v1.0.0-beta.5"
+
   cluster_name = var.cluster_name
 
   cluster_patch_matrix = {
@@ -16,4 +18,11 @@ locals {
   }
 
   network_plugin = lower(var.network_plugin)
+
+  tags = merge(var.tags, {
+    "lnrs.io;k8s-platform"             = "true"
+    "lnrs.io;terraform"                = "true"
+    "lnrs.io;terraform-module"         = "terraform-azurerm-aks"
+    "lnrs.io;terraform-module-version" = local.module_version
+  })
 }
