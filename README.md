@@ -10,17 +10,22 @@ This module is designed to provide a simple and opinionated way to build standar
 
 Support and use of this module.
 
-* Clusters **must** be updated by periodically applying this module within 1 month of the latest release
-* RSG core engineering and architecture teams only support clusters deployed using this module
-  * It is not supported to use the open-source module directly, or any other method
-  * Issues must be demonstrated by calling the module directly, not nesting within multi-layer modules
-* Operating system support:
-  * Linux - beta
-  * Windows - none 
-    * There is no `daemonset` support so core metrics and logging capabilities are missing
-    * Windows node pools may be provisioned solely for testing Windows container deployment
+* Clusters **must** be updated periodically by updating this module within 1 month of the latest release
+* For the most stable experience, upgrade through sequential minor versions in turn
+  * While upgrades through non-consecutive version __*should*__ work, the core team don't test this
+* Core engineering and architecture teams only support clusters deployed using this module
+  * It is not supported to use the upstream open-source module directly, or any other method
+  * Issues must be demonstrated by calling the module directly (*i.e. not nesting within multi-layer modules*)
 
-> a timeline for Windows support has yet to be established, given the engineering effort required and focus on Linux support
+<br />
+
+**Windows Support**
+
+Teams **must** seek approval from their business unit Architect **and** IOG Architecture before using Windows node pools.
+
+Windows support is currently limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent-bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform __*should*__ work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
+
+There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward. We plan on providing an equally supported module for Windows, however, we are still establishing testing procedures and identifying the appropriate level of resource required to achieve this.
 
 ---
 
