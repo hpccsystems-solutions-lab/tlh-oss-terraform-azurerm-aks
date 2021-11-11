@@ -163,12 +163,17 @@ module "fluentd" {
 
   source = "./modules/fluentd"
 
+  azure_subscription_id   = var.azure_subscription_id
+  location                = var.location
+
+  cluster_name            = var.cluster_name
+
   additional_env = local.fluentd.additional_env
   debug          = local.fluentd.debug
   pod_labels     = local.fluentd.pod_labels
-  filter_config  = local.fluentd.filter_config
-  route_config   = local.fluentd.route_config
-  output_config  = local.fluentd.output_config
+  filters        = local.fluentd.filters
+  routes         = local.fluentd.routes
+  outputs        = local.fluentd.outputs
 
   tags = var.tags
 }

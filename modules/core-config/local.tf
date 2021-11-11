@@ -62,26 +62,9 @@ locals {
     additional_env = []
     debug          = true
     pod_labels     = {}
-    filter_config  = ""
-    route_config   = <<-EOT
-      <match **>
-        @type route
-        <route **>
-          copy
-          @label @PROMETHEUS
-        </route>
-        <route **>
-          copy
-          @label @DEFAULT
-        </route>
-      </match>
-    EOT
-    output_config  = <<-EOT
-      <label @DEFAULT>
-        <match **>
-          @type null
-        </match>
-      </label>
-    EOT
+    filters        = ""
+    routes         = ""
+    outputs        = ""
+
   }, lookup(var.config, "fluentd", {}))
 }

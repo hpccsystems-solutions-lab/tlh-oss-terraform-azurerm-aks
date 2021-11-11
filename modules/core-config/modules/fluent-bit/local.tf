@@ -1,9 +1,7 @@
 locals {
   namespace = "logging"
 
-  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
-
-  chart_version = "0.15.14"
+  chart_version = "0.19.5"
 
   chart_values = {
     serviceMonitor = {
@@ -15,6 +13,14 @@ locals {
 
     dashboards = {
       enabled = true
+    }
+
+    updateStrategy = {
+      type = "RollingUpdate"
+
+      rollingUpdate = {
+        maxUnavailable = "25%"
+      }
     }
 
     resources = {
@@ -57,86 +63,86 @@ locals {
 
   service_config = <<-EOT
     [SERVICE]
-      Daemon Off
-      Flush 1
-      Log_Level info
-      HTTP_Server On
-      HTTP_Listen 0.0.0.0
-      HTTP_Port 2020
-      storage.path /var/log/flb-storage/
-      storage.sync normal
-      storage.checksum off
-      storage.max_chunks_up 128
+      Daemon                    Off
+      Flush                     1
+      Log_Level                 info
+      HTTP_Server               On
+      HTTP_Listen               0.0.0.0
+      HTTP_Port                 2020
+      storage.path              /var/log/flb-storage/
+      storage.sync              normal
+      storage.checksum          off
+      storage.max_chunks_up     128
       storage.backlog.mem_limit 16M
-      storage.metrics on
-      Parsers_File parsers.conf
-      Parsers_File custom_parsers.conf
+      storage.metrics           on
+      Parsers_File              parsers.conf
+      Parsers_File              custom_parsers.conf
   EOT
 
   input_config = <<-EOT
     [INPUT]
-      Name tail
-      Path /var/log/containers/*.log
-      Parser cri
-      Tag kube.*
-      Skip_Long_Lines On
+      Name              tail
+      Path              /var/log/containers/*.log
+      multiline.parser  cri
+      Tag               kube.*
+      Skip_Long_Lines   On
       Buffer_Chunk_Size 32k
-      Buffer_Max_Size 256k
-      DB /var/log/flb-storage/tail.db
-      DB.Sync normal
-      storage.type  filesystem
+      Buffer_Max_Size   256k
+      DB                /var/log/flb-storage/tail.db
+      DB.Sync           normal
+      storage.type      filesystem
 
     [INPUT]
-      Name systemd
-      Systemd_Filter _SYSTEMD_UNIT=docker.service
-      Systemd_Filter _SYSTEMD_UNIT=containerd.service
-      Systemd_Filter _SYSTEMD_UNIT=kubelet.service
-      Tag host.*
+      Name              systemd
+      Systemd_Filter    _SYSTEMD_UNIT=docker.service
+      Systemd_Filter    _SYSTEMD_UNIT=containerd.service
+      Systemd_Filter    _SYSTEMD_UNIT=kubelet.service
+      Tag               host.*
       Strip_Underscores On
-      DB /var/log/flb-storage/systemd.db
-      DB.Sync normal
-      storage.type  filesystem
+      DB                /var/log/flb-storage/systemd.db
+      DB.Sync           normal
+      storage.type      filesystem
   EOT
 
   filter_config = <<-EOT
     [FILTER]
-      Name kubernetes
-      Match kube.*
-      Merge_Log On
-      Merge_Log_Key log_processed
-      Merge_Log_Trim On
-      Keep_Log Off
-      K8S-Logging.Parser On
+      Name                kubernetes
+      Match               kube.*
+      Merge_Log           On
+      Merge_Log_Key       log_processed
+      Merge_Log_Trim      On
+      Keep_Log            On
+      K8S-Logging.Parser  On
       K8S-Logging.Exclude On
 
     [FILTER]
-      Name          nest
-      Match         kube.*
-      Operation     lift
-      Nested_under  kubernetes
-      Add_prefix    kubernetes_
+      Name         nest
+      Match        kube.*
+      Operation    lift
+      Nested_under kubernetes
+      Add_prefix   kubernetes_
 
     [FILTER]
-      Name          nest
-      Match         kube.*
-      Operation     lift
-      Nested_under  kubernetes_labels
-      Add_prefix    kubernetes_labels_
+      Name         nest
+      Match        kube.*
+      Operation    lift
+      Nested_under kubernetes_labels
+      Add_prefix   kubernetes_labels_
 
     [FILTER]
-      Name          nest
-      Match         kube.*
-      Operation     lift
-      Nested_under  kubernetes_annotations
-      Add_prefix    kubernetes_annotations_
+      Name         nest
+      Match        kube.*
+      Operation    lift
+      Nested_under kubernetes_annotations
+      Add_prefix   kubernetes_annotations_
   EOT
 
   output_config = <<-EOT
     [OUTPUT]
-      Name forward
+      Name  forward
       Match *
-      Host fluentd.logging.svc
-      Port 24224
+      Host  fluentd.logging.svc
+      Port  24224
   EOT
 
   output_config_loki = <<-EOT
@@ -150,4 +156,7 @@ locals {
       line_format json
       net.connect_timeout 180
   EOT
+
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_objects = {}
 }

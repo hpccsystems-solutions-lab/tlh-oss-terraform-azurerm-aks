@@ -282,9 +282,9 @@ module "aks" {
 | `additional_env` | Additional environment variables.                                                    | `list(any)`   | No           |
 | `debug`          | If `true` all logs are printed to stdout.                                            | `bool`        | No           |
 | `pod_labels`     | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations.  | `map(string)` | No           |
-| `filter_config`  | _Fluentd_ filter configuration\_.                                                    | `string`      | No           |
-| `route_config`   | _Fluentd_ route configuration\_.                                                     | `string`      | No           |
-| `output_config`  | _Fluentd_ output configuration\_.                                                    | `string`      | No           |
+| `filters`        | _Fluentd_ filter config split into multiple strings\_.                               | `string`      | No           |
+| `routes`         | _Fluentd_ route config split into multiple strings\_.                                | `string`      | No           |
+| `outputs`        | _Fluentd_ output config split into multiple strings\_.                               | `string`      | No           |
 
 ### Appendix K
 
