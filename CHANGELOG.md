@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update fluent-bit chart to version 0.19.5 [@sossickd](url)
 - Add update stategy for fluent-bit [@sossickd](url)
 - Add [multiline](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing) support for fluent-bit [@sossickd](url)
-- Update fluentd chart version to 2.6.4 [@sossickd](url)
+- Update fluentd chart version to 2.6.5 [@sossickd](url)
 - Add fields to logs including cluster_name, subscription_id and location using the record_transformer filter in fluentd [@sossickd](url)
 
 - Change filter_config, route_config and output_config variables to filters, routes and outputs respectively in fleuntd [@sossickd](url)
