@@ -4,6 +4,12 @@ resource "kubectl_manifest" "resources" {
   yaml_body = file(each.value)
 }
 
+resource "kubectl_manifest" "resource_objects" {
+  for_each = local.resource_objects
+
+  yaml_body = yamlencode(each.value)
+}
+
 resource "helm_release" "default" {
   name      = "fluentd"
   namespace = local.namespace
@@ -17,4 +23,6 @@ resource "helm_release" "default" {
   values = [
     yamlencode(local.chart_values)
   ]
+
+  timeout = 600
 }

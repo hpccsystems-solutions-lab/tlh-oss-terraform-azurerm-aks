@@ -1,3 +1,23 @@
+variable "azure_subscription_id" {
+  type        = string
+  description = "The GUID of your Azure subscription"
+
+  validation {
+    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
+    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
+  }
+}
+
+variable "location" {
+  description = "Azure region in which to build resources."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "The name of the AKS cluster."
+  type        = string
+}
+
 variable "additional_env" {
   description = "Additional environment variables."
   type        = list(any)
@@ -13,18 +33,18 @@ variable "pod_labels" {
   type        = map(any)
 }
 
-variable "filter_config" {
-  description = "The filter config."
+variable "filters" {
+  description = "The filter config split into multiple strings."
   type        = string
 }
 
-variable "route_config" {
-  description = "The route config."
+variable "routes" {
+  description = "The route config, split into multiple strings."
   type        = string
 }
 
-variable "output_config" {
-  description = "The output config."
+variable "outputs" {
+  description = "The output config, split into multiple strings."
   type        = string
 }
 
