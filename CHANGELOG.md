@@ -23,38 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **IMPORTANT** - If you are currently using the filter_config, route_config or output_config in the fluentd section of the core_services_config these will need to be renamed accordingly.
 
-Example:
-
-From:
-
-```terraform
-  core_services_config = {
-    fluentd = {
-      filter_config = <<-EOT
-        <label @EXAMPLE>
-          <match **>
-            @type stdout
-          </match>
-        </label>
-      EOT
-    }
-```
-
-To:
-
-```terraform
-  core_services_config = {
-    fluentd = {
-      filters = <<-EOT
-        <label @EXAMPLE>
-          <match **>
-            @type stdout
-          </match>
-        </label>
-      EOT
-    }
-```
-
 ## v1.0.0-beta.4 - 2021-11-02
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
