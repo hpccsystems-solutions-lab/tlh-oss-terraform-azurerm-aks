@@ -19,10 +19,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add [multiline](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing) support for fluent-bit [@sossickd](url)
 - Update fluentd chart version to 2.6.5 [@sossickd](url)
 - Add fields to logs including cluster_name, subscription_id and location using the record_transformer filter in fluentd [@sossickd](url)
-
 - Change filter_config, route_config and output_config variables to filters, routes and outputs respectively in fleuntd [@sossickd](url)
 
-> **IMPORTANT** - Please change the core_services_config input for fluentd.
+> **IMPORTANT** - If you are currently using the filter_config, route_config or output_config in the fluentd section of the core_services_config these will need to be renamed accordingly.
+
+Example:
+
+From:
+
+```terraform
+  core_services_config = {
+    fluentd = {
+      filter_config = <<-EOT
+        <label @EXAMPLE>
+          <match **>
+            @type stdout
+          </match>
+        </label>
+      EOT
+    }
+```
+
+To:
+
+```terraform
+  core_services_config = {
+    fluentd = {
+      filters = <<-EOT
+        <label @EXAMPLE>
+          <match **>
+            @type stdout
+          </match>
+        </label>
+      EOT
+    }
+```
 
 ## v1.0.0-beta.4 - 2021-11-02
 
