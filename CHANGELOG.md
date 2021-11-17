@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update fluentd chart version to 2.6.5 [@sossickd](url)
 - Add fields to logs including cluster_name, subscription_id and location using the record_transformer filter in fluentd [@sossickd](url)
 - Change `filter_config`, `route_config` and `output_config` variables to `filters`, `routes` and `outputs` respectively in fleuntd [@sossickd](url)
+- Update kube-prometheus-stack to version 19.3.0 [@sossickd](url)
+- Update kube-prometheus-stack crds to version 0.50.0 [@sossickd](url)
+- Enable managed identity for Azure Monitor Grafana data source [@sossickd](url)
+- Enable server_side_apply for kubectl manifests in kube-prometheus-stack module [@sossickd](url)
 
 > **IMPORTANT** - If you are currently using the `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
 
