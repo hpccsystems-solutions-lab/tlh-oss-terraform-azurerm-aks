@@ -4,12 +4,16 @@ resource "kubectl_manifest" "crds" {
   for_each = var.skip_crds ? {} : local.crd_files
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "resources" {
   for_each = local.resource_files
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
 
   depends_on = [
     kubectl_manifest.crds

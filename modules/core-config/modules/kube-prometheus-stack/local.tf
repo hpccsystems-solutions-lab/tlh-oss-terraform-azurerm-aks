@@ -1,7 +1,7 @@
 locals {
   namespace = "monitoring"
 
-  chart_version = "16.12.1"
+  chart_version = "19.3.0"
 
   chart_values = {
     commonLabels = {
@@ -239,6 +239,10 @@ locals {
 
         users = {
           viewers_can_edit = true
+        }
+
+        azure = {
+          managed_identity_enabled = true
         }
       }
 
