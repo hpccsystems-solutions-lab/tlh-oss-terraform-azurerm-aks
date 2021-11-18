@@ -277,14 +277,16 @@ module "aks" {
 
 `fluentd` object specification.
 
-| **Variable**     | **Description**                                                                      | **Type**      | **Required** |
-| :--------------- | :----------------------------------------------------------------------------------- | :------------ | :----------- |
-| `additional_env` | Additional environment variables.                                                    | `list(any)`   | No           |
-| `debug`          | If `true` all logs are printed to stdout.                                            | `bool`        | No           |
-| `pod_labels`     | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations.  | `map(string)` | No           |
-| `filters`        | _Fluentd_ filter config split into multiple strings\_.                               | `string`      | No           |
-| `routes`         | _Fluentd_ route config split into multiple strings\_.                                | `string`      | No           |
-| `outputs`        | _Fluentd_ output config split into multiple strings\_.                               | `string`      | No           |
+| **Variable**       | **Description**                                                                      | **Type**      | **Required** |
+| :----------------- | :----------------------------------------------------------------------------------- | :------------ | :----------- |
+| `image_repository` | Custom image repository to use for the Fluentd image, image_tag must also be set.    | `string`      | No           |
+| `image_tag`        | Custom image tag to use for the Fluentd image, image_repository must also be set.    | `string`      | No           |
+| `additional_env`   | Additional environment variables.                                                    | `list(any)`   | No           |
+| `debug`            | If `true` all logs are printed to stdout.                                            | `bool`        | No           |
+| `pod_labels`       | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations.  | `map(string)` | No           |
+| `filters`          | _Fluentd_ filter config split into multiple strings\_.                               | `string`      | No           |
+| `routes`           | _Fluentd_ route config split into multiple strings\_.                                | `string`      | No           |
+| `outputs`          | _Fluentd_ output config split into multiple strings\_.                               | `string`      | No           |
 
 ### Appendix K
 

@@ -59,12 +59,14 @@ locals {
   }, lookup(var.config, "alertmanager", {}))
 
   fluentd = merge({
-    additional_env = []
-    debug          = true
-    pod_labels     = {}
-    filters        = ""
-    routes         = ""
-    outputs        = ""
+    image_repository = ""
+    image_tag        = ""
+    additional_env   = []
+    debug            = true
+    pod_labels       = {}
+    filters          = ""
+    routes           = ""
+    outputs          = ""
 
   }, lookup(var.config, "fluentd", {}))
 }

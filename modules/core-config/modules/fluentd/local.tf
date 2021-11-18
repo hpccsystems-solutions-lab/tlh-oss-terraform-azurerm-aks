@@ -1,7 +1,7 @@
 locals {
   namespace = "logging"
 
-  chart_version = "2.6.5"
+  chart_version = "2.6.4"
 
   chart_values = {
     nameOverride = "fluentd"
@@ -80,6 +80,13 @@ locals {
       accessMode   = "ReadWriteOnce"
       size         = "50Gi"
     }
+
+    image_override = length(var.image_repository) > 0 && length(var.image_tag) > 0 ? {
+      image = {
+        repository = var.image_repository
+        tag        = var.image_tag
+      }
+    } : {}
 
     env = concat([
       { name = "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR", value = "0.9" },

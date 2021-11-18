@@ -168,12 +168,14 @@ module "fluentd" {
 
   cluster_name            = var.cluster_name
 
-  additional_env = local.fluentd.additional_env
-  debug          = local.fluentd.debug
-  pod_labels     = local.fluentd.pod_labels
-  filters        = local.fluentd.filters
-  routes         = local.fluentd.routes
-  outputs        = local.fluentd.outputs
+  image_repository = local.fluentd.image_repository
+  image_tag        = local.fluentd.image_tag
+  additional_env   = local.fluentd.additional_env
+  debug            = local.fluentd.debug
+  pod_labels       = local.fluentd.pod_labels
+  filters          = local.fluentd.filters
+  routes           = local.fluentd.routes
+  outputs          = local.fluentd.outputs
 
   tags = var.tags
 }

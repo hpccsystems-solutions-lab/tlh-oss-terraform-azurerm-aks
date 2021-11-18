@@ -18,6 +18,16 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "image_repository" {
+  description = "Custom image repository to use for the Fluentd image, image_tag must also be set."
+  type        = string
+}
+
+variable "image_tag" {
+  description = "Custom image tag to use for the Fluentd image, image_repository must also be set."
+  type        = string
+}
+
 variable "additional_env" {
   description = "Additional environment variables."
   type        = list(any)
