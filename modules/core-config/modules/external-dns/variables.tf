@@ -55,15 +55,15 @@ variable "dns_permissions" {
   ]
 }
 
-variable "azure_cloud" {
+variable "azure_environment" {
+  description = "Azure Cloud Environment."
   type        = string
-  description = "The AKS node pool where external-dns should run"
-  default     = "AZUREPUBLICCLOUD"
+  default     = "AzurePublicCloud"
 
   validation {
-    condition     = var.azure_cloud == "AZUREPUBLICCLOUD" || var.azure_cloud == "AZUREUSGOVERNMENTCLOUD"
-    error_message = "The \"azure_cloud\" variable must be either \"AZUREPUBLICCLOUD\" or \"AZUREUSGOVERNMENTCLOUD\"."
-  }
+    condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
+    error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
+  } 
 }
 
 variable "azure_tenant_id" {

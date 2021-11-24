@@ -1,7 +1,17 @@
-resource "kubectl_manifest" "resources" {
+resource "kubectl_manifest" "resource_files" {
   for_each = local.resource_files
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
+}
+
+resource "kubectl_manifest" "resource_objects" {
+  for_each = local.resource_objects
+
+  yaml_body = yamlencode(each.value)
+
+  server_side_apply = true
 }
 
 resource "azurerm_role_definition" "resource_group_reader_private" {
@@ -149,6 +159,7 @@ resource "kubernetes_secret" "azure_private_config_file" {
   data = {
     "azure-private.json" = <<CONFIG
        {
+         "cloud": "${var.azure_environment}",
          "tenantId": "${var.azure_tenant_id}",
          "subscriptionId": "${var.azure_subscription_id}",
          "resourceGroup": "${var.private_domain_filters.resource_group_name}",
@@ -173,6 +184,7 @@ resource "kubernetes_secret" "azure_public_config_file" {
   data = {
     "azure-public.json" = <<CONFIG
        {
+         "cloud": "${var.azure_environment}",
          "tenantId": "${var.azure_tenant_id}",
          "subscriptionId": "${var.azure_subscription_id}",
          "resourceGroup": "${var.public_domain_filters.resource_group_name}",

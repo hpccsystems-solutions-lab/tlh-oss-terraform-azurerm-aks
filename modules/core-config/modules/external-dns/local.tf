@@ -11,8 +11,6 @@ locals {
 
   azure-private-json = "azure-private.json"
   azure-public-json = "azure-public.json"
-
-  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
   
   chart_version = "1.2.0"
 
@@ -50,13 +48,21 @@ locals {
       }
     }
 
+    logFormat = "json"
+
+    logLevel = "debug"
+
     sources = concat(["service", "ingress"], var.additional_sources)
 
     policy = "sync"
 
-    logLevel = "debug"
+    txtOwnerId = var.cluster_name
 
-    txtOwnerId : var.cluster_name
+    env = [{
+      name  = "AZURE_ENVIRONMENT"
+      value = var.azure_environment
+    }]
+
   }
 
   chart_values_private = merge(local.chart_values, {
@@ -126,4 +132,7 @@ locals {
       "--azure-config-file=/etc/kubernetes/${local.azure-public-json}"
     ]
   })
+
+  resource_files   = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_objects = {}
 }
