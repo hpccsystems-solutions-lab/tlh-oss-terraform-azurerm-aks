@@ -130,14 +130,14 @@ module "aks" {
 
 ## Terraform
 
-| Version |
-| ------- |
-| >= 1.0  |
+| Version   |
+|-----------|
+| >= 1.0 |
 
 ## Providers
 
 | Name       | Version   |
-| ---------- | --------- |
+|------------|-----------|
 | azurerm    | >= 2.71   |
 | helm       | >= 2.1.2  |
 | kubectl    | >= 1.12.1 |
@@ -146,33 +146,33 @@ module "aks" {
 
 ## Inputs
 
-| **Variable**                      | **Description**                                                                                                                                                                                                                                                                                   | **Type**                                 | **Default**       | **Required** |
-| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------- | :---------------- | :----------: |
-| `api_server_authorized_ip_ranges` | Public IP or CIDR ranges to apply as a whitelist to the K8S API server, if not set defaults to `0.0.0.0/0`.                                                                                                                                                                                       | `map(string)`                            | `nil`             |     `no`     |
-| `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                                                                                                                                                                                                                  | `object(map(string))` _(see appendix a)_ | `{}`              |     `no`     |
-| `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                                                                                                                                                                                                                     | `string`                                 | `nil`             |    `yes`     |
-| `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                                                                                                                                                                                                         | `string`                                 | `"1.21"`          |     `no`     |
-| `core_services_config`            | Configuration options for core platform services                                                                                                                                                                                                                                                  | `any` _(see appendix h)_                 | `nil`             |    `yes`     |
-| `ingress_node_pool`               | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                                   | `false`           |     `no`     |
-| `location`                        | Azure region in which to build resources.                                                                                                                                                                                                                                                         | `string`                                 | `nil`             |    `yes`     |
-| `log_analytics_workspace_id`      | ID of an existing Log Analytics Workspace to be used for the Azure Monitor Container Insights add-on. By setting this option, you are agreeing that Azure will deploy and manage a service on the cluster to send metrics and logs to Log Analytics                                               | `string`                                 | `nil`             |     `no`     |
-| `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                                                                                                                                                                                                                      | `string`                                 | `"kubenet"`       |     `no`     |
-| `node_pools`                      | Node pool definitions.                                                                                                                                                                                                                                                                            | `list(object())` _(see appendix b)_      | `nil`             |    `yes`     |
-| `podnet_cidr`                     | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                                                                                                                                                                                                          | `string`                                 | `"100.65.0.0/16"` |     `no`     |
-| `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                                                                                                                                                                                                         | `string`                                 | `nil`             |    `yes`     |
-| `tags`                            | Tags to be applied to cloud resources.                                                                                                                                                                                                                                                            | `map(string)`                            | `{}`              |     `no`     |
-| `virtual_network`                 | Virtual network configuration.                                                                                                                                                                                                                                                                    | `object(map)` _(see appendix d)_         | `nil`             |    `yes`     |
+| **Variable**                      | **Description**                                                                                            | **Type**                                 | **Default**       | **Required** | 
+|:----------------------------------|:-----------------------------------------------------------------------------------------------------------|:-----------------------------------------|:------------------|:------------:|
+| `api_server_authorized_ip_ranges` | Public IP or CIDR ranges to apply as a whitelist to the K8S API server, if not set defaults to `0.0.0.0/0`.| `map(string)`                            | `nil`             | `no`         |
+| `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                           | `object(map(string))` _(see appendix a)_ | `{}`              | `no`         |
+| `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                              | `string`                                 | `nil`             | `yes`        |
+| `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                          | `string`                                 | `"1.21"`          | `no`         |
+| `core_services_config`            | Configuration options for core platform services                                                           | `any` _(see appendix h)_                 | `nil`             | `yes`        |
+| `ingress_node_pool`              | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                            | `false`             | `no`   |
+| `location`                        | Azure region in which to build resources.                                                                  | `string`                                 | `nil`             | `yes`        |
+| `log_analytics_workspace_id`      | ID of an existing Log Analytics Workspace to be used for the Azure Monitor Container Insights add-on. By setting this option, you are agreeing that Azure will deploy and manage a service on the cluster to send metrics and logs to Log Analytics                           | `string`                                 | `nil`             | `no`        |
+| `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                               | `string`                                 | `"kubenet"`       | `no`         |
+| `node_pools`                      | Node pool definitions.                                                                                     | `list(object())` _(see appendix b)_      | `nil`             | `yes`        |
+| `podnet_cidr`                        | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                   | `string`                                 | `"100.65.0.0/16"` | `no`         |
+| `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                  | `string`                                 | `nil`             | `yes`        |
+| `tags`                            | Tags to be applied to cloud resources.                                                                     | `map(string)`                            | `{}`              | `no`         |
+| `virtual_network`                 | Virtual network configuration.                                                                             | `object(map)` _(see appendix d)_         | `nil`             | `yes`        |
 
 ### Appendix A
 
 `azuread_clusterrole_map` object specification.
 
-| **Variable**           | **Description**                                                      | **Type**    | **Default** |
-| :--------------------- | :------------------------------------------------------------------- | :---------- | :---------- |
-| `cluster_admin_users`  | A map of Azure AD Ids to be assigned full cluster admin permissions. | `string`    | `nil`       |
-| `cluster_view_users`   | A map of Azure AD Ids to be assigned full cluster read permissions.  | `string`    | `nil`       |
-| `standard_view_users`  | A map of Azure AD Ids to be assigned basic cluster read permissions. | `mapstring` | `nil`       |
-| `standard_view_groups` | A map of Azure AD Ids to be assigned basic cluster read permissions. | `string`    | `nil`       |
+| **Variable**           | **Description**                                                         | **Type** | **Default** |
+| :--------------------- | :---------------------------------------------------------------------- | :------- | :---------- |
+| `cluster_admin_users`  | A map of Azure AD Ids to be assigned full cluster admin permissions.    | `string` | `nil`       |
+| `cluster_view_users`   | A map of Azure AD Ids to be assigned full cluster read permissions.     | `string` | `nil`       |
+| `standard_view_users`  | A map of Azure AD Ids to be assigned basic cluster read permissions.    | `mapstring` | `nil`       |
+| `standard_view_groups` | A map of Azure AD Ids to be assigned basic cluster read permissions.    | `string` | `nil`       |
 
 > see [RBAC documentation](/modules/core-config/modules/rbac/README.md) for more details
 
@@ -193,7 +193,6 @@ module "aks" {
 | `labels   `   | Kubernetes node labels to apply to nodes in the pool.                                                                                               | `map(string)`                     | `nil`       |
 | `taints   `   | Kubernetes taints to apply to nodes in the pool.                                                                                                    | `list(object)` _(see appendix c)_ | `nil`       |
 | `tags    `    | Additional cloud tags to apply to the node pool.                                                                                                    | `map(string)`                     | `nil`       |
-
 
 ### Appendix C
 
@@ -219,25 +218,25 @@ module "aks" {
 
 `virtual_network.subnets` object specification.
 
-| **Variable** | **Description**    | **Type**      | **Default** |
-| :----------- | :----------------- | :------------ | :---------- |
-| `public`     | Public subnet id.  | `object(map)` | `nil`       |
-| `private`    | Private subnet id. | `object(map)` | `nil`       |
+| **Variable** | **Description**      | **Type**      | **Default** |
+| :----------- | :------------------- | :------------ | :-----------|
+| `public`     | Public subnet id.    | `object(map)` | `nil`       |
+| `private`    | Private subnet id.   | `object(map)` | `nil`       |
 
 
 ### Appendix F
 
 `core_services_config` object specification.
 
-| **Variable**            | **Description**                | **Type**                 |
-| :---------------------- | :----------------------------- | :----------------------- |
-| `alertmanager`          | _Alert Manager_ configuration. | `any` _(see appendix G)_ |
-| `cert_manager`          | _Cert Manager_ configuration.  | `any` _(see appendix H)_ |
-| `external_dns`          | _External DNS_ configuration.  | `any` _(see appendix I)_ |
-| `fluentd`               | _Fluentd_ configuration.       | `any` _(see appendix J)_ |
-| `grafana`               | _Grafana_ configuration.       | `any` _(see appendix K)_ |
-| `ingress_internal_core` | _Ingress_ configuration.       | `any` _(see appendix L)_ |
-| `prometheus`            | _Prometheus_ configuration.    | `any` _(see appendix M)_ |
+| **Variable**            | **Description**                             | **Type**                 |
+| :---------------------- | :------------------------------------------ | :----------------------- |
+| `alertmanager`          | _Alert Manager_ configuration.              | `any` _(see appendix G)_ |
+| `cert_manager`          | _Cert Manager_ configuration.               | `any` _(see appendix H)_ |
+| `external_dns`          | _External DNS_ configuration.               | `any` _(see appendix I)_ |
+| `fluentd`               | _Fluentd_ configuration.                    | `any` _(see appendix J)_ |
+| `grafana`               | _Grafana_ configuration.                    | `any` _(see appendix K)_ |
+| `ingress_internal_core` | _Ingress_ configuration.                    | `any` _(see appendix L)_ |
+| `prometheus`            | _Prometheus_ configuration.                 | `any` _(see appendix M)_ |
 
 ### Appendix G
 
@@ -254,41 +253,41 @@ module "aks" {
 
 `cert_manager` object specification.
 
-| **Variable**              | **Description**                                                                                                               | **Type**      | **Required** |
-| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
+| **Variable**              | **Description**                                                                                                               | **Type**       | **Required** |
+| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
 | `dns_zones`               | DNS zones that _Lets Encrypt_ can manage certificates for, must be set up as an _Azure DNS_ public zones in the subscription. | `map(string)` | No           |
-| `letsencrypt_environment` | _Lets Encrypt_ environment, supported values `staging` or `production`.                                                       | `string`      | No           |
-| `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`      | No           |
-| `additional_issuers`      | Additional issuers to install into the cluster.                                                                               | `map(any)`    | No           |
-| `azure_environment`       | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                            | `string  `    | No           |
+| `letsencrypt_environment` | _Lets Encrypt_ environment, supported values `staging` or `production`.                                                       | `string`       | No           |
+| `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`       | No           |
+| `additional_issuers`      | Additional issuers to install into the cluster.                                                                                 | `map(any)`     | No           |
+| `azure_environment`       | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                                                | `string  `     | No           |
 
 ### Appendix I
 
 `external_dns` object specification.
 
-| **Variable**                  | **Description**                                                                                                              | **Type**       | **Required** |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `azure_environment`           | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                           | `string  `     | No           |
-| `additional_sources`          | Additional _Kubernetes_ objects to be watched.                                                                               | `list(string)` | No           |
-| `public_resource_group_name`  | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group.   | `string`       | No           |
-| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group. | `string`       | No           |
-| `public_zones`                | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.                    | `list(string)` | No           |
-| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.                   | `list(string)` | No           |
+| **Variable**                  | **Description**                                                                                                                      | **Type**       | **Required** |
+| :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------   | :------------- | :----------- |
+| `azure_environment`           | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                                   | `string  `     | No           |
+| `additional_sources`          | Additional _Kubernetes_ objects to be watched.                                                                                       | `list(string)` | No           |
+| `public_resource_group_name`  | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group.           | `string`       | No           |
+| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group.         | `string`       | No           |
+| `public_zones`                | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.                            | `list(string)` | No           |
+| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.                           | `list(string)` | No           |
 
 ### Appendix J
 
 `fluentd` object specification.
 
-| **Variable**       | **Description**                                                                     | **Type**      | **Required** |
-| :----------------- | :---------------------------------------------------------------------------------- | :------------ | :----------- |
-| `image_repository` | Custom image repository to use for the Fluentd image, image_tag must also be set.   | `string`      | No           |
-| `image_tag`        | Custom image tag to use for the Fluentd image, image_repository must also be set.   | `string`      | No           |
-| `additional_env`   | Additional environment variables.                                                   | `list(any)`   | No           |
-| `debug`            | If `true` all logs are printed to stdout.                                           | `bool`        | No           |
-| `pod_labels`       | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations. | `map(string)` | No           |
-| `filters`          | _Fluentd_ filter config split into multiple strings\_.                              | `string`      | No           |
-| `routes`           | _Fluentd_ route config split into multiple strings\_.                               | `string`      | No           |
-| `outputs`          | _Fluentd_ output config split into multiple strings\_.                              | `string`      | No           |
+| **Variable**       | **Description**                                                                      | **Type**      | **Required** |
+| :----------------- | :----------------------------------------------------------------------------------- | :------------ | :----------- |
+| `image_repository` | Custom image repository to use for the Fluentd image, image_tag must also be set.    | `string`      | No           |
+| `image_tag`        | Custom image tag to use for the Fluentd image, image_repository must also be set.    | `string`      | No           |
+| `additional_env`   | Additional environment variables.                                                    | `list(any)`   | No           |
+| `debug`            | If `true` all logs are printed to stdout.                                            | `bool`        | No           |
+| `pod_labels`       | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations.  | `map(string)` | No           |
+| `filters`          | _Fluentd_ filter config split into multiple strings\_.                               | `string`      | No           |
+| `routes`           | _Fluentd_ route config split into multiple strings\_.                                | `string`      | No           |
+| `outputs`          | _Fluentd_ output config split into multiple strings\_.                               | `string`      | No           |
 
 ### Appendix K
 
@@ -304,11 +303,11 @@ module "aks" {
 
 `ingress_internal_core` object specification.
 
-| **Variable**       | **Description**                                                                                                  | **Type**       | **Required** |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `domain`           | Internal ingress domain.                                                                                         | `string`       | **Yes**      |
-| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                              | `string`       | No           |
-| `lb_source_cidrs`  | Source CIDR ranges accepted by the ingress load balancer, defaults to `10.0.0.0/8` & `100.65.0.0/16` (POD CIDR). | `list(string)` | No           |
+| **Variable**       | **Description**                                                                                                  | **Type**      | **Required** |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
+| `domain`           | Internal ingress domain.                                                                                         | `string`      | **Yes**      |
+| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                              | `string`      | No           |
+| `lb_source_cidrs`  | Source CIDR ranges accepted by the ingress load balancer, defaults to `10.0.0.0/8` & `100.65.0.0/16` (POD CIDR). | `list(string)`| No           |
 
 ### Appendix M
 
@@ -323,7 +322,7 @@ module "aks" {
 ## Outputs
 
 | Name                                     | Description |
-| ---------------------------------------- | ----------- |
+|------------------------------------------|-------------|
 | `aks_cluster_effective_outbound_ips_ids` | n/a         |
 | `cluster_id`                             | n/a         |
 | `cluster_name`                           | n/a         |
