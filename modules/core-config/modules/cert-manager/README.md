@@ -1,6 +1,6 @@
 # cert-manager
 
-[cert-manager](https://cert-manager.io/docs/) is an agent for Kubernetes that manages TLS certificates and certificate issuers. It's intended to facilitate and automate the creation and lifecycle of TLS certificates. Briefly, you configure an issuer against a provider with an API (such as [LetsEncrypt](letsencrypt.org/)), then request certificates through that issuer. cert-manager will then manage the certificate throughouts its life, including renewals.
+[cert-manager](https://cert-manager.io/docs/) is an agent for Kubernetes that manages TLS certificates and certificate issuers. It's intended to facilitate and automate the creation and lifecycle of TLS certificates. Briefly, you configure an issuer against a provider with an API (such as [LetsEncrypt](letsencrypt.org/)), then request certificates through that issuer. cert-manager will then manage the certificate throughout its life, including renewals.
 
 We're implementing cert-manager as part of our Kubernetes core config so that TLS support is built in. By default, a cluster issuer called `letsencrypt-issuer` will always be created for LetsEncrypt and a list of domains that you must provide.
 
@@ -8,13 +8,13 @@ As there is abundant documentation online on how to use cert-manager, this READM
 
 ## Usage
 
-The AKS module has an input variable called `config` through which you can pass bits of config to this submodule like so:
+The AKS module has an input variable called `core_services_config` through which you can pass bits of config to this submodule like so:
 
 ```
 module "aks" {
   source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
   ...
-  config = {
+  core_services_config = {
     cert_manager = {
       ...
     }
@@ -37,7 +37,7 @@ Concrete example:
 module "aks" {
   source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
   ...
-  config = {
+  core_services_config = {
     cert_manager = {
       azure_environment = "AzurePublicCloud"
       letsencrypt_environment = "production"
@@ -54,9 +54,9 @@ For additional issuers, see the cert-manager documentation as the implementation
 
 ## Wildcard Certificate
 
-When deploying the cert-manager module a wilcard certificate is generated to overcome the [rate limits](https://letsencrypt.org/docs/rate-limits/) for new certifcate requests imposed by lets-encrypt.
+When deploying the cert-manager module a wildcard certificate is generated to overcome the [rate limits](https://letsencrypt.org/docs/rate-limits/) for new certificate requests imposed by lets-encrypt.
 
-A wilcard certiificate is generated that contains a list of wildcard entries listed from the `dns_zones` map of domains.
+A wildcard certificate is generated that contains a list of wildcard entries listed from the `dns_zones` map of domains.
 
 This uses the `letsencrypt-issuer` cluster issuer to generate a certificate and secret named `default-wildcard-cert-tls` in the cert-manager namespace.
 
