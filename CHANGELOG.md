@@ -26,8 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update kube-prometheus-stack crds to version 0.50.0 [@sossickd](url)
 - Enable managed identity for Azure Monitor Grafana data source [@sossickd](url)
 - Enable server_side_apply for kubectl manifests in kube-prometheus-stack module [@sossickd](url)
+- Add versioning to vm types. All vm types going forward require an appended version. (see IMPORTANT note below) [@dutsmiller](url)
+- Add gpd, mem, memd, and stor vm types (see [matrix](./modules/nodes/matrix.md) for node types) [@dutsmiller](url)
+- Add local volume provisioner nvme and ssd disks [@dutsmiller](url)
 
-> **IMPORTANT** - If you are currently using the `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
+> **IMPORTANT** - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The beta.4 node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility .  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
+
+> **IMPORTANT** - If you are currently using `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
 
 ## v1.0.0-beta.4 - 2021-11-02
 

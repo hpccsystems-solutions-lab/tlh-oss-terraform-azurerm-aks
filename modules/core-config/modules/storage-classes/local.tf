@@ -58,5 +58,23 @@ locals {
       volume_binding_mode    = "WaitForFirstConsumer"
       allow_volume_expansion = true
     }
+    local-nvme-delete = {
+      labels                 = local.standard_storage_class_labels
+      storage_provisioner    = "kubernetes.io/no-provisioner"
+      parameters             = {}
+      reclaim_policy         = "Delete"
+      mount_options          = ["debug"]
+      volume_binding_mode    = "WaitForFirstConsumer"
+      allow_volume_expansion = false
+    }
+    local-ssd-delete = {
+      labels                 = local.standard_storage_class_labels
+      storage_provisioner    = "kubernetes.io/no-provisioner"
+      parameters             = {}
+      reclaim_policy         = "Delete"
+      mount_options          = ["debug"]
+      volume_binding_mode    = "WaitForFirstConsumer"
+      allow_volume_expansion = false
+    }
   }
 }

@@ -20,6 +20,12 @@ module "storage_classes" {
   source = "./modules/storage-classes"
 }
 
+module "local_storage" {
+  source = "./modules/local-storage"
+
+  depends_on = [module.storage_classes]
+}
+
 resource "time_sleep" "namespace" {
   destroy_duration = "30s"
 }

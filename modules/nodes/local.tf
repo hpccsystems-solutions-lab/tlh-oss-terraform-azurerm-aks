@@ -1,6 +1,6 @@
 locals {
   vm_types = {
-    x64-gp = {
+    x64-gp-v1 = {
       medium     = "Standard_B2s"
       large      = "Standard_D2s_v4"
       xlarge     = "Standard_D4s_v4"
@@ -10,6 +10,43 @@ locals {
       "12xlarge" = "Standard_D48s_v4"
       "16xlarge" = "Standard_D64s_v4"
       "24xlarge" = "Standard_D96as_v4"
+    }
+    x64-gpd-v1 = {
+      medium     = "Standard_B2s"
+      large      = "Standard_D2ds_v4"
+      xlarge     = "Standard_D4ds_v4"
+      "2xlarge"  = "Standard_D8ds_v4"
+      "4xlarge"  = "Standard_D16ds_v4"
+      "8xlarge"  = "Standard_D32ds_v4"
+      "12xlarge" = "Standard_D48ds_v4"
+      "16xlarge" = "Standard_D64ds_v4"
+      "24xlarge" = "Standard_D96as_v4"
+    }
+    x64-mem-v1 = {
+      large      = "Standard_E2s_v4"
+      xlarge     = "Standard_E4s_v4"
+      "2xlarge"  = "Standard_E8s_v4"
+      "4xlarge"  = "Standard_E16s_v4"
+      "8xlarge"  = "Standard_E32s_v4"
+      "12xlarge" = "Standard_E48s_v4"
+      "16xlarge" = "Standard_E64s_v4"
+    }
+    x64-memd-v1 = {
+      large      = "Standard_E2ds_v4"
+      xlarge     = "Standard_E4ds_v4"
+      "2xlarge"  = "Standard_E8ds_v4"
+      "4xlarge"  = "Standard_E16ds_v4"
+      "8xlarge"  = "Standard_E32ds_v4"
+      "12xlarge" = "Standard_E48ds_v4"
+      "16xlarge" = "Standard_E64ds_v4"
+    }
+    x64-stor-v1 = {
+      "2xlarge"  = "Standard_L8s_v2"
+      "4xlarge"  = "Standard_L16s_v2"
+      "8xlarge"  = "Standard_L32s_v2"
+      "12xlarge" = "Standard_L48s_v2"
+      "16xlarge" = "Standard_L64s_v2"
+      "20xlarge" = "Standard_L80s_v2"
     }
   }
 
@@ -26,6 +63,8 @@ locals {
       "24xlarge" = "Standard_D96as_v4"
     }
   }
+
+  storage_vm_types = [ "gpd", "memd", "stor" ]
 
   max_pods = {
     azure   = 30
@@ -77,7 +116,7 @@ locals {
     name         = "ingress"
     single_vmss  = true
     public       = true
-    node_type    = "x64-gp"
+    node_type    = "x64-gp-v1"
     node_size    = "large"
     min_capacity = 0
     max_capacity = 6
@@ -96,7 +135,7 @@ locals {
     name         = "system"
     single_vmss  = false
     public       = false
-    node_type    = "x64-gp"
+    node_type    = "x64-gp-v1"
     node_size    = "large"
     min_capacity = length(local.node_pool_defaults.availability_zones)
     max_capacity = (length(local.node_pool_defaults.availability_zones) * 2)
@@ -113,19 +152,24 @@ locals {
   }
 
   node_pools = merge(values({ for pool in concat([local.system_node_pool], (var.ingress_node_pool ? [local.ingress_node_pool] : []), var.node_pools) :
-    pool.name => { for zone in (pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
+    pool.name => { for zone in(pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
         availability_zones = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
         priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
-        vm_size            = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+", pool.node_type)][pool.node_size]
+        vm_size            = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+-v[0-9]+", pool.node_type)][pool.node_size]
         os_type            = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
         min_count          = (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones)))
         max_count          = (pool.single_vmss ? pool.max_capacity : (pool.max_capacity / length(local.node_pool_defaults.availability_zones)))
 
-        node_labels = merge({
-          "lnrs.io/lifecycle" = (lookup(pool, "use_spot", false) ? "spot" : "ondemand")
-          "lnrs.io/size"      = pool.node_size
-        }, pool.labels)
+        node_labels = merge(
+          {
+            "lnrs.io/lifecycle" = (lookup(pool, "use_spot", false) ? "spot" : "ondemand")
+            "lnrs.io/size"      = pool.node_size
+          },
+          (contains(local.storage_vm_types, split("-", pool.node_type)[1]) ? {"lnrs.io/local-storage" = "true"} : {}),
+          pool.labels
+        )
+
         node_taints = [for taint in pool.taints :
           "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
         ]

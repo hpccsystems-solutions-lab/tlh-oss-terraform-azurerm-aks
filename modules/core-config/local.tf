@@ -4,7 +4,8 @@ locals {
     "dns",
     "logging",
     "ingress-core-internal",
-    "monitoring"
+    "monitoring",
+    "storage"
   ]
 
   #############

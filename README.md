@@ -72,7 +72,7 @@ module "aks" {
       name         = "workers"
       single_vmss  = false
       public       = false
-      node_type    = "x64-gp"
+      node_type    = "x64-gp-v1"
       node_size    = "medium"
       min_capacity = "3"
       max_capacity = "6"
@@ -186,13 +186,14 @@ module "aks" {
 | `name`        | Node pool name.                                                                                                                                     | `string`                          | `nil`       |
 | `single_vmss` | `false` creates a single node pool across all zones, `true` creates node pools of the same specification in all zones to support stateful services. | `bool`                            | `nil`       |
 | `public`      | Set to `true` to assign a public IP to nodes in the pool.                                                                                           | `bool`                            | `nil`       |
-| `node_type`     | Type of instance being created in the node group(s), currently only x64-gp is supported.  Append "-win" for Windows node pools (example: "x64-gp-win"). Windows are nodes only supported when network_plugin set to "azure".            | `string`                          | `nil`       |
-| `node_size`     | Size of instance being created in the node pool(s) using generic sizes and based on the node_type.  | `string`                          | `nil`       |
+| `node_type`     | Type of instance being created in the node group(s).  Append "-win" for Windows node pools (example: "x64-gp-v1-win"). Windows are nodes only supported when network_plugin set to "azure".            | `string`                          | `nil`       |
+| `node_size`     | Size of instance being created in the node pool(s) using generic sizes and based on the node_type, see the [node type/size matrix](/modules/nodes/matrix.md) for size classes | `string`                          | `nil`       |
 | `min_capacity`   | Minimum number of instances the resultant node pool(s) should have.  If single_vmss is set to false, this number must be divisible by the number of Availability Zones (3).                                                                                                 | `number`                          | `nil`       |
 | `max_capacity`   | Maximum number of instances the resultant node pool(s) should have. If single_vmss is set to false, this number must be divisible by the number of Availability Zones (3).                                                                             | `number`                          | `nil`       |
 | `labels   `   | Kubernetes node labels to apply to nodes in the pool.                                                                                               | `map(string)`                     | `nil`       |
 | `taints   `   | Kubernetes taints to apply to nodes in the pool.                                                                                                    | `list(object)` _(see appendix c)_ | `nil`       |
 | `tags    `    | Additional cloud tags to apply to the node pool.                                                                                                    | `map(string)`                     | `nil`       |
+
 
 ### Appendix C
 

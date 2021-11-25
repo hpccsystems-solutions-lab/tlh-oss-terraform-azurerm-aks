@@ -11,6 +11,7 @@
   * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
   * [ACR Access](#acr-access)
   * [External Persistent Disks](#external-persistent-disks)
+  * [Local Volumes](#local-volumes)
   * [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
 * [Service User Guide](#services)
   * [Azure AD Pod Identity](#azure-ad-pod-identity)
@@ -47,7 +48,7 @@ To enable the [encryption at host](https://docs.microsoft.com/en-us/azure/virtua
 ```bash
 $ az account set --subscription <subscription_name>
 $ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
-$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (verify until registered)
+$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (verify until registered, up to 30 minutes)
 $ az provider register -n Microsoft.Compute
 ```
 
@@ -317,6 +318,21 @@ Any `storageClassName` can be used on the remote cluster, however it is useful t
 As an example, use the [azurerm_managed_disk](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk) resource to create a disk in the external resource group. Repeat the steps above to add the Azure Role assignment to this group. Use the same Kubernetes manifest above specifying the `DiskName` & `DiskURI` properties to target the disk on any cluster, which has the advantage the same manifest can be used throughout the workflow without modification.
 
 > for this reason this is the recommended approach
+
+---
+
+### Local Volumes
+
+For node types in the [node type/size matrix](/modules/nodes/matrix.md) with either local SSD or NVME storage, these disks will automatically be converted to [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) and be available for pods on the node to claim via a [Persistent Volume Claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims).
+
+There are a few important considerations when using these volumes.
+
+* It's possible the disk may already contain data from other Azure customers, this is not scrubbed before mounting
+* The [encryption at host](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli#prerequisites) feature will only protect RSG data on SSD volumes, not NVME volumes
+  * NVME volume data **must** be encrypted by another means - this is the users responsibility
+* If a `PersistentVolumeClaim` is deleted the disk will be scrubbed shortly after by the `daemonset`
+  * This could take several hours for large disks and incur a lot of IO and processing cycles
+* If a node is deleted the `PersistentVolume` is retained on the cluster and must be removed manually
 
 ---
 

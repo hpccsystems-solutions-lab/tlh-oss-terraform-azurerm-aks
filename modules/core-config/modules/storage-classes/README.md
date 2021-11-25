@@ -12,6 +12,8 @@ Storage classes created by this module:
 - `azure-disk-premium-ssd-retain`: Azure Managed Disk in Premium SSD tier, with reclaim policy "Retain"
 - `azure-disk-standard-ssd-delete`: Azure Managed Disk in Standard SSD tier, with reclaim policy "Delete"
 - `azure-disk-premium-ssd-delete`: Azure Managed Disk in Premium SSD tier, with reclaim policy "Delete"
+- `local-nvme-delete`: Provisions volumes on disks matching "nvme*"
+- `local-ssd-delete`: Provisions volumes on disks matching "sdb1*"
 
 **Note**: AKS provisions a set of default storage classes which are protected by a Kubernetes Reconciliation loop. One of those storage classes is called `default`, is set as a cluster default, cannot be overridden by any means ([by design](https://docs.microsoft.com/en-us/azure/aks/concepts-storage#storage-classes)), and its main attributes are Azure Managed Disk + Standard SSD tier + reclaim policy = "Delete". 
 
