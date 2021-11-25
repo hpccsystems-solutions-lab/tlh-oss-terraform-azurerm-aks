@@ -38,6 +38,8 @@ module "aks" {
 
 The `fluentd` block is just a key-value map, for a list of of available input variables for fluentd look at the main [README](../../../../README.md), Appendix J.
 
+- `image_repository`: Custom image repository to use for the Fluentd image, image_tag must also be set.
+- `image_tag`: Custom image tag to use for the Fluentd image, image_repository must also be set.
 - `additional_env`: Additional environment variables
 - `debug`: If `true` all logs are printed to stdout.
 - `pod_labels`: Labels to add to fluentd pods, used for pod-identity or cloud storage integrations.
