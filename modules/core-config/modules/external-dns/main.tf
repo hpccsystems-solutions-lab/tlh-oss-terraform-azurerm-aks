@@ -1,4 +1,4 @@
-resource "kubectl_manifest" "resource_files" {
+resource "kubectl_manifest" "resources" {
   for_each = local.resource_files
 
   yaml_body = file(each.value)
