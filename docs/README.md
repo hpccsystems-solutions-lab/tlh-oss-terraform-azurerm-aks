@@ -363,6 +363,9 @@ There are a few important considerations when using these volumes.
 * If a `PersistentVolumeClaim` is deleted the disk will be scrubbed shortly after by the `daemonset`
   * This could take several hours for large disks and incur a lot of IO and processing cycles
 * If a node is deleted the `PersistentVolume` is retained on the cluster and must be removed manually
+* Each disk will be converted to a single `PersistentVolume`, RAID is not implemented to combine them
+
+> L Series NVME volumes are 1.92 TB, the largest 20x instance supports 10 disks (see the [node type/size matrix](/modules/nodes/matrix.md))
 
 ---
 
@@ -391,6 +394,7 @@ The module deploys the `aad-pod-identity` service to support this via the follow
 * Create an Azure AD managed identity
 * Assign the managed identity appropriate Azure RBAC permissions
 * Configure `AzureIdentity` and `AzureIdentityBindings` resources to reference the managed identity
+* Add the [aadpodidbinding](https://azure.github.io/aad-pod-identity/docs/demo/standard_walkthrough/#6-deployment-and-validation) label to pods with value set to the identity name
 
 See the [Pod Identity walkthrough](https://azure.github.io/aad-pod-identity/docs/demo/standard_walkthrough/#2-create-an-identity-on-azure) from step 2 for implementation details.
 
