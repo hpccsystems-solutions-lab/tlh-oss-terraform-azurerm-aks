@@ -194,7 +194,6 @@ module "aks" {
 | `taints   `   | Kubernetes taints to apply to nodes in the pool.                                                                                                    | `list(object)` _(see appendix c)_ | `nil`       |
 | `tags    `    | Additional cloud tags to apply to the node pool.                                                                                                    | `map(string)`                     | `nil`       |
 
-
 ### Appendix C
 
 `node_pools.taints` object specification.
@@ -266,13 +265,14 @@ module "aks" {
 
 `external_dns` object specification.
 
-| **Variable**          | **Description**                                                                                              | **Type**       | **Required** |
-| :-------------------- | :----------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `additional_sources`  | Additional _Kubernetes_ objects to be watched.                                                               | `list(string)` | No           |
-| `public_resource_group_name` | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group. | `string`       | No           |
-| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group. | `string`       | No           |
-| `public_zones`               | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
-| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.           | `list(string)` | No           |
+| **Variable**                  | **Description**                                                                                                                      | **Type**       | **Required** |
+| :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------   | :------------- | :----------- |
+| `azure_environment`           | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                                   | `string  `     | No           |
+| `additional_sources`          | Additional _Kubernetes_ objects to be watched.                                                                                       | `list(string)` | No           |
+| `public_resource_group_name`  | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group.           | `string`       | No           |
+| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group.         | `string`       | No           |
+| `public_zones`                | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.                            | `list(string)` | No           |
+| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.                           | `list(string)` | No           |
 
 ### Appendix J
 
