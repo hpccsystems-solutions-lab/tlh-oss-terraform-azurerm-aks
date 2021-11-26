@@ -49,7 +49,9 @@
 ## x64-stor-v1 (storage optimized with local ssd and nvme)
 | **Size**   |  **vCPU**  | **Memory** |   **SSD**  |  **NVMe**  | **SKU**            |
 |:-----------|:----------:|:----------:|:----------:|:----------:|:-------------------|
-| `2xlarge`  | 8          | `64`       | 80         | 1x1.92 TB  | Standard_E8ds_v4
-| `4xlarge`  | 16         | `128`      | 160        | 2x1.92 TB  | Standard_E16ds_v4
-| `8xlarge`  | 32         | `256`      | 320        | 4x1.92 TB  | Standard_E32ds_v4
-| `16xlarge` | 64         | `512`      | 640        | 8x1.92 TB  | Standard_E64ds_v4
+| `2xlarge`  | 8          | `64`       | 80         | 1x1.92 TB  | Standard_L8s_v2
+| `4xlarge`  | 16         | `128`      | 160        | 2x1.92 TB  | Standard_L16s_v2
+| `8xlarge`  | 32         | `256`      | 320        | 4x1.92 TB  | Standard_L32s_v2
+| `12xlarge` | 48         | `384`      | 480        | 6x1.92 TB  | Standard_L48s_v2
+| `16xlarge` | 64         | `512`      | 640        | 8x1.92 TB  | Standard_L64s_v2
+| `20xlarge` | 80         | `640`      | 800        | 10x1.92 TB | Standard_L80s_v2
