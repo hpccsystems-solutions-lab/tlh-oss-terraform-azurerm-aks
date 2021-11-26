@@ -8,8 +8,11 @@ resource "azurerm_user_assigned_identity" "main" {
 resource "azurerm_role_assignment" "main" {
   count = length(var.roles)
 
+  ## Support both (mutually exclusive) options depending on the input (if an Azure path use role_definition_id)
+  role_definition_id   = length(regexall("^/subscription", var.roles[count.index].role_definition_resource_id)) > 0 ? var.roles[count.index].role_definition_resource_id : null
+  role_definition_name = length(regexall("^/subscription", var.roles[count.index].role_definition_resource_id)) > 0 ? null : var.roles[count.index].role_definition_resource_id
+
   scope              = var.roles[count.index].scope
-  role_definition_id = var.roles[count.index].role_definition_resource_id
   principal_id       = azurerm_user_assigned_identity.main.principal_id
 }
 
@@ -18,7 +21,5 @@ resource "kubectl_manifest" "identity" {
 }
 
 resource "kubectl_manifest" "identity_binding" {
-  depends_on = [kubectl_manifest.identity]
-
   yaml_body = yamlencode(local.identity_binding)
 }

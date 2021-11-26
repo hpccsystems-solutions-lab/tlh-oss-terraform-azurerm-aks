@@ -3,6 +3,8 @@ locals {
 
   chart_version = "19.3.0"
 
+  grafana_identity_name = "grafana"
+
   chart_values = {
     commonLabels = {
       "lnrs.io/k8s-platform" = "true"
@@ -223,6 +225,11 @@ locals {
       rbac = {
         create     = true
         pspEnabled = false
+      }
+
+      podLabels = {
+        aadpodidbinding        = "${var.cluster_name}-${local.grafana_identity_name}"
+        "lnrs.io/k8s-platform" = "true"
       }
 
       admin = {

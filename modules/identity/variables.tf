@@ -34,4 +34,9 @@ variable "roles" {
     role_definition_resource_id = string
     scope                       = string
   }))
+
+  validation {
+    condition     = alltrue([for x in var.roles : length(x.role_definition_resource_id) > 0])
+    error_message = "Role definition resource ID must have a value."
+  }
 }

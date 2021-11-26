@@ -133,8 +133,13 @@ module "kube_prometheus_stack" {
 
   source = "./modules/kube-prometheus-stack"
 
+  azure_subscription_id = var.azure_subscription_id
+
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
+
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
 
   skip_crds = true
 
@@ -149,10 +154,14 @@ module "kube_prometheus_stack" {
   grafana_plugins                 = local.grafana.additional_plugins
   grafana_additional_data_sources = local.grafana.additional_data_sources
 
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
   ingress_domain           = local.ingress_internal_core.domain
   ingress_subdomain_suffix = local.ingress_internal_core.subdomain_suffix
 
   loki_enabled = local.loki.enabled
+
+  tags = var.tags
 }
 
 module "fluent-bit" {

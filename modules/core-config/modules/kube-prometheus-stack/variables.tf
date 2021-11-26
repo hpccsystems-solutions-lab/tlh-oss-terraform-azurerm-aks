@@ -1,3 +1,13 @@
+variable "azure_subscription_id" {
+  type        = string
+  description = "The GUID of your Azure subscription"
+
+  validation {
+    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
+    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
+  }
+}
+
 variable "cluster_name" {
   description = "The name of the cluster that has been created."
   type        = string
@@ -6,6 +16,16 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "The Kubernetes minor version of the cluster (e.g. x.y)"
   type        = string
+}
+
+variable "resource_group_name" {
+  type        = string
+  description = "The name of the resource group of your AKS cluster"
+}
+
+variable "resource_group_location" {
+  type        = string
+  description = "The location of the resource group of your AKS cluster"
 }
 
 variable "skip_crds" {
@@ -53,6 +73,11 @@ variable "grafana_additional_data_sources" {
   type        = list(any)
 }
 
+variable "log_analytics_workspace_id" {
+  description = "ID of the Azure Log Analytics Workspace optionally configured for the cluster"
+  type        = string
+}
+
 variable "ingress_domain" {
   description = "The domain to use for ingress resources."
   type        = string
@@ -66,4 +91,9 @@ variable "ingress_subdomain_suffix" {
 variable "loki_enabled" {
   description = "If Loki is enabled in the cluster."
   type        = bool
+}
+
+variable "tags" {
+  description = "Tags to be applied to all resources"
+  type        = map(string)
 }

@@ -10,6 +10,7 @@
   * [Kubernetes RBAC](#kubernetes-rbac)
   * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
   * [ACR Access](#acr-access)
+  * [Grafana Access to Azure Resources](#grafana-access-to-azure-resources)
   * [External Persistent Disks](#external-persistent-disks)
   * [Local Volumes](#local-volumes)
   * [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
@@ -208,6 +209,35 @@ resource "azurerm_role_assignment" "accurint_acr" {
 ```
 
 The code above requires the ACR and AKS resources be deployed in the same project/subscription and the Terraform user has access to modify them. In many cases, an ACR could be shared by many clusters and deployed in a central subscription, hence the role assignment would need to happen there (this is the reason ACR access is not supported by the module directly).
+
+---
+
+### Grafana Access to Azure Resources
+
+To support the in-cluster Grafana service to query Azure resources such as metrics or logs from a Log Analytics workspace, add an Azure role assignment for the Grafana managed identity to the appropriate resource group and workspace.
+
+```yaml
+resource "azurerm_role_assignment" "grafana_accurint_log_analytics_rg_reader" {
+  scope                = azurerm_resource_group.accurint_log_analytics_rg.id
+  role_definition_name = "Reader"
+  principal_id         = module.aks.grafana_identity
+}
+
+resource "azurerm_role_assignment" "grafana_log_analytics_workspace_reader" {
+  scope                = azurerm_log_analytics_workspace.accurint.id
+  role_definition_name = "Log Analytics Reader"
+  principal_id         = module.aks.grafana_identity
+}
+```
+
+> Grafana needs `Reader` access to the Resource Group for service discovery
+
+For convenience, the module automatically configures the following:
+
+* Adds role assignments for the managed identity to all resources within the AKS cluster resource group
+* Adds role assignments to the workspace added via the `log_analytics_workspace_id` variable (if set)
+
+AKS cluster resource group roles provides access to Azure cluster metrics and control plane diagnostics logs stored in a Log Analytics workspace within it.
 
 ---
 

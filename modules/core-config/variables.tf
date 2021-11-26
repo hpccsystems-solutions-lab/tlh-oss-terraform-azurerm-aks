@@ -85,3 +85,8 @@ variable "config" {
   description = "Platform service configuration options"
   type        = any
 }
+
+variable "log_analytics_workspace_id" {
+  description = "ID of the Azure Log Analytics Workspace optionally configured for the cluster"
+  type        = string
+}

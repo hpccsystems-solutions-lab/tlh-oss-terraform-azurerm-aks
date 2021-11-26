@@ -20,7 +20,47 @@ resource "kubectl_manifest" "resources" {
   ]
 }
 
+## Managed identity for Grafana to query Azure data sources such as Log Analytics workspaces
+module "identity_grafana" {
+  source = "../../../identity"
+
+  cluster_name        = var.cluster_name
+  identity_name       = local.grafana_identity_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  tags                = var.tags
+  namespace           = local.namespace
+
+  ## By default Grafana is granted access to the following resources:
+  #   - Log Analytics Reader access to the cluster resource group (cluster metrics and diagnostic logs)
+  #   - If log_analytics_workspace_id is set as a module variable:
+  #     - Reader access to its Resource Group, plus Log Analytics Reader access to the Workspace
+
+  roles = concat(
+    [
+      {
+        role_definition_resource_id = "Log Analytics Reader"
+        scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.resource_group_name}"
+      }
+    ],
+    var.log_analytics_workspace_id == null ? [] :
+    [{
+        role_definition_resource_id = "Reader"
+        scope                       = regex("([[:ascii:]]*)(/providers/)", var.log_analytics_workspace_id)[0]
+    },
+    {
+        role_definition_resource_id = "Log Analytics Reader"
+        scope                       = var.log_analytics_workspace_id
+    }]
+  )
+}
+
 resource "helm_release" "default" {
+  depends_on = [
+    module.identity_grafana,
+    kubectl_manifest.crds
+  ]
+
   name      = "kube-prometheus-stack"
   namespace = local.namespace
 
@@ -31,10 +71,6 @@ resource "helm_release" "default" {
 
   values = [
     yamlencode(local.chart_values)
-  ]
-
-  depends_on = [
-    kubectl_manifest.crds
   ]
 }
 

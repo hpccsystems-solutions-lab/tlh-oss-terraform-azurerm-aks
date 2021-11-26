@@ -83,6 +83,8 @@ module "core-config" {
   azure_tenant_id       = data.azurerm_client_config.current.tenant_id
   azure_subscription_id = data.azurerm_client_config.current.subscription_id
 
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
   config = var.core_services_config
 
   tags = local.tags

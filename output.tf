@@ -21,3 +21,7 @@ output "kubelet_identity" {
 output "principal_id" {
   value = module.kubernetes.principal_id
 }
+
+output "grafana_identity" {
+  value = module.core-config.grafana_identity
+}
