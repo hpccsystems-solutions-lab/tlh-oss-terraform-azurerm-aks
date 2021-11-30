@@ -1,0 +1,67 @@
+name: Feature Request
+description: Request a new feature
+title: "[Feature]: "
+labels: ["feature", "enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form!
+        *Please provide as much detail as possible so we can add the new functionality as soon as possible.*
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: The Feature
+      description: What do you want the module to do?
+      placeholder: Describe the new feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The Problem
+      description: What is currently stopping this from working?
+      placeholder: Why doesn't this currently work?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: blocking
+    attributes:
+      label: What is this Blocking?
+      description: What can't you do as a result of this missing functionality?
+      placeholder: What are you trying to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: The Solution
+      description: How can this be fixed?
+      placeholder: Suggest how this should be implemented
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: external-dependencies
+    attributes:
+      label: External Dependencies
+      description: Is this feature dependent on any new features in upstream tools?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false

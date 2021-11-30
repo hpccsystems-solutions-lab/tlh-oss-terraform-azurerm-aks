@@ -1,0 +1,22 @@
+name: General Question
+description: Ask a question to the maintainers
+title: "[Question]: "
+labels: ["question", "triage"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: The Question
+      description: What would you like to know?
+      placeholder: Ask a question
+    validations:
+      required: true
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
