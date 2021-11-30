@@ -10,6 +10,15 @@ body:
         *Please provide as much detail as possible so we can test and resolve the issue as soon as possible.*
 
   - type: input
+    id: module-version
+    attributes:
+      label: Module Version
+      description: What version tag of the module are you consuming?
+      placeholder: ex. v1
+    validations:
+      required: true
+
+  - type: input
     id: tf-version
     attributes:
       label: Terraform Version
@@ -23,16 +32,7 @@ body:
     attributes:
       label: Provider Versions
       description: What terraform providers were used?
-      placeholder: hashicorp/aws = 3.67.0
-    validations:
-      required: true
-
-  - type: input
-    id: module-version
-    attributes:
-      label: Module Version
-      description: What version tag of the module are you consuming?
-      placeholder: ex. v1
+      placeholder: hashicorp/azurerm v2.87.0
     validations:
       required: true
 
