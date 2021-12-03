@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enable server_side_apply for kubectl manifests in external-dns module [@sossickd](url)
 - Add support for AzureUSGovernmentCloud for external-dns [@sossickd](url)
 - Change logging format to json for external-dns [@sossickd](url)
+- Configure monitor diagnostic settings to send control-plane logs to a log analytics workspace [@sossickd](url)
+- Add Azure Monitor data source to Grafana [@sossickd](url)
+- Add Grafana dashboard to view control-plane logs [@sossickd](url)
 
 > **IMPORTANT** - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The beta.4 node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility .  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
 

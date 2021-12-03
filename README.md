@@ -317,6 +317,14 @@ module "aks" {
 | :------------- | :---------------------------------- | :------------- | :----------- |
 | `remote_write` | Remote write endpoints for metrics. | `list(string)` | No           |
 
+### Appendix N
+
+`monitor-diagnostic-settings` object specification.
+
+| **Variable**         | **Description**                                                       | **Type** | **Required** |
+| :------------------- | :-------------------------------------------------------------------- | :------- | :----------- |
+| `storage_account_id` | Storage account id to store a secondary copy of diagnostic logs.      | `string` | No           |
+
 ---
 
 ## Outputs

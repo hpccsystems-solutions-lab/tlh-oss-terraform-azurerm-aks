@@ -71,4 +71,9 @@ locals {
     outputs          = ""
 
   }, lookup(var.config, "fluentd", {}))
+
+  monitor-diagnostic-settings = merge({
+    storage_account_id = ""
+  }, lookup(var.config, "monitor-diagnostic-settings", {}))
+
 }

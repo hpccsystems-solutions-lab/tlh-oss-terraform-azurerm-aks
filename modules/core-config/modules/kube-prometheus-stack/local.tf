@@ -255,7 +255,7 @@ locals {
 
       plugins = var.grafana_plugins
 
-      additionalDataSources = concat(var.loki_enabled ? [local.grafana_loki_data_source] : [], var.grafana_additional_data_sources)
+      additionalDataSources = concat(var.loki_enabled ? [local.grafana_loki_data_source] : [], [local.grafana_azure_monitor_data_source], var.grafana_additional_data_sources)
 
       priorityClassName = ""
 
@@ -562,6 +562,16 @@ locals {
     url    = "http://loki.logging.svc:3100"
     access = "proxy"
     orgId  = "1"
+  }
+
+  grafana_azure_monitor_data_source = {
+    name   = "Azure Monitor"
+    type   = "grafana-azure-monitor-datasource"
+    orgId  = "1"
+    isDefault = false
+    jsonData = {
+      subscriptionId = var.azure_subscription_id
+    }
   }
 
   crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
