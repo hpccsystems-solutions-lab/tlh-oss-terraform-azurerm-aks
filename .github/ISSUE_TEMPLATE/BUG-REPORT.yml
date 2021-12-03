@@ -92,7 +92,7 @@ body:
       description: Provide the steps we can take to reproduce the error?
       placeholder: Tell us how to reproduce the error!
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: logs
@@ -101,7 +101,7 @@ body:
       description: Please provide any relevant log data.
       placeholder: Redact any secret data from the log before posting.
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: suggested-fix

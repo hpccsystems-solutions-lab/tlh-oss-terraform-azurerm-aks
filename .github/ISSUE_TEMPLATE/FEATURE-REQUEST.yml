@@ -43,19 +43,16 @@ body:
       description: How can this be fixed?
       placeholder: Suggest how this should be implemented
     validations:
-      required: true
-  
-  - type: dropdown
+      required: false
+
+  - type: textarea
     id: external-dependencies
     attributes:
       label: External Dependencies
       description: Is this feature dependent on any new features in upstream tools?
-      options:
-        - "Yes"
-        - "No"
-        - "Not sure"
+      placeholder: List any known dependencies
     validations:
-      required: true
+      required: false
 
   - type: input
     id: contact
