@@ -7,7 +7,9 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this form!
+
         *Please provide as much detail as possible so we can add the new functionality as soon as possible.*
+        
         *The title on this issue uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec to aid with automation. Please follow the formatting used in the title template.*
 
   - type: textarea
