@@ -1,6 +1,6 @@
 name: Bug Report
 description: File a bug report
-title: "[Bug]: "
+title: "bug[optional scope]: <title>"
 labels: ["bug", "triage"]
 body:
   - type: markdown
@@ -8,6 +8,7 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report!
         *Please provide as much detail as possible so we can test and resolve the issue as soon as possible.*
+        *The title on this issue uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec to aid with automation. Please follow the formatting used in the title template.*
 
   - type: input
     id: module-version
