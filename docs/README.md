@@ -1,27 +1,28 @@
 # AKS Documentation
 
-* [Architecture](#architecture)
-  * [Prerequisites](#prerequisites)
-  * [Virtual Network Requirements](#virtual-network-requirements)
-  * [CNI Options](#cni-options)
-  * [Node Memory Allocation](#node-memory-allocation)
-  * [Platform Resource Settings](#platform-resource-settings)
-* [Module User Guide](#module-user-guide)
-  * [Kubernetes RBAC](#kubernetes-rbac)
-  * [DNS, TLS Certificates & Ingress](#dns-tls-certificates-ingress)
-  * [ACR Access](#acr-access)
-  * [Grafana Access to Azure Resources](#grafana-access-to-azure-resources)
-  * [External Persistent Disks](#external-persistent-disks)
-  * [Local Volumes](#local-volumes)
-  * [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
-* [Service User Guide](#services)
-  * [Azure AD Pod Identity](#azure-ad-pod-identity)
-  * [Ingress](#ingress)
-  * [External DNS](#external-dns)
-  * [TLS Certificates](#tls-certificates)
-  * [Network Policy](#network-policy)
-  * [Metrics & Alerts](#metrics-alerts)
-  * [Azure Monitor Container Insights](#azure-monitor-container-insights)
+- [AKS Documentation](#aks-documentation)
+  - [Architecture](#architecture)
+    - [Prerequisites](#prerequisites)
+    - [Virtual Network Requirements](#virtual-network-requirements)
+    - [CNI Options](#cni-options)
+    - [Node Memory Allocation](#node-memory-allocation)
+    - [Platform Resource Settings](#platform-resource-settings)
+  - [Module User Guide](#module-user-guide)
+    - [Kubernetes RBAC](#kubernetes-rbac)
+    - [DNS, TLS Certificates & Ingress](#dns-tls-certificates--ingress)
+    - [ACR Access](#acr-access)
+    - [Grafana Access to Azure Resources](#grafana-access-to-azure-resources)
+    - [External Persistent Disks](#external-persistent-disks)
+    - [Local Volumes](#local-volumes)
+    - [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
+  - [Service User Guide](#service-user-guide)
+    - [Azure AD Pod Identity](#azure-ad-pod-identity)
+    - [Ingress](#ingress)
+    - [External DNS](#external-dns)
+    - [TLS Certificates](#tls-certificates)
+    - [Network Policy](#network-policy)
+    - [Metrics & Alerts](#metrics--alerts)
+    - [Azure Monitor Container Insights](#azure-monitor-container-insights)
 
 <br>
 
@@ -234,6 +235,7 @@ resource "azurerm_role_assignment" "grafana_log_analytics_workspace_reader" {
 
 For convenience, the module automatically configures the following:
 
+* Adds a Grafana `Azure Monitor` data source to query Azure resources via a managed identity
 * Adds role assignments for the managed identity to all resources within the AKS cluster resource group
 * Adds role assignments to the workspace added via the `log_analytics_workspace_id` variable (if set)
 

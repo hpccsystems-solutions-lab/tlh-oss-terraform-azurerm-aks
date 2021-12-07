@@ -195,3 +195,20 @@ module "fluentd" {
 
   tags = var.tags
 }
+
+module "monitor-diagnostic-settings" {
+  depends_on = [module.pod_identity]
+
+  source = "./modules/monitor-diagnostic-settings"
+
+  azure_subscription_id   = var.azure_subscription_id
+  resource_group_name     = var.resource_group_name
+  resource_group_location = var.location
+
+  cluster_id   = var.cluster_id
+  cluster_name = var.cluster_name
+
+  storage_account_id = local.monitor-diagnostic-settings.storage_account_id
+
+  tags = var.tags
+}
