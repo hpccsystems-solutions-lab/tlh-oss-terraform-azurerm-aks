@@ -175,8 +175,8 @@ For example, the module exposes ingress endpoints for core services such as Prom
     }
 
     external_dns= {
-      resource_group_name = "us-accurint-prod-dns-rg"
-      zones = [ "us-accurint-prod.azure.lnrsg.io" ]
+      private_resource_group_name = "us-accurint-prod-dns-rg"
+      private_zones = [ "us-accurint-prod.azure.lnrsg.io" ]
     }
 
     ingress_internal_core = {
@@ -185,13 +185,15 @@ For example, the module exposes ingress endpoints for core services such as Prom
   }
 ```
 
-The `cert-manager` block specifies the public zone Let's Encrypt will use to validate the domain and its resource group. 
+The `cert-manager` block specifies the **public zone** Let's Encrypt will use to validate the domain and its resource group. 
 
 The `external-dns` block specifies domain(s) that user services can expose DNS records through and their resource group - all zones managed by `external-dns` **must** be in a single resource group. 
 
 The `ingress_internal_core` block specifies the domain to expose ingress resources to, consuming DNS/TLS services above. 
 
 It's very likely the same primary domain will be configured for all services, perhaps with `external-dns` managing some additional domains. The resource group is a required input so the module can assign appropriate Azure role bindings. It is expected that in most cases all DNS domains will be hosted in a single resource group.
+
+While `external-dns` supports both public and private zones, in split-horizon setups only the private zone should be configured, otherwise both zones will be updated with service records. The only scenario for configuring both public and private zones of the same name is to migrate public records to private records. Once this is done, the public zone should be removed and records manually deleted in the public zone.
 
 See the [Ingress](/modules/core-config/modules/ingress_internal_core/README.md) documentation for implementation details.
 
