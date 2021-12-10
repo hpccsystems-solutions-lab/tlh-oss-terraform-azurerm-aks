@@ -33,8 +33,9 @@ resource "time_sleep" "namespace" {
 module "rbac" {
   depends_on = [kubernetes_namespace.default]
 
-  cluster_id              = var.cluster_id
+  azure_environment       = var.azure_environment
   azuread_clusterrole_map = var.azuread_clusterrole_map
+  cluster_id              = var.cluster_id
 
   source = "./modules/rbac"
 }
@@ -75,7 +76,7 @@ module "external_dns" {
 
   azure_tenant_id       = var.azure_tenant_id
   azure_subscription_id = var.azure_subscription_id
-  azure_environment     = local.external_dns.azure_environment
+  azure_environment     = var.azure_environment
 
   resource_group_name     = var.resource_group_name
   resource_group_location = var.location
@@ -112,7 +113,7 @@ module "cert_manager" {
   additional_issuers      = local.cert_manager.additional_issuers
   default_issuer_kind     = local.cert_manager.default_issuer_kind
   default_issuer_name     = local.cert_manager.default_issuer_name
-  azure_environment       = local.cert_manager.azure_environment
+  azure_environment       = var.azure_environment
 
   ingress_internal_core_domain = local.ingress_internal_core.domain
 }

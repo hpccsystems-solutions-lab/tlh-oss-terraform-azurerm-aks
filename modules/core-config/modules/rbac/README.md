@@ -24,10 +24,8 @@ To assign Azure AD users or groups to Kubernetes cluster roles, use the `azuread
   }
 ```
 
-* Map keys - descriptive names for audit & transparency purposes (not used within the code)
+* Map keys   - AD UPN (*e.g. murtaghj@b2b.regn.net*)
 * Map Values - Azure AD user and group UIDs, see [Object Id Lookup](#object-id-lookup) to find them
-
-> It is recommended to use the AD UPN (*e.g. murtaghj@b2b.regn.net*) or display name (*e.g. IOB AKS Viewers*) as a key for clarity
 
 ---
 

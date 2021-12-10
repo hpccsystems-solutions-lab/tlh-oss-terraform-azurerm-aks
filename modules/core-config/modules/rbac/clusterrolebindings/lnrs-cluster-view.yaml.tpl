@@ -12,5 +12,5 @@ subjects:
 %{ for user in cluster_view_users }
 - apiGroup: rbac.authorization.k8s.io
   kind: User
-  name: ${user}
+  name: "${user}"
 %{ endfor }

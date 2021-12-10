@@ -12,7 +12,7 @@ subjects:
 %{ for user in standard_view_users }
 - apiGroup: rbac.authorization.k8s.io
   kind: User
-  name: ${user}
+  name: "${user}"
 %{ endfor }
 %{ for group in standard_view_groups }
 - apiGroup: rbac.authorization.k8s.io

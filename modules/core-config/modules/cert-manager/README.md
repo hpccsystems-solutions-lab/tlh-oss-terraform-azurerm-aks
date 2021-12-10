@@ -25,7 +25,6 @@ module "aks" {
 
 The `cert_manager` block is just a key-value map that expects the following keys:
 
-`azure_environment`: The Azure cloud you're deploying into, this must be `AzurePublicCloud` or `AzureUSGovernmentCloud`
 `letsencrypt_environment`: must be `staging` or `production`
 `letsencrypt_email`: the email address set on the issuer, the issuer will send emails to that address, such as certificate expiration alerts
 `dns_zones`: a map of domain names -> resource groups that your certificates will use

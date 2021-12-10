@@ -22,7 +22,6 @@ locals {
   ## Services ##
 
   external_dns = merge({
-    azure_environment           = "AzurePublicCloud"
     additional_sources          = []
     private_resource_group_name = ""
     public_resource_group_name  = ""
@@ -31,7 +30,6 @@ locals {
   }, lookup(var.config, "external_dns", {}))
 
   cert_manager = merge({
-    azure_environment       = "AzurePublicCloud"
     letsencrypt_environment = "production"
     dns_zones               = {}
     additional_issuers      = {}

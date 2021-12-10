@@ -1,3 +1,8 @@
+variable "azure_environment" {
+  description = "Azure Cloud Environment."
+  type        = string
+}
+
 variable "azure_tenant_id" {
   type        = string
   description = "The GUID of your Azure tenant"

@@ -4,6 +4,17 @@ variable "api_server_authorized_ip_ranges" {
   default     = null
 }
 
+variable "azure_environment" {
+  description = "Azure Cloud Environment."
+  type        = string
+  default     = "AzurePublicCloud"
+
+  validation {
+    condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
+    error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
+  } 
+}
+
 variable "azuread_clusterrole_map" {
   description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
   type = object(

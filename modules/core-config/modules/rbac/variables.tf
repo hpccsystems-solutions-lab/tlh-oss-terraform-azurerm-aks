@@ -1,5 +1,5 @@
-variable "cluster_id" {
-  description = "The unique identifier of the AKS cluster."
+variable "azure_environment" {
+  description = "Azure Cloud Environment."
   type        = string
 }
 
@@ -13,4 +13,9 @@ variable "azuread_clusterrole_map" {
       standard_view_groups = map(string)
     }
   )
+}
+
+variable "cluster_id" {
+  description = "The unique identifier of the AKS cluster."
+  type        = string
 }

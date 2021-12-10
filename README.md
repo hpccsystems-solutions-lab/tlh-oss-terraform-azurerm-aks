@@ -149,6 +149,7 @@ module "aks" {
 | **Variable**                      | **Description**                                                                                            | **Type**                                 | **Default**       | **Required** | 
 |:----------------------------------|:-----------------------------------------------------------------------------------------------------------|:-----------------------------------------|:------------------|:------------:|
 | `api_server_authorized_ip_ranges` | Public IP or CIDR ranges to apply as a whitelist to the K8S API server, if not set defaults to `0.0.0.0/0`.| `map(string)`                            | `nil`             | `no`         |
+| `azure_environment`         | Azure Cloud Environment.  `AzurePublicCloud` & `AzureUSGovernmentCloud` are supported.                 | `string` | `"AzurePublicCloud"`              | `no`         |
 | `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                           | `object(map(string))` _(see appendix a)_ | `{}`              | `no`         |
 | `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                              | `string`                                 | `nil`             | `yes`        |
 | `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                          | `string`                                 | `"1.21"`          | `no`         |

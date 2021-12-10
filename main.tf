@@ -74,6 +74,8 @@ module "core-config" {
   cluster_id      = module.kubernetes.id
   cluster_version = var.cluster_version
 
+  azure_environment = var.azure_environment
+
   azuread_clusterrole_map = var.azuread_clusterrole_map
 
   aks_identity                 = module.kubernetes.kubelet_identity.object_id

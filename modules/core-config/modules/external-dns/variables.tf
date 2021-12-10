@@ -58,12 +58,6 @@ variable "dns_permissions" {
 variable "azure_environment" {
   description = "Azure Cloud Environment."
   type        = string
-  default     = "AzurePublicCloud"
-
-  validation {
-    condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
-    error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
-  } 
 }
 
 variable "azure_tenant_id" {
