@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.0-beta.5 - UNRELEASED
+## v1.0.0-beta.6 - UNRELEASED
+
+<br>
+
+## v1.0.0-beta.5 - 2021-12-14
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -28,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `kube-prometheus-stack` - updated chart to 19.3.0 & CRDs to 0.50.0 [@sossickd](url)
 - `kubectl provider` - updated version to 1.12.1 [@dutsmiller](url)
 - `kubectl provider` - enabled server-side-apply for fluentd, kube-prometheus-stack, external-dns [@sossickd](url)
-- `Grafana` - updated container image to 8.3.2 to mitigate [CVE-2021-43798](https://nvd.nist.gov/vuln/detail/CVE-2021-43798) [@jamurtag](url)
+- `Grafana` - updated container image to 8.3.2 to mitigate [CVE-2021-43798](https://nvd.nist.gov/vuln/detail/CVE-2021-43798) & [CVE-2021-43813](https://grafana.com/blog/2021/12/10/grafana-8.3.2-and-7.5.12-released-with-moderate-severity-security-fix/) [@jamurtag](url)
 - `Grafana` - managed identity support & Azure role assignment for access to managed resources [@jamurtag](url)
 - `Grafana` - added grafana_identity output for custom Azure role assignments [@jamurtag](url)
 - `Grafana` - added Azure Monitor data source for access to Azure resources [@sossickd](url)
@@ -41,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **IMPORTANT** - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The beta.4 node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility .  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
 
 > **IMPORTANT** - If you are currently using `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
+
+<br>
 
 ## v1.0.0-beta.4 - 2021-11-02
 
@@ -62,6 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set `allowSnippetAnnotations` to `false` on ingress-nginx chart to mitigate [security vulnerability](https://www.armosec.io/blog/new-kubernetes-high-severity-vulnerability-alert-cve-2021-25742) [@prikesh-patel](url)
 - Updated support policy regarding Windows node pools and nested Terraform modules [@jamurtag](url)
 
+<br>
+
 ## v1.0.0-beta.3 - 2021-09-29
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
@@ -80,6 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **IMPORTANT** - Please change the core_services_config input for external_dns.
 
+<br>
+
 ## v1.0.0-beta.2 - 2021-09-10
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
@@ -90,6 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Set ingress-nginx & PrometheusOperator adminissionWebhook to run on system nodepool [@jamurtag](url)
 - Output changed:  aks_cluster_name -> cluster_name [@dutsmiller](url)
+
+<br>
 
 ## v1.0.0-beta.1 - 2021-08-20
 

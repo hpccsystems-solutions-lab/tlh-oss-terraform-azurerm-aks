@@ -45,12 +45,19 @@ The following prerequisites must be met in advance of deploying an AKS cluster.
 
 A [default subscription DNS public zone](https://reedelsevier.sharepoint.com/sites/OG-CoP-Cloud/SitePages/DNS-Zone-Naming-Conventions.aspx) (and Resource Group) may have been created as part of the subscription deployment process. If additional public zones are required they **must** be deployed to the same resource group for `external-dns` to access them.
 
-To enable the [encryption at host](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli#prerequisites) feature, a user with subscription Contributor permissions must execute the following commands:
+The [encryption at host](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-enable-host-based-encryption-cli#prerequisites) feature *may* be applied to newer subscriptions, if not a user with subscription Contributor permissions must execute the following commands:
 
 ```bash
+### Check EncryptionAtHost feature is Registered
 $ az account set --subscription <subscription_name>
+$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute
+Name                                RegistrationState
+----------------------------------  -------------------
+Microsoft.Compute/EncryptionAtHost  NotRegistered
+
+### If not, register via the following commands
 $ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
-$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (verify until registered, up to 30 minutes)
+$ az feature show --name EncryptionAtHost --namespace Microsoft.Compute      (may take up to 30 minutes to register)
 $ az provider register -n Microsoft.Compute
 ```
 
