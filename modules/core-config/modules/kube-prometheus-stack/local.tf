@@ -222,6 +222,11 @@ locals {
     grafana = {
       enabled = true
 
+      ## temporary fix to mitigate CVE-2021-43798
+      image = {
+        tag = "8.3.2"
+      }
+
       rbac = {
         create     = true
         pspEnabled = false

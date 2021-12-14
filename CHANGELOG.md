@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `kube-prometheus-stack` - updated chart to 19.3.0 & CRDs to 0.50.0 [@sossickd](url)
 - `kubectl provider` - updated version to 1.12.1 [@dutsmiller](url)
 - `kubectl provider` - enabled server-side-apply for fluentd, kube-prometheus-stack, external-dns [@sossickd](url)
+- `Grafana` - updated container image to 8.3.2 to mitigate [CVE-2021-43798](https://nvd.nist.gov/vuln/detail/CVE-2021-43798) [@jamurtag](url)
 - `Grafana` - managed identity support & Azure role assignment for access to managed resources [@jamurtag](url)
 - `Grafana` - added grafana_identity output for custom Azure role assignments [@jamurtag](url)
 - `Grafana` - added Azure Monitor data source for access to Azure resources [@sossickd](url)
