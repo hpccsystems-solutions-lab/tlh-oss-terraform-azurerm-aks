@@ -1,7 +1,7 @@
 locals {
   namespace = "logging"
 
-  chart_version = "0.19.5"
+  chart_version = "0.19.16"
 
   chart_values = {
     serviceMonitor = {
@@ -83,7 +83,7 @@ locals {
     [INPUT]
       Name              tail
       Path              /var/log/containers/*.log
-      multiline.parser  cri
+      Parser            cri
       Tag               kube.*
       Skip_Long_Lines   On
       Buffer_Chunk_Size 32k

@@ -524,4 +524,30 @@ The module can be configured to send logs and metrics to Log Analytics via the [
 
 This is enabled by setting the `log_analytics_workspace_id` variable to a valid workspace which must already exist and be provisioned outwith the module. Note by setting this option you are consenting for Azure to deploy and fully manage a set of pods on the cluster to provide this integration, any issues must be raised directly with Azure support.
 
-This integration duplicates some functionality that already exists within the module, for example the agents deploy another set of `fluent-bit` pods which will double IO load for log scraping. To avoid sending unnecessary data to Log Analytics (which could have a significant cost impact), carefully eview and configure [agent settings](https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-agent-config).
+This integration duplicates some functionality that already exists within the module, for example the agents deploy another set of `fluent-bit` pods which will double IO load for log scraping. To avoid sending unnecessary data to Log Analytics (which could have a significant cost impact), carefully review and configure [agent settings](https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-agent-config).
+
+At a minimum we suggest excluding the kube-system and logging namespaces from the log collection settings for both stderr and stdout.
+
+Example below shows a subset of the configmap to exclude the kube-system and logging namespaces:
+
+```yaml
+kind: ConfigMap
+apiVersion: v1
+data:
+  schema-version:
+    v1
+  config-version:
+    ver1
+  log-data-collection-settings: |-
+    [log_collection_settings]
+       [log_collection_settings.stdout]
+          enabled = true
+          exclude_namespaces = ["kube-system", "logging"]
+       [log_collection_settings.stderr]
+          enabled = true
+          exclude_namespaces = ["kube-system", "logging"]
+metadata:
+  name: container-azm-ms-agentconfig
+  namespace: kube-system
+```
+
