@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.0-beta.6 - UNRELEASED
 
+- `fluent-bit` - updated chart to 0.19.16 [@sossickd](url)
+- `fluent-bit` - revert cri multi-line parser back to the standard parser until upstream [issue](https://github.com/fluent/fluent-bit/issues/4377) has been fixed [@sossickd](url)
+
 <br>
 
 ## v1.0.0-beta.5 - 2021-12-14
