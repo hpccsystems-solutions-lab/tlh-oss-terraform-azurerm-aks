@@ -19,6 +19,7 @@
     - [Azure AD Pod Identity](#azure-ad-pod-identity)
     - [Ingress](#ingress)
     - [External DNS](#external-dns)
+    - [Coredns](#coredns)
     - [TLS Certificates](#tls-certificates)
     - [Network Policy](#network-policy)
     - [Metrics & Alerts](#metrics--alerts)
@@ -457,6 +458,32 @@ spec:
 ```
 
 See [external-dns documentation](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/faq.md#how-do-i-specify-a-dns-name-for-my-kubernetes-objects) for more details.
+
+---
+
+### Coredns
+
+The coredns module configures a configmap named `coredns-custom` via a `coredns` block in the `core_services_config` variable. This configures dns forwarders for the purpose of on-premise or cloud based dns resolution.
+
+To configure coredns to forward DNS requests for custom domains to external resolvers, add the appropriate configuration to core_services_config as below.
+
+```terraform
+module "aks" {
+  source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
+  ...
+  core_services_config = {
+    coredns = {
+      forward_zones = {"b2b.regn.net" = "10.52.24.10 10.52.24.11"
+                       "rbi.web.ds" = "10.52.24.10 10.52.24.11"
+                       "risk.regn.net" = "10.239.0.135"
+                      }
+    }
+    ...
+  }
+}
+```
+
+For more information please visit the modules [README.md](/modules/core-config/modules/coredns/README.md)
 
 ---
 

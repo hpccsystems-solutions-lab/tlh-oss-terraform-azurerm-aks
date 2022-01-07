@@ -213,3 +213,11 @@ module "monitor-diagnostic-settings" {
 
   tags = var.tags
 }
+
+module "coredns" {
+  depends_on = [module.pod_identity]
+
+  source = "./modules/coredns"
+
+  forward_zones = local.coredns.forward_zones
+}

@@ -74,4 +74,8 @@ locals {
     storage_account_id = ""
   }, lookup(var.config, "monitor-diagnostic-settings", {}))
 
+  coredns = merge({
+    forward_zones = {}
+  }, lookup(var.config, "coredns", {}))
+
 }
