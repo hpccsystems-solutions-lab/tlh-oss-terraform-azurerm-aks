@@ -326,6 +326,14 @@ module "aks" {
 | :------------------- | :-------------------------------------------------------------------- | :------- | :----------- |
 | `storage_account_id` | Storage account id to store a secondary copy of diagnostic logs.      | `string` | No           |
 
+### Appendix O
+
+`coredns` object specification.
+
+| **Variable**    | **Description**                                                                            | **Type**      | **Required** |
+| :-------------- | :------------------------------------------------------------------------------------------| :------------ | :----------- |
+| `forward_zones` | The map of DNS zones and DNS server IP addresses to forward dns requests to. | `map(string)` | No           |
+
 ---
 
 ## Outputs
