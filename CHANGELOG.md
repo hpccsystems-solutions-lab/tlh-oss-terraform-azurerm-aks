@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `fluent-bit` - updated chart to 0.19.16 [@sossickd](url)
 - `fluent-bit` - revert cri multi-line parser back to the standard parser until upstream [issue](https://github.com/fluent/fluent-bit/issues/4377) has been fixed [@sossickd](url)
 - `coredns` - Add corends module to support on-premise name resolution [@sossickd](url)
+- `external-dns` - updated chart to 1.7.1 [@sossickd](url)
 
 <br>
 

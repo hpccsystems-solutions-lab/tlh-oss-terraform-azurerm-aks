@@ -12,7 +12,7 @@ locals {
   azure-private-json = "azure-private.json"
   azure-public-json = "azure-public.json"
   
-  chart_version = "1.2.0"
+  chart_version = "1.7.1"
 
   chart_values = {
 
