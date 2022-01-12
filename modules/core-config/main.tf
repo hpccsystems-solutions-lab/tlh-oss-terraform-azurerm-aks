@@ -21,9 +21,12 @@ module "storage_classes" {
 }
 
 module "local_storage" {
-  source = "./modules/local-storage"
+  depends_on = [
+    module.storage_classes,
+    kubectl_manifest.kube_prometheus_stack_crds
+  ]
 
-  depends_on = [module.storage_classes]
+  source = "./modules/local-storage"
 }
 
 resource "time_sleep" "namespace" {
