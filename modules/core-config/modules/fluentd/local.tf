@@ -1,9 +1,9 @@
 locals {
   namespace = "logging"
 
-  chart_version = "2.6.5"
+  chart_version = "2.6.7"
 
-  chart_values = {
+  chart_values = merge({
     nameOverride = "fluentd"
 
     podLabels = merge({
@@ -81,13 +81,6 @@ locals {
       size         = "50Gi"
     }
 
-    image_override = length(var.image_repository) > 0 && length(var.image_tag) > 0 ? {
-      image = {
-        repository = var.image_repository
-        tag        = var.image_tag
-      }
-    } : {}
-
     env = concat([
       { name = "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR", value = "0.9" },
       { name = "SUBSCRIPTION_ID", value = var.azure_subscription_id },
@@ -103,7 +96,14 @@ locals {
       route   = local.route_config
       output  = local.output_config
     }
-  }
+  }, local.image_override)
+
+  image_override = length(var.image_repository) > 0 && length(var.image_tag) > 0 ? {
+    image = {
+      repository = var.image_repository
+      tag        = var.image_tag
+    }
+  } : {}
 
   default_route = <<-EOT
     <route **>
