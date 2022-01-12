@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `fluentd` - fix image tag and repository override [@sossickd](url)
 - `coredns` - Add corends module to support on-premise name resolution [@sossickd](url)
 - `external-dns` - updated chart to 1.7.1 [@sossickd](url)
+- `local_storage` - Add dependency on kube-prometheus-stack CRDs [@sossickd]
 
 <br>
 
