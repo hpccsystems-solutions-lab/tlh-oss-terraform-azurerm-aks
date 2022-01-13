@@ -11,10 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `fluent-bit` - revert cri multi-line parser back to the standard parser until upstream [issue](https://github.com/fluent/fluent-bit/issues/4377) has been fixed [@sossickd](url)
 - `fluentd` - updated chart to 2.6.7 [@sossickd](url)
 - `fluentd` - fix image tag and repository override [@sossickd](url)
-- `coredns` - Add corends module to support on-premise name resolution [@sossickd](url)
+- `coredns` - added corends module to support on-premise name resolution [@sossickd](url)
 - `external-dns` - updated chart to 1.7.1 [@sossickd](url)
-- `local_storage` - Add dependency on kube-prometheus-stack CRDs [@sossickd](url)
-- `module` - Removed providers from root-module and provider version constraints from sub-modules [@sossickd](url)
+- `local_storage` - added dependency on kube-prometheus-stack CRDs [@sossickd](url)
+- `module` - removed providers from root-module and provider version constraints from sub-modules (see **IMPORTANT** note below) [@sossickd](url)
+- `module` - added required core_services_config parameters to examples [@sossickd](url)
 
 > **IMPORTANT** - Providers have now been removed from the module which requires changes to the Terraform workspace. All providers **must** be declared and configuration for the `kubernetes`, `kubectl` & `helm` providers **must** be set. See [examples](/examples) for valid configuration and review the [CHANGELOG](/CHANGELOG.md) on each release.
 

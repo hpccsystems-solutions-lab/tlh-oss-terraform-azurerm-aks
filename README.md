@@ -229,15 +229,18 @@ module "aks" {
 
 `core_services_config` object specification.
 
-| **Variable**            | **Description**                             | **Type**                 |
-| :---------------------- | :------------------------------------------ | :----------------------- |
-| `alertmanager`          | _Alert Manager_ configuration.              | `any` _(see appendix G)_ |
-| `cert_manager`          | _Cert Manager_ configuration.               | `any` _(see appendix H)_ |
-| `external_dns`          | _External DNS_ configuration.               | `any` _(see appendix I)_ |
-| `fluentd`               | _Fluentd_ configuration.                    | `any` _(see appendix J)_ |
-| `grafana`               | _Grafana_ configuration.                    | `any` _(see appendix K)_ |
-| `ingress_internal_core` | _Ingress_ configuration.                    | `any` _(see appendix L)_ |
-| `prometheus`            | _Prometheus_ configuration.                 | `any` _(see appendix M)_ |
+| **Variable**                  | **Description**                              | **Type**                 |
+| :---------------------------- | :------------------------------------------- | :----------------------- |
+| `alertmanager`                | _Alert Manager_ configuration.               | `any` _(see appendix G)_ |
+| `cert_manager`                | _Cert Manager_ configuration.                | `any` _(see appendix H)_ |
+| `external_dns`                | _External DNS_ configuration.                | `any` _(see appendix I)_ |
+| `fluentd`                     | _Fluentd_ configuration.                     | `any` _(see appendix J)_ |
+| `grafana`                     | _Grafana_ configuration.                     | `any` _(see appendix K)_ |
+| `ingress_internal_core`       | _Ingress_ configuration.                     | `any` _(see appendix L)_ |
+| `prometheus`                  | _Prometheus_ configuration.                  | `any` _(see appendix M)_ |
+| `monitor-diagnostic-settings` | _Monitor Diagnostic Settings_ configuration. | `any` _(see appendix N)_ |
+| `coredns`                     | _Coredns_ configuration.                     | `any` _(see appendix O)_ |
+
 
 ### Appendix G
 
