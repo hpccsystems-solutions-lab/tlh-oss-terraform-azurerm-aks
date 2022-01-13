@@ -15,9 +15,3 @@ variable "azuread_clusterrole_map" {
     standard_view_groups = {}
   }
 }
-
-variable "core_services_config" {
-  description = "core services config"
-  type        = any
-  default     = {}
-}
