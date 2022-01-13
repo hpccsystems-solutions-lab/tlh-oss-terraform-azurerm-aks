@@ -13,7 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `fluentd` - fix image tag and repository override [@sossickd](url)
 - `coredns` - Add corends module to support on-premise name resolution [@sossickd](url)
 - `external-dns` - updated chart to 1.7.1 [@sossickd](url)
-- `local_storage` - Add dependency on kube-prometheus-stack CRDs [@sossickd]
+- `local_storage` - Add dependency on kube-prometheus-stack CRDs [@sossickd](url)
+- `module` - Removed providers from root-module and provider version constraints from sub-modules [@sossickd](url)
+
+> **IMPORTANT** - Providers have now been removed from the module which requires changes to the Terraform workspace. All providers **must** be declared and configuration for the `kubernetes`, `kubectl` & `helm` providers **must** be set. See [examples](/examples) for valid configuration and review the [CHANGELOG](/CHANGELOG.md) on each release.
 
 <br>
 
