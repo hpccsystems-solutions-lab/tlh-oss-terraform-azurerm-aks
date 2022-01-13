@@ -9,7 +9,7 @@ locals {
 
   namespace = "cert-manager"
 
-  chart_version = "1.4.1"
+  chart_version = "1.6.1"
 
   chart_values = {
     installCRDs = false
@@ -67,11 +67,10 @@ locals {
 
     extraArgs = [
       "--dns01-recursive-nameservers-only",
-      "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53",
+      "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53"
     ]
 
     cainjector = {
-
       nodeSelector = {
         "kubernetes.io/os"          = "linux"
         "kubernetes.azure.com/mode" = "system"
