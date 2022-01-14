@@ -2,12 +2,16 @@ resource "kubectl_manifest" "crds" {
   for_each = local.crd_files
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "resources" {
   for_each = local.resource_files
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
 
   depends_on = [
     kubectl_manifest.crds
@@ -103,6 +107,8 @@ resource "kubectl_manifest" "certificates" {
   depends_on = [helm_release.main, kubectl_manifest.issuers]
 
   yaml_body = yamlencode(each.value)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "issuers" {
@@ -111,4 +117,6 @@ resource "kubectl_manifest" "issuers" {
   depends_on = [helm_release.main]
 
   yaml_body = yamlencode(each.value)
+
+  server_side_apply = true
 }
