@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.0-beta.6 - UNRELEASED
+## v1.0.0-beta.7 - UNRELEASED
+
+<br>
+
+## v1.0.0-beta.6 - 2021-02-14
+
+> **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
+
+### Changed
 
 - `fluent-bit` - updated chart to 0.19.16 [@sossickd](url)
 - `fluent-bit` - revert cri multi-line parser back to the standard parser until upstream [issue](https://github.com/fluent/fluent-bit/issues/4377) has been fixed [@sossickd](url)
@@ -14,10 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `coredns` - added corends module to support on-premise name resolution [@sossickd](url)
 - `external-dns` - updated chart to 1.7.1 [@sossickd](url)
 - `local_storage` - added dependency on kube-prometheus-stack CRDs [@sossickd](url)
-- `module` - removed providers from root-module and provider version constraints from sub-modules (see **IMPORTANT** note below) [@sossickd](url)
+- `module` - removed providers from module and version constraints from sub-modules (see IMPORTANT note below) [@sossickd](url)
 - `module` - added required core_services_config parameters to examples [@sossickd](url)
 - `cert-manager` - updated chart and CRDs to 1.6.1 [@sossickd](url)
 - `kubectl provider` - enabled server-side-apply for fluent-bit, cert-manager [@sossickd](url)
+
+<br>
 
 > **IMPORTANT** - Providers have now been removed from the module which requires changes to the Terraform workspace. All providers **must** be declared and configuration for the `kubernetes`, `kubectl` & `helm` providers **must** be set. See [examples](/examples) for valid configuration and review the [CHANGELOG](/CHANGELOG.md) on each release.
 
