@@ -100,6 +100,36 @@ locals {
       }
     }
 
+    startupapicheck = {
+      nodeSelector = {
+        "kubernetes.io/os"          = "linux"
+        "kubernetes.azure.com/mode" = "system"
+      }
+
+      tolerations = [
+        {
+          key      = "CriticalAddonsOnly"
+          operator = "Exists"
+        },
+        {
+          key      = "system"
+          operator = "Exists"
+        }
+      ]
+
+      resources = {
+        requests = {
+          cpu    = "50m"
+          memory = "64Mi"
+        }
+
+        requests = {
+          cpu    = "100m"
+          memory = "128Mi"
+        }
+      }
+    }
+
     webhook = {
       securePort  = 10251
       hostNetwork = true

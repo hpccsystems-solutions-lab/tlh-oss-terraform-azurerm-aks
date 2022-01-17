@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.0-beta.7 - UNRELEASED
 
+### Changed
+
+- `cert-manager` - added toleration and node selector for startupapicheck [@sossickd](url)
+
 <br>
 
 ## v1.0.0-beta.6 - 2021-02-14
