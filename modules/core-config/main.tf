@@ -52,6 +52,8 @@ resource "kubectl_manifest" "kube_prometheus_stack_crds" {
   for_each = { for x in fileset(path.module, "modules/kube-prometheus-stack/crds/*.yaml") : basename(x) => "${path.module}/${x}" }
 
   yaml_body = file(each.value)
+
+  server_side_apply = true
 }
 
 ###################################################################

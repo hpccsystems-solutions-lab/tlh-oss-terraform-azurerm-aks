@@ -1,15 +1,11 @@
 locals {
   namespace = "monitoring"
 
-  chart_version = "19.3.0"
+  chart_version = "30.1.0"
 
   grafana_identity_name = "grafana"
 
   chart_values = {
-    commonLabels = {
-      "lnrs.io/k8s-platform" = "true"
-    }
-
     global = {
       rbac = {
         create     = true
@@ -22,23 +18,88 @@ locals {
       "lnrs.io/k8s-platform"        = "true"
     }
 
+    ###############################################
+    ### Prometheus Operator #######################
+
+    prometheusOperator = {
+      enabled = true
+
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
+      priorityClassName = "system-cluster-critical"
+
+      nodeSelector = {
+        "kubernetes.io/os"          = "linux"
+        "kubernetes.azure.com/mode" = "system"
+      }
+
+      tolerations = [
+        {
+          key      = "CriticalAddonsOnly"
+          operator = "Equal"
+          value    = "true"
+          effect   = "NoSchedule"
+        }
+      ]
+
+      resources = {
+        requests = {
+          cpu    = "50m"
+          memory = "128Mi"
+        }
+
+        limits = {
+          cpu    = "500m"
+          memory = "512Mi"
+        }
+      }
+
+      createCustomResource = false
+      manageCrds           = false
+
+      prometheusConfigReloader = {
+        resources = {
+          requests = {
+            cpu    = "20m"
+            memory = "16Mi"
+          }
+
+          limits = {
+            cpu    = "50m"
+            memory = "32Mi"
+          }
+        }
+      }
+
+      admissionWebhooks = {
+        patch = {
+          priorityClassName = "system-cluster-critical"
+
+          nodeSelector = {
+            "kubernetes.io/os"          = "linux"
+            "kubernetes.azure.com/mode" = "system"
+          }
+
+          tolerations = [
+            {
+              key      = "CriticalAddonsOnly"
+              operator = "Equal"
+              value    = "true"
+              effect   = "NoSchedule"
+            }
+          ]
+        }
+      }
+    }
+    ### End of Prometheus Operator ################
+    ###############################################
 
     ###############################################
     ### Prometheus ################################
 
     prometheus = {
-      ingress = {
-        enabled = true
-
-        ingressClassName = "core-internal"
-        pathType         = "Prefix"
-
-        hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
-        tls = [{
-          "hosts" = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
-        }]
-      }
-
       prometheusSpec = {
         retention = "28d"
 
@@ -48,11 +109,15 @@ locals {
           }
         }
 
-        priorityClassName = "system-cluster-critical"
-
         remoteWrite = var.prometheus_remote_write
 
         podMonitorSelector = {
+          matchLabels = {
+            "lnrs.io/monitoring-platform" = "core-prometheus"
+          }
+        }
+
+        serviceMonitorSelector = {
           matchLabels = {
             "lnrs.io/monitoring-platform" = "core-prometheus"
           }
@@ -64,11 +129,10 @@ locals {
           }
         }
 
-        serviceMonitorSelector = {
-          matchLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
-          }
-        }
+        logLevel  = "info"
+        logFormat = "json"
+
+        priorityClassName = "system-cluster-critical"
 
         nodeSelector = {
           "kubernetes.io/os"          = "linux"
@@ -111,6 +175,18 @@ locals {
           }
         }
       }
+
+      ingress = {
+        enabled = true
+
+        ingressClassName = "core-internal"
+        pathType         = "Prefix"
+
+        hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        tls = [{
+          "hosts" = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        }]
+      }
     }
     ### End of Prometheus #########################
     ###############################################
@@ -120,13 +196,13 @@ locals {
 
     alertmanager = {
       alertmanagerSpec = {
+        priorityClassName = "system-cluster-critical"
+
         podMetadata = {
           labels = {
             "lnrs.io/k8s-platform" = "true"
           }
         }
-
-        priorityClassName = "system-cluster-critical"
 
         retention = "120h"
 
@@ -221,11 +297,6 @@ locals {
 
     grafana = {
       enabled = true
-
-      ## temporary fix to mitigate CVE-2021-43798
-      image = {
-        tag = "8.3.2"
-      }
 
       rbac = {
         create     = true
@@ -355,125 +426,6 @@ locals {
       }
     }
 
-
-    ###############################################
-    ### Prometheus Operator #######################
-
-    prometheusOperator = {
-      enabled = true
-
-      podLabels = {
-        "lnrs.io/k8s-platform" = "true"
-      }
-
-      priorityClassName = "system-cluster-critical"
-
-      nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
-      }
-
-      tolerations = [
-        {
-          key      = "CriticalAddonsOnly"
-          operator = "Equal"
-          value    = "true"
-          effect   = "NoSchedule"
-        }
-      ]
-
-      createCustomResource = false
-      manageCrds           = false
-
-      resources = {
-        requests = {
-          cpu    = "50m"
-          memory = "128Mi"
-        }
-
-        limits = {
-          cpu    = "500m"
-          memory = "512Mi"
-        }
-      }
-
-      tlsProxy = {
-        resources = {
-          requests = {
-            cpu    = "5m"
-            memory = "8Mi"
-          }
-
-          limits = {
-            cpu    = "100m"
-            memory = "32Mi"
-          }
-        }
-      }
-
-      admissionWebhooks = {
-        patch = {
-          priorityClassName = "system-cluster-critical"
-
-          nodeSelector = {
-            "kubernetes.io/os"          = "linux"
-            "kubernetes.azure.com/mode" = "system"
-          }
-
-          tolerations = [
-            {
-              key      = "CriticalAddonsOnly"
-              operator = "Equal"
-              value    = "true"
-              effect   = "NoSchedule"
-            }
-          ]
-        }
-      }
-    }
-    ### End of Prometheus Operator ################
-    ###############################################
-
-    ###############################################
-    ### Node Exporter #############################
-
-    ## Deploy servicemonitor
-    nodeExporter = {
-      enabled = true
-    }
-
-    prometheus-node-exporter = {
-      podLabels = {
-        "lnrs.io/k8s-platform" = "true"
-      }
-
-      priorityClassName = "system-node-critical"
-
-      nodeSelector = {
-        "kubernetes.io/os" = "linux"
-      }
-
-      tolerations = [
-        {
-          operator = "Exists"
-        }
-      ]
-
-      resources = {
-        requests = {
-          cpu    = "50m"
-          memory = "16Mi"
-        }
-
-        limits = {
-          cpu    = "500m"
-          memory = "128Mi"
-        }
-      }
-    }
-    ### End of Node Exporter ######################
-    ###############################################
-
     ###############################################
     ### Kube-state-metrics ########################
 
@@ -483,11 +435,20 @@ locals {
     }
 
     kube-state-metrics = {
-      priorityClassName = "system-cluster-critical"
-
       podSecurityPolicy = {
         enabled = false
       }
+
+      prometheus = {
+        monitor = {
+          enabled = true
+          additionalLabels = {
+            "lnrs.io/monitoring-platform" = "core-prometheus"
+          }
+        }
+      }
+
+      priorityClassName = "system-cluster-critical"
 
       nodeSelector = {
         "kubernetes.io/os"          = "linux"
@@ -502,16 +463,6 @@ locals {
           effect   = "NoSchedule"
         }
       ]
-
-      ## Avoid duplicate kube-state-metrics servicemonitor
-      prometheus = {
-        monitor = {
-          enabled = false
-          additionalLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
-          }
-        }
-      }
 
       resources = {
         requests = {
@@ -557,6 +508,67 @@ locals {
     }
     ### End of Kube-state-metrics #################
     ###############################################
+
+    ###############################################
+    ### Node Exporter #############################
+
+    ## Deploy servicemonitor
+    nodeExporter = {
+      enabled = true
+    }
+
+    prometheus-node-exporter = {
+      rbac = {
+        create     = true
+        pspEnabled = false
+      }
+      prometheus = {
+        monitor = {
+          enabled = true
+          additionalLabels = {
+            "lnrs.io/monitoring-platform" = "core-prometheus"
+          }
+        }
+      }
+      podLabels = {
+        "lnrs.io/k8s-platform" = "true"
+      }
+
+      priorityClassName = "system-node-critical"
+
+      nodeSelector = {
+        "kubernetes.io/os" = "linux"
+      }
+
+      tolerations = [
+        {
+          operator = "Exists"
+        }
+      ]
+
+      updateStrategy = {
+        type = "RollingUpdate"
+
+        rollingUpdate = {
+          maxUnavailable = "25%"
+        }
+      }
+
+      resources = {
+        requests = {
+          cpu    = "50m"
+          memory = "16Mi"
+        }
+
+        limits = {
+          cpu    = "500m"
+          memory = "128Mi"
+        }
+      }
+    }
+    ### End of Node Exporter ######################
+    ###############################################
+
   }
 
   grafana_auth_secret_name = "grafana-auth"
