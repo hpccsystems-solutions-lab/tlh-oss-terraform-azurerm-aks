@@ -20,6 +20,8 @@ resource "kubectl_manifest" "crds" {
   for_each = fileset(path.module, "crds/*.yaml")
 
   yaml_body = file("${path.module}/${each.value}")
+
+  server_side_apply = true
 }
 
 resource "helm_release" "aad_pod_identity" {

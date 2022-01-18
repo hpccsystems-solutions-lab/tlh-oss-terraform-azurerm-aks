@@ -1,6 +1,6 @@
 locals {
 
-  chart_version = "4.1.5"
+  chart_version = "4.1.7"
 
   chart_values = {
 
@@ -59,10 +59,6 @@ locals {
 
     nmi = {
       priorityClassName = "system-node-critical"
-
-      nodeSelector = {
-        "kubernetes.io/os" = "linux"
-      }
 
       allowNetworkPluginKubenet = (var.network_plugin == "kubenet" ? true : false)
 
