@@ -73,7 +73,6 @@ locals {
 
   node_pool_defaults = merge({
     availability_zones   = [1, 2, 3]
-    enable_auto_scaling  = true
     max_pods             = local.max_pods[var.network_plugin]
     max_surge            = "1"
     orchestrator_version = var.orchestrator_version
@@ -99,11 +98,6 @@ locals {
       tags        = null
       subnet      = null
       mode        = null
-  })
-
-  tags = merge(var.tags, {
-    "k8s.io|cluster-autoscaler|enabled"             = "true"
-    "k8s.io|cluster-autoscaler|${var.cluster_name}" = "owned"
   })
 
   taint_effects = {
@@ -154,12 +148,14 @@ locals {
   node_pools = merge(values({ for pool in concat([local.system_node_pool], (var.ingress_node_pool ? [local.ingress_node_pool] : []), var.node_pools) :
     pool.name => { for zone in(pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
       "${pool.name}${(zone == 0 ? "" : zone)}" => merge(local.node_pool_defaults, {
-        availability_zones = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
-        priority           = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
-        vm_size            = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+-v[0-9]+", pool.node_type)][pool.node_size]
-        os_type            = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
-        min_count          = (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones)))
-        max_count          = (pool.single_vmss ? pool.max_capacity : (pool.max_capacity / length(local.node_pool_defaults.availability_zones)))
+        availability_zones  = (zone != 0 ? [zone] : local.node_pool_defaults.availability_zones)
+        priority            = (lookup(pool, "use_spot", false) ? "Spot" : "Regular")
+        vm_size             = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+-v[0-9]+", pool.node_type)][pool.node_size]
+        os_type             = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
+        enable_auto_scaling = (pool.min_capacity == pool.max_capacity ? false : true)
+        node_count          = (pool.min_capacity == pool.max_capacity ? (pool.min_capacity / length(local.node_pool_defaults.availability_zones)) : null)
+        min_count           = (pool.min_capacity == pool.max_capacity ? null : (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones))))
+        max_count           = (pool.min_capacity == pool.max_capacity ? null : (pool.single_vmss ? pool.max_capacity : (pool.max_capacity / length(local.node_pool_defaults.availability_zones))))
 
         node_labels = merge(
           {
@@ -173,7 +169,11 @@ locals {
         node_taints = [for taint in pool.taints :
           "${taint.key}=${taint.value}:${lookup(local.taint_effects, taint.effect, taint.effect)}"
         ]
-        tags = merge(local.tags, pool.tags)
+        tags = merge(var.tags, pool.tags, {
+          "k8s.io|cluster-autoscaler|enabled" = (pool.min_capacity == pool.max_capacity ? "false" : "true")
+        }, (pool.min_capacity == pool.max_capacity ? {} : {
+          "k8s.io|cluster-autoscaler|${var.cluster_name}" = "owned" })
+        ) 
 
         subnet = (pool.public ? "public" : "private")
 

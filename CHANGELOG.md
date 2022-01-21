@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `aad-pod-identity` - updated chart to 4.1.7 [@sossickd](url)
 - `cert-manager` - added toleration and node selector for startupapicheck [@sossickd](url)
 - `kubectl provider` - enabled server-side-apply aad-pod-identity [@sossickd](url)
+- `cluster-autoscaler` - disabled autoscaling for node pools when min/max settings are the same [@dutsmiller](url)
 
 <br>
 
