@@ -1,5 +1,5 @@
 locals {
-  storage_provisioner = "kubernetes.io/azure-disk"
+  storage_provisioner = var.cluster_version == "1.19" || var.cluster_version == "1.20" ? "kubernetes.io/azure-disk" :  "disk.csi.azure.com"
 
   standard_storage_class_labels = {
     "lnrs.io/k8s-platform" = "true"

@@ -18,6 +18,8 @@ resource "kubernetes_namespace" "default" {
 
 module "storage_classes" {
   source = "./modules/storage-classes"
+
+  cluster_version = var.cluster_version
 }
 
 module "local_storage" {
