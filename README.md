@@ -126,6 +126,9 @@ module "aks" {
 </details>
 <br />
 
+- Refer to [CHANGELOG.md](CHANGELOG.md) to review significant changes within each release version
+- Refer to [UPGRADE.md](/UPGRADE.md) for module upgrade instructions and troubleshooting steps
+
 ---
 
 ## Terraform

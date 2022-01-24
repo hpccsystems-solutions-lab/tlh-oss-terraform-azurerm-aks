@@ -5,8 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Refer to [UPGRADE.md](/UPGRADE.md) for module and AKS version upgrade instructions and troubleshooting steps.
+
 ## v1.0.0-beta.7 - UNRELEASED
 
+### Added
+
+- `documentation` - added [documentation](/UPGRADE.md) on upgrade steps [@sossickd](url)
 ### Changed
 
 - `aad-pod-identity` - updated chart to 4.1.7 [@sossickd](url)
@@ -23,11 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `grafana` - updated container image to 8.3.3, removed temporary fix to mitigate [CVE-2021-43798](https://nvd.nist.gov/vuln/detail/CVE-2021-43798) & [CVE-2021-43813](https://grafana.com/blog/2021/12/10/grafana-8.3.2-and-7.5.12-released-with-moderate-severity-security-fix/) [@sossickd](url)
 - `storage-classes` - migrate storage classes created by the module to [CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers) for 1.21.x clusters (see IMPORTANT note below)[@sossickd](url)
 
-> **IMPORTANT** - Due to an upgrade of the `kube-state-metrics` chart as part of the `kube-prometheus-stack` upgrade, removal of its deployment needs to done manually `prior` to upgrading to the `v1.0.0-beta.7` tag. The command below needs to run by a cluster operator with permissions to delete resources.
+<br>
 
-```bash
-kubectl delete deployment kube-prometheus-stack-kube-state-metrics -n monitoring
-```
+> **IMPORTANT** - Due to an upgrade of the `kube-state-metrics` chart as part of the `kube-prometheus-stack` upgrade, removal of its deployment needs to done manually `prior` to upgrading to the `v1.0.0-beta.7` tag. Please see [UPGRADE.md](/UPGRADE.md#from-v100-beta6-to-v100-beta7) for details.
 
 > **IMPORTANT** - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
 
@@ -37,17 +40,20 @@ kubectl delete deployment kube-prometheus-stack-kube-state-metrics -n monitoring
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
+### Added
+
+- `coredns` - added corends module to support on-premise name resolution [@sossickd](url)
+- `module` - added required core_services_config parameters to examples [@sossickd](url)
+
 ### Changed
 
 - `fluent-bit` - updated chart to 0.19.16 [@sossickd](url)
 - `fluent-bit` - revert cri multi-line parser back to the standard parser until upstream [issue](https://github.com/fluent/fluent-bit/issues/4377) has been fixed [@sossickd](url)
 - `fluentd` - updated chart to 2.6.7 [@sossickd](url)
 - `fluentd` - fix image tag and repository override [@sossickd](url)
-- `coredns` - added corends module to support on-premise name resolution [@sossickd](url)
 - `external-dns` - updated chart to 1.7.1 [@sossickd](url)
 - `local_storage` - added dependency on kube-prometheus-stack CRDs [@sossickd](url)
 - `module` - removed providers from module and version constraints from sub-modules (see IMPORTANT note below) [@sossickd](url)
-- `module` - added required core_services_config parameters to examples [@sossickd](url)
 - `cert-manager` - updated chart and CRDs to 1.6.1 [@sossickd](url)
 - `kubectl provider` - enabled server-side-apply for fluent-bit, cert-manager [@sossickd](url)
 
@@ -61,14 +67,16 @@ kubectl delete deployment kube-prometheus-stack-kube-state-metrics -n monitoring
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
+### Added
+
+- `CSI` - added local volume provisioner for local nvme & ssd disks [@dutsmiller](url)
+- `Diagnostics` - AKS control plane logs written to log analytics workspace in cluster resource group [@sossickd](url)
 ### Changed
 
 - `API` - added version field to node_types (see **IMPORTANT** note below) [@dutsmiller](url)
 - `AzureUSGovernmentCloud` - added `azure_environment` variable to set cloud environment [@dutsmiller](url)
 - `AzureUSGovernmentCloud` - added support for AAD member users [@dutsmiller](url) [@jamurtag](url)
 - `AzureUSGovernmentCloud` - added support in external-dns & cert-manager [@sossickd](url)
-- `CSI` - added local volume provisioner for local nvme & ssd disks [@dutsmiller](url)
-- `Diagnostics` - AKS control plane logs written to log analytics workspace in cluster resource group [@sossickd](url)
 - `Documentation` - clarification of Windows node pool support [@jamurtag](url)
 - `external-dns` - changed logging format to json [@sossickd](url)
 - `fluent-bit` - updated chart to 0.19.5 [@sossickd](url)

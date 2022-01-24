@@ -23,7 +23,9 @@ If you are creating a new 1.21.x cluster or above of upgrading from a 1.20.x clu
 
 > **IMPORTANT** - When upgrading from a 1.20.x cluster to a 1.21.x cluster you must delete the following storage classes prior to the upgrade (`azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`)
 
-```bash
+ The command below needs to run by a cluster operator with permissions to delete resources.
+
+```console
 kubectl delete storageclass azure-disk-premium-ssd-delete azure-disk-premium-ssd-retain azure-disk-standard-ssd-delete azure-disk-standard-ssd-retain
 ```
 
