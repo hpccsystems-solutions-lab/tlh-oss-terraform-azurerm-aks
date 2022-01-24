@@ -18,8 +18,12 @@ resource "azurerm_role_assignment" "main" {
 
 resource "kubectl_manifest" "identity" {
   yaml_body = yamlencode(local.identity)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "identity_binding" {
   yaml_body = yamlencode(local.identity_binding)
+
+  server_side_apply = true
 }

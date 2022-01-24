@@ -6,14 +6,20 @@ resource "kubectl_manifest" "clusterroles" {
 
 resource "kubectl_manifest" "cluster_admin_rolebinding" {
   yaml_body = templatefile("${path.module}/clusterrolebindings/lnrs-cluster-admin.yaml.tpl", local.cluster_roles)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "cluster_view_rolebinding" {
   yaml_body = templatefile("${path.module}/clusterrolebindings/lnrs-cluster-view.yaml.tpl", local.cluster_roles)
+
+  server_side_apply = true
 }
 
 resource "kubectl_manifest" "standard_view_rolebinding" {
   yaml_body = templatefile("${path.module}/clusterrolebindings/lnrs-standard-view.yaml.tpl", local.cluster_roles)
+
+  server_side_apply = true
 }
 
 resource "azurerm_role_assignment" "aks_cluster_user_role" {
