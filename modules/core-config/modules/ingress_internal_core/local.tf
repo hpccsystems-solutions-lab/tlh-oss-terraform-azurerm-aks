@@ -1,9 +1,9 @@
 locals {
   namespace = "ingress-core-internal"
 
-  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  name = "core-internal"
 
-  chart_version = "4.0.6"
+  chart_version = "4.0.16"
 
   chart_timeout = 1800
 
@@ -25,9 +25,9 @@ locals {
 
       ingressClassResource = {
         enabled = true
-        name = "core-internal"
+        name = local.name
         default = false
-        controllerValue = "k8s.io/nginx-core-internal"
+        controllerValue = "k8s.io/nginx-${local.name}"
         parameters = {}
       }
 
@@ -218,4 +218,7 @@ locals {
       }
     }
   }
+  
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_objects = { for x in fileset(path.module, "resources/*.yaml.tpl") : basename(x) => yamldecode(templatefile("${path.module}/${x}", { name = local.name, namespace = local.namespace, title = title(replace(local.name, "-", " ")), ingress_class = local.chart_values.controller.ingressClassResource.controllerValue })) }
 }

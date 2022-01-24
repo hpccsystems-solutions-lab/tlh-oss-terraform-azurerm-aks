@@ -131,7 +131,6 @@ module "ingress_internal_core" {
   source = "./modules/ingress_internal_core"
 
   cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
 
   lb_source_cidrs = local.ingress_internal_core.lb_source_cidrs
 }
