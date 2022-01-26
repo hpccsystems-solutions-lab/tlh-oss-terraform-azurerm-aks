@@ -153,7 +153,7 @@ locals {
         vm_size             = local.vm_types[regex("[0-9A-Za-z]+-[0-9A-Za-z]+-v[0-9]+", pool.node_type)][pool.node_size]
         os_type             = ((length(regexall("-win", pool.node_type)) > 0) ? "Windows" : "Linux")
         enable_auto_scaling = (pool.min_capacity == pool.max_capacity ? false : true)
-        node_count          = (pool.min_capacity == pool.max_capacity ? (pool.min_capacity / length(local.node_pool_defaults.availability_zones)) : null)
+        node_count          = (pool.min_capacity == pool.max_capacity ? (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones))) : null)
         min_count           = (pool.min_capacity == pool.max_capacity ? null : (pool.single_vmss ? pool.min_capacity : (pool.min_capacity / length(local.node_pool_defaults.availability_zones))))
         max_count           = (pool.min_capacity == pool.max_capacity ? null : (pool.single_vmss ? pool.max_capacity : (pool.max_capacity / length(local.node_pool_defaults.availability_zones))))
 
