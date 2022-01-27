@@ -4,9 +4,10 @@ locals {
   cluster_name = var.cluster_name
 
   cluster_patch_matrix = {
-    "1.21" = "1.21.2"
-    "1.20" = "1.20.7"
-    "1.19" = "1.19.11"
+    "1.22" = "1.22.4"
+    "1.21" = "1.21.7"
+    "1.20" = "1.20.13"
+    "1.19" = "1.19.13"
   }
 
   cluster_patch_version = local.cluster_patch_matrix[var.cluster_version]
