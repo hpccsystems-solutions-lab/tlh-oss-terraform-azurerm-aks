@@ -174,16 +174,7 @@ module "aks" {
 
   virtual_network = module.virtual_network.aks["demo"]
 
-  core_services_config = {
-    alertmanager = {
-      smtp_host = "smtp-hostname.ds:25"
-      smtp_from = "cluster-name@lexisnexisrisk.com"
-    }
-
-    ingress_internal_core = {
-      domain    = "example.azure.lnrsg.io"
-    }
-  }
+  core_services_config = var.core_services_config
 
   # see /modules/core-config/modules/rbac/README.md
   azuread_clusterrole_map = var.azuread_clusterrole_map
