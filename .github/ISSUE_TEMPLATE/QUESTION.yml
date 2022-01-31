@@ -1,0 +1,18 @@
+name: General Question
+description: Ask a question to the maintainers
+title: "question: <title>"
+labels: ["question", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        *The title on this issue uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec to aid with automation. Please follow the formatting used in the title template.*
+
+  - type: textarea
+    id: question
+    attributes:
+      label: The Question
+      description: What would you like to know?
+      placeholder: Ask a question
+    validations:
+      required: true
