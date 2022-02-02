@@ -1,6 +1,7 @@
 # Upgrade Documentation
 
 - [Upgrade Documentation](#upgrade-documentation)
+  - [Recommendations](#recommendations)
   - [Upgrading Module Versions](#upgrading-module-versions)
     - [From `v1.0.0-beta.6` to `v1.0.0-beta.7`](#from-v100-beta6-to-v100-beta7)
     - [From `v1.0.0-beta.5` to `v1.0.0-beta.6`](#from-v100-beta5-to-v100-beta6)
@@ -9,27 +10,149 @@
     - [From `v1.0.0-beta.2` to `v1.0.0-beta.3`](#from-v100-beta2-to-v100-beta3)
     - [From `v1.0.0-beta.1` to `v1.0.0-beta.2`](#from-v100-beta1-to-v100-beta2)
   - [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
-    - [From `1.20.x` to `1.21.x`](#from-120x-to-121x)
     - [From `1.19.x` to `1.20.x`](#from-119x-to-120x)
   - [Upgrading Kubernetes Major Versions](#upgrading-kubernetes-major-versions)
+  - [Cluster Health Checks](#cluster-health-checks)
+    - [PodDisruptionBudgets (PDB)](#poddisruptionbudgets-pdb)
   - [Deprecated API Migration Guide](#deprecated-api-migration-guide)
-  - [Troubleshooting Failed AKS Version Upgrades](#troubleshooting-failed-aks-version-upgrades)
+  - [Troubleshooting](#troubleshooting)
+    - [AKS Node Pool Provisioning State Failed](#aks-node-pool-provisioning-state-failed)
+    - [Terraform Plan Failed](#terraform-plan-failed)
+    - [Terraform Apply Failed](#terraform-apply-failed)
 
 <br>
 
+## Recommendations
+
+Perform the upgrade on AKS clusters in lower environments `BEFORE` upgrading production clusters. Lower environments must mirror workloads in production environments to mitigate unforeseen issues. Ensure monitoring is in place to alert on outages.
+
+To speed up the process when [upgrading Module Versions](#upgrading-module-versions) or [upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions) all steps should be completed `prior` to the upgrade. If missed these steps can be completed retrospectively by performing a re-run of the Terraform plan or apply stages.
+
+Ensure Terraform pipelines have a sufficient timeout window, 2 hours is recommended.
+
 ## Upgrading Module Versions
 
-Below is a list of steps that need to be taken when upgrading from one module version to the next. If you are skipping a version you will need to take the accumulative steps.
+Below is a list of steps that need to be taken when upgrading from one module version to the next. If you are skipping a version you will need to take the accumulative steps. For example, upgrades between `v1.0.0-beta.5` -> `v1.0.0-beta.7` you will need to follow the steps included in [`v1.0.0-beta.5` to `v1.0.0-beta.6`](#from-v100-beta5-to-v100-beta6) and [`v1.0.0-beta.6` to `v1.0.0-beta.7`](#from-v100-beta6-to-v100-beta7).
+
+Some module upgrades will initiate a Kubernetes `Minor` or `Patch` upgrade. This is required as AKS [frequently drop support](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) for Kubernetes `Minor` or `Patch` versions.
+
+> **IMPORTANT** - Make sure that the CI/CD Gitlab project that deploys terraform aks module has a [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) set that is sufficient to complete the upgrade process. Even usually takes less than an hour if you have not fixed any [PodDisruptionBudgets (PDB)] this can take significantly longer before an error is returned. The recommendation is `2` hours.
 
 ### From `v1.0.0-beta.6` to `v1.0.0-beta.7`
 
-`kube-prometheus-stack` - Due to an upgrade of the `kube-state-metrics` chart, removal of its deployment needs to done manually `prior` to upgrading to the `v1.0.0-beta.7` tag. The command below needs to run by a cluster operator with permissions to delete resources.
+> **IMPORTANT** - Updating to this module version will instigate a Kubernetes patch version upgrade. Please read the [Cluster Health Checks](#cluster-health-checks) section prior to updating.
+
+A Github [issue](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/305) has been created on the `terraform-azurerm-aks` project to track any problems caused by the Kubernetes patch upgrade. Even though this upgrade path has been tested there may be unforeseen permutations. If you experience a problem that was not remediated by the steps outlined in this guide please add a comment with a detailed description of your experience.
+
+> **IMPORTANT** - To speed up the process complete all steps `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
+
+`module version upgrade instigates a Kubernetes patch upgrade`: YES
+
+`Manual steps to delete Kubernetes resources`
+
+> **IMPORTANT** - All commands needs to run by a cluster operator with permissions to delete resources.
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`aad-pod-identity` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+
+</details>
+<br />
+
+`aad-pod-identity`
+
+```console
+kubectl delete crd azureassignedidentities.aadpodidentity.k8s.io 
+kubectl delete crd azureidentities.aadpodidentity.k8s.io 
+kubectl delete crd azureidentitybindings.aadpodidentity.k8s.io 
+kubectl delete crd azurepodidentityexceptions.aadpodidentity.k8s.io
+```
+
+> **IMPORTANT** - this will remove all custom resources of these types, if user workloads created or consumed AAD Pod Identities the Kubernetes custom resources will need to be recreated
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`kube-prometheus-stack` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+
+</details>
+<br />
+
+`kube-prometheus-stack`
+
+```console
+kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
+kubectl delete crd alertmanagers.monitoring.coreos.com
+kubectl delete crd podmonitors.monitoring.coreos.com
+kubectl delete crd probes.monitoring.coreos.com
+kubectl delete crd prometheuses.monitoring.coreos.com
+kubectl delete crd prometheusrules.monitoring.coreos.com
+kubectl delete crd servicemonitors.monitoring.coreos.com
+kubectl delete crd thanosrulers.monitoring.coreos.com
+```
+
+> **IMPORTANT** - this will remove all custom resources of these types, if user workloads created any of these the Kubernetes custom resources will need to be recreated
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`kube-prometheus-stack` - This step is required due to an upgrade of the `kube-state-metrics` deployment.
+
+</details>
+<br />
+
+`kube-state-metrics`
 
 ```console
 kubectl delete deployment kube-prometheus-stack-kube-state-metrics -n monitoring
 ```
 
-`DEPRECATION WARNING` - The `kube-prometheus-stack` helm chart version is upgraded to `30.1.0` which includes `Alertmanager` version `0.23`. Since this upgrade deprecated syntax warning appear in the kube-prometheus-stack-operator pod logs. If you have created your own custom routes this is advanced warning and maybe a good idea to start considering testing the new [matchers](https://prometheus.io/docs/alerting/latest/configuration/#route) configuration.
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`ingress_internal_core` - Ingress Grafana dashboard configmap is being handled by a different `kubectl_manifest`. This causes a known `cycle` error as the resource get destroyed on the Terraform apply phase.
+
+</details>
+<br />
+
+`ingress_internal_core`
+
+> **IMPORTANT** - This next step is only required if you upgrading from module version `v1.0.0-beta.3` and above.
+
+```console
+kubectl delete configmap dashboard-ingress-core-internal -n ingress-core-internal
+```
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`storage-class` - The change to the storage classes to use CSI drivers causes the Kubernetes resources to be replaced during a Terraform apply, this causes a known `cycle` error.
+
+</details>
+<br />
+
+`storage-class`
+
+> **IMPORTANT** - This next step is only required if you are on Kubernetes `1.21.x`
+
+```console
+kubectl delete storageclass azure-disk-premium-ssd-delete 
+kubectl delete storageclass azure-disk-premium-ssd-retain 
+kubectl delete storageclass azure-disk-standard-ssd-delete 
+kubectl delete storageclass azure-disk-standard-ssd-retain
+```
+
+> **IMPORTANT** - The change to use CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi).
+
+`DEPRECATION WARNINGS`
+
+`Alertmanager` The helm chart `kube-prometheus-stack` helm chart upgrade to `30.1.0` includes `Alertmanager` version `0.23`. Since this upgrade deprecated syntax warning appear in the kube-prometheus-stack-operator pod logs. If you have created your own custom routes this is advanced warning and maybe a good idea to start considering testing the new [matchers](https://prometheus.io/docs/alerting/latest/configuration/#route) configuration.
 
 ```console
 kubectl logs kube-prometheus-stack-operator-76d7dc6bd-v89j6 -n monitoring
@@ -37,36 +160,58 @@ kubectl logs kube-prometheus-stack-operator-76d7dc6bd-v89j6 -n monitoring
 level=warn ts=2022-01-22T08:31:55.923186487Z caller=amcfg.go:1326 component=alertmanageroperator alertmanager=kube-prometheus-stack-alertmanager namespace=monitoring receiver=alerts msg="'matchers' field is using a deprecated syntax which will be removed in future versions" match="unsupported value type" match_re="unsupported value type"
 ```
 
-`storage-class` - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
-
 ### From `v1.0.0-beta.5` to `v1.0.0-beta.6`
+
+> **IMPORTANT** - To speed up the process complete all steps `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
+
+`module version upgrade instigates a Kubernetes patch upgrade`: NO
+
+`Manual steps to delete Kubernetes resources`
+
+> **IMPORTANT** - All commands needs to run by a cluster operator with permissions to delete resources.
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`cert-manager` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+
+</details>
+<br />
+
+`cert-manager`
+
+```console
+kubectl delete crd certificaterequests.cert-manager.io 
+kubectl delete crd certificates.cert-manager.io 
+kubectl delete crd challenges.acme.cert-manager.io 
+kubectl delete crd clusterissuers.cert-manager.io 
+kubectl delete crd issuers.cert-manager.io 
+kubectl delete crd orders.acme.cert-manager.io
+```
+
+`Manual steps required to the Terraform workspace`
 
 `module` - Providers have now been removed from the module which requires changes to the Terraform workspace. All providers **must** be declared and configuration for the `kubernetes`, `kubectl` & `helm` providers **must** be set. See [examples](/examples) for valid configuration.
 
 ### From `v1.0.0-beta.4` to `v1.0.0-beta.5`
 
-`nodepool` - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The `v1.0.0-beta.4` node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility.  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
+> **IMPORTANT** - To speed up the process complete all steps `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
 
-Example module input change:
+`module version upgrade instigates a Kubernetes patch upgrade`: NO
 
-From:
+`Manual steps required to the Terraform workspace`
 
-```terraform
-module "aks" {
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
 
-  node_pools = [
-    {
-      name         = "wnp1" # windows worker node pool 1
-      node_type    = "x64-gp-win"
-    },
-    {
-      name         = "inp1" # linux ingress node 1
-      node_type    = "x64-gp"
-    }
-  ]
-```
+`nodepool` - Existing node types must have "-v1" appended to be compatible with `v1.0.0-beta.5`.  Example:  The `v1.0.0-beta.4` node type of `x64-gp` would need to be changed to `x64-gp-v1` to maintain compatibility.  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
 
-To:
+</details>
+<br />
+
+`nodepool`
 
 ```terraform
 module "aks" {
@@ -83,32 +228,16 @@ module "aks" {
   ]
 ```
 
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
 
 `fluentd` - Changed `filter_config`, `route_config` and `output_config` variables to `filters`, `routes` and `outputs`. If you are currently using `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
 
-Example core_services_config input change:
+</details>
+<br />
 
-From:
-
-```terraform
-module "aks" {
-  ...
-  core_services_config = {
-    fluentd = {
-      output_config = <<-EOT
-        <label @DEFAULT>
-          <match kube.var.log.containers.example-**.log>
-            @type elasticsearch
-            ....
-        </label>
-      EOT
-    }
-    ...
-  }
-}
-```
-
-To:
+`fluentd`
 
 ```terraform
 module "aks" {
@@ -133,7 +262,65 @@ No additional action required.
 
 ### From `v1.0.0-beta.2` to `v1.0.0-beta.3`
 
-No additional action required.
+> **IMPORTANT** - To speed up the process complete the next step `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
+
+`module version upgrade instigates a Kubernetes patch upgrade`: NO
+
+`Manual steps required to the Terraform workspace`
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`external-dns` - Due to changes to `external-dns` it fits the criteria to return [Provider configuration not present](https://support.hashicorp.com/hc/en-us/articles/1500000332721-Error-Provider-configuration-not-present) errors.
+</details>
+<br />
+
+> **IMPORTANT** - To speed up the process complete the next step `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform plan stage.
+
+If you do not complete this step `prior` to the module version upgrade you will receive the following error.
+
+```console
+ Error: Provider configuration not present
+ ....
+ module.aks.module.core-config.module.external_dns.helm_release.main
+ (orphan) its original provider configuration at
+ module.aks.provider["registry.terraform.io/hashicorp/helm"] is required,
+ but it has been removed.
+ ```
+
+To resolve the issue remove the orphaned resources from the Terraform state file.
+
+> **IMPORTANT** - Change the name in each of the `terraform state rm` commands from `module.example` to `module.<your-module-name>` otherwise you will receive an error.
+
+```console
+terraform state rm 'module.example.module.core-config.module.external_dns.module.identity.kubectl_manifest.identity'
+terraform state rm 'module.example.module.core-config.module.external_dns.module.identity.kubectl_manifest.identity_binding'
+terraform state rm 'module.example.module.core-config.module.external_dns.helm_release.main'
+```
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
+
+`external-dns` - Changed `resource_group_name` and `zones` variables to `private_resource_group_name` and `private_zones `. If you are currently using `resource_group_name` and `zones` in the external-dns section of the core_services_config these will need to be renamed accordingly.
+
+</details>
+<br />
+
+`external-dns`
+
+```terraform
+module "aks" {
+
+  core_services_config = {
+    external_dns = {
+      private_resource_group_name = "azure-resource-group-name"
+      private_zones               = ["staging.app.lnrsg.io", "dev.app.lnrsg.io"]
+    }
+  }
+}
+```
 
 ### From `v1.0.0-beta.1` to `v1.0.0-beta.2`
 
@@ -143,39 +330,43 @@ No additional action required.
 
 ## Upgrading Kubernetes Minor Versions
 
+> **IMPORTANT** - Please reference the [Deprecated API Migration Guide](#deprecated-api-migration-guide) prior to completing an upgrade.
+
+> **IMPORTANT** - Please read the [Cluster Health Checks](#cluster-health-checks) section prior to completing an upgrade.
+
+> **IMPORTANT** - Make sure that the CI/CD Gitlab project that will be used to upgrade AKS using Terraform has a [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) set that is sufficient to complete an upgrade. Even though an upgrade takes less than an hour if you have not fixed any [PodDisruptionBudgets (PDB)](#poddisruptionbudgets-pdb) this can take significantly longer before an error is returned. The recommendation is `2` hours or more.
+
 Below is a list of steps that need to be taken when upgrading from one minor version of kubernetes to the next. For more information on upgrading an AKS cluster please visit the official [Microsoft documentation](https://docs.microsoft.com/en-us/azure/aks/upgrade-cluster)
 
-`Note`: When you upgrade a supported AKS cluster, Kubernetes minor versions cannot be skipped. All upgrades must be performed sequentially by major version number. For example, upgrades between `1.19.x` -> `1.20.x` or `1.20.x` -> `1.21.x` are allowed, however `1.19.x` -> `1.21.x` is not allowed.
+`Note`: When you upgrade a supported AKS cluster, Kubernetes minor versions cannot be skipped. All upgrades must be followed sequentially by major version number. For example, upgrades between `1.19.x` -> `1.20.x` or `1.20.x` -> `1.21.x` are allowed, however `1.19.x` -> `1.21.x` is not allowed.
 
 To perform an AKS cluster to the next major version of kubernetes you need to change the `cluster_version` input to the module.
 
-So to upgrade from kubernetes version `1.19.x` to `1.20.x` you would make the following change to the `cluster_version` input to the module. This will instantiate a cluster upgrade on the resulting terraform apply.
+`Manual steps to delete Kubernetes resources`
 
-From:
+> **IMPORTANT** - To speed up the process complete all steps `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
 
-```terraform
-module "aks" {
-  cluster_version = "1.20"
-```
+> **IMPORTANT** - All commands needs to run by a cluster operator with permissions to delete resources.
 
-To:
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br />
 
-```terraform
-module "aks" {
-  cluster_version = "1.21"
-```
+`storage-class` - The change to the storage classes to use CSI drivers causes the Kubernetes resources to be replaced during a Terraform apply, this causes a known `cycle` error.
 
-> **NOTE** - It is important to complete any steps below `prior` to completing a cluster upgrade and any action required for deprecated APIs, please reference the [Deprecated API Migration Guide](#deprecated-api-migration-guide)
+</details>
+<br />
 
-### From `1.20.x` to `1.21.x`
-
-`storage-class` - When migrating from a 1.20.x cluster to 1.21.x the storage-classes are migrated from `in-tree` drivers to the new `CSI drivers`. This change requires you to delete the following storage classes `prior` to the upgrade. You can find more details in the storage-class [README.md](/modules/core-config/modules/storage-classes/README.md)
-
- The command below needs to run by a cluster operator with permissions to delete resources.
+`storage-class`
 
 ```console
-kubectl delete storageclass azure-disk-premium-ssd-delete azure-disk-premium-ssd-retain azure-disk-standard-ssd-delete azure-disk-standard-ssd-retain
+kubectl delete storageclass azure-disk-premium-ssd-delete 
+kubectl delete storageclass azure-disk-premium-ssd-retain 
+kubectl delete storageclass azure-disk-standard-ssd-delete 
+kubectl delete storageclass azure-disk-standard-ssd-retain
 ```
+
+> **IMPORTANT** - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
 
 ### From `1.19.x` to `1.20.x`
 
@@ -187,7 +378,59 @@ No additional action required.
 
 ---
 
+## Cluster Health Checks
+
+It is important to carry out cluster health checks prior to completing an upgrade
+
+### PodDisruptionBudgets (PDB)
+
+It is important to understand PodDisruptionBudgets (PDB) as they can cause a cluster upgrade to fail.
+
+ A PodDisruptionBudget (PDB) is an indicator of the number of disruptions that can be tolerated at a given time for a class of pods (a budget of faults). Whenever a disruption to the pods in a service is calculated to cause the service to drop below the budget, the operation is paused until it can maintain the budget.
+
+ For more information see the Official Kubernetes [documentation](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
+
+ Lets take `fluentd` for example which is part of the logging service included in the core config.
+
+ `fluentd` is a `statefulset` with replica count of `3`
+
+ ```console
+ kubectl get statefulsets -n logging
+
+NAME      READY   AGE
+fluentd   3/3     12h
+```
+
+ `fluentd` is also configured with PodDisruptionBudget (PDB) with maxUnavailable setting of `1`
+
+ ```console
+ kubectl get pdb -n logging
+NAME      MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+fluentd   N/A             1                 1                     12h
+```
+
+Now in this scenario `0` of the `3` fluentd pods are available. This would cause a cluster upgrade to fail.
+
+ ```console
+ kubectl get statefulsets -n logging
+
+NAME      READY   AGE
+fluentd   0/3     12h
+```
+
+To resolve the issue find the cause as to why `0` of the `3` fluentd pods are available and fix the issue prior to a cluster upgrade. If the pods are in a `Pending` of `Error` state you can use the following commands to troubleshoot.
+
+```console
+kubectl describe pod fluentd-0 -n logging
+
+kubectl logs fluentd-0 -n logging
+```
+
+---
+
 ## Deprecated API Migration Guide
+
+> **IMPORTANT** - Please share this information with any team developing their own helm charts or creating kubernetes manifests.
 
 As the Kubernetes API evolves, APIs are periodically reorganized or upgraded. When APIs evolve, the old API is deprecated and eventually removed. This page contains information you need to know when migrating from deprecated API versions to newer and more stable API versions.
 
@@ -195,10 +438,36 @@ For details please refer to the [official kubernetes documentation](https://kube
 
 ---
 
-## Troubleshooting Failed AKS Version Upgrades
+## Troubleshooting
+
+### AKS Node Pool Provisioning State Failed
+
+The Terraform Apply phase will report an error if a node pool `Provisioning State` returns a status of `Failed`. Follow the guides below to troubleshoot the issue. During testing all encountered errors have been recoverable.
+
+[I'm receiving errors that my cluster is in failed state during an upgrade due to PodDisruption Budgets](#pod-disruption-budgets)
 
 [I'm receiving errors that my cluster is in failed state and upgrading or scaling will not work until it is fixed](https://docs.microsoft.com/en-us/azure/aks/troubleshooting#im-receiving-errors-that-my-cluster-is-in-failed-state-and-upgrading-or-scaling-will-not-work-until-it-is-fixed)
 
 [I'm getting an insufficientSubnetSize error while deploying an AKS cluster with advanced networking. What should I do?](https://docs.microsoft.com/en-us/azure/aks/troubleshooting#im-receiving-errors-when-trying-to-upgrade-or-scale-that-state-my-cluster-is-being-upgraded-or-has-failed-upgrade)
 
 [I'm getting a quota exceeded error during creation or upgrade. What should I do?](https://docs.microsoft.com/en-us/azure/aks/troubleshooting#im-getting-a-quota-exceeded-error-during-creation-or-upgrade-what-should-i-do)
+
+During testing all encountered errors have been recoverable, for example if you encountered a `insufficientSubnetSize` error it maybe because you have more than one node pool in a given subnet.
+
+- Wait until all node pools `Provisioning State` returns a status either a `Succeeded` or `Failed`.- Then using the `az cli` or the `Azure Portal` for the node pools that have a `Provisioning State` of `Failed` change the `Scale node pool` setting from `Autoscale` to `Manual` with the same `min` - `max` settings.
+- This will trigger a scaling event and a new node will be provisioned with the later kubernetes `minor` or `patch` version. 
+- Wait until the `Provisioning State` has changed to `Succeeded` and repeat these steps for the next node pool that has a `Provisioning State` of `Failed` until all node pools have a `Provisioning State` of `Succeeded`
+
+The same steps can be carried out after resolving errors associated with PodDisruptionBudgets (#pod-disruption-budgets)
+
+If you have followed all the troubleshooting steps and you cannot get the node pool `Provisioning State` to a Succeeded status consider logging a [support request](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/how-to-create-azure-support-request) in the Azure portal.
+
+### Terraform Plan Failed
+
+`Provider configuration not present`  errors during a Terraform `Plan`, please make sure you have followed all the steps in the [Upgrading Module Versions](#upgrading-module-versions) and [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
+
+### Terraform Apply Failed
+
+`Cycle` errors during a Terraform `Apply`, please make sure you have followed all the steps in the [Upgrading Module Versions](#upgrading-module-versions) and [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
+
+`Conflicts with "HashiCorp" using apiextensions.k8s.io/v1` errors during a Terraform `Apply`, please make sure you have followed all the steps in the [Upgrading Module Versions](#upgrading-module-versions) and [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
