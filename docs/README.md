@@ -8,6 +8,7 @@
     - [Node Memory Allocation](#node-memory-allocation)
     - [Platform Resource Settings](#platform-resource-settings)
   - [Module User Guide](#module-user-guide)
+    - [Cluster Upgrades](#cluster-upgrades)
     - [Kubernetes RBAC](#kubernetes-rbac)
     - [DNS, TLS Certificates & Ingress](#dns-tls-certificates--ingress)
     - [ACR Access](#acr-access)
@@ -140,6 +141,32 @@ It is the collective responsibility of all teams to monitor system service metri
 
 How to interact with the Terraform module to deploy an AKS cluster.
 
+### Cluster Upgrades
+
+A cluster upgrade is initiated by one of the following changes:
+
+* A user updates the `cluster_version` module input to the next minor/major AKS version
+* The module internally updates the supported patch revision for a supported AKS version
+
+When changes are applied, the following workflow commences:
+
+* The AKS control plane and default node pool are updated to the new version
+* Once complete, all other node pools are updated **simultaneously** by rolling through nodes sequentially
+
+Given the above, here are some best practices and considerations:
+
+* Consult the [Upgrade Guide](/UPGRADE.md) for necessary manual steps or considerations - if not the operation **will fail**
+* Ensure the Terraform pipeline has a sufficient timeout to allow the operation to complete
+  * It is recommended to provide 10 minutes per node (or 2 hours as a minimum)
+* Scale down node pools if possible, in particular batch workloads that may be stopped and resumed
+* For `Azure CNI`, ensure at least (*no of node pools*)*30 free IP addresses in the subnet
+  * Azure CNI pre-allocates 30 IPs for each node (see [CNI Options](#cni-options) above)
+* Ensure workloads are spread across pools, if necessary use [Pod Disruption Budgets](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) or other availability options
+* Don't perform upgrades when the cluster is processing high-intensity workloads
+* Fewer, larger nodes will take less time to upgrade than many smaller nodes
+
+---
+
 ### Kubernetes RBAC
 
 [Cluster authentication](https://docs.microsoft.com/en-us/azure/aks/azure-ad-integration-cli#access-cluster-with-azure-ad) is managed via Azure AD (SSO) in the `RBAHosting` tenant.
@@ -161,7 +188,9 @@ Azure AD users or services accounts (managed identities) will need some level of
   }
 ```
 
-After handover it's possible for teams to create additional roles and bindings for Azure AD users, however this **must not** include the `cluster-admin` role - this high priviliged role must be fully managed by this variable for transparency and auditing by InfoSec and SRE teams. See the [RBAC](/modules/core-config/modules/rbac/README.md) documentation for full implementation details.
+In `AzureUSGovernmentCloud` environments the map key **must** be the User Principal name. For `AzurePublicCloud` the key may be the UPN or descriptive field, however it is highly recommended to use the UPN as this is unique and easily referenced.
+
+After handover it's possible for teams to create additional roles and bindings for Azure AD users, however this **must not** include the `cluster-admin` role - this high privileged role must be fully managed by this variable for transparency and auditing by InfoSec and SRE teams. See the [RBAC](/modules/core-config/modules/rbac/README.md) documentation for full implementation details.
 
 For service accounts, a managed identity can be configured for non-interactive `kubectl` access, see [kubelogin](https://docs.microsoft.com/en-us/azure/aks/managed-aad#non-interactive-sign-in-with-kubelogin) for details.
 

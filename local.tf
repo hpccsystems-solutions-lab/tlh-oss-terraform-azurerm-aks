@@ -1,5 +1,5 @@
 locals {
-  module_version = "v1.0.0-beta.5"
+  module_version = "v1.0.0-beta.7"
 
   cluster_name = var.cluster_name
 

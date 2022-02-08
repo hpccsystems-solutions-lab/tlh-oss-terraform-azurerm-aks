@@ -34,7 +34,7 @@ Edit [CHANGELOG.md](/CHANGELOG.md) and to update the release date and next versi
 
 ```shell
 git add .
-git commit -m "update changelog with v1.0.0-beta.6 release date"
+git commit -m "Release v1.0.0-beta.6"
 git push origin release-v1.0.0-beta.6
 ```
 

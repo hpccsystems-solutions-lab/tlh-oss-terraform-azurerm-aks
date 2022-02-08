@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade instructions and troubleshooting steps.
 
-## v1.0.0-beta.7 - UNRELEASED
+## v1.0.0-beta.8 - UNRELEASED
+
+<br/>
+
+## v1.0.0-beta.7 - 2022-02-08
 
 ### Added
 
-- `documentation` - added [documentation](/UPGRADE.md) on upgrade steps [@sossickd](url)
+- `documentation` - added [documentation](/UPGRADE.md) for module & AKS version upgrades [@sossickd](url)
 
 ### Changed
 
@@ -32,7 +36,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 ### Removed
 
-- `module` - Dropped support for Kubernetes version 1.19 (see **IMPORTANT** note below) [@dutsmiller](url)
+- `module` - dropped support for Kubernetes version 1.19 (see **IMPORTANT** note below) [@dutsmiller](url)
 
 <br>
 
@@ -44,7 +48,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.6 - 2021-02-14
+## v1.0.0-beta.6 - 2022-01-14
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 

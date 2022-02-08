@@ -10,6 +10,7 @@
     - [From `v1.0.0-beta.2` to `v1.0.0-beta.3`](#from-v100-beta2-to-v100-beta3)
     - [From `v1.0.0-beta.1` to `v1.0.0-beta.2`](#from-v100-beta1-to-v100-beta2)
   - [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
+    - [From `1.20.x` to `1.21.x`](#from-120x-to-121x)
     - [From `1.19.x` to `1.20.x`](#from-119x-to-120x)
   - [Upgrading Kubernetes Major Versions](#upgrading-kubernetes-major-versions)
   - [Cluster Health Checks](#cluster-health-checks)
@@ -122,24 +123,17 @@ kubectl delete deployment kube-prometheus-stack-kube-state-metrics -n monitoring
 
 `ingress_internal_core`
 
-> **IMPORTANT** - This next step is only required if you upgrading from module version `v1.0.0-beta.3` and above.
+> **IMPORTANT** - This next step is only required if upgrading from module version `v1.0.0-beta.3` and above.
 
 ```console
 kubectl delete configmap dashboard-ingress-core-internal -n ingress-core-internal
 ```
 
-<details>
-<summary markdown="span">Explanation for the next step</summary>
-<br />
+> **IMPORTANT** - This next step is only required if on or upgrading to Kubernetes `1.21.x`
 
-`storage-class` - The change to the storage classes to use CSI drivers causes the Kubernetes resources to be replaced during a Terraform apply, this causes a known `cycle` error.
+`storage-classes`
 
-</details>
-<br />
-
-`storage-class`
-
-> **IMPORTANT** - This next step is only required if you are on Kubernetes `1.21.x`
+The change to the storage classes to use CSI drivers causes the Kubernetes resources to be replaced during a Terraform apply, this causes a known `cycle` error. Delete existing platform storage classes before upgrading - this does not impact existing volumes.
 
 ```console
 kubectl delete storageclass azure-disk-premium-ssd-delete 
@@ -148,7 +142,9 @@ kubectl delete storageclass azure-disk-standard-ssd-delete
 kubectl delete storageclass azure-disk-standard-ssd-retain
 ```
 
-> **IMPORTANT** - The change to use CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi).
+> **IMPORTANT** - if cluster operators created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will also need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi).
+
+<br/>
 
 `DEPRECATION WARNINGS`
 
@@ -340,7 +336,9 @@ Below is a list of steps that need to be taken when upgrading from one minor ver
 
 `Note`: When you upgrade a supported AKS cluster, Kubernetes minor versions cannot be skipped. All upgrades must be followed sequentially by major version number. For example, upgrades between `1.19.x` -> `1.20.x` or `1.20.x` -> `1.21.x` are allowed, however `1.19.x` -> `1.21.x` is not allowed.
 
-To perform an AKS cluster to the next major version of kubernetes you need to change the `cluster_version` input to the module.
+Change the `cluster_version` module input to upgrade an AKS cluster to the next version.
+
+<br/>
 
 `Manual steps to delete Kubernetes resources`
 
@@ -348,16 +346,13 @@ To perform an AKS cluster to the next major version of kubernetes you need to ch
 
 > **IMPORTANT** - All commands needs to run by a cluster operator with permissions to delete resources.
 
-<details>
-<summary markdown="span">Explanation for the next step</summary>
-<br />
+<br/>
+
+### From `1.20.x` to `1.21.x`
 
 `storage-class` - The change to the storage classes to use CSI drivers causes the Kubernetes resources to be replaced during a Terraform apply, this causes a known `cycle` error.
 
-</details>
-<br />
-
-`storage-class`
+Delete existing platform storage classes before upgrading - this does not impact existing volumes.
 
 ```console
 kubectl delete storageclass azure-disk-premium-ssd-delete 
@@ -366,11 +361,15 @@ kubectl delete storageclass azure-disk-standard-ssd-delete
 kubectl delete storageclass azure-disk-standard-ssd-retain
 ```
 
-> **IMPORTANT** - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
+> **IMPORTANT** - if cluster operators created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will also need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi).
+
+<br/>
 
 ### From `1.19.x` to `1.20.x`
 
 No additional action required.
+
+<br/>
 
 ---
 
