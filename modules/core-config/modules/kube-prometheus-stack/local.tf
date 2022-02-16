@@ -1,7 +1,7 @@
 locals {
   namespace = "monitoring"
 
-  chart_version = "30.1.0"
+  chart_version = "32.2.1"
 
   grafana_identity_name = "grafana"
 
