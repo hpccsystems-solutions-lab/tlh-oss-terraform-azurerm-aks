@@ -12,7 +12,7 @@ variable "azure_environment" {
   validation {
     condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
     error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
-  } 
+  }
 }
 
 variable "azuread_clusterrole_map" {
@@ -147,7 +147,7 @@ variable "log_analytics_workspace_id" {
   type        = string
   default     = null
 }
-    
+
 variable "virtual_network" {
   description = "Virtual network configuration."
   type = object({

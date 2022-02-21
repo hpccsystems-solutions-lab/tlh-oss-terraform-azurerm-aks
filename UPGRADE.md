@@ -1,6 +1,6 @@
-# Upgrade Documentation
+# AKS Pre-Release Upgrade Documentation
 
-- [Upgrade Documentation](#upgrade-documentation)
+- [AKS Pre-Release Upgrade Documentation](#aks-pre-release-upgrade-documentation)
   - [Recommendations](#recommendations)
   - [Upgrading Module Versions](#upgrading-module-versions)
     - [From `v1.0.0-beta.6` to `v1.0.0-beta.7`](#from-v100-beta6-to-v100-beta7)
@@ -12,7 +12,6 @@
   - [Upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions)
     - [From `1.20.x` to `1.21.x`](#from-120x-to-121x)
     - [From `1.19.x` to `1.20.x`](#from-119x-to-120x)
-  - [Upgrading Kubernetes Major Versions](#upgrading-kubernetes-major-versions)
   - [Cluster Health Checks](#cluster-health-checks)
     - [PodDisruptionBudgets (PDB)](#poddisruptionbudgets-pdb)
   - [Deprecated API Migration Guide](#deprecated-api-migration-guide)
@@ -25,25 +24,25 @@
 
 ## Recommendations
 
-Perform the upgrade on AKS clusters in lower environments `BEFORE` upgrading production clusters. Lower environments must mirror workloads in production environments to mitigate unforeseen issues. Ensure monitoring is in place to alert on outages.
+Perform the upgrade on AKS clusters in lower environments **BEFORE** upgrading production clusters. Lower environments must mirror workloads in production environments to mitigate unforeseen issues. Ensure monitoring is in place to alert on outages.
 
-To speed up the process when [upgrading Module Versions](#upgrading-module-versions) or [upgrading Kubernetes Minor Versions](#upgrading-kubernetes-minor-versions) all steps should be completed `prior` to the upgrade. If missed these steps can be completed retrospectively by performing a re-run of the Terraform plan or apply stages.
+To speed up the process when upgrading [module versions](#upgrading-module-versions) or upgrading [Kubernetes minor versions](#upgrading-kubernetes-minor-versions) all steps should be completed **PRIOR** to the upgrade. If missed these steps can be completed retrospectively by performing a re-run of the Terraform plan or apply stages.
 
 Ensure Terraform pipelines have a sufficient timeout window, 2 hours is recommended.
 
 ## Upgrading Module Versions
 
-Below is a list of steps that need to be taken when upgrading from one module version to the next. If you are skipping a version you will need to take the accumulative steps. For example, upgrades between `v1.0.0-beta.5` -> `v1.0.0-beta.7` you will need to follow the steps included in [`v1.0.0-beta.5` to `v1.0.0-beta.6`](#from-v100-beta5-to-v100-beta6) and [`v1.0.0-beta.6` to `v1.0.0-beta.7`](#from-v100-beta6-to-v100-beta7).
+Below is a list of steps that need to be taken when upgrading from one module version to the next. We **DO NOT** support skipping versions and expect that each upgrade is completed independently before running the next one.
 
-Some module upgrades will initiate a Kubernetes `Minor` or `Patch` upgrade. This is required as AKS [frequently drop support](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) for Kubernetes `Minor` or `Patch` versions.
+Some module upgrades will initiate a Kubernetes patch update; this is required as AKS [frequently drops support](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) for Kubernetes patch versions.
 
-> **IMPORTANT** - Make sure that the CI/CD Gitlab project that deploys terraform aks module has a [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) set that is sufficient to complete the upgrade process. Even usually takes less than an hour if you have not fixed any [PodDisruptionBudgets (PDB)] this can take significantly longer before an error is returned. The recommendation is `2` hours.
+This upgrade process usually takes less than an hour but can take significantly longer and we recommend allowing for 2 hours. If you're using GitLab to deploy AKS via this Terraform module you must set a CI [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) that is sufficient to complete the upgrade process; we recommend `2` hours.
 
 ### From `v1.0.0-beta.6` to `v1.0.0-beta.7`
 
 > **IMPORTANT** - Updating to this module version will instigate a Kubernetes patch version upgrade. Please read the [Cluster Health Checks](#cluster-health-checks) section prior to updating.
 
-A Github [issue](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/305) has been created on the `terraform-azurerm-aks` project to track any problems caused by the Kubernetes patch upgrade. Even though this upgrade path has been tested there may be unforeseen permutations. If you experience a problem that was not remediated by the steps outlined in this guide please add a comment with a detailed description of your experience.
+A GitHub [issue](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/305) has been created on the `terraform-azurerm-aks` project to track any problems caused by the Kubernetes patch upgrade. Even though this upgrade path has been tested there may be unforeseen permutations. If you experience a problem that was not remediated by the steps outlined in this guide please add a comment with a detailed description of your experience.
 
 > **IMPORTANT** - To speed up the process complete all steps `prior` to a module version upgrade. If you miss these steps they can be completed retrospectively. This requires you to re-run the Terraform apply stage.
 
@@ -57,7 +56,7 @@ A Github [issue](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/
 <summary markdown="span">Explanation for the next step</summary>
 <br />
 
-`aad-pod-identity` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+`aad-pod-identity` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with HashiCorp using `apiextensions.k8s.io/v1`.
 
 </details>
 <br />
@@ -77,7 +76,7 @@ kubectl delete crd azurepodidentityexceptions.aadpodidentity.k8s.io
 <summary markdown="span">Explanation for the next step</summary>
 <br />
 
-`kube-prometheus-stack` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+`kube-prometheus-stack` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with HashiCorp using `apiextensions.k8s.io/v1`.
 
 </details>
 <br />
@@ -170,7 +169,7 @@ level=warn ts=2022-01-22T08:31:55.923186487Z caller=amcfg.go:1326 component=aler
 <summary markdown="span">Explanation for the next step</summary>
 <br />
 
-`cert-manager` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with "HashiCorp" using apiextensions.k8s.io/v1.
+`cert-manager` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. This can cause a conflict with HashiCorp using `apiextensions.k8s.io/v1`.
 
 </details>
 <br />
@@ -252,6 +251,7 @@ module "aks" {
   }
 }
 ```
+
 ### From `v1.0.0-beta.3` to `v1.0.0-beta.4`
 
 No additional action required.
@@ -326,17 +326,15 @@ No additional action required.
 
 ## Upgrading Kubernetes Minor Versions
 
-> **IMPORTANT** - Please reference the [Deprecated API Migration Guide](#deprecated-api-migration-guide) prior to completing an upgrade.
+> **IMPORTANT** - Please reference the [Deprecated API Migration Guide](#deprecated-api-migration-guide) and [Cluster Health Checks](#cluster-health-checks) prior to starting an upgrade.
 
-> **IMPORTANT** - Please read the [Cluster Health Checks](#cluster-health-checks) section prior to completing an upgrade.
+When you upgrade an AKS cluster's Kubernetes minor version you can only move up one minor version at a time; for example, upgrades between `1.19.x` -> `1.20.x` or `1.20.x` -> `1.21.x` are allowed, however `1.19.x` -> `1.21.x` is not allowed.
 
-> **IMPORTANT** - Make sure that the CI/CD Gitlab project that will be used to upgrade AKS using Terraform has a [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) set that is sufficient to complete an upgrade. Even though an upgrade takes less than an hour if you have not fixed any [PodDisruptionBudgets (PDB)](#poddisruptionbudgets-pdb) this can take significantly longer before an error is returned. The recommendation is `2` hours or more.
+Below is a list of steps that need to be taken when upgrading from one minor version of Kubernetes to the next. For more information on upgrading an AKS cluster please visit the official [Microsoft documentation](https://docs.microsoft.com/en-us/azure/aks/upgrade-cluster).
 
-Below is a list of steps that need to be taken when upgrading from one minor version of kubernetes to the next. For more information on upgrading an AKS cluster please visit the official [Microsoft documentation](https://docs.microsoft.com/en-us/azure/aks/upgrade-cluster)
+This upgrade process usually takes less than an hour but can take significantly longer and we recommend allowing for 2 hours. If you're using GitLab to deploy AKS via this Terraform module you must set a CI [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) that is sufficient to complete the upgrade process; we recommend `2` hours.
 
-`Note`: When you upgrade a supported AKS cluster, Kubernetes minor versions cannot be skipped. All upgrades must be followed sequentially by major version number. For example, upgrades between `1.19.x` -> `1.20.x` or `1.20.x` -> `1.21.x` are allowed, however `1.19.x` -> `1.21.x` is not allowed.
-
-Change the `cluster_version` module input to upgrade an AKS cluster to the next version.
+To upgrade the AKS Kubernetes minor version change the `cluster_version` module input to the next version.
 
 <br/>
 
@@ -373,13 +371,9 @@ No additional action required.
 
 ---
 
-## Upgrading Kubernetes Major Versions
-
----
-
 ## Cluster Health Checks
 
-It is important to carry out cluster health checks prior to completing an upgrade
+It is important to carry out cluster health checks prior to completing an upgrade.
 
 ### PodDisruptionBudgets (PDB)
 
@@ -429,11 +423,11 @@ kubectl logs fluentd-0 -n logging
 
 ## Deprecated API Migration Guide
 
-> **IMPORTANT** - Please share this information with any team developing their own helm charts or creating kubernetes manifests.
+> **IMPORTANT** - Please share this information with any team developing their own helm charts or creating Kubernetes manifests.
 
 As the Kubernetes API evolves, APIs are periodically reorganized or upgraded. When APIs evolve, the old API is deprecated and eventually removed. This page contains information you need to know when migrating from deprecated API versions to newer and more stable API versions.
 
-For details please refer to the [official kubernetes documentation](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
+For details please refer to the [official Kubernetes documentation](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
 
 ---
 
@@ -454,7 +448,7 @@ The Terraform Apply phase will report an error if a node pool `Provisioning Stat
 During testing all encountered errors have been recoverable, for example if you encountered a `insufficientSubnetSize` error it maybe because you have more than one node pool in a given subnet.
 
 - Wait until all node pools `Provisioning State` returns a status either a `Succeeded` or `Failed`.- Then using the `az cli` or the `Azure Portal` for the node pools that have a `Provisioning State` of `Failed` change the `Scale node pool` setting from `Autoscale` to `Manual` with the same `min` - `max` settings.
-- This will trigger a scaling event and a new node will be provisioned with the later kubernetes `minor` or `patch` version. 
+- This will trigger a scaling event and a new node will be provisioned with the later Kubernetes `minor` or `patch` version.
 - Wait until the `Provisioning State` has changed to `Succeeded` and repeat these steps for the next node pool that has a `Provisioning State` of `Failed` until all node pools have a `Provisioning State` of `Succeeded`
 
 The same steps can be carried out after resolving errors associated with PodDisruptionBudgets (#pod-disruption-budgets)

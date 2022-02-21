@@ -1,0 +1,53 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "init",
+      "type": "shell",
+      "command": "terraform",
+      "args": [
+        "init"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "init:upgrade",
+      "type": "shell",
+      "command": "terraform",
+      "args": [
+        "init",
+        "--upgrade"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "validate",
+      "type": "shell",
+      "command": "terraform",
+      "args": [
+        "validate"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "fmt",
+      "type": "shell",
+      "command": "terraform",
+      "args": [
+        "fmt"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "lint",
+      "type": "shell",
+      "command": "tflint",
+      "args": [
+        "./"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

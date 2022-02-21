@@ -1,23 +1,37 @@
-# Changelog
+# Azure AKS Terraform Module Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade instructions and troubleshooting steps.
+---
 
-## v1.0.0-beta.8 - UNRELEASED
-- `aad-pod-identity` - updated chart to 4.1.8 ([#329](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/329)) [@james1miller93](https://github.com/james1miller93)
+## Upgrading Pre-Release Versions
+
+To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md) for instructions and troubleshooting steps.
+
+---
+
+<!-- ## [vX.Y.Z] - UNRELEASED
+### Added
+### Changed
+### Updated
+### Deprecated
+### Removed -->
+
+## [v1.0.0-beta.8] - UNRELEASED
 
 ### Changed
 
+- `aad-pod-identity` - updated chart to 4.1.8 ([#329](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/329)) [@james1miller93](https://github.com/james1miller93)
 - `ingress-nginx` - updated chart to 4.0.17 ([#334](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/3349)) [@james1miller93](https://github.com/james1miller93)
 - `kube-prometheus-stack` - updated chart to [32.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-32.2.1) and CRDs to 0.54.0 (includes Grafana [v8.3.5](https://github.com/grafana/grafana/releases/tag/v8.3.5)) [@james1miller93](https://github.com/james1miller93)
+- Updated documentation. [@stevehipwell](https://github.com/stevehipwell)
 
 <br/>
 
-## v1.0.0-beta.7 - 2022-02-08
+## [v1.0.0-beta.7] - 2022-02-08
 
 ### Added
 
@@ -54,7 +68,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.6 - 2022-01-14
+## [v1.0.0-beta.6] - 2022-01-14
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -81,7 +95,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.5 - 2021-12-14
+## [v1.0.0-beta.5] - 2021-12-14
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -122,7 +136,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.4 - 2021-11-02
+## [v1.0.0-beta.4] - 2021-11-02
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -144,7 +158,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.3 - 2021-09-29
+## [v1.0.0-beta.3] - 2021-09-29
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -164,7 +178,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.2 - 2021-09-10
+## [v1.0.0-beta.2] - 2021-09-10
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -177,7 +191,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 
 <br>
 
-## v1.0.0-beta.1 - 2021-08-20
+## [v1.0.0-beta.1] - 2021-08-20
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -189,7 +203,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 - Fix default-ssl-certificate in ingress_internal_core module [@sossickd](url)
 - User guide updates [@jamurtag](url)
 
-## v0.12.0 - 2021-08-11
+## [v0.12.0] - 2021-08-11
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -206,7 +220,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 - Remove configmaps, secrets and namespaces variables [@dutsmiller](url)
 - Remove assignment of public IPs for nodes in public subnet [@dutsmiller](url)
 
-## v0.11.0 - 2021-07-27
+## [v0.11.0] - 2021-07-27
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -224,7 +238,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 - Remove additional_priority_classes and additional_storage_classes api options [@jamurtag](url)
 - Remove autodoc from repo [@dutsmiller](url)
 
-## v0.10.0 - 2021-07-19
+## [v0.10.0] - 2021-07-19
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
@@ -232,7 +246,7 @@ Refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade ins
 - Tolerate stateful services on system nodepools [@jamurtag](url)
 - Rename config variable to core_services_config [@jamurtag](url)
 
-## v0.9.0 - 2021-07-14
+## [v0.9.0] - 2021-07-14
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
