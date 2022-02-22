@@ -3,7 +3,7 @@ locals {
 
   name = "core-internal"
 
-  chart_version = "4.0.16"
+  chart_version = "4.0.17"
 
   chart_timeout = 1800
 
