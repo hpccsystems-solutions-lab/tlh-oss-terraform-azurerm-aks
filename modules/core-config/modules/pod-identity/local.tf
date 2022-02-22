@@ -1,6 +1,6 @@
 locals {
 
-  chart_version = "4.1.7"
+  chart_version = "4.1.8"
 
   chart_values = {
 
