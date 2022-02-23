@@ -78,6 +78,12 @@ variable "location" {
   type        = string
 }
 
+variable "log_analytics_workspace_id" {
+  description = "ID of the Azure Log Analytics Workspace"
+  type        = string
+  default     = null
+}
+
 variable "network_plugin" {
   description = "Kubernetes Network Plugin (kubenet or azure)"
   type        = string
@@ -136,16 +142,20 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "sku_tier" {
+  description = "Sets cluster control plane SKU tier. The paid tier has a financially-backed uptime SLA, see [documentation](https://docs.microsoft.com/en-us/azure/aks/uptime-sla)."
+  type        = string
+
+  validation {
+    condition     = contains(["Free", "Paid"], var.sku_tier)
+    error_message = "Available SKU Tiers are \"Free\" and \"Paid\"."
+  }
+}
+
 variable "tags" {
   description = "Tags to be applied to cloud resources."
   type        = map(string)
   default     = {}
-}
-
-variable "log_analytics_workspace_id" {
-  description = "ID of the Azure Log Analytics Workspace"
-  type        = string
-  default     = null
 }
 
 variable "virtual_network" {
@@ -162,4 +172,3 @@ variable "virtual_network" {
     route_table_id = string
   })
 }
-

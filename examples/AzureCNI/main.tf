@@ -152,7 +152,8 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
-  network_plugin    = "azure"
+  sku_tier            = "Paid"
+  network_plugin      = "azure"
   #ingress_node_pool = true
 
   node_pools = [

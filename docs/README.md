@@ -8,6 +8,7 @@
     - [Node Memory Allocation](#node-memory-allocation)
     - [Platform Resource Settings](#platform-resource-settings)
   - [Module User Guide](#module-user-guide)
+    - [Control Plane Uptime SLA](#control-plane-uptime-sla)
     - [Cluster Upgrades](#cluster-upgrades)
     - [Kubernetes RBAC](#kubernetes-rbac)
     - [DNS, TLS Certificates & Ingress](#dns-tls-certificates--ingress)
@@ -140,6 +141,14 @@ It is the collective responsibility of all teams to monitor system service metri
 ## Module User Guide
 
 How to interact with the Terraform module to deploy an AKS cluster.
+
+### Control Plane Uptime SLA
+
+The `sku_tier` variable is required to set the control plane [Uptime SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla), set to either `Free` or `Paid`.
+
+Setting to `Paid` increases control plane scalability, performance and availability (99.95%), as well as a financially backed guarantee for a fee of $0.10 per hour ($72 pcm). It is recommended to select this option for production clusters or those that require additional availability guarantees.
+
+---
 
 ### Cluster Upgrades
 

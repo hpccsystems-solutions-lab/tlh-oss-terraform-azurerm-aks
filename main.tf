@@ -27,6 +27,7 @@ module "kubernetes" {
   dns_prefix   = local.cluster_name
 
   kubernetes_version = local.cluster_patch_version
+  sku_tier           = var.sku_tier
 
   enable_azure_policy   = false
   enable_kube_dashboard = false

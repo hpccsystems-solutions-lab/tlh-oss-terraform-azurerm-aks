@@ -22,6 +22,10 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 ## [v1.0.0-beta.8] - UNRELEASED
 
+### Added
+
+- `module` - add **sku_tier** variable to set [control plane SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla) level [@dutsmiller](url) [@jamurtag](url)
+
 ### Changed
 
 - `aad-pod-identity` - updated chart to 4.1.8 ([#329](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/329)) [@james1miller93](https://github.com/james1miller93)

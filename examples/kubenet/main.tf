@@ -153,7 +153,8 @@ module "aks" {
   tags                = module.metadata.tags
   resource_group_name = module.resource_group.name
 
-  ingress_node_pool = true
+  sku_tier            = "Free"
+  ingress_node_pool   = true
 
   node_pools = [
     {

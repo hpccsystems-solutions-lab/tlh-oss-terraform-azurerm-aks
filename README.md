@@ -55,6 +55,7 @@ module "aks" {
 
   cluster_name    = "ioa-aks-1"
   cluster_version = "1.21"
+  sku_tier        = "Paid"
   
   location            = "eastus"
   resource_group_name = "ioa-aks-1-rg"
@@ -165,6 +166,7 @@ module "aks" {
 | `node_pools`                      | Node pool definitions.                                                                                                                                                                                                                                                                            | `list(object())` _(see appendix b)_      | `nil`                |    `yes`     |
 | `podnet_cidr`                     | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                                                                                                                                                                                                          | `string`                                 | `"100.65.0.0/16"`    |     `no`     |
 | `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                                                                                                                                                                                                         | `string`                                 | `nil`                |    `yes`     |
+| `sku_tier`                        | Set cluster control plane SKU tier to either **Free** or **Paid**. The paid tier has a financially-backed uptime SLA, see [documentation](https://docs.microsoft.com/en-us/azure/aks/uptime-sla)                                                                                                  | `string`                                 | `nil`                | `yes`        |
 | `tags`                            | Tags to be applied to cloud resources.                                                                                                                                                                                                                                                            | `map(string)`                            | `{}`                 |     `no`     |
 | `virtual_network`                 | Virtual network configuration.                                                                                                                                                                                                                                                                    | `object(map)` _(see appendix d)_         | `nil`                |    `yes`     |
 
