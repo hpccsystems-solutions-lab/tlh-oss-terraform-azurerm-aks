@@ -23,6 +23,8 @@ locals {
         "fluentbit.io/parser" = "k8s-nginx-ingress"
       }
 
+      ingressClass = ""
+
       ingressClassResource = {
         enabled = true
         name = local.name
