@@ -1,7 +1,7 @@
 locals {
   namespace = "logging"
 
-  chart_version = "2.6.7"
+  chart_version = "2.6.9"
 
   chart_values = merge({
     nameOverride = "fluentd"

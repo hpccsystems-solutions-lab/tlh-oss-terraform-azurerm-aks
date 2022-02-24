@@ -51,6 +51,10 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 - `fluent-bit` - updated chart to 0.19.19 ([#331](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/331)) [@james1miller93](https://github.com/james1miller93)
 
+### Changed
+
+- `fluentd` - updated chart to 2.6.9 ([#332](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/332)) [@james1miller93](https://github.com/james1miller93)
+
 <br/>
 
 ## [v1.0.0-beta.7] - 2022-02-08
