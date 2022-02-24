@@ -47,6 +47,10 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 > **IMPORTANT** - The _Cert Manager_ API versions `v1alpha2`, `v1alpha3`, and `v1beta1` have been removed. All _Cert Manager_ custom resources must only use `v1` before upgrading to this release. All certificates are already stored as `v1`, after this release you can only access deprecated API resources through the _Cert Manager_ API.
 
+### Changed
+
+- `fluent-bit` - updated chart to 0.19.19 ([#331](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/331)) [@james1miller93](https://github.com/james1miller93)
+
 <br/>
 
 ## [v1.0.0-beta.7] - 2022-02-08
