@@ -43,6 +43,32 @@ This upgrade process usually takes less than an hour but can take significantly 
 
 It is required to set the `sku_tier` variable to either **Free** or **Paid**.
 
+### From `v1.0.0-beta.7` to `v1.0.0-beta.8`
+
+<br/>
+
+`Manual steps to update Kubernetes resources`
+
+> **IMPORTANT** - All commands needs to run by a cluster operator with permissions to delete resources.
+
+<details>
+<summary markdown="span">Explanation for the next step</summary>
+<br/>
+
+`cert-manager` - The `kubectl_manifest` terraform resource for applying CRDs has `server-side-apply` enabled. The managed fields on the crd objects cause terraform to error when updating these resources and they must be patched before upgrading.
+
+</details>
+<br/>
+
+`cert-manager`
+
+```bash
+for crd_name in certificaterequests.cert-manager.io certificates.cert-manager.io challenges.acme.cert-manager.io clusterissuers.cert-manager.io issuers.cert-manager.io orders.acme.cert-manager.io; do
+  manager_index="$(kubectl get crd "${crd_name}" --show-managed-fields --output json | jq -r '.metadata.managedFields | map(.manager == "cainjector") | index(true)')"
+  kubectl patch crd "${crd_name}" --type=json -p="[{\"op\": \"remove\", \"path\": \"/metadata/managedFields/${manager_index}\"}]"
+done
+```
+
 ### From `v1.0.0-beta.6` to `v1.0.0-beta.7`
 
 > **IMPORTANT** - Updating to this module version will instigate a Kubernetes patch version upgrade. Please read the [Cluster Health Checks](#cluster-health-checks) section prior to updating.

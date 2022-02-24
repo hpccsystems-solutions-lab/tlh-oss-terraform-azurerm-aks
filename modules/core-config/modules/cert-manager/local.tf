@@ -9,7 +9,7 @@ locals {
 
   namespace = "cert-manager"
 
-  chart_version = "1.6.1"
+  chart_version = "1.7.1"
 
   chart_values = {
     installCRDs = false
