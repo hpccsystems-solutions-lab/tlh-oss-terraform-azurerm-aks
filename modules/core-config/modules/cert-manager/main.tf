@@ -18,44 +18,6 @@ resource "kubectl_manifest" "resources" {
   ]
 }
 
-resource "azurerm_role_definition" "resource_group_reader" {
-  for_each = var.dns_zones
-
-  name        = "${var.cluster_name}-cert-manager-rg-${replace(each.key, ".", "-")}"
-  scope       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}"
-  description = "Custom role for cert-manager to manage DNS records"
-
-  assignable_scopes = ["/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}"]
-
-  permissions {
-    actions = [
-      "Microsoft.Resources/subscriptions/resourceGroups/read",
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
-resource "azurerm_role_definition" "dns_zone_contributor" {
-  for_each = var.dns_zones
-
-  name        = "${var.cluster_name}-cert-manager-dns-${replace(each.key, ".", "-")}"
-  scope       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}/providers/Microsoft.Network/dnszones/${each.key}"
-  description = "Custom role for cert-manager to manage DNS records"
-
-  assignable_scopes = ["/subscriptions/${var.azure_subscription_id}/resourceGroups/${each.value}/providers/Microsoft.Network/dnszones/${each.key}"]
-
-  permissions {
-    actions = [
-      "Microsoft.Network/dnsZones/*"
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
 module "identity" {
   source = "../../../identity"
 
@@ -69,13 +31,7 @@ module "identity" {
   roles = concat(
     [for zone, rg in var.dns_zones :
       {
-        role_definition_resource_id = azurerm_role_definition.resource_group_reader[zone].role_definition_resource_id
-        scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${rg}"
-      }
-    ],
-    [for zone, rg in var.dns_zones :
-      {
-        role_definition_resource_id = azurerm_role_definition.dns_zone_contributor[zone].role_definition_resource_id
+        role_definition_resource_id = "DNS Zone Contributor"
         scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${rg}/providers/Microsoft.Network/dnszones/${zone}"
       }
     ]

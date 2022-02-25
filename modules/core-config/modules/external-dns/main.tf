@@ -14,82 +14,6 @@ resource "kubectl_manifest" "resource_objects" {
   server_side_apply = true
 }
 
-resource "azurerm_role_definition" "resource_group_reader_private" {
-  count = length(var.private_domain_filters.names) > 0 ? 1 : 0
-
-  name        = "${var.cluster_name}-external-dns-private-rg"
-  scope       = local.private_dns_zone_resource_group_id
-  description = "Custom role for external-dns to manage DNS records"
-
-  assignable_scopes = [local.private_dns_zone_resource_group_id]
-
-  permissions {
-    actions = [
-      "Microsoft.Resources/subscriptions/resourceGroups/read",
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
-resource "azurerm_role_definition" "resource_group_reader_public" {
-  count = length(var.public_domain_filters.names) > 0 ? 1 : 0
-
-  name        = "${var.cluster_name}-external-dns-public-rg"
-  scope       = local.public_dns_zone_resource_group_id
-  description = "Custom role for external-dns to manage DNS records"
-
-  assignable_scopes = [local.public_dns_zone_resource_group_id]
-
-  permissions {
-    actions = [
-      "Microsoft.Resources/subscriptions/resourceGroups/read",
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
-resource "azurerm_role_definition" "private_dns_zone_contributor" {
-  count = length(var.private_domain_filters.names) > 0 ? 1 : 0
-
-  name        = "${var.cluster_name}-external-private-dns-zone"
-  scope       = element(local.private_dns_zone_ids, 0)
-  description = "Custom role for external-dns to manage DNS records for private zones"
-
-  assignable_scopes = local.private_dns_zone_ids
-
-  permissions {
-    actions = [
-      "Microsoft.Network/privateDnsZones/*"
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
-resource "azurerm_role_definition" "public_dns_zone_contributor" {
-  count = length(var.public_domain_filters.names) > 0 ? 1 : 0
-
-  name        = "${var.cluster_name}-external-public-dns-zone"
-  scope       = element(local.public_dns_zone_ids, 0)
-  description = "Custom role for external-dns to manage DNS records for public zones"
-
-  assignable_scopes = local.public_dns_zone_ids
-
-  permissions {
-    actions = [
-      "Microsoft.Network/dnsZones/*"
-    ]
-    data_actions     = []
-    not_actions      = []
-    not_data_actions = []
-  }
-}
-
 module "identity_private" {
   count = length(var.private_domain_filters.names) > 0 ? 1 : 0
 
@@ -105,13 +29,13 @@ module "identity_private" {
   roles = concat(
     [
       {
-        role_definition_resource_id = azurerm_role_definition.resource_group_reader_private[count.index].role_definition_resource_id
+        role_definition_resource_id = "Reader"
         scope                       = local.private_dns_zone_resource_group_id
       }
     ],
     [for zone in toset(var.private_domain_filters.names) :
       {
-        role_definition_resource_id = azurerm_role_definition.private_dns_zone_contributor[count.index].role_definition_resource_id
+        role_definition_resource_id = "Private DNS Zone Contributor"
         scope                       = "${local.private_dns_zone_resource_group_id}/providers/Microsoft.Network/privateDnsZones/${zone}"
       }
     ]
@@ -133,13 +57,13 @@ module "identity_public" {
   roles = concat(
     [
       {
-        role_definition_resource_id = azurerm_role_definition.resource_group_reader_public[count.index].role_definition_resource_id
+        role_definition_resource_id = "Reader"
         scope                       = local.public_dns_zone_resource_group_id
       }
     ],
     [for zone in toset(var.public_domain_filters.names) :
       {
-        role_definition_resource_id = azurerm_role_definition.public_dns_zone_contributor[count.index].role_definition_resource_id
+        role_definition_resource_id = "DNS Zone Contributor"
         scope                       = "${local.public_dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"
       }
     ]
