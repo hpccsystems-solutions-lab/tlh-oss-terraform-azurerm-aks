@@ -25,6 +25,7 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 ### Added
 
 - `module` - add **sku_tier** variable to set [control plane SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla) level [@dutsmiller](url) [@jamurtag](url)
+- **BREAKING** - Added support for setting node pool [proximity placement group](https://docs.microsoft.com/en-us/azure/aks/reduce-latency-ppg#:~:text=A%20proximity%20placement%20group%20is,and%20tasks%20that%20complete%20quickly.) via the `placement_group_key` variable. @hipwells
 
 ### Changed
 
@@ -36,7 +37,7 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - `cert-manager` - updated chart to 1.7.1 ([#330](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/330)) [@james1miller93](https://github.com/james1miller93)
 - `fluent-bit` - updated chart to 0.19.19 ([#331](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/331)) [@james1miller93](https://github.com/james1miller93)
 - `fluentd` - updated chart to 2.6.9 ([#332](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/332)) [@james1miller93](https://github.com/james1miller93)
--  Update version of upstream AKS module. [@dutsmiller](url)
+- Update version of upstream AKS module. [@dutsmiller](url)
 
 <br/>
 

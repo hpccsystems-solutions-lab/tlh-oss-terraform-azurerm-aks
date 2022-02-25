@@ -104,14 +104,15 @@ variable "ingress_node_pool" {
 variable "node_pools" {
   description = "Node pool definitions."
   type = list(object({
-    name         = string
-    single_vmss  = bool
-    public       = bool
-    node_type    = string
-    node_size    = string
-    min_capacity = number
-    max_capacity = number
-    labels       = map(string)
+    name                = string
+    single_vmss         = bool
+    public              = bool
+    placement_group_key = string
+    node_type           = string
+    node_size           = string
+    min_capacity        = number
+    max_capacity        = number
+    labels              = map(string)
     taints = list(object({
       key    = string
       value  = string

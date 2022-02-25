@@ -64,7 +64,7 @@ locals {
     }
   }
 
-  storage_vm_types = [ "gpd", "memd", "stor" ]
+  storage_vm_types = ["gpd", "memd", "stor"]
 
   max_pods = {
     azure   = 30
@@ -83,7 +83,6 @@ locals {
       enable_host_encryption       = true
       enable_node_public_ip        = false
       eviction_policy              = null
-      proximity_placement_group_id = null
       spot_max_price               = null
       os_disk_size_gb              = null
       os_disk_type                 = "Managed"
@@ -107,13 +106,14 @@ locals {
   }
 
   ingress_node_pool = {
-    name         = "ingress"
-    single_vmss  = true
-    public       = true
-    node_type    = "x64-gp-v1"
-    node_size    = "large"
-    min_capacity = 0
-    max_capacity = 6
+    name                = "ingress"
+    single_vmss         = true
+    public              = true
+    placement_group_key = ""
+    node_type           = "x64-gp-v1"
+    node_size           = "large"
+    min_capacity        = 0
+    max_capacity        = 6
     labels = {
       "lnrs.io/tier" = "ingress"
     }
@@ -126,15 +126,16 @@ locals {
   }
 
   system_node_pool = {
-    name         = "system"
-    single_vmss  = false
-    public       = false
-    node_type    = "x64-gp-v1"
-    node_size    = "large"
-    min_capacity = length(local.node_pool_defaults.availability_zones)
-    max_capacity = (length(local.node_pool_defaults.availability_zones) * 2)
-    subnet       = "private"
-    labels       = {}
+    name                = "system"
+    single_vmss         = false
+    public              = false
+    placement_group_key = ""
+    node_type           = "x64-gp-v1"
+    node_size           = "large"
+    min_capacity        = length(local.node_pool_defaults.availability_zones)
+    max_capacity        = (length(local.node_pool_defaults.availability_zones) * 2)
+    subnet              = "private"
+    labels              = {}
     taints = [
       {
         key    = "CriticalAddonsOnly"
@@ -144,6 +145,9 @@ locals {
     ]
     tags = {}
   }
+
+  placement_group_keys  = distinct(compact([for n in var.node_pools : n.placement_group_key if !n.single_vmss]))
+  placement_group_names = flatten([for k in local.placement_group_keys : [for z in local.node_pool_defaults.availability_zones : "${k}${z}"]])
 
   node_pools = merge(values({ for pool in concat([local.system_node_pool], (var.ingress_node_pool ? [local.ingress_node_pool] : []), var.node_pools) :
     pool.name => { for zone in(pool.single_vmss ? [0] : local.node_pool_defaults.availability_zones) :
@@ -162,7 +166,7 @@ locals {
             "lnrs.io/lifecycle" = (lookup(pool, "use_spot", false) ? "spot" : "ondemand")
             "lnrs.io/size"      = pool.node_size
           },
-          (contains(local.storage_vm_types, split("-", pool.node_type)[1]) ? {"lnrs.io/local-storage" = "true"} : {}),
+          (contains(local.storage_vm_types, split("-", pool.node_type)[1]) ? { "lnrs.io/local-storage" = "true" } : {}),
           pool.labels
         )
 
@@ -171,11 +175,13 @@ locals {
         ]
         tags = merge(var.tags, pool.tags, {
           "k8s.io|cluster-autoscaler|enabled" = (pool.min_capacity == pool.max_capacity ? "false" : "true")
-        }, (pool.min_capacity == pool.max_capacity ? {} : {
+          }, (pool.min_capacity == pool.max_capacity ? {} : {
           "k8s.io|cluster-autoscaler|${var.cluster_name}" = "owned" })
-        ) 
+        )
 
         subnet = (pool.public ? "public" : "private")
+
+        proximity_placement_group_id = pool.single_vmss || length(pool.placement_group_key) == 0 ? null : azurerm_proximity_placement_group.default["${pool.placement_group_key}${zone}"].id
 
         mode                         = (pool.name == local.system_node_pool.name ? "System" : "User")
         only_critical_addons_enabled = ((pool.name == local.system_node_pool.name && zone == 1) ? true : false)

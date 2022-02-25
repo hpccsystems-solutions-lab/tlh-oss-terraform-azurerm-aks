@@ -6,6 +6,9 @@ module "nodes" {
 
   network_plugin = local.network_plugin
 
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
   subnets = {
     private = var.virtual_network.subnets.private
     public  = var.virtual_network.subnets.public
