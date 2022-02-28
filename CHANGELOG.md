@@ -20,7 +20,16 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 ### Deprecated
 ### Removed -->
 
-## [v1.0.0-beta.8] - UNRELEASED
+## [v1.0.0-beta.9] - UNRELEASED
+### Added
+### Changed
+### Updated
+### Deprecated
+### Removed
+
+<br>
+
+## [v1.0.0-beta.8] - 2022-02-28
 
 ### Added
 
