@@ -17,6 +17,7 @@
     - [External Persistent Disks](#external-persistent-disks)
     - [Local Volumes](#local-volumes)
     - [Multiple Clusters per Subnet](#multiple-clusters-per-subnet)
+    - [Proximity Placement Groups](#proximity-placement-groups)
   - [Service User Guide](#service-user-guide)
     - [Azure AD Pod Identity](#azure-ad-pod-identity)
     - [Ingress](#ingress)
@@ -135,7 +136,6 @@ It is the collective responsibility of all teams to monitor system service metri
 > commands such as `kubectl top`, `kubectl describe node` and Grafana dashboards can help to track resource usage
 
 <br>
----
 <br>
 
 ## Module User Guide
@@ -427,8 +427,20 @@ However, given the IP requirements for Azure CNI (see [IP address availability a
 
 Also, while `kubenet` doesn't officially support it, testing hasn't yet highlighted any issues. Each cluster **must** have a unique `podnet_cidr` range so route table rules don't clash (increment the second octet for each cluster, e.g. `100.65.0.0/16`, `100.66.0.0/16` ...). However this **must not** be used in production given the current Azure support policy.
 
-<br>
 ---
+
+### Proximity Placement Groups
+
+[Proximity Placement Groups](https://docs.microsoft.com/en-us/azure/aks/reduce-latency-ppg) aim to reduce network latency between nodes in the same availability zone by co-locating nodes physically close to one another. In the module this is managed by the `placement_group_key` string within the `node_pools` variable, with the following considerations and constraints:
+
+- `placement_group_key` constraints - max 11 alphanumeric, lowercase characters (PPGs are max 12 characters, the zone id is appended)
+- `placement_group_key` must be unique within the Resource Group hosting the AKS service
+- it is only supported for zonal pools (`single_vmss` must be set to `false`)
+- the same key _may_ be used for different pools to co-locate multiple node pools in the same placement group
+
+__WARNING__: Proximity Placement Groups are not intended to be a general purpose tool to optimise network performance, their use must be carefully considered and discussed with a Solution Architect and potentially the Microsoft account team. By placing artificial topology constraints within an availability zone, there is a much higher chance nodes cannot be scheduled which could have significant impact if this occurs during certain events, e.g. node pool scale-out or upgrades.
+
+<br>
 <br>
 
 ## Service User Guide

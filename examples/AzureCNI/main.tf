@@ -158,32 +158,34 @@ module "aks" {
 
   node_pools = [
     {
-      name         = "winw"
-      single_vmss  = false
-      public       = false
-      node_type    = "x64-gp-v1-win"
-      node_size    = "medium"
-      min_capacity = 3
-      max_capacity = 6
-      taints       = []
+      name                = "winw"
+      single_vmss         = false
+      public              = false
+      placement_group_key = ""
+      node_type           = "x64-gp-v1-win"
+      node_size           = "medium"
+      min_capacity        = 3
+      max_capacity        = 6
+      taints              = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags = {}
+      tags                = {}
     },
     {
-      name         = "workers"
-      single_vmss  = false
-      public       = false
-      node_type    = "x64-gp-v1"
-      node_size    = "medium"
-      min_capacity = 3
-      max_capacity = 6
-      taints       = []
+      name                = "workers"
+      single_vmss         = false
+      public              = false
+      placement_group_key = ""
+      node_type           = "x64-gp-v1"
+      node_size           = "medium"
+      min_capacity        = 3
+      max_capacity        = 6
+      taints              = []
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      tags = {}
+      tags                = {}
     }
   ]
 

@@ -43,7 +43,7 @@ This upgrade process usually takes less than an hour but can take significantly 
 
 It is required to set the `sku_tier` variable to either **Free** or **Paid**.
 
-### From `v1.0.0-beta.7` to `v1.0.0-beta.8`
+It is required to set the `placement_group_key` within `node_pools` to either "" or a key value.
 
 <br/>
 
