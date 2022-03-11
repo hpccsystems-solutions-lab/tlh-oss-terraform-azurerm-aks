@@ -3,7 +3,7 @@ locals {
 
   name = "core-internal"
 
-  chart_version = "4.0.17"
+  chart_version = "4.0.18"
 
   chart_timeout = 1800
 
@@ -220,7 +220,7 @@ locals {
       }
     }
   }
-  
+
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_objects = { for x in fileset(path.module, "resources/*.yaml.tpl") : basename(x) => yamldecode(templatefile("${path.module}/${x}", { name = local.name, namespace = local.namespace, title = title(replace(local.name, "-", " ")), ingress_class = local.chart_values.controller.ingressClassResource.controllerValue })) }
 }
