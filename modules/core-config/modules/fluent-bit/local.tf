@@ -1,7 +1,7 @@
 locals {
   namespace = "logging"
 
-  chart_version = "0.19.19"
+  chart_version = "0.19.20"
 
   chart_values = {
     serviceMonitor = {
