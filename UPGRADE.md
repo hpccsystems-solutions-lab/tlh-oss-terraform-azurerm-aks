@@ -3,6 +3,7 @@
 - [AKS Pre-Release Upgrade Documentation](#aks-pre-release-upgrade-documentation)
   - [Recommendations](#recommendations)
   - [Upgrading Module Versions](#upgrading-module-versions)
+    - [From `v1.0.0-beta.8` to `v1.0.0-beta.9`](#from-v100-beta8-to-v100-beta9)
     - [From `v1.0.0-beta.7` to `v1.0.0-beta.8`](#from-v100-beta7-to-v100-beta8)
     - [From `v1.0.0-beta.6` to `v1.0.0-beta.7`](#from-v100-beta6-to-v100-beta7)
     - [From `v1.0.0-beta.5` to `v1.0.0-beta.6`](#from-v100-beta5-to-v100-beta6)
@@ -38,6 +39,10 @@ Below is a list of steps that need to be taken when upgrading from one module ve
 Some module upgrades will initiate a Kubernetes patch update; this is required as AKS [frequently drops support](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) for Kubernetes patch versions.
 
 This upgrade process usually takes less than an hour but can take significantly longer and we recommend allowing for 2 hours. If you're using GitLab to deploy AKS via this Terraform module you must set a CI [timeout](https://docs.gitlab.com/ee/ci/pipelines/settings.html) that is sufficient to complete the upgrade process; we recommend `2` hours.
+
+### From `v1.0.0-beta.8` to `v1.0.0-beta.9`
+
+This release includes no breaking changes to the exposed api. Operators can upgrade without manual intervention.
 
 ### From `v1.0.0-beta.7` to `v1.0.0-beta.8`
 
