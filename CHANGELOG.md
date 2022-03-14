@@ -20,17 +20,22 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 ### Deprecated
 ### Removed -->
 
-## [v1.0.0-beta.9] - UNRELEASED
+## [v1.0.0-beta.10] - UNRELEASED
 ### Added
 ### Changed
+### Updated
+### Deprecated
+### Removed
+
+<br>
+
+## [v1.0.0-beta.9] - 2022-03-14
+
 ### Updated
 
 - `fluent-bit` upgrade chart to [0.19.20](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.19.20) ([#353](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/353)) [@james1miller93](https://github.com/james1miller93)
 - `ingress-nginx` upgrade chart to [4.0.18](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.0.18) ([#358](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/358)) [@james1miller93](https://github.com/james1miller93)
 - `kube-prometheus-stack` upgrade chart to [33.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-33.2.0) ([#354](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/354)) [@james1miller93](https://github.com/james1miller93)
-
-### Deprecated
-### Removed
 
 <br>
 
