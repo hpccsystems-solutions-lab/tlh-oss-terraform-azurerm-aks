@@ -1,14 +1,19 @@
-output "client_id" {
-  description = "client id of user assigned identity"
-  value       = azurerm_user_assigned_identity.main.client_id
-}
-
-output "principal_id" {
-  description = "principal id of user assigned identity"
-  value       = azurerm_user_assigned_identity.main.principal_id
+output "id" {
+  description = "ID of user assigned identity."
+  value       = azurerm_user_assigned_identity.default.id
 }
 
 output "name" {
-  description = "name of user assigned identity"
-  value       = azurerm_user_assigned_identity.main.name
+  description = "Name of user assigned identity."
+  value       = azurerm_user_assigned_identity.default.name
+}
+
+output "principal_id" {
+  description = "Service Principal ID of user assigned identity."
+  value       = azurerm_user_assigned_identity.default.principal_id
+}
+
+output "client_id" {
+  description = "Client ID of user assigned identity."
+  value       = azurerm_user_assigned_identity.default.client_id
 }

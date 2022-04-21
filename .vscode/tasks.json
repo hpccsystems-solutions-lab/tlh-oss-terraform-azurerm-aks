@@ -41,6 +41,15 @@
       "problemMatcher": []
     },
     {
+      "label": "lint:init",
+      "type": "shell",
+      "command": "tflint",
+      "args": [
+        "--init"
+      ],
+      "problemMatcher": []
+    },
+    {
       "label": "lint",
       "type": "shell",
       "command": "tflint",

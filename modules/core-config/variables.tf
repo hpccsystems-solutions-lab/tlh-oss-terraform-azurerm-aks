@@ -1,26 +1,91 @@
-variable "azure_environment" {
-  description = "Azure Cloud Environment."
+variable "azure_env" {
+  description = "Azure cloud environment type."
   type        = string
 }
 
-variable "azure_tenant_id" {
+variable "tenant_id" {
+  description = "ID of the Azure Tenant."
   type        = string
-  description = "The GUID of your Azure tenant"
-
-  validation {
-    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_tenant_id))
-    error_message = "The \"azure_tenant_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
-  }
 }
 
-variable "azure_subscription_id" {
+variable "subscription_id" {
+  description = "ID of the subscription."
   type        = string
-  description = "The GUID of your Azure subscription"
+}
 
-  validation {
-    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
-    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
-  }
+variable "location" {
+  description = "Azure region in which the AKS cluster is located."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "Name of the resource group containing the AKS cluster."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "Name of the Azure Kubernetes managed cluster."
+  type        = string
+}
+
+variable "cluster_version" {
+  description = "Kubernetes version of the AKS cluster."
+  type        = string
+}
+
+variable "network_plugin" {
+  description = "Kubernetes Network Plugin."
+  type        = string
+}
+
+variable "subnet_name" {
+  description = "name of the node group subnet."
+  type        = string
+}
+
+variable "availability_zones" {
+  description = "Availability zones to use for the node groups."
+  type        = list(number)
+}
+
+variable "kubelet_identity_id" {
+  description = "ID of the Kubelet identity."
+  type        = string
+}
+
+variable "node_resource_group_name" {
+  description = "Name of the node resource group."
+  type        = string
+}
+
+variable "dns_resource_group_lookup" {
+  description = "Lookup from DNS zone to resource group name."
+  type        = map(string)
+}
+
+variable "core_services_config" {
+  description = "Core configuration options."
+  type        = any
+}
+
+variable "control_plane_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the AKS cluster control plane."
+  type        = string
+}
+
+variable "oms_agent" {
+  description = "If the OMS agent addon should be installed."
+  type        = bool
+}
+
+variable "oms_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the OMS agent."
+  type        = string
+}
+
+variable "labels" {
+  description = "Labels to be applied to all Kubernetes resources."
+  type        = map(string)
 }
 
 variable "tags" {
@@ -28,70 +93,8 @@ variable "tags" {
   type        = map(string)
 }
 
-variable "resource_group_name" {
-  description = "The name of the Resource Group where the Kubernetes Cluster exists."
-  type        = string
-}
-
-variable "location" {
-  description = "Azure region in which to build resources."
-  type        = string
-}
-
-variable "cluster_name" {
-  description = "The name of the AKS cluster."
-  type        = string
-}
-
-variable "cluster_id" {
-  description = "The unique identifier of the AKS cluster."
-  type        = string
-}
-
-variable "cluster_version" {
-  description = "The Kubernetes minor version to use for the AKS cluster."
-  type        = string
-}
-
-variable "aks_identity" {
-  description = "Kubelet identity client_id."
-  type        = string
-}
-
-variable "aks_node_resource_group_name" {
-  description = "resource group created by AKS"
-  type        = string
-}
-
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or azure)"
-  type        = string
-  default     = "kubenet"
-
-  validation {
-    condition     = contains(["kubenet", "azure"], var.network_plugin)
-    error_message = "Network plugin must be kubenet or azure."
-  }
-}
-
-variable "azuread_clusterrole_map" {
-  description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
-  type = object(
-    {
-      cluster_admin_users  = map(string)
-      cluster_view_users   = map(string)
-      standard_view_users  = map(string)
-      standard_view_groups = map(string)
-    }
-  )
-}
-
-variable "config" {
-  description = "Platform service configuration options"
+# tflint-ignore: terraform_unused_declarations
+variable "experimental" {
+  description = "Provide experimental feature flag configuration."
   type        = any
-}
-
-variable "log_analytics_workspace_id" {
-  description = "ID of the Azure Log Analytics Workspace optionally configured for the cluster"
-  type        = string
 }

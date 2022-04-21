@@ -1,50 +1,55 @@
-variable "azure_subscription_id" {
-  type        = string
-  description = "The GUID of your Azure subscription"
-
-  validation {
-    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
-    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
-  }
-}
-
 variable "azure_environment" {
   description = "Azure Cloud Environment."
   type        = string
 }
 
-variable "cluster_name" {
-  description = "The name of the AKS cluster."
+variable "tenant_id" {
+  description = "ID of the Azure Tenant."
+  type        = string
+}
+
+variable "subscription_id" {
+  description = "ID of the subscription."
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region in which the AKS cluster is located."
   type        = string
 }
 
 variable "resource_group_name" {
+  description = "Name of the resource group containing the AKS cluster."
   type        = string
-  description = "The name of the resource group of your AKS cluster"
 }
 
-variable "resource_group_location" {
-  type        = string
-  description = "The location of the resource group of your AKS cluster"
-}
-
-variable "dns_zones" {
-  description = "The name and resource group of the DNS zone associated with your Azure subscription"
+variable "dns_resource_group_lookup" {
+  description = "Lookup from DNS zone to resource group name."
   type        = map(string)
 }
 
-variable "letsencrypt_environment" {
-  description = "Let's Encrypt enfironment to use, staging or production."
+variable "cluster_name" {
+  description = "Name of the AKS cluster."
   type        = string
+}
 
-  validation {
-    condition     = contains(["staging", "production"], lower(var.letsencrypt_environment))
-    error_message = "The \"letsencrypt_environment\" variable must be either \"staging\" or \"production\"."
-  }
+variable "namespace" {
+  description = "Namespace to install the Kubernetes resources into."
+  type        = string
+}
+
+variable "labels" {
+  description = "Labels to be applied to all Kubernetes resources."
+  type        = map(string)
+}
+
+variable "acme_dns_zones" {
+  description = "DNS zones which can be managed via the ACME protocol."
+  type        = list(string)
 }
 
 variable "additional_issuers" {
-  description = "Issuers in addition to the default Let's Encrypt cluster issuer to add to the cluster."
+  description = "Additional issuers to add to the cluster."
   type        = map(any)
 }
 
@@ -58,12 +63,7 @@ variable "default_issuer_name" {
   type        = string
 }
 
-variable "ingress_internal_core_domain" {
-  description = "The domain to use for internal ingress resources."
-  type        = string
-}
-
 variable "tags" {
-  description = "Tags to be applied to all resources"
+  description = "Tags to apply to all resources."
   type        = map(string)
 }

@@ -1,9 +1,5 @@
 locals {
-  namespace = "monitoring"
-
-  chart_version = "33.2.0"
-
-  grafana_identity_name = "grafana"
+  chart_version = "34.1.1"
 
   chart_values = {
     global = {
@@ -13,41 +9,35 @@ locals {
       }
     }
 
-    commonLabels = {
-      "lnrs.io/monitoring-platform" = "core-prometheus"
-      "lnrs.io/k8s-platform"        = "true"
-    }
-
-    ###############################################
-    ### Prometheus Operator #######################
+    commonLabels = merge(var.labels, {
+      "lnrs.io/monitoring-platform" = "true"
+    })
 
     prometheusOperator = {
       enabled = true
 
-      podLabels = {
-        "lnrs.io/k8s-platform" = "true"
-      }
-
-      priorityClassName = "system-cluster-critical"
+      priorityClassName = ""
 
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
         {
           key      = "CriticalAddonsOnly"
-          operator = "Equal"
-          value    = "true"
-          effect   = "NoSchedule"
+          operator = "Exists"
+        },
+        {
+          key      = "system"
+          operator = "Exists"
         }
       ]
 
       resources = {
         requests = {
-          cpu    = "50m"
-          memory = "128Mi"
+          cpu    = "200m"
+          memory = "256Mi"
         }
 
         limits = {
@@ -75,80 +65,84 @@ locals {
 
       admissionWebhooks = {
         patch = {
-          priorityClassName = "system-cluster-critical"
+          priorityClassName = ""
 
           nodeSelector = {
-            "kubernetes.io/os"          = "linux"
-            "kubernetes.azure.com/mode" = "system"
+            "kubernetes.io/os" = "linux"
+            "lnrs.io/tier"     = "system"
           }
 
           tolerations = [
             {
               key      = "CriticalAddonsOnly"
-              operator = "Equal"
-              value    = "true"
-              effect   = "NoSchedule"
+              operator = "Exists"
+            },
+            {
+              key      = "system"
+              operator = "Exists"
             }
           ]
         }
+
+        certManager = {
+          enabled = true
+        }
       }
     }
-    ### End of Prometheus Operator ################
-    ###############################################
-
-    ###############################################
-    ### Prometheus ################################
 
     prometheus = {
       prometheusSpec = {
         retention = "28d"
 
-        podMetadata = {
-          labels = {
-            "lnrs.io/k8s-platform" = "true"
-          }
-        }
-
         remoteWrite = var.prometheus_remote_write
 
         podMonitorSelector = {
           matchLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
+            "lnrs.io/monitoring-platform" = "true"
           }
         }
 
         serviceMonitorSelector = {
           matchLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
+            "lnrs.io/monitoring-platform" = "true"
           }
         }
 
         ruleSelector = {
           matchLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
+            "lnrs.io/monitoring-platform" = "true"
+            "lnrs.io/prometheus-rule"     = "true"
           }
         }
 
         logLevel  = "info"
         logFormat = "json"
 
-        priorityClassName = "system-cluster-critical"
+        priorityClassName = ""
 
         nodeSelector = {
-          "kubernetes.io/os"          = "linux"
-          "kubernetes.azure.com/mode" = "system"
+          "kubernetes.io/os" = "linux"
+          "lnrs.io/tier"     = "system"
         }
 
-        tolerations = [{
-          key      = "CriticalAddonsOnly"
-          operator = "Exists"
-          effect   = "NoSchedule"
-        }]
+        tolerations = [
+          {
+            key      = "CriticalAddonsOnly"
+            operator = "Exists"
+          },
+          {
+            key      = "system"
+            operator = "Exists"
+          }
+        ]
+
+        podAntiAffinity            = "hard"
+        podAntiAffinityTopologyKey = "topology.kubernetes.io/zone"
 
         storageSpec = {
           volumeClaimTemplate = {
             spec = {
-              storageClassName = "azure-disk-premium-ssd-retain"
+              storageClassName = "azure-disk-premium-ssd-delete"
 
               accessModes : [
                 "ReadWriteOnce"
@@ -156,7 +150,7 @@ locals {
 
               resources = {
                 requests = {
-                  storage = "300Gi"
+                  storage = "500Gi"
                 }
               }
             }
@@ -165,62 +159,55 @@ locals {
 
         resources = {
           requests = {
-            cpu    = "1000m"
+            cpu    = "500m"
             memory = "4096Mi"
           }
 
           limits = {
             cpu    = "2000m"
-            memory = "6144Mi"
+            memory = "4096Mi"
           }
         }
       }
 
       ingress = {
-        enabled = true
-
-        ingressClassName = "core-internal"
+        enabled          = true
+        annotations      = var.ingress_annotations
+        ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-
-        hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         tls = [{
-          "hosts" = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
     }
-    ### End of Prometheus #########################
-    ###############################################
-
-    ###############################################
-    ### AlertManager ##############################
 
     alertmanager = {
       alertmanagerSpec = {
-        priorityClassName = "system-cluster-critical"
-
-        podMetadata = {
-          labels = {
-            "lnrs.io/k8s-platform" = "true"
-          }
-        }
+        priorityClassName = ""
 
         retention = "120h"
 
         nodeSelector = {
-          "kubernetes.io/os"          = "linux"
-          "kubernetes.azure.com/mode" = "system"
+          "kubernetes.io/os" = "linux"
+          "lnrs.io/tier"     = "system"
         }
 
-        tolerations = [{
-          key      = "CriticalAddonsOnly"
-          operator = "Exists"
-          effect   = "NoSchedule"
-        }]
+        tolerations = [
+          {
+            key      = "CriticalAddonsOnly"
+            operator = "Exists"
+          },
+          {
+            key      = "system"
+            operator = "Exists"
+          }
+        ]
 
         storage = {
           volumeClaimTemplate = {
             spec = {
-              storageClassName = "azure-disk-premium-ssd-retain"
+              storageClassName = "azure-disk-premium-ssd-delete"
 
               accessModes : [
                 "ReadWriteOnce"
@@ -255,7 +242,7 @@ locals {
           smtp_from        = var.alertmanager_smtp_from
         }
 
-        receivers = concat([{ name = "null" }], var.alertmanager_receivers)
+        receivers = local.alertmanager_receivers
 
         route = {
           group_by = [
@@ -267,33 +254,21 @@ locals {
           repeat_interval = "12h"
           receiver        = "null"
 
-          routes = concat([
-            {
-              match = {
-                alertname = "Watchdog"
-              }
-              receiver = "null"
-          }], var.alertmanager_routes)
+          routes = local.alertmanager_routes
         }
       }
 
       ingress = {
-        enabled = true
-
-        ingressClassName = "core-internal"
+        enabled          = true
+        annotations      = var.ingress_annotations
+        ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-
-        hosts = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         tls = [{
-          "hosts" = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
     }
-    ### End of AlertManager #######################
-    ###############################################
-
-    ###############################################
-    ### Grafana ###################################
 
     grafana = {
       enabled = true
@@ -304,12 +279,11 @@ locals {
       }
 
       podLabels = {
-        aadpodidbinding        = "${var.cluster_name}-${local.grafana_identity_name}"
-        "lnrs.io/k8s-platform" = "true"
+        aadpodidbinding = module.identity_grafana.name
       }
 
       admin = {
-        existingSecret = local.grafana_auth_secret_name
+        existingSecret = kubernetes_secret.grafana_auth.metadata[0].name
         userKey        = "admin-user"
         passwordKey    = "admin-password"
       }
@@ -329,42 +303,45 @@ locals {
         }
       }
 
-      plugins = var.grafana_plugins
+      plugins = distinct(concat([
+        "grafana-piechart-panel"
+      ], var.grafana_additional_plugins))
 
-      additionalDataSources = concat(var.loki_enabled ? [local.grafana_loki_data_source] : [], [local.grafana_azure_monitor_data_source], var.grafana_additional_data_sources)
+      additionalDataSources = concat([local.grafana_azure_monitor_data_source], var.grafana_additional_data_sources)
 
       priorityClassName = ""
 
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
         {
           key      = "CriticalAddonsOnly"
-          operator = "Equal"
-          value    = "true"
-          effect   = "NoSchedule"
+          operator = "Exists"
+        },
+        {
+          key      = "system"
+          operator = "Exists"
         }
       ]
 
       ingress = {
-        enabled = true
-
-        ingressClassName = "core-internal"
+        enabled          = true
+        annotations      = var.ingress_annotations
+        ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
         path             = "/"
-
-        hosts = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         tls = [{
-          "hosts" = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
 
       resources = {
         requests = {
-          cpu    = "10m"
+          cpu    = "100m"
           memory = "128Mi"
         }
 
@@ -381,19 +358,17 @@ locals {
 
         resources = {
           requests = {
-            cpu    = "10m"
-            memory = "64Mi"
+            cpu    = "100m"
+            memory = "128Mi"
           }
 
           limits = {
-            cpu    = "100m"
+            cpu    = "200m"
             memory = "256Mi"
           }
         }
       }
     }
-    ### End of Grafana ############################
-    ###############################################
 
     kubeScheduler = {
       enabled = false
@@ -418,16 +393,8 @@ locals {
     }
 
     defaultRules = {
-      rules = {
-        kubernetesSystem    = false
-        kubernetesResources = false
-        kubernetesStorage   = false
-        kubernetesApps      = false
-      }
+      create = false
     }
-
-    ###############################################
-    ### Kube-state-metrics ########################
 
     ## Deploy servicemonitor
     kubeStateMetrics = {
@@ -443,24 +410,26 @@ locals {
         monitor = {
           enabled = true
           additionalLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
+            "lnrs.io/monitoring-platform" = "true"
           }
         }
       }
 
-      priorityClassName = "system-cluster-critical"
+      priorityClassName = ""
 
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
         {
           key      = "CriticalAddonsOnly"
-          operator = "Equal"
-          value    = "true"
-          effect   = "NoSchedule"
+          operator = "Exists"
+        },
+        {
+          key      = "system"
+          operator = "Exists"
         }
       ]
 
@@ -472,47 +441,11 @@ locals {
 
         limits = {
           cpu    = "500m"
-          memory = "1024Mi"
+          memory = "256Mi"
         }
       }
-
-      collectors = [
-        "certificatesigningrequests",
-        "configmaps",
-        "cronjobs",
-        "daemonsets",
-        "deployments",
-        "endpoints",
-        "horizontalpodautoscalers",
-        "ingresses",
-        "jobs",
-        "limitranges",
-        "mutatingwebhookconfigurations",
-        "namespaces",
-        "networkpolicies",
-        "nodes",
-        "persistentvolumeclaims",
-        "persistentvolumes",
-        "poddisruptionbudgets",
-        "pods",
-        "replicasets",
-        "replicationcontrollers",
-        "resourcequotas",
-        "secrets",
-        "services",
-        "statefulsets",
-        "storageclasses",
-        "validatingwebhookconfigurations",
-        "volumeattachments"
-      ]
     }
-    ### End of Kube-state-metrics #################
-    ###############################################
 
-    ###############################################
-    ### Node Exporter #############################
-
-    ## Deploy servicemonitor
     nodeExporter = {
       enabled = true
     }
@@ -522,16 +455,14 @@ locals {
         create     = true
         pspEnabled = false
       }
+
       prometheus = {
         monitor = {
           enabled = true
           additionalLabels = {
-            "lnrs.io/monitoring-platform" = "core-prometheus"
+            "lnrs.io/monitoring-platform" = "true"
           }
         }
-      }
-      podLabels = {
-        "lnrs.io/k8s-platform" = "true"
       }
 
       priorityClassName = "system-node-critical"
@@ -540,11 +471,9 @@ locals {
         "kubernetes.io/os" = "linux"
       }
 
-      tolerations = [
-        {
-          operator = "Exists"
-        }
-      ]
+      tolerations = [{
+        operator = "Exists"
+      }]
 
       updateStrategy = {
         type = "RollingUpdate"
@@ -556,8 +485,8 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "50m"
-          memory = "16Mi"
+          cpu    = "100m"
+          memory = "32Mi"
         }
 
         limits = {
@@ -566,30 +495,36 @@ locals {
         }
       }
     }
-    ### End of Node Exporter ######################
-    ###############################################
-
   }
 
-  grafana_auth_secret_name = "grafana-auth"
+  alertmanager_base_receivers    = [{ name = "null" }]
+  alertmanager_default_receivers = length(var.alertmanager_receivers) > 0 ? [] : [{ name = "alerts" }]
+  alertmanager_receivers         = concat(local.alertmanager_base_receivers, local.alertmanager_default_receivers, var.alertmanager_receivers)
 
-  grafana_loki_data_source = {
+  alertmanager_base_routes    = [{ match = { alertname = "Watchdog" }, receiver = "null" }]
+  alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{ match_re = { severity = "warning|critical" }, receiver = "alerts" }]
+  alertmanager_routes         = concat(local.alertmanager_base_routes, local.alertmanager_default_routes, var.alertmanager_routes)
+
+  loki_data_source = {
     name   = "Loki"
     type   = "loki"
-    url    = "http://loki.logging.svc:3100"
+    url    = "http://loki-gateway.logging.svc.cluster.local"
     access = "proxy"
     orgId  = "1"
   }
 
   grafana_azure_monitor_data_source = {
-    name   = "Azure Monitor"
-    type   = "grafana-azure-monitor-datasource"
-    orgId  = "1"
+    name      = "Azure Monitor"
+    type      = "grafana-azure-monitor-datasource"
+    orgId     = "1"
     isDefault = false
     jsonData = {
-      subscriptionId = var.azure_subscription_id
+      subscriptionId = var.subscription_id
     }
   }
+
+  resource_group_id                             = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
+  oms_log_analytics_workspace_resource_group_id = var.oms_agent && length(var.oms_log_analytics_workspace_id) > 0 ? regex("([[:ascii:]]*)(/providers/)", var.oms_log_analytics_workspace_id)[0] : ""
 
   crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

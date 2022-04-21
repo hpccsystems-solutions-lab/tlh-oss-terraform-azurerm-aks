@@ -1,36 +1,36 @@
-variable "azure_subscription_id" {
-  type        = string
-  description = "The GUID of your Azure subscription"
-
-  validation {
-    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
-    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
-  }
-}
-
-variable "cluster_name" {
-  description = "The name of the cluster that has been created."
+variable "subscription_id" {
+  description = "ID of the subscription."
   type        = string
 }
 
-variable "cluster_version" {
-  description = "The Kubernetes minor version of the cluster (e.g. x.y)"
+variable "location" {
+  description = "Azure region in which the AKS cluster is located."
   type        = string
 }
 
 variable "resource_group_name" {
+  description = "Name of the resource group containing the AKS cluster."
   type        = string
-  description = "The name of the resource group of your AKS cluster"
 }
 
-variable "resource_group_location" {
+variable "cluster_name" {
+  description = "Name of the Azure Kubernetes managed cluster."
   type        = string
-  description = "The location of the resource group of your AKS cluster"
 }
 
-variable "skip_crds" {
-  description = "Skip installing the CRDs as part of the module."
-  type        = bool
+variable "namespace" {
+  description = "Namespace to install the Kubernetes resources into."
+  type        = string
+}
+
+variable "labels" {
+  description = "Labels to be applied to all Kubernetes resources."
+  type        = map(string)
+}
+
+variable "zones" {
+  description = "The number of zones this chart should be run on."
+  type        = number
 }
 
 variable "prometheus_remote_write" {
@@ -50,12 +50,12 @@ variable "alertmanager_smtp_from" {
 
 variable "alertmanager_receivers" {
   description = "Alertmanager recievers to add to the default null."
-  type        = list(any)
+  type        = any
 }
 
 variable "alertmanager_routes" {
   description = "Alertmanager routes."
-  type        = list(any)
+  type        = any
 }
 
 variable "grafana_admin_password" {
@@ -63,18 +63,18 @@ variable "grafana_admin_password" {
   type        = string
 }
 
-variable "grafana_plugins" {
-  description = "Grafana plugins to install."
+variable "grafana_additional_plugins" {
+  description = "Additional Grafana plugins to install."
   type        = list(string)
 }
 
 variable "grafana_additional_data_sources" {
-  description = "Additional Grafana data sources to add.."
+  description = "Additional Grafana data sources to add."
   type        = list(any)
 }
 
-variable "log_analytics_workspace_id" {
-  description = "ID of the Azure Log Analytics Workspace optionally configured for the cluster"
+variable "ingress_class_name" {
+  description = "The ingress class for ingress resources."
   type        = string
 }
 
@@ -88,12 +88,32 @@ variable "ingress_subdomain_suffix" {
   type        = string
 }
 
-variable "loki_enabled" {
-  description = "If Loki is enabled in the cluster."
+variable "ingress_annotations" {
+  description = "The annotations for ingress resources."
+  type        = map(string)
+}
+
+variable "control_plane_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the AKS cluster control plane."
+  type        = string
+}
+
+variable "oms_agent" {
+  description = "If the OMS agent addon should be installed."
+  type        = bool
+}
+
+variable "oms_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the OMS agent."
+  type        = string
+}
+
+variable "skip_crds" {
+  description = "Skip installing the CRDs as part of the module."
   type        = bool
 }
 
 variable "tags" {
-  description = "Tags to be applied to all resources"
+  description = "Tags to apply to all resources."
   type        = map(string)
 }

@@ -1,30 +1,120 @@
-variable "api_server_authorized_ip_ranges" {
-  description = "Public CIDR ranges to whitelist access to the Kubernetes API server, if not set defaults to `0.0.0.0/0`."
-  type        = map(string)
-  default     = null
-}
-
-variable "azure_environment" {
-  description = "Azure Cloud Environment."
+variable "azure_env" {
+  description = "Azure cloud environment type, \"public\" & \"usgovernment\" are supported."
   type        = string
-  default     = "AzurePublicCloud"
+  default     = "public"
 
   validation {
-    condition     = contains(["AzurePublicCloud", "AzureUSGovernmentCloud"], var.azure_environment)
-    error_message = "The \"azure_environment\" variable must be either \"AzurePublicCloud\" or \"AzureUSGovernmentCloud\"."
+    condition     = contains(["public", "usgovernment"], var.azure_env)
+    error_message = "Available environments are \"public\" or \"usgovernment\"."
   }
 }
 
+variable "location" {
+  description = "Azure location to target."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern \"aks-{ordinal}\"."
+  type        = string
+
+  validation {
+    condition     = var.cluster_name == lower(var.cluster_name)
+    error_message = "Cluster name should be lowercase."
+  }
+
+  validation {
+    condition     = length(regexall("(?i)^(?:.+-)aks-\\d+", var.cluster_name)) > 0
+    error_message = "Cluster name should contain a unique \"aks-<ordinal>\" component."
+  }
+}
+
+variable "cluster_version" {
+  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster, curently only \"1.21\" is supported."
+  type        = string
+
+  validation {
+    condition     = contains(["1.21"], var.cluster_version)
+    error_message = "Available versions are \"1.21\"."
+  }
+}
+
+variable "network_plugin" {
+  description = "Kubernetes network plugin, \"kubenet\" & \"azure\" are supported."
+  type        = string
+  default     = "kubenet"
+
+  validation {
+    condition     = contains(["kubenet", "azure"], var.network_plugin)
+    error_message = "Available network plugin are \"kubenet\" or \"azure\"."
+  }
+}
+
+variable "sku_tier_paid" {
+  description = "If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA."
+  type        = bool
+}
+
+variable "cluster_endpoint_public_access" {
+  description = "Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled."
+  type        = bool
+}
+
+variable "cluster_endpoint_access_cidrs" {
+  description = "List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint."
+  type        = list(string)
+}
+
+variable "virtual_network_resource_group_name" {
+  description = "Name of the resource group containing the virtual network."
+  type        = string
+}
+
+variable "virtual_network_name" {
+  description = "Name of the virtual network to use for the cluster."
+  type        = string
+}
+
+variable "subnet_name" {
+  description = "Name of the AKS subnet in the virtual network."
+  type        = string
+}
+
+variable "route_table_name" {
+  description = "Name of the AKS subnet route table."
+  type        = string
+}
+
+variable "dns_resource_group_lookup" {
+  description = "Lookup from DNS zone to resource group name."
+  type        = map(string)
+}
+
+variable "podnet_cidr_block" {
+  description = "CIDR range for pod IP addresses when using the kubenet network plugin, if you're running more than one cluster in a virtual network this value needs to be unique."
+  type        = string
+  default     = "100.65.0.0/16"
+}
+
+variable "admin_group_object_ids" {
+  description = "AD Object IDs to be added to the cluster admin group, if not set the current user will be made a cluster administrator."
+  type        = list(string)
+  default     = []
+}
+
 variable "azuread_clusterrole_map" {
-  description = "Map of Azure AD User and Group Ids to configure in Kubernetes clusterrolebindings"
-  type = object(
-    {
-      cluster_admin_users  = map(string)
-      cluster_view_users   = map(string)
-      standard_view_users  = map(string)
-      standard_view_groups = map(string)
-    }
-  )
+  description = "Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings."
+  type = object({
+    cluster_admin_users  = map(string)
+    cluster_view_users   = map(string)
+    standard_view_users  = map(string)
+    standard_view_groups = map(string)
+  })
   default = {
     cluster_admin_users  = {}
     cluster_view_users   = {}
@@ -33,85 +123,18 @@ variable "azuread_clusterrole_map" {
   }
 }
 
-variable "cluster_name" {
-  description = "The name of the AKS cluster to create, also used as a prefix in names of related resources."
-  type        = string
-}
-
-variable "cluster_version" {
-  description = "The Kubernetes minor version to use for the AKS cluster."
-  type        = string
-  default     = "1.21"
-
-  validation {
-    condition     = contains(["1.21", "1.20"], var.cluster_version)
-    error_message = "This module only supports AKS versions 1.21 & 1.20."
-  }
-}
-
-variable "core_services_config" {
-  description = "Configuration options for core platform services"
-  type        = any
-
-  validation {
-    condition = (lookup(var.core_services_config, "alertmanager", null) == null ||
-      (length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 &&
-    length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0))
-    error_message = "The config variable for alertmanager doesn't have all the required fields, please check the module README."
-  }
-
-  validation {
-    condition = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
-    length(lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", "")) > 0)
-    error_message = "The config variable for ingress_internal_core doesn't have all the required fields, please check the module README."
-  }
-
-  validation {
-    condition = (lookup(var.core_services_config, "ingress_internal_core", null) == null ||
-    length(lookup(lookup(lookup(var.core_services_config, "cert_manager", {}), "dns_zones", {}), lookup(lookup(var.core_services_config, "ingress_internal_core", {}), "domain", ""), "")) > 0)
-    error_message = "The domain attribute of ingress_internal_core must be a key of the dns_zones attribute of cert_manager, please check the module README."
-  }
-}
-
-variable "location" {
-  description = "Azure region in which to build resources."
-  type        = string
-}
-
-variable "log_analytics_workspace_id" {
-  description = "ID of the Azure Log Analytics Workspace"
-  type        = string
-  default     = null
-}
-
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin (kubenet or azure)"
-  type        = string
-  default     = "kubenet"
-
-  validation {
-    condition     = contains(["kubenet", "azure"], lower(var.network_plugin))
-    error_message = "Network plugin must be kubenet or azure."
-  }
-}
-
-variable "ingress_node_pool" {
-  description = "Specifies if a cluster managed ingress node group is required, if true the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to true or you need to follow the instructions for managing your own ingress node group."
-  type        = bool
-  default     = false
-}
-
-variable "node_pools" {
-  description = "Node pool definitions."
+variable "node_group_templates" {
+  description = "Templates describing the requires node groups."
   type = list(object({
     name                = string
-    single_vmss         = bool
-    public              = bool
-    placement_group_key = string
+    node_os             = string
     node_type           = string
+    node_type_version   = string
     node_size           = string
+    single_group        = bool
     min_capacity        = number
     max_capacity        = number
+    placement_group_key = string
     labels              = map(string)
     taints = list(object({
       key    = string
@@ -122,54 +145,62 @@ variable "node_pools" {
   }))
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 11 && length(regexall("-win", pool.node_type)) == 0)]) == 0)
-    error_message = "Node pool name must be fewer than 12 characters for os_type Linux."
+    condition     = alltrue([for x in var.node_group_templates : x.name != null && length(x.name) <= 10])
+    error_message = "Node group template names must be 10 characters or less."
   }
 
   validation {
-    condition     = (length([for pool in var.node_pools : pool.name if(length(pool.name) > 5 && length(regexall("-win", pool.node_type)) > 0)]) == 0)
-    error_message = "Node pool name must be fewer than 6 characters for os_type Windows."
+    condition     = alltrue([for x in var.node_group_templates : contains(["ubuntu", "windows"], x.node_os)])
+    error_message = "Node group template OS must be either \"ubuntu\" or \"windows\"."
   }
-}
-
-variable "podnet_cidr" {
-  description = "CIDR range for pod IP addresses when using the `kubenet` network plugin."
-  type        = string
-  default     = "100.65.0.0/16"
-}
-
-variable "resource_group_name" {
-  description = "The name of the Resource Group to deploy the AKS cluster service to, must already exist."
-  type        = string
-}
-
-variable "sku_tier" {
-  description = "Sets cluster control plane SKU tier. The paid tier has a financially-backed uptime SLA, see [documentation](https://docs.microsoft.com/en-us/azure/aks/uptime-sla)."
-  type        = string
 
   validation {
-    condition     = contains(["Free", "Paid"], var.sku_tier)
-    error_message = "Available SKU Tiers are \"Free\" and \"Paid\"."
+    condition     = alltrue([for x in var.node_group_templates : contains(["gp", "gpd", "mem", "memd", "cpu", "stor"], x.node_type)])
+    error_message = "Node group template type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
   }
+
+  validation {
+    condition     = alltrue([for x in var.node_group_templates : length(x.placement_group_key != null ? x.placement_group_key : "") <= 11])
+    error_message = "Node group template placement key must be 11 characters or less."
+  }
+}
+
+variable "core_services_config" {
+  description = "Core service configuration."
+  type        = any
+
+  validation {
+    condition     = lookup(var.core_services_config, "alertmanager", null) != null && length(lookup(var.core_services_config.alertmanager, "smtp_host", "")) > 0 && length(lookup(var.core_services_config.alertmanager, "smtp_from", "")) > 0
+    error_message = "The core configuration variable for Alertmanager doesn't have all the required fields, please check the module README."
+  }
+
+  validation {
+    condition     = lookup(var.core_services_config, "ingress_internal_core", null) != null && length(lookup(var.core_services_config.ingress_internal_core, "domain", "")) > 0
+    error_message = "The core configuration variable for the internal ingress core doesn't have all the required fields, please check the module README."
+  }
+}
+
+variable "logging_storage_account_id" {
+  description = "Optional ID of a storage account to add cluster logs to."
+  type        = string
+  default     = ""
 }
 
 variable "tags" {
-  description = "Tags to be applied to cloud resources."
+  description = "Tags to apply to all resources."
   type        = map(string)
   default     = {}
 }
 
-variable "virtual_network" {
-  description = "Virtual network configuration."
-  type = object({
-    subnets = object({
-      private = object({
-        id = string
-      })
-      public = object({
-        id = string
-      })
-    })
-    route_table_id = string
-  })
+variable "azure_auth_env" {
+  description = "Map containing the environment variables needed to authenticate the Azure CLI."
+  type        = map(string)
+  default     = {}
+}
+
+# tflint-ignore: terraform_unused_declarations
+variable "experimental" {
+  description = "Configure experimental features."
+  type        = any
+  default     = {}
 }

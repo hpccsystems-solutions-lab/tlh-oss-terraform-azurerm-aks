@@ -4,75 +4,52 @@ resource "kubectl_manifest" "crds" {
   yaml_body = file(each.value)
 
   server_side_apply = true
+  wait              = true
 }
 
-resource "kubectl_manifest" "resources" {
+resource "kubectl_manifest" "resource_files" {
   for_each = local.resource_files
 
   yaml_body = file(each.value)
 
   server_side_apply = true
+  wait              = true
 
   depends_on = [
     kubectl_manifest.crds
   ]
 }
 
-module "identity" {
-  source = "../../../identity"
-
-  cluster_name        = var.cluster_name
-  identity_name       = "cert-manager"
-  resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
-  tags                = var.tags
-  namespace           = local.namespace
-
-  roles = concat(
-    [for zone, rg in var.dns_zones :
-      {
-        role_definition_resource_id = "DNS Zone Contributor"
-        scope                       = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${rg}/providers/Microsoft.Network/dnszones/${zone}"
-      }
-    ]
-  )
-}
-
-resource "helm_release" "main" {
-  depends_on = [module.identity]
-
+resource "helm_release" "default" {
   name      = "cert-manager"
-  namespace = local.namespace
+  namespace = var.namespace
 
-  repository = "https://charts.jetstack.io"
+  repository = "https://charts.jetstack.io/"
   chart      = "cert-manager"
   version    = local.chart_version
   skip_crds  = true
 
-  max_history = 20
-  timeout     = 300
+  max_history = 10
+  timeout     = 600
 
   values = [
     yamlencode(local.chart_values)
   ]
-}
 
-resource "kubectl_manifest" "certificates" {
-  for_each = local.certificates
-
-  depends_on = [helm_release.main, kubectl_manifest.issuers]
-
-  yaml_body = yamlencode(each.value)
-
-  server_side_apply = true
+  depends_on = [
+    kubectl_manifest.crds
+  ]
 }
 
 resource "kubectl_manifest" "issuers" {
   for_each = local.issuers
 
-  depends_on = [helm_release.main]
-
   yaml_body = yamlencode(each.value)
 
   server_side_apply = true
+  wait              = true
+
+  depends_on = [
+    helm_release.default
+  ]
 }

@@ -2,9 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dashboard-external-dns
-  labels:
-    grafana_dashboard: "1"
   namespace: dns
+  labels:
+    lnrs.io/k8s-platform: "true"
+    grafana_dashboard: "1"
 data:
   external-dns.json: |-
     {
@@ -12,7 +13,7 @@ data:
         {
           "name": "DS_PROMETHEUS",
           "label": "Prometheus",
-          "description": "",
+          "description": "Prometheus data source",
           "type": "datasource",
           "pluginId": "prometheus",
           "pluginName": "Prometheus"
@@ -20,15 +21,21 @@ data:
       ],
       "__requires": [
         {
+          "type": "panel",
+          "id": "bargauge",
+          "name": "Bar gauge",
+          "version": ""
+        },
+        {
           "type": "grafana",
           "id": "grafana",
           "name": "Grafana",
-          "version": "6.3.4"
+          "version": "8.0.3"
         },
         {
           "type": "panel",
           "id": "graph",
-          "name": "Graph",
+          "name": "Graph (old)",
           "version": ""
         },
         {
@@ -39,14 +46,20 @@ data:
         },
         {
           "type": "panel",
-          "id": "singlestat",
-          "name": "Singlestat",
+          "id": "table",
+          "name": "Table",
           "version": ""
         },
         {
           "type": "panel",
-          "id": "table",
-          "name": "Table",
+          "id": "table-old",
+          "name": "Table (old)",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "timeseries",
+          "name": "Time series",
           "version": ""
         }
       ],
@@ -64,10 +77,10 @@ data:
         ]
       },
       "editable": true,
-      "gnetId": null,
+      "gnetId": 15038,
       "graphTooltip": 0,
-      "id": 27,
-      "iteration": 1631826526746,
+      "id": null,
+      "iteration": 1632326408265,
       "links": [],
       "panels": [
         {
@@ -1417,8 +1430,7 @@ data:
       "style": "dark",
       "tags": [
         "external-dns",
-        "dns",
-        "lnrs-platform"
+        "dns"
       ],
       "templating": {
         "list": [
@@ -1445,12 +1457,8 @@ data:
           },
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "text": "All",
-              "value": "All"
-            },
-            "datasource": null,
+            "current": {},
+            "datasource": "${DS_PROMETHEUS}",
             "definition": "label_values(kube_pod_info{pod=~\".*external-dns.*\"}, pod)",
             "description": null,
             "error": null,
@@ -1478,7 +1486,8 @@ data:
       },
       "timepicker": {},
       "timezone": "browser",
-      "title": "External-dns",
+      "title": "External DNS",
       "uid": "eea5u_I7z",
-      "version": 2
+      "version": 1,
+      "description": "Grafana dashboard to display external-dns metrics"
     }

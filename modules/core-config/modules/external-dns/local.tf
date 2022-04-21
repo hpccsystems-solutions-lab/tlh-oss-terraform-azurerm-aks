@@ -1,40 +1,31 @@
 locals {
-  private_dns_zone_resource_group_id = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.private_domain_filters.resource_group_name}"
-  public_dns_zone_resource_group_id  = "/subscriptions/${var.azure_subscription_id}/resourceGroups/${var.public_domain_filters.resource_group_name}"
-  private_dns_zone_ids               = [for zone in toset(var.private_domain_filters.names) : "${local.private_dns_zone_resource_group_id}/providers/Microsoft.Network/privateDnsZones/${zone}"]
-  public_dns_zone_ids                = [for zone in toset(var.public_domain_filters.names) : "${local.public_dns_zone_resource_group_id}/providers/Microsoft.Network/dnszones/${zone}"] 
-
-  namespace = "dns"
-
-  azure-private-secret-name = "azure-private-config-file"
-  azure-public-secret-name = "azure-public-config-file"
-
-  azure-private-json = "azure-private.json"
-  azure-public-json = "azure-public.json"
-  
   chart_version = "1.7.1"
 
   chart_values = {
-
     serviceMonitor = {
       enabled = true
       additionalLabels = {
-        "lnrs.io/monitoring-platform" = "core-prometheus"
+        "lnrs.io/monitoring-platform" = "true"
       }
     }
 
-    priorityClassName = "system-cluster-critical"
+    priorityClassName = ""
 
     nodeSelector = {
-      "kubernetes.io/os"          = "linux"
-      "kubernetes.azure.com/mode" = "system"
+      "kubernetes.io/os" = "linux"
+      "lnrs.io/tier"     = "system"
     }
 
-    tolerations = [{
-      key      = "CriticalAddonsOnly"
-      operator = "Exists"
-      effect   = "NoSchedule"
-    }]
+    tolerations = [
+      {
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+      },
+      {
+        key      = "system"
+        operator = "Exists"
+      }
+    ]
 
     resources = {
       requests = {
@@ -50,8 +41,6 @@ locals {
 
     logFormat = "json"
 
-    logLevel = "debug"
-
     sources = concat(["service", "ingress"], var.additional_sources)
 
     policy = "sync"
@@ -63,76 +52,80 @@ locals {
       value = var.azure_environment
     }]
 
+    extraVolumeMounts = [{
+      name      = "azure-config-file"
+      mountPath = "/etc/kubernetes"
+      readOnly  = true
+    }]
   }
 
   chart_values_private = merge(local.chart_values, {
     nameOverride = "external-dns-private"
 
-    podLabels = {
-      aadpodidbinding        = "${var.cluster_name}-external-dns-private"
-      "lnrs.io/k8s-platform" = "true"
-    }
-
-    extraVolumeMounts = [{
-      name = local.azure-private-secret-name
-      mountPath = "/etc/kubernetes"
-      readOnly = true
-    }]
+    podLabels = merge(var.labels, {
+      aadpodidbinding = local.enable_private ? module.identity_private[0].name : ""
+    })
 
     extraVolumes = [{
-      name = local.azure-private-secret-name
+      name = "azure-config-file"
       secret = {
-        secretName = local.azure-private-secret-name
+        secretName = local.enable_private ? kubernetes_secret.private_config[0].metadata[0].name : ""
         items = [{
-          key  = local.azure-private-json
-          path = local.azure-private-json
+          key  = "config"
+          path = "azure.json"
         }]
       }
     }]
 
     provider = "azure-private-dns"
 
-    domainFilters = var.private_domain_filters.names
+    domainFilters = var.private_domain_filters
 
-    extraArgs = [
-      "--azure-config-file=/etc/kubernetes/${local.azure-private-json}"
-    ]
+    extraArgs = concat([
+      "--azure-config-file=/etc/kubernetes/azure.json",
+      "--annotation-filter=lnrs.io/zone-type in (private, public-private)"
+    ], contains(var.additional_sources, "crd") ? local.crd_args : [])
   })
 
   chart_values_public = merge(local.chart_values, {
     nameOverride = "external-dns-public"
 
-    podLabels = {
-      aadpodidbinding        = "${var.cluster_name}-external-dns-public"
-      "lnrs.io/k8s-platform" = "true"
-    }
-
-    extraVolumeMounts = [{
-      name = local.azure-public-secret-name
-      mountPath = "/etc/kubernetes"
-      readOnly = true
-    }]
+    podLabels = merge(var.labels, {
+      aadpodidbinding = local.enable_public ? module.identity_public[0].name : ""
+    })
 
     extraVolumes = [{
-      name = local.azure-public-secret-name
+      name = "azure-config-file"
       secret = {
-        secretName = local.azure-public-secret-name
+        secretName = local.enable_public ? kubernetes_secret.public_config[0].metadata[0].name : ""
         items = [{
-          key  = local.azure-public-json
-          path = local.azure-public-json
+          key  = "config"
+          path = "azure.json"
         }]
       }
     }]
 
     provider = "azure"
 
-    domainFilters = var.public_domain_filters.names
+    domainFilters = var.public_domain_filters
 
-    extraArgs = [
-      "--azure-config-file=/etc/kubernetes/${local.azure-public-json}"
-    ]
+    extraArgs = concat([
+      "--azure-config-file=/etc/kubernetes/azure.json",
+      "--annotation-filter=lnrs.io/zone-type in (public, public-private)"
+    ], contains(var.additional_sources, "crd") ? local.crd_args : [])
   })
 
-  resource_files   = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
-  resource_objects = {}
+  crd_args = [
+    "--crd-source-apiversion=externaldns.k8s.io/v1alpha1",
+    "--crd-source-kind=DNSEndpoint"
+  ]
+
+  private_dns_zone_resource_group_name = one(distinct([for zone in var.private_domain_filters : var.dns_resource_group_lookup[zone]]))
+  public_dns_zone_resource_group_name  = one(distinct([for zone in var.private_domain_filters : var.dns_resource_group_lookup[zone]]))
+
+  enable_private = length(var.private_domain_filters) > 0 && local.private_dns_zone_resource_group_name != null
+  enable_public  = length(var.public_domain_filters) > 0 && local.public_dns_zone_resource_group_name != null
+
+  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

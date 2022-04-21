@@ -1,14 +1,12 @@
 locals {
-  namespace = "logging"
-
-  chart_version = "2.6.9"
+  chart_version = "2.7.0"
 
   chart_values = merge({
     nameOverride = "fluentd"
 
-    podLabels = merge({
-      "lnrs.io/k8s-platform" = "true"
-    }, var.pod_labels)
+    podLabels = merge(var.labels, {
+      aadpodidbinding = module.identity.name
+    })
 
     podAnnotations = {
       "fluentbit.io/exclude" = "true"
@@ -19,7 +17,7 @@ locals {
       serviceMonitor = {
         enabled = true
         additionalLabels = {
-          "lnrs.io/monitoring-platform" = "core-prometheus"
+          "lnrs.io/monitoring-platform" = "true"
         }
       }
     }
@@ -28,25 +26,30 @@ locals {
       enabled = true
     }
 
-    replicaCount = 3
+    replicaCount = var.zones
 
     podDisruptionBudget = {
       enabled        = true
       maxUnavailable = 1
     }
 
-    priorityClassName = "system-cluster-critical"
+    priorityClassName = ""
 
     nodeSelector = {
-      "kubernetes.io/os"          = "linux"
-      "kubernetes.azure.com/mode" = "system"
+      "kubernetes.io/os" = "linux"
+      "lnrs.io/tier"     = "system"
     }
 
-    tolerations = [{
-      key      = "CriticalAddonsOnly"
-      operator = "Exists"
-      effect   = "NoSchedule"
-    }]
+    tolerations = [
+      {
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+      },
+      {
+        key      = "system"
+        operator = "Exists"
+      }
+    ]
 
     affinity = {
       podAntiAffinity = {
@@ -64,29 +67,24 @@ locals {
 
     resources = {
       requests = {
-        cpu    = "100m"
-        memory = "256Mi"
+        cpu    = "200m"
+        memory = "512Mi"
       }
 
       limits = {
-        cpu    = "500m"
+        cpu    = "1000m"
         memory = "512Mi"
       }
     }
 
     persistence = {
       enabled      = true
-      storageClass = "azure-disk-premium-ssd-retain"
+      storageClass = "azure-disk-premium-ssd-delete"
       accessMode   = "ReadWriteOnce"
       size         = "50Gi"
     }
 
-    env = concat([
-      { name = "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR", value = "0.9" },
-      { name = "SUBSCRIPTION_ID", value = var.azure_subscription_id },
-      { name = "LOCATION", value = var.location },
-      { name = "CLUSTER_NAME", value = var.cluster_name }
-    ], var.additional_env)
+    env = [for k, v in local.additional_env : { name = k, value = v }]
 
     debug = var.debug
 
@@ -104,6 +102,13 @@ locals {
       tag        = var.image_tag
     }
   } : {}
+
+  additional_env = merge({
+    "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR" = "0.9"
+    "SUBSCRIPTION_ID"                     = var.subscription_id
+    "LOCATION"                            = var.location
+    "CLUSTER_NAME"                        = var.cluster_name
+  }, var.additional_env)
 
   default_route = <<-EOT
     <route **>
@@ -130,12 +135,24 @@ locals {
 
   filter_config = <<-EOT
     <filter **>
-      @type record_transformer
+      @type record_modifier
       <record>
-        accountId "#{ENV['SUBSCRIPTION_ID']}"
-        region "#{ENV['LOCATION']}"
-        clusterName "#{ENV['CLUSTER_NAME']}"
+        cloud azure
+        subscriptionId "#{ENV['SUBSCRIPTION_ID']}"
+        location "#{ENV['LOCATION']}"
+        cluster "#{ENV['CLUSTER_NAME']}"
+        app $${record.dig("kubernetes","labels","app.kubernetes.io/name") || record.dig("kubernetes","container_name") || record.dig("kubernetes","pod_name")}
+        componentTemp $${ c = record.dig("kubernetes","labels","app.kubernetes.io/component"); c.nil? ? c : record["component"] = c; }
+        container $${record.dig("kubernetes","container_name")}
+        instance $${record.dig("kubernetes","labels","app.kubernetes.io/instance") || record.dig("kubernetes","pod_name")}
+        namespace $${record.dig("kubernetes","namespace") || record.dig("kubernetes","namespace_name") }
+        node $${record.dig("kubernetes","host")}
+        pod $${record.dig("kubernetes","pod_name")}
+        partOfTemp $${ p = record.dig("kubernetes","labels","app.kubernetes.io/part-of"); p.nil? ? p : record["partOf"] = p; }
+        versionTemp $${ v = record.dig("kubernetes","labels","app.kubernetes.io/version"); v.nil? ? v : record["version"] = v; }
+        stream
       </record>
+      remove_keys stream, versionTemp, partOfTemp, componentTemp
     </filter>
     %{if length(var.filters) > 0~}
     ${var.filters}
@@ -155,6 +172,5 @@ locals {
 
   output_config = length(var.outputs) > 0 ? var.outputs : local.default_output
 
-  resource_files   = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
-  resource_objects = {}
+  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

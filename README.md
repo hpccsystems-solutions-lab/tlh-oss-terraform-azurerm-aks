@@ -2,256 +2,252 @@
 
 ## Overview
 
-This module is designed to provide a simple and opinionated way to build standard AKS clusters and is based on the open-source [terraform-azurerm-kubernetes](https://github.com/Azure-Terraform/terraform-azurerm-kubernetes) module. This module takes a set of configuration options and creates a fully functional Kubernetes cluster with a common set of services.
+This module is designed to provide a simple and opinionated way to build standard AKS clusters. This module takes a set of configuration options and creates a fully functional Kubernetes cluster with a common set of services.
 
 ---
 
 ## Support Policy
 
-Support and use of this module.
+This module is supported as a pattern by the core engineering team as long as the following constraints have been followed. This support **isn't** operational and by using this module you're agreeing that operational support will be provided to your end-users and the core engineering team will interact with your operational teams.
 
-- Clusters **must** be updated periodically by updating this module within 1 month of the latest release
-- For the most stable experience, upgrade through sequential minor versions in turn
-  - While upgrades through non-consecutive version **should** work, the core team don't test this
-- Core engineering and architecture teams only support clusters deployed using this module
-  - It is not supported to use the upstream open-source module directly, or any other method
-  - Issues must be demonstrated by calling the module directly (_i.e. not nesting within multi-layer modules_)
-
-<br />
-
-### Windows Support
-
-Teams **must** seek approval from their business unit Architect **and** IOG Architecture before using Windows node pools.
-
-Windows support is currently limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent-bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **should** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
-
-There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward. We plan on providing an equally supported module for Windows, however, we are still establishing testing procedures and identifying the appropriate level of resource required to achieve this.
+- Clusters **must** be updated periodically by updating this module within 4 weeks of the latest release.
+  - Issues must be demonstrated on a cluster running the latest version of the module.
+- Core engineering and architecture teams **only** support clusters deployed using this module.
+  - Issues must be demonstrated by calling the module directly (_i.e. not nesting within multi-layer modules_).
+- Issues should only be created by the cluster operators **after** they have confirmed that the problem hasn't already been documented, cluster users should work with the cluster operators if they have an issue.
+  - Issues need to have context such as Kubernetes version, module version, region, etc.
+  - Issues should have an example of how to replicate them on a test cluster unless not possible.
+  - Issues not following this guidance will be closed.
 
 ---
 
-## Requirements
+## Architecture
 
 See [documentation](/docs) for system architecture, requirements and user guides for cluster services.
+
+### Node Groups
+
+The node group configuration (`node_group_templates`) allows a cluster to be created with multiple node groups that span multiple availability zones and can be configured with the specific required behaviour.
+
+#### Node Sizes
+
+Node sizes are based on the number of CPUs, with the other resources being dependent on the node type; not all node types support all sizes.
+
+|   **Name** | **CPU Count** |
+| ---------: | ------------: |
+|    `large` |           `2` |
+|   `xlarge` |           `4` |
+|  `2xlarge` |           `8` |
+|  `4xlarge` |          `16` |
+|  `8xlarge` |          `32` |
+| `12xlarge` |          `48` |
+| `16xlarge` |          `64` |
+| `18xlarge` |          `72` |
+| `20xlarge` |          `80` |
+| `24xlarge` |          `96` |
+| `26xlarge` |         `104` |
+
+#### Node Types
+
+Node types describe the purpose of the node and maps down to the underlaying [Azure virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes). Select your node type for the kind of workloads you expect to be running, as a rule of thumb use `gp` unless you have additional requirements.
+
+Due to the availability issues with specific Azure VMs when choosing a node type you also need to select the version; newer versions may well be less available in popular regions.
+
+All the nodes provisioned by the module support permium storage.
+
+##### General Purpose
+
+[General purpose](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general) nodes, `gp` & `gpd`, offer a good balance of compute and memory. If you need a local NVMe drive `gpd` provides this.
+
+| **Type** | **Version** | **VM Type**                                                                                     | **Sizes**                                                                               |
+| -------- | ----------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `gp`     | `v1`        | [Dsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/dv4-dsv4-series#dsv4-series)     | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
+| `gp`     | `v2`        | [Dsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series#dsv5-series)     | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `gpd`    | `v1`        | [Ddsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
+| `gpd`    | `v2`        | [Ddsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv5-ddsv5-series#ddsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+
+##### Memory Optimised
+
+[Memory optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-memory) nodes, `mem` & `memd`, offer a higher memory to CPU ration than general purpose nodes. If you need a local NVMe drive `memd` provides this.
+
+| **Type** | **Version** | **VM Type**                                                                                     | **Sizes**                                                                                           |
+| -------- | ----------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `mem`    | `v1`        | [Esv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ev4-esv4-series#esv4-series)     | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
+| `mem`    | `v2`        | [Esv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ev5-esv5-series#esv5-series)     | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+| `memd`   | `v1`        | [Edsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/edv4-edsv4-series#edsv4-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
+| `memd`   | `v2`        | [Edsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series#edsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+
+##### Compute Optimised
+
+[Compute optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-compute) nodes, `cpu`, offer a higher CPU to memory ratio than general purpose nodes.
+
+| **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
+| -------- | ----------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `cpu`    | `v1`        | [Fsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/fsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `18xlarge` |
+
+##### Storage Optimised
+
+[Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
+
+| **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
+| -------- | ----------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 
 ---
 
 ## Usage
 
-This module is designed to provide a standard set of defaults for all node pools and optimized instance type selection for a given size.
+This module is expected to be referenced by it's major version (e.g. `v1`) and run regularly (at least every 4 weeks) to keep the cluster configuration up to date.
 
-See [examples](/examples) for general usage and how to integrate AKS with other **mandatory** IOG modules (_e.g. Vnet, naming_).
+### Connecting to the Cluster
 
-<details>
-<summary markdown="span">AKS cluster with private and ingress node pools</summary>
-<br />
-A standalone configuration simply to highlight minimum requirements, plus describe core object structures.
+AKS clusters created by this module use [Azure AD authentication](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and don't create local accounts. To connect to an AKS cluster after it's been created follow you can run the following commands; assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed, you are logged in.
 
-DO NOT copy this directly, see the examples folder for production cluster setup.
-<br />
-
-```terraform
-module "aks" {
-  source = "github.com/LexisNexis-RBA/terraform-azurerm-aks?ref=v1"
-
-  cluster_name    = "ioa-aks-1"
-  cluster_version = "1.21"
-  sku_tier        = "Paid"
-  
-  location            = "eastus"
-  resource_group_name = "ioa-aks-1-rg"
-  
-  virtual_network = {
-    subnets = {
-      private = { id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/virtualNetworks/AKS-1-vnet/subnets/private" }
-      public  = { id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/virtualNetworks/AKS-1-vnet/subnets/public" }
-    }
-    route_table_id = "/subscriptions/ff83a9d2-8d6e-4c4a-8b34-641163f8c99f/resourceGroups/AKS-1-Vnet/providers/Microsoft.Network/routeTables/AKS-1-route-table"
-  }
-
-  node_pools = [
-    {
-      name               = "workers"
-      single_vmss        = false
-      public             = false
-      placement_group_key = ""
-      node_type          = "x64-gp-v1"
-      node_size          = "medium"
-      min_capacity       = "3"
-      max_capacity       = "6"
-      taints = []
-      labels = {
-        "lnrs.io/tier" = "standard"
-      }
-      tags = {}
-    }
-  ]
-  ingress_node_pool = true
-
-  core_services_config = {
-    alertmanager = {
-      smtp_host = "smtp.lexisnexisrisk.com:25"
-      smtp_from = "ioa-eks-1@lexisnexisrisk.com"
-      receivers = [{ name = "alerts", email_configs = [{ to = "ioa-sre@lexisnexisrisk.com", require_tls = false }]}]
-    }
-  
-    cert_manager = {
-      dns_zones = { 
-        "ioa.useast.azure.lnrsg.io" = "ioa-dns-zones-rg"
-      }
-    }
-
-    external_dns = {
-      public_zones               = [ "ioa.useast.azure.lnrsg.io" ]
-      public_resource_group_name = "ioa-dns-zones-rg"
-    }
-
-    ingress_core_internal = {
-      domain = "ioa.useast.azure.lnrsg.io"
-    }
-  }
-  
-  azuread_clusterrole_map = {
-    cluster_admin_users  = {
-      "James Murtagh" = "d76d0bbd-3243-47e2-bdff-b4a8d4f2b6c1"
-    }
-    cluster_view_users   = {}
-    standard_view_users  = {}
-    standard_view_groups = {}
-  }
-
-  tags = {
-    "my-tag" = "tag value"
-  }
-}
+```shell
+az aks install-cli
 ```
 
-</details>
-<br />
-
-- Refer to [CHANGELOG.md](CHANGELOG.md) to review significant changes within each release version
-- Refer to [UPGRADE.md](/UPGRADE.md) for module upgrade instructions and troubleshooting steps
+```shell
+az aks get-credentials --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
+kubelogin convert-kubeconfig -l azurecli
+```
 
 ---
 
-## Terraform
+## Experimental Features
+
+> **Info**
+> Experimental features are not officially supported and do not follow SemVer like the rest of this module; use them at your own risk.
+
+### OMS Agent Support
+
+This module supports enabling the OMS agent as it needs to be done when the cluster is created; but the operation of the agent is not managed by the module and needs to be handled by the cluster operators separately.
+
+To enable OMS agent support you need to set `experimental = { oms_agent = true, oms_log_analytics_workspace_id = "my-workspace-id" }`.
+
+### Windows Node Support
+
+> **Important**
+> Teams must seek approval from their business unit Architect and IOG Architecture before using Windows node pools.
+
+Windows Node support is **best effort** and is currently significantly limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent Bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **should** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
+
+There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward.
+
+To enable Windows support you need to set `experimental = { windows_support = true }`.
+
+---
+
+## Requirements
+
+This module requires the following versions to be configured in the workspace `terraform {}` block.
+
+### Terraform
 
 | **Version** |
 | :---------- |
 | `>= 1.0.0`  |
 
-## Providers
+### Providers
 
-| **Name**     | **Version** |
-| :----------- | :---------- |
-| `azurerm`    | `>= 2.71.0` |
-| `helm`       | `>= 2.4.1`  |
-| `kubectl`    | `>= 1.13.1` |
-| `kubernetes` | `>= 2.6.1`  |
-| `random`     | `>= 3.1.0`  |
-| `time`       | `>= 0.7.1`  |
+| **Name**                                                                                    | **Version** |
+| :------------------------------------------------------------------------------------------ | :---------- |
+| [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.1.0`  |
+| [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.4.1`  |
+| [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.13.1` |
+| [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.8.0`  |
+| [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.1.0`  |
+| [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>=1.7.10`  |
+| [hashicorp/time](https://registry.terraform.io/providers/hashicorp/time/latest)             | `>= 0.7.2`  |
 
-## Inputs
+---
 
-| **Variable**                      | **Description**                                                                                                                                                                                                                                                                                   | **Type**                                 | **Default**          | **Required** |
-| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------- | :------------------- | :----------: |
-| `api_server_authorized_ip_ranges` | Public IP or CIDR ranges to apply as a whitelist to the K8S API server, if not set defaults to `0.0.0.0/0`.                                                                                                                                                                                       | `map(string)`                            | `nil`                |     `no`     |
-| `azure_environment`               | Azure Cloud Environment.  `AzurePublicCloud` & `AzureUSGovernmentCloud` are supported.                                                                                                                                                                                                            | `string`                                 | `"AzurePublicCloud"` |     `no`     |
-| `azuread_clusterrole_map`         | Azure AD Users and Groups to assign to Kubernetes cluster roles.                                                                                                                                                                                                                                  | `object(map(string))` _(see appendix a)_ | `{}`                 |     `no`     |
-| `cluster_name`                    | Name of the AKS cluster, also used as a prefix in names of related resources.                                                                                                                                                                                                                     | `string`                                 | `nil`                |    `yes`     |
-| `cluster_version`                 | The Kubernetes minor version. Versions `1.19`, `1.20` & `1.21` supported.                                                                                                                                                                                                                         | `string`                                 | `"1.21"`             |     `no`     |
-| `core_services_config`            | Configuration options for core platform services                                                                                                                                                                                                                                                  | `any` _(see appendix h)_                 | `nil`                |    `yes`     |
-| `ingress_node_pool`               | Specifies if a cluster managed ingress node group is required, if `true` the system ingress node group will be given instances. If you're using custom ingress controllers this either needs to be set to `true` or you need to follow the instructions for managing your own ingress node group. | `bool`                                   | `false`              |     `no`     |
-| `location`                        | Azure region in which to build resources.                                                                                                                                                                                                                                                         | `string`                                 | `nil`                |    `yes`     |
-| `log_analytics_workspace_id`      | ID of an existing Log Analytics Workspace to be used for the Azure Monitor Container Insights add-on. By setting this option, you are agreeing that Azure will deploy and manage a service on the cluster to send metrics and logs to Log Analytics                                               | `string`                                 | `nil`                |     `no`     |
-| `network_plugin`                  | Kubernetes Network Plugin (kubenet or azure)                                                                                                                                                                                                                                                      | `string`                                 | `"kubenet"`          |     `no`     |
-| `node_pools`                      | Node pool definitions.                                                                                                                                                                                                                                                                            | `list(object())` _(see appendix b)_      | `nil`                |    `yes`     |
-| `podnet_cidr`                     | CIDR range for pod IP addresses when using the `kubenet` network plugin.                                                                                                                                                                                                                          | `string`                                 | `"100.65.0.0/16"`    |     `no`     |
-| `resource_group_name`             | Name of the Resource Group to deploy the AKS Kubernetes service into, must already exist.                                                                                                                                                                                                         | `string`                                 | `nil`                |    `yes`     |
-| `sku_tier`                        | Set cluster control plane SKU tier to either **Free** or **Paid**. The paid tier has a financially-backed uptime SLA, see [documentation](https://docs.microsoft.com/en-us/azure/aks/uptime-sla)                                                                                                  | `string`                                 | `nil`                |    `yes`     |
-| `tags`                            | Tags to be applied to cloud resources.                                                                                                                                                                                                                                                            | `map(string)`                            | `{}`                 |     `no`     |
-| `virtual_network`                 | Virtual network configuration.                                                                                                                                                                                                                                                                    | `object(map)` _(see appendix d)_         | `nil`                |    `yes`     |
+## Variables
+
+| **Variable**                          | **Description**                                                                                                                                                                      | **Type**                             | **Default**       |
+| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :---------------- |
+| `azure_env`                           | Azure cloud environment type, `public` & `usgovernment` are supported.                                                                                                               | `string`                             | `"public"`        |
+| `location`                            | Azure location to target.                                                                                                                                                            | `string`                             | `null`            |
+| `resource_group_name`                 | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                          | `string`                             | `null`            |
+| `cluster_name`                        | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`. | `string`                             | `null`            |
+| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster, currently only `1.21` is supported.                                                                      | `string`                             | `null`            |
+| `network_plugin`                      | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                        | `string`                             | `"kubenet"`       |
+| `sku_tier_paid`                       | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                     | `bool`                               | `null`            |
+| `cluster_endpoint_public_access`      | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                         | `bool`                               | `null`            |
+| `cluster_endpoint_access_cidrs`       | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint.                                                                               | `list(string)`                       | `null`            |
+| `virtual_network_resource_group_name` | Name of the resource group containing the virtual network.                                                                                                                           | `string`                             | `null`            |
+| `virtual_network_name`                | Name of the virtual network to use for the cluster.                                                                                                                                  | `string`                             | `null`            |
+| `subnet_name`                         | Name of the AKS subnet in the virtual network.                                                                                                                                       | `string`                             | `null`            |
+| `route_table_name`                    | Name of the AKS subnet route table.                                                                                                                                                  | `string`                             | `null`            |
+| `dns_resource_group_lookup`           | Lookup from DNS zone to resource group name.                                                                                                                                         | `map(string)`                        | `null`            |
+| `podnet_cidr_block`                   | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a virtual network this value needs to be unique.                 | `string`                             | `"100.65.0.0/16"` |
+| `admin_group_object_ids`              | AD Object IDs to be added to the cluster admin group, if not set the current user will be made a cluster administrator.                                                              | `list(string)`                       | `[]`              |
+| `azuread_clusterrole_map`             | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                  | `object` ([Appendix A](#appendix-a)) | `{}`              |
+| `node_group_templates`                | Templates describing the requires node groups.                                                                                                                                       | `object` ([Appendix B](#appendix-b)) | `null`            |
+| `core_services_config`                | Core service configuration.                                                                                                                                                          | `any` ([Appendix D](#appendix-d))    | `null`            |
+| `logging_storage_account_id`          | Optional ID of a storage account to add cluster logs to.                                                                                                                             | `string`                             | `""`              |
+| `tags`                                | Tags to apply to all resources.                                                                                                                                                      | `map(string)`                        | `{}`              |
+| `azure_auth_env`                      | Map containing the environment variables needed to authenticate the Azure CLI.                                                                                                       | `map(string)`                        | `{}`              |
+| `experimental`                        | Configure experimental features.                                                                                                                                                     | `any`                                | `{}`              |
 
 ### Appendix A
 
-`azuread_clusterrole_map` object specification.
+Specification for the `azuread_clusterrole_map` object.
 
-| **Variable**           | **Description**                                                      | **Type**    | **Default** |
-| :--------------------- | :------------------------------------------------------------------- | :---------- | :---------- |
-| `cluster_admin_users`  | A map of Azure AD Ids to be assigned full cluster admin permissions. | `string`    | `nil`       |
-| `cluster_view_users`   | A map of Azure AD Ids to be assigned full cluster read permissions.  | `string`    | `nil`       |
-| `standard_view_users`  | A map of Azure AD Ids to be assigned basic cluster read permissions. | `mapstring` | `nil`       |
-| `standard_view_groups` | A map of Azure AD Ids to be assigned basic cluster read permissions. | `string`    | `nil`       |
-
-> see [RBAC documentation](/modules/core-config/modules/rbac/README.md) for more details
+| **Variable**           | **Description**                                                                           | **Type**      | **Default** |
+| :--------------------- | :---------------------------------------------------------------------------------------- | :------------ | :---------- |
+| `cluster_admin_users`  | Users to add to the cluster admin role, identifier as the key and group ID as the value.  | `map(string)` | `null`      |
+| `cluster_view_users`   | Users to add to the cluster view role, identifier as the key and group ID as the value.   | `map(string)` | `null`      |
+| `standard_view_users`  | Users to add to the standard view role, identifier as the key and group ID as the value.  | `map(string)` | `null`      |
+| `standard_view_groups` | Groups to add to the standard view role, identifier as the key and group ID as the value. | `map(string)` | `null`      |
 
 ### Appendix B
 
-`node_pools` object specification.
+Specification for the `node_group_templates` objects.
 
-| **Variable**          | **Description**                                                                                                                                                                                                              | **Type**                          | **Default** |
-| :-------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- | :---------- |
-| `name`                | Node pool name.                                                                                                                                                                                                              | `string`                          | `nil`       |
-| `single_vmss`         | `false` creates a single node pool across all zones, `true` creates node pools of the same specification in all zones to support stateful services.                                                                          | `bool`                            | `nil`       |
-| `public`              | Set to `true` to assign a public IP to nodes in the pool.                                                                                                                                                                    | `bool`                            | `nil`       |
-| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_vmss` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `bool`                            | `string`    |
-| `node_type`           | Type of instance being created in the node group(s).  Append "-win" for Windows node pools (example: "x64-gp-v1-win"). Windows are nodes only supported when network_plugin set to "azure".                                  | `string`                          | `nil`       |
-| `node_size`           | Size of instance being created in the node pool(s) using generic sizes and based on the node_type, see the [node type/size matrix](/modules/nodes/matrix.md) for size classes                                                | `string`                          | `nil`       |
-| `min_capacity`        | Minimum number of instances the resultant node pool(s) should have.  If `single_vmss` is set to false, this number must be divisible by the number of Availability Zones (3).                                                | `number`                          | `nil`       |
-| `max_capacity`        | Maximum number of instances the resultant node pool(s) should have. If `single_vmss` is set to false, this number must be divisible by the number of Availability Zones (3).                                                 | `number`                          | `nil`       |
-| `labels`              | Kubernetes node labels to apply to nodes in the pool.                                                                                                                                                                        | `map(string)`                     | `nil`       |
-| `taints`              | Kubernetes taints to apply to nodes in the pool.                                                                                                                                                                             | `list(object)` _(see appendix c)_ | `nil`       |
-| `tags`                | Additional cloud tags to apply to the node pool.                                                                                                                                                                             | `map(string)`                     | `nil`       |
+| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                          | **Type**                             | **Default** |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :---------- |
+| `name`                | User defined component of the node group(s) name.                                                                                                                                                                                                                                                                        | `string`                             | `null`      |
+| `node_os`             | OS to use for the node group(s), `ubuntu` & `windows` are supported, [Windows node support](#windows-node-support) is experimental and needs manually enabling.                                                                                                                                                          | `string`                             | `null`      |
+| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                             | `null`      |
+| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                             | `null`      |
+| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                             | `null`      |
+| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                               | `null`      |
+| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                             | `null`      |
+| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                             | `null`      |
+| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `string`                             | `null`      |
+| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                | `map(string)`                        | `null`      |
+| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                | `object` ([Appendix C](#appendix-c)) | `null`      |
+| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                           | `map(string)`                        | `null`      |
 
 ### Appendix C
 
-`node_pools.taints` object specification.
+Specification for the `node_group_templates.taints` objects.
 
 | **Variable** | **Description**                                                                           | **Type** | **Default** |
 | :----------- | :---------------------------------------------------------------------------------------- | :------- | :---------- |
-| `key`        | The key of the taint. Maximum length of 63.                                               | `string` | `nil`       |
-| `value`      | The value of the taint. Maximum length of 63.                                             | `string` | `nil`       |
-| `effect`     | The effect of the taint. Valid values: `NO_SCHEDULE`, `NO_EXECUTE`, `PREFER_NO_SCHEDULE`. | `string` | `nil`       |
-
+| `key`        | The key of the taint. Maximum length of 63.                                               | `string` | `null`      |
+| `value`      | The value of the taint. Maximum length of 63.                                             | `string` | `null`      |
+| `effect`     | The effect of the taint. Valid values: `NO_SCHEDULE`, `NO_EXECUTE`, `PREFER_NO_SCHEDULE`. | `string` | `null`      |
 
 ### Appendix D
 
-`virtual_network` object specification.
+Specification for the `core_services_config` object.
 
-| **Variable**     | **Description**                                        | **Type**                         | **Default** |
-| :--------------- | :----------------------------------------------------- | :------------------------------- | :---------- |
-| `subnets`        | Map of public and private subnet ids.                  | `object(map)` _(see appendix e)_ | `nil`       |
-| `route_table_id` | Route table id attached to public and private subnets. | `string`                         | `nil`       |
+| **Variable**            | **Description**                      | **Type**                          | **Default** |
+| :---------------------- | :----------------------------------- | :-------------------------------- | :---------- |
+| `alertmanager`          | Alertmanager configuration.          | `any` ([Appendix E](#appendix-e)) | `null`      |
+| `cert_manager`          | Cert Manager configuration.          | `any` ([Appendix F](#appendix-f)) | `null`      |
+| `coredns`               | CoreDNS configuration.               | `any` ([Appendix G](#appendix-g)) | `null`      |
+| `external_dns`          | ExternalDNS configuration.           | `any` ([Appendix H](#appendix-h)) | `null`      |
+| `fluentd`               | Fluentd configuration.               | `any` ([Appendix I](#appendix-i)) | `null`      |
+| `grafana`               | Grafana configuration.               | `any` ([Appendix J](#appendix-j)) | `null`      |
+| `ingress_internal_core` | Ingress internal-core configuration. | `any` ([Appendix K](#appendix-k)) | `null`      |
+| `prometheus`            | Prometheus configuration.            | `any` ([Appendix L](#appendix-l)) | `null`      |
 
 ### Appendix E
 
-`virtual_network.subnets` object specification.
-
-| **Variable** | **Description**    | **Type**      | **Default** |
-| :----------- | :----------------- | :------------ | :---------- |
-| `public`     | Public subnet id.  | `object(map)` | `nil`       |
-| `private`    | Private subnet id. | `object(map)` | `nil`       |
-
-
-### Appendix F
-
-`core_services_config` object specification.
-
-| **Variable**                  | **Description**                              | **Type**                 |
-| :---------------------------- | :------------------------------------------- | :----------------------- |
-| `alertmanager`                | _Alert Manager_ configuration.               | `any` _(see appendix G)_ |
-| `cert_manager`                | _Cert Manager_ configuration.                | `any` _(see appendix H)_ |
-| `external_dns`                | _External DNS_ configuration.                | `any` _(see appendix I)_ |
-| `fluentd`                     | _Fluentd_ configuration.                     | `any` _(see appendix J)_ |
-| `grafana`                     | _Grafana_ configuration.                     | `any` _(see appendix K)_ |
-| `ingress_internal_core`       | _Ingress_ configuration.                     | `any` _(see appendix L)_ |
-| `prometheus`                  | _Prometheus_ configuration.                  | `any` _(see appendix M)_ |
-| `monitor-diagnostic-settings` | _Monitor Diagnostic Settings_ configuration. | `any` _(see appendix N)_ |
-| `coredns`                     | _Coredns_ configuration.                     | `any` _(see appendix O)_ |
-
-
-### Appendix G
-
-`alertmanager` object specification.
+Specification for the `core_services_config.alertmanager` object.
 
 | **Variable** | **Description**                                                                               | **Type** | **Required** |
 | :----------- | :-------------------------------------------------------------------------------------------- | :------- | :----------- |
@@ -260,49 +256,52 @@ module "aks" {
 | `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `any`    | No           |
 | `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `any`    | No           |
 
+### Appendix F
+
+Specification for the `core_services_config.cert_manager` object.
+
+| **Variable**          | **Description**                                            | **Type**       | **Required** |
+| :-------------------- | :--------------------------------------------------------- | :------------- | :----------- |
+| `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for. | `list(string)` | No           |
+| `additional_issuers`  | Additional issuers to install into the cluster.            | `map(any)`     | No           |
+| `default_issuer_kind` | Kind of the default issuer.                                | `string`       | No           |
+| `default_issuer_name` | Name of the default issuer.                                | `string`       | No           |
+
+### Appendix G
+
+Specification for the `core_services_config.coredns` object.
+
+| **Variable**    | **Description**                                                          | **Type**      | **Required** |
+| :-------------- | :----------------------------------------------------------------------- | :------------ | :----------- |
+| `forward_zones` | Map of DNS zones and DNS server IP addresses to forward DNS requests to. | `map(string)` | No           |
+
 ### Appendix H
 
-`cert_manager` object specification.
+Specification for the `core_services_config.external_dns` object.
 
-| **Variable**              | **Description**                                                                                                               | **Type**      | **Required** |
-| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
-| `dns_zones`               | DNS zones that _Lets Encrypt_ can manage certificates for, must be set up as an _Azure DNS_ public zones in the subscription. | `map(string)` | No           |
-| `letsencrypt_environment` | _Lets Encrypt_ environment, supported values `staging` or `production`.                                                       | `string`      | No           |
-| `letsencrypt_email`       | Email address for certificate expiry notifications.                                                                           | `string`      | No           |
-| `additional_issuers`      | Additional issuers to install into the cluster.                                                                               | `map(any)`    | No           |
-| `azure_environment`       | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                            | `string  `    | No           |
+| **Variable**             | **Description**                                                                                                 | **Type**       | **Required** |
+| :----------------------- | :-------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
+| `additional_sources`     | Additional _Kubernetes_ objects to be watched.                                                                  | `list(string)` | No           |
+| `private_domain_filters` | Domains that can have DNS records created for them, these must be set up in the VPC as private hosted zones.    | `list(string)` | No           |
+| `public_domain_filters`  | Domains that can have DNS records created for them, these must be set up in the account as public hosted zones. | `list(string)` | No           |
 
 ### Appendix I
 
-`external_dns` object specification.
+Specification for the `core_services_config.fluentd` object.
 
-| **Variable**                  | **Description**                                                                                                              | **Type**       | **Required** |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `azure_environment`           | Azure Cloud environment, `AzurePublicCloud` (default) or `AzureUSGovernmentCloud`.                                           | `string  `     | No           |
-| `additional_sources`          | Additional _Kubernetes_ objects to be watched.                                                                               | `list(string)` | No           |
-| `public_resource_group_name`  | Name of the Azure Resource Group hosting public DNZ zones, public zones managed by external-dns must be in the same group.   | `string`       | No           |
-| `private_resource_group_name` | Name of the Azure Resource Group hosting private DNZ zones, private zones managed by external-dns must be in the same group. | `string`       | No           |
-| `public_zones`                | A list of public DNS zones to be managed by external-dns, must be hosted within the resource group input.                    | `list(string)` | No           |
-| `private_zones`               | A list of private DNS zones to be managed by external-dns, must be hosted within the resource group input.                   | `list(string)` | No           |
+| **Variable**       | **Description**                                                                                                                    | **Type**      | **Required** |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
+| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                              | `map(string)` | No           |
+| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                              | `map(string)` | No           |
+| `additional_env`   | Additional environment variables.                                                                                                  | `map(string)` | No           |
+| `debug`            | If `true` all logs are printed to stdout.                                                                                          | `bool`        | No           |
+| `filters`          | [Fluentd filter configuration](https://docs.fluentd.org/filter), can be multiple `<filter>` blocks.                                | `string`      | No           |
+| `routes`           | _Fluentd_ [fluent-plugin-route](https://github.com/tagomoris/fluent-plugin-route) configuration, can be multiple `<route>` blocks. | `string`      | No           |
+| `outputs`          | [Fluentd output configuration](https://docs.fluentd.org/output), can be multiple `<label>` blocks referencing the routes.          | `string`      | No           |
 
 ### Appendix J
 
-`fluentd` object specification.
-
-| **Variable**       | **Description**                                                                     | **Type**      | **Required** |
-| :----------------- | :---------------------------------------------------------------------------------- | :------------ | :----------- |
-| `image_repository` | Custom image repository to use for the Fluentd image, image_tag must also be set.   | `string`      | No           |
-| `image_tag`        | Custom image tag to use for the Fluentd image, image_repository must also be set.   | `string`      | No           |
-| `additional_env`   | Additional environment variables.                                                   | `list(any)`   | No           |
-| `debug`            | If `true` all logs are printed to stdout.                                           | `bool`        | No           |
-| `pod_labels`       | Labels to add to fluentd pods, used for pod-identity or cloud storage integrations. | `map(string)` | No           |
-| `filters`          | _Fluentd_ filter config split into multiple strings\_.                              | `string`      | No           |
-| `routes`           | _Fluentd_ route config split into multiple strings\_.                               | `string`      | No           |
-| `outputs`          | _Fluentd_ output config split into multiple strings\_.                              | `string`      | No           |
-
-### Appendix K
-
-`grafana` object specification.
+Specification for the `core_services_config.grafana` object.
 
 | **Variable**              | **Description**                | **Type**       | **Required** |
 | :------------------------ | :----------------------------- | :------------- | :----------- |
@@ -310,49 +309,40 @@ module "aks" {
 | `additional_data_sources` | Additional data sources.       | `list(any)`    | No           |
 | `additional_plugins`      | Additional plugins to install. | `list(string)` | No           |
 
+### Appendix K
+
+Specification for the `core_services_config.ingress_internal_core` object.
+
+| **Variable**       | **Description**                                                                     | **Type**       | **Required** |
+| :----------------- | :---------------------------------------------------------------------------------- | :------------- | :----------- |
+| `domain`           | Internal ingress domain.                                                            | `string`       | **Yes**      |
+| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used. | `string`       | No           |
+| `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.        | `list(string)` | No           |
+| `public_dns`       | If the internal ingress DNS should be public or private.                            | `bool`         | No           |
+
 ### Appendix L
 
-`ingress_internal_core` object specification.
-
-| **Variable**       | **Description**                                                                                                  | **Type**       | **Required** |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `domain`           | Internal ingress domain.                                                                                         | `string`       | **Yes**      |
-| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                              | `string`       | No           |
-| `lb_source_cidrs`  | Source CIDR ranges accepted by the ingress load balancer, defaults to `10.0.0.0/8` & `100.65.0.0/16` (POD CIDR). | `list(string)` | No           |
-
-### Appendix M
-
-`prometheus` object specification.
+Specification for the `core_services_config.prometheus` object.
 
 | **Variable**   | **Description**                     | **Type**       | **Required** |
 | :------------- | :---------------------------------- | :------------- | :----------- |
 | `remote_write` | Remote write endpoints for metrics. | `list(string)` | No           |
 
-### Appendix N
-
-`monitor-diagnostic-settings` object specification.
-
-| **Variable**         | **Description**                                                  | **Type** | **Required** |
-| :------------------- | :--------------------------------------------------------------- | :------- | :----------- |
-| `storage_account_id` | Storage account id to store a secondary copy of diagnostic logs. | `string` | No           |
-
-### Appendix O
-
-`coredns` object specification.
-
-| **Variable**    | **Description**                                                              | **Type**      | **Required** |
-| :-------------- | :--------------------------------------------------------------------------- | :------------ | :----------- |
-| `forward_zones` | The map of DNS zones and DNS server IP addresses to forward dns requests to. | `map(string)` | No           |
-
 ---
 
 ## Outputs
 
-| Name                                     | Description |
-| ---------------------------------------- | ----------- |
-| `aks_cluster_effective_outbound_ips_ids` | n/a         |
-| `cluster_id`                             | n/a         |
-| `cluster_name`                           | n/a         |
-| `kube_config`                            | n/a         |
-| `kubelet_identity`                       | n/a         |
-| `principal_id`                           | n/a         |
+| **Variable**                                 | **Description**                                                                                 | **Type**       |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------- | :------------- |
+| `cluster_id`                                 | Azure Kubernetes Service (AKS) managed cluster ID.                                              | `string`       |
+| `cluster_fqdn`                               | FQDN of the Azure Kubernetes Service managed cluster.                                           | `string`       |
+| `cluster_endpoint`                           | Endpoint for the Azure Kubernetes Service managed cluster API server.                           | `string`       |
+| `cluster_certificate_authority_data`         | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.    | `string`       |
+| `effective_outbound_ips`                     | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.    | `list(string)` |
+| `cluster_identity`                           | User assigned identity used by the cluster.                                                     | `object`       |
+| `kubelet_identity`                           | Kubelet identity.                                                                               | `object`       |
+| `grafana_identity`                           | Grafana identity.                                                                               | `object`       |
+| `node_resource_group_name`                   | Auto-generated resource group which contains the resources for this managed Kubernetes cluster. | `string`       |
+| `control_plane_log_analytics_workspace_id`   | ID of the default log analytics workspace created for control plane logs.                       | `string`       |
+| `control_plane_log_analytics_workspace_name` | Name of the default log analytics workspace created for control plane logs.                     | `string`       |
+| `windows_config`                             | Windows configuration.                                                                          | `object`       |

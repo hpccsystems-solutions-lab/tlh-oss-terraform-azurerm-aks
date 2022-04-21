@@ -1,15 +1,5 @@
 locals {
-
-  letsencrypt_endpoint = {
-    staging    = "https://acme-staging-v02.api.letsencrypt.org/directory"
-    production = "https://acme-v02.api.letsencrypt.org/directory"
-  }
-
-  zones = keys(var.dns_zones)
-
-  namespace = "cert-manager"
-
-  chart_version = "1.7.1"
+  chart_version = "1.7.2"
 
   chart_values = {
     installCRDs = false
@@ -18,10 +8,9 @@ locals {
       priorityClassName = "system-cluster-critical"
     }
 
-    podLabels = {
-      aadpodidbinding        = module.identity.name
-      "lnrs.io/k8s-platform" = "true"
-    }
+    podLabels = merge(var.labels, {
+      aadpodidbinding = module.identity.name
+    })
 
     securityContext = {
       fsGroup = 65534
@@ -37,31 +26,36 @@ locals {
         interval           = "60s"
         scrapeTimeout      = "30s"
         labels = {
-          "lnrs.io/monitoring-platform" = "core-prometheus"
+          "lnrs.io/monitoring-platform" = "true"
         }
       }
     }
 
     nodeSelector = {
-      "kubernetes.io/os"          = "linux"
-      "kubernetes.azure.com/mode" = "system"
+      "kubernetes.io/os" = "linux"
+      "lnrs.io/tier"     = "system"
     }
 
-    tolerations = [{
-      key      = "CriticalAddonsOnly"
-      operator = "Exists"
-      effect   = "NoSchedule"
-    }]
+    tolerations = [
+      {
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+      },
+      {
+        key      = "system"
+        operator = "Exists"
+      }
+    ]
 
     resources = {
       requests = {
         cpu    = "100m"
-        memory = "128Mi"
+        memory = "256Mi"
       }
 
       limits = {
         cpu    = "500m"
-        memory = "256Mi"
+        memory = "512Mi"
       }
     }
 
@@ -72,8 +66,8 @@ locals {
 
     cainjector = {
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
@@ -90,20 +84,20 @@ locals {
       resources = {
         requests = {
           cpu    = "100m"
-          memory = "128Mi"
+          memory = "256Mi"
         }
 
         limits = {
           cpu    = "500m"
-          memory = "256Mi"
+          memory = "512Mi"
         }
       }
     }
 
     startupapicheck = {
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
@@ -134,9 +128,11 @@ locals {
       securePort  = 10251
       hostNetwork = true
 
+      replicaCount = 2
+
       nodeSelector = {
-        "kubernetes.io/os"          = "linux"
-        "kubernetes.azure.com/mode" = "system"
+        "kubernetes.io/os" = "linux"
+        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [
@@ -174,25 +170,56 @@ locals {
       apiVersion = "cert-manager.io/v1"
       kind       = "ClusterIssuer"
       metadata = {
-        name = "letsencrypt-issuer"
+        name   = "letsencrypt"
+        labels = var.labels
       }
       spec = {
         acme = {
           email  = "systems.engineering@reedbusiness.com"
-          server = local.letsencrypt_endpoint[lower(var.letsencrypt_environment)]
+          server = "https://acme-v02.api.letsencrypt.org/directory"
           privateKeySecretRef = {
-            name = "letsencrypt-issuer-privatekey"
+            name = "issuer-letsencrypt-privatekey"
           }
-          solvers = [for zone, rg in var.dns_zones : {
+          solvers = [for zone in var.acme_dns_zones : {
             selector = {
               dnsZones = [zone]
             }
             dns01 = {
               azureDNS = {
-                subscriptionID    = var.azure_subscription_id
-                resourceGroupName = rg
-                hostedZoneName    = zone
                 environment       = var.azure_environment
+                subscriptionID    = var.subscription_id
+                resourceGroupName = var.dns_resource_group_lookup[zone]
+                hostedZoneName    = zone
+              }
+            }
+          }]
+        }
+      }
+    },
+    letsencrypt_staging = {
+      apiVersion = "cert-manager.io/v1"
+      kind       = "ClusterIssuer"
+      metadata = {
+        name   = "letsencrypt-staging"
+        labels = var.labels
+      }
+      spec = {
+        acme = {
+          email  = "systems.engineering@reedbusiness.com"
+          server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+          privateKeySecretRef = {
+            name = "issuer-letsencrypt-staging-privatekey"
+          }
+          solvers = [for zone in var.acme_dns_zones : {
+            selector = {
+              dnsZones = [zone]
+            }
+            dns01 = {
+              azureDNS = {
+                environment       = var.azure_environment
+                subscriptionID    = var.subscription_id
+                resourceGroupName = var.dns_resource_group_lookup[zone]
+                hostedZoneName    = zone
               }
             }
           }]
@@ -200,33 +227,6 @@ locals {
       }
     }
   })
-
-  certificates = {
-    ingress_internal_core_wildcard = {
-      apiVersion = "cert-manager.io/v1"
-      kind       = "Certificate"
-
-      metadata = {
-        name      = "internal-ingress-wildcard"
-        namespace = local.namespace
-      }
-
-      spec = {
-        dnsNames = [
-          var.ingress_internal_core_domain,
-          "*.${var.ingress_internal_core_domain}"
-        ]
-
-        issuerRef = {
-          group = "cert-manager.io"
-          kind  = "ClusterIssuer"
-          name  = "letsencrypt-issuer"
-        }
-
-        secretName = "internal-ingress-wildcard-cert"
-      }
-    }
-  }
 
   crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

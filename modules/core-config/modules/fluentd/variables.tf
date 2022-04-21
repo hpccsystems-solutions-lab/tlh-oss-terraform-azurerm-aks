@@ -1,21 +1,36 @@
-variable "azure_subscription_id" {
+variable "subscription_id" {
+  description = "ID of the subscription."
   type        = string
-  description = "The GUID of your Azure subscription"
-
-  validation {
-    condition     = can(regex("[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}", var.azure_subscription_id))
-    error_message = "The \"azure_subscription_id\" variable must be a GUID (xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."
-  }
 }
 
 variable "location" {
-  description = "Azure region in which to build resources."
+  description = "Azure region in which the AKS cluster is located."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "Name of the resource group containing the AKS cluster."
   type        = string
 }
 
 variable "cluster_name" {
-  description = "The name of the AKS cluster."
+  description = "Name of the Azure Kubernetes managed cluster."
   type        = string
+}
+
+variable "namespace" {
+  description = "Namespace to install the Kubernetes resources into."
+  type        = string
+}
+
+variable "labels" {
+  description = "Labels to be applied to all Kubernetes resources."
+  type        = map(string)
+}
+
+variable "zones" {
+  description = "The number of zones this chart should be run on."
+  type        = number
 }
 
 variable "image_repository" {
@@ -30,17 +45,12 @@ variable "image_tag" {
 
 variable "additional_env" {
   description = "Additional environment variables."
-  type        = list(any)
+  type        = map(string)
 }
 
 variable "debug" {
   description = "If Fluentd should write all processed log entries to stdout."
   type        = bool
-}
-
-variable "pod_labels" {
-  description = "labels to assign to fluentd pods, used for pod-identity and cloud storage integration."
-  type        = map(any)
 }
 
 variable "filters" {

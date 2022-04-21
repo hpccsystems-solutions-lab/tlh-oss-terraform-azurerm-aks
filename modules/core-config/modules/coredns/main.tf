@@ -1,22 +1,17 @@
-resource "kubectl_manifest" "configmap" {
+resource "kubectl_manifest" "resource_files" {
+  for_each = local.resource_files
 
-  count = length(var.forward_zones) > 0 ? 1 : 0
+  yaml_body = file(each.value)
 
-  yaml_body = <<YAML
-  apiVersion: v1
-  kind: ConfigMap
-  metadata:
-    name: coredns-custom
-    namespace: kube-system
-  data:
-    onpremzones.server: |
-      %{ for zone, ip in var.forward_zones }
-      ${zone}:53 {
-          forward . ${ip}
-      }
-      %{ endfor }
-  YAML
-  
   server_side_apply = true
+  wait              = true
 }
 
+resource "kubectl_manifest" "resource_objects" {
+  for_each = local.resource_objects
+
+  yaml_body = yamlencode(each.value)
+
+  server_side_apply = true
+  wait              = true
+}

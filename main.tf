@@ -1,97 +1,122 @@
-module "nodes" {
-  source = "./modules/nodes"
+module "cluster" {
+  source = "./modules/cluster"
 
-  cluster_name         = local.cluster_name
-  orchestrator_version = local.cluster_patch_version
-
-  network_plugin = local.network_plugin
-
-  location            = var.location
-  resource_group_name = var.resource_group_name
-
-  subnets = {
-    private = var.virtual_network.subnets.private
-    public  = var.virtual_network.subnets.public
-  }
-
-  ingress_node_pool = var.ingress_node_pool
-  node_pools        = var.node_pools
-  tags              = local.tags
+  location                       = var.location
+  resource_group_name            = var.resource_group_name
+  cluster_name                   = var.cluster_name
+  cluster_version_full           = local.cluster_version_full
+  sku_tier_paid                  = var.sku_tier_paid
+  cluster_endpoint_public_access = var.cluster_endpoint_public_access
+  cluster_endpoint_access_cidrs  = var.cluster_endpoint_access_cidrs
+  network_plugin                 = var.network_plugin
+  subnet_id                      = local.subnet_id
+  route_table_id                 = local.route_table_id
+  podnet_cidr_block              = var.podnet_cidr_block
+  admin_group_object_ids         = var.admin_group_object_ids
+  bootstrap_vm_size              = local.bootstrap_vm_size
+  logging_storage_account_id     = var.logging_storage_account_id
+  oms_agent                      = local.experimental_oms_agent
+  oms_log_analytics_workspace_id = local.experimental_oms_log_analytics_workspace_id
+  windows_support                = local.experimental_windows_support
+  tags                           = local.tags
+  experimental                   = var.experimental
 }
 
-module "kubernetes" {
-  source = "github.com/Azure-Terraform/terraform-azurerm-kubernetes.git?ref=v4.2.2"
+module "rbac" {
+  source = "./modules/rbac"
 
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = local.tags
+  azure_env               = var.azure_env
+  cluster_id              = module.cluster.id
+  azuread_clusterrole_map = var.azuread_clusterrole_map
+  labels                  = local.labels
 
-  cluster_name = local.cluster_name
-  dns_prefix   = local.cluster_name
-
-  kubernetes_version = local.cluster_patch_version
-  sku_tier           = var.sku_tier
-
-  enable_azure_policy   = false
-  enable_kube_dashboard = false
-
-  network_plugin          = local.network_plugin
-  network_policy          = "calico"
-  pod_cidr                = (local.network_plugin == "kubenet" ? var.podnet_cidr : null)
-  network_profile_options = local.network_profile_options
-
-  virtual_network = {
-    subnets = {
-      private = var.virtual_network.subnets.private
-      public  = var.virtual_network.subnets.public
-    }
-    route_table_id = var.virtual_network.route_table_id
-  }
-
-  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-
-  node_pools        = module.nodes.node_pools
-  default_node_pool = module.nodes.default_node_pool
-
-  rbac = {
-    enabled        = true
-    ad_integration = true
-  }
-
-  windows_profile = (module.nodes.windows_config.enabled ? {
-    admin_username = module.nodes.windows_config.admin_username
-    admin_password = module.nodes.windows_config.admin_password
-  } : null)
-
-  log_analytics_workspace_id = var.log_analytics_workspace_id
+  depends_on = [
+    module.cluster
+  ]
 }
 
-module "core-config" {
-  depends_on = [module.kubernetes]
+module "node_groups" {
+  source = "./modules/node-groups"
 
+  subscription_id      = local.subscription_id
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  cluster_id           = module.cluster.id
+  cluster_name         = var.cluster_name
+  cluster_version_full = local.cluster_version_full
+  network_plugin       = var.network_plugin
+  subnet_id            = local.subnet_id
+  availability_zones   = local.availability_zones
+  node_group_templates = var.node_group_templates
+  bootstrap_vm_size    = local.bootstrap_vm_size
+  azure_auth_env       = local.azure_auth_env
+  labels               = local.labels
+  tags                 = local.tags
+  experimental         = var.experimental
+
+  depends_on = [
+    module.cluster
+  ]
+}
+
+module "core_config" {
   source = "./modules/core-config"
 
-  resource_group_name = var.resource_group_name
+  azure_env           = var.azure_env
+  tenant_id           = local.tenant_id
+  subscription_id     = local.subscription_id
   location            = var.location
+  resource_group_name = var.resource_group_name
 
-  cluster_name    = module.kubernetes.name
-  cluster_id      = module.kubernetes.id
+  cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
+  network_plugin  = var.network_plugin
 
-  azure_environment = var.azure_environment
+  subnet_name        = var.subnet_name
+  availability_zones = local.availability_zones
 
-  azuread_clusterrole_map = var.azuread_clusterrole_map
+  kubelet_identity_id      = module.cluster.kubelet_identity.object_id
+  node_resource_group_name = module.cluster.node_resource_group_name
 
-  aks_identity                 = module.kubernetes.kubelet_identity.object_id
-  aks_node_resource_group_name = module.kubernetes.node_resource_group
-  network_plugin               = local.network_plugin
+  dns_resource_group_lookup = var.dns_resource_group_lookup
 
-  azure_tenant_id       = data.azurerm_client_config.current.tenant_id
-  azure_subscription_id = data.azurerm_client_config.current.subscription_id
+  core_services_config = var.core_services_config
 
-  log_analytics_workspace_id = var.log_analytics_workspace_id
+  control_plane_log_analytics_workspace_id = module.cluster.control_plane_log_analytics_workspace_id
+  oms_agent                                = local.experimental_oms_agent
+  oms_log_analytics_workspace_id           = local.experimental_oms_log_analytics_workspace_id
 
-  config = var.core_services_config
+  labels = local.labels
+  tags   = local.tags
 
-  tags = local.tags
+  experimental = var.experimental
+
+  depends_on = [
+    module.rbac,
+    module.node_groups
+  ]
+}
+
+resource "kubernetes_config_map" "default" {
+  metadata {
+    name      = "tfmodule-${local.module_name}"
+    namespace = "kube-system"
+
+    labels = local.labels
+  }
+
+  data = {
+    version = local.module_version
+
+    config = jsonencode({
+      cluster = {
+        name    = var.cluster_name
+        version = local.cluster_version_full
+      }
+    })
+  }
+
+  depends_on = [
+    module.core_config
+  ]
 }

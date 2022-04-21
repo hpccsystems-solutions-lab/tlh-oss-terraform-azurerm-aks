@@ -1,29 +1,46 @@
-resource "azurerm_user_assigned_identity" "main" {
-  name                = "${var.cluster_name}-${var.identity_name}"
-  resource_group_name = var.resource_group_name
+resource "azurerm_user_assigned_identity" "default" {
+  name = var.name
+
   location            = var.location
-  tags                = var.tags
+  resource_group_name = var.resource_group_name
+
+  tags = var.tags
 }
 
-resource "azurerm_role_assignment" "main" {
+resource "azurerm_role_assignment" "default" {
   count = length(var.roles)
 
+  principal_id = azurerm_user_assigned_identity.default.principal_id
+
   ## Support both (mutually exclusive) options depending on the input (if an Azure path use role_definition_id)
-  role_definition_id   = length(regexall("^/subscription", var.roles[count.index].role_definition_resource_id)) > 0 ? var.roles[count.index].role_definition_resource_id : null
-  role_definition_name = length(regexall("^/subscription", var.roles[count.index].role_definition_resource_id)) > 0 ? null : var.roles[count.index].role_definition_resource_id
-
-  scope              = var.roles[count.index].scope
-  principal_id       = azurerm_user_assigned_identity.main.principal_id
+  role_definition_id   = length(regexall("^/subscription", var.roles[count.index].id)) > 0 ? var.roles[count.index].id : null
+  role_definition_name = length(regexall("^/subscription", var.roles[count.index].id)) > 0 ? null : var.roles[count.index].id
+  scope                = var.roles[count.index].scope
 }
 
-resource "kubectl_manifest" "identity" {
-  yaml_body = yamlencode(local.identity)
-
-  server_side_apply = true
+resource "time_sleep" "finalizer" {
+  destroy_duration = "30s"
 }
 
-resource "kubectl_manifest" "identity_binding" {
-  yaml_body = yamlencode(local.identity_binding)
+resource "kubectl_manifest" "azure_identity" {
+  yaml_body = yamlencode(local.azure_identity)
 
   server_side_apply = true
+  wait              = true
+
+  depends_on = [
+    time_sleep.finalizer,
+    azurerm_user_assigned_identity.default
+  ]
+}
+
+resource "kubectl_manifest" "azure_identity_binding" {
+  yaml_body = yamlencode(local.azure_identity_binding)
+
+  server_side_apply = true
+  wait              = true
+
+  depends_on = [
+    kubectl_manifest.azure_identity
+  ]
 }

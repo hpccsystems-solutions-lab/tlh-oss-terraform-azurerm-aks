@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## Upgrading Pre-Release Versions
+## Upgrading From Pre v1.0.0-beta.10 Versions
 
-To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md) for instructions and troubleshooting steps.
+All clusters created with a module version older than `v1.0.0-beta.10` need to be destroyed and re-created with the latest version of the module.
 
 ---
 
@@ -21,13 +21,40 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 ### Removed -->
 
 ## [v1.0.0-beta.10] - UNRELEASED
+
+> **Important**
+> This release is a significant breaking change and intended to be the last in the `beta` series with a stable `rc` being planned for the next release.
+
 ### Added
+
+- Support for `cpu` node types. [@stevehipwell](https://github.com/stevehipwell)
+- Support for `gp`, `gpd`, `mem` & `memd` `v2` node types. [@stevehipwell](https://github.com/stevehipwell)
+- Node type & size documentation has been added to the module README. [@stevehipwell](https://github.com/stevehipwell)
+
 ### Changed
+
+- The system node pools can now be upgraded automatically by the module. [@stevehipwell](https://github.com/stevehipwell)
+- The node image versions should be automatically upgraded. [@stevehipwell](https://github.com/stevehipwell)
+- The AKS cluster now only uses a single subnet with isolation expected to be clontrolled by node taints and network restrictions provided by `NetworkPolicies`. [@stevehipwell](https://github.com/stevehipwell)
+- Control plane logging has been turned on for all types. [@stevehipwell](https://github.com/stevehipwell)
+- Cert manager now has multiple ACME issuers installed so you can use the right one for each certificate. [@stevehipwell](https://github.com/stevehipwell)
+- The internal ingress certificate is now created in the ingress namespace. [@stevehipwell](https://github.com/stevehipwell)
+- Module variables have been changed, check the README for more details. [@stevehipwell](https://github.com/stevehipwell)
+- Kubernetes based providers must be configured to use the `exec` plugin pattern. [@stevehipwell](https://github.com/stevehipwell)
+- The module architecture has been flattened and simplified. [@stevehipwell](https://github.com/stevehipwell)
+- This module can be used in a new Terraform workspace first apply as no `data` lookups are used that aren't known at plan. [@stevehipwell](https://github.com/stevehipwell)
+- Unsupported features, Windows nodes and OMS Agent, have been moved behind the `experimental` variable. [@stevehipwell](https://github.com/stevehipwell)
+- Terraform dependency graph has been updated to make sure that create and destroy steps happen in the correct order. [@stevehipwell](https://github.com/stevehipwell)
+
 ### Updated
-### Deprecated
+
+- The `azurerm` Terraform provider has been updated to `v3`, this means all modules and resources in your workspace will need updating to support this. [@stevehipwell](https://github.com/stevehipwell)
+- All core services have been aligned to the versions used in the EKS module. [@stevehipwell](https://github.com/stevehipwell)
+
 ### Removed
 
-<br>
+- The community module dependency has been removed. [@stevehipwell](https://github.com/stevehipwell)
+- The module no longer exposes Kubernetes credentials, you need to use `az` and `kubelogin` to connect to the cluster. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.9] - 2022-03-14
 
@@ -36,8 +63,6 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - `fluent-bit` upgrade chart to [0.19.20](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.19.20) ([#353](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/353)) [@james1miller93](https://github.com/james1miller93)
 - `ingress-nginx` upgrade chart to [4.0.18](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.0.18) ([#358](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/358)) [@james1miller93](https://github.com/james1miller93)
 - `kube-prometheus-stack` upgrade chart to [33.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-33.2.0) ([#354](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/354)) [@james1miller93](https://github.com/james1miller93)
-
-<br>
 
 ## [v1.0.0-beta.8] - 2022-02-28
 
@@ -60,13 +85,9 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - Updated documentation. [@stevehipwell](https://github.com/stevehipwell)
 - Update version of upstream AKS module. [@dutsmiller](url)
 
-<br/>
-
 > **IMPORTANT** - As part of the `cert-manager` upgrade, all of the cert manager crds need to be patched manually `prior` to upgrading to the `v1.0.0-beta.8` tag. An [issue](https://github.com/cert-manager/cert-manager/issues/4831) has been raised against the upstream repository to track this. Please see [UPGRADE.md](/UPGRADE.md#from-v100-beta7-to-v100-beta8) for details.
 
 > **IMPORTANT** - The _Cert Manager_ API versions `v1alpha2`, `v1alpha3`, and `v1beta1` have been removed. All _Cert Manager_ custom resources must only use `v1` before upgrading to this release. All certificates are already stored as `v1`, after this release you can only access deprecated API resources through the _Cert Manager_ API.
-
-<br/>
 
 ## [v1.0.0-beta.7] - 2022-02-08
 
@@ -95,15 +116,11 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 - `module` - dropped support for Kubernetes version 1.19 (see **IMPORTANT** note below) [@dutsmiller](url)
 
-<br>
-
 > **IMPORTANT** - Dropped support for Kubernetes version 1.19, patch versions updated for 1.20 and 1.21. This will instigate a cluster upgrade, refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade instructions and troubleshooting steps.
 
 > **IMPORTANT** - Due to an upgrade of the `kube-state-metrics` chart as part of the `kube-prometheus-stack` upgrade, removal of its deployment needs to done manually `prior` to upgrading to the `v1.0.0-beta.7` tag. Please see [UPGRADE.md](/UPGRADE.md#from-v100-beta6-to-v100-beta7) for details.
 
 > **IMPORTANT** - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
-
-<br>
 
 ## [v1.0.0-beta.6] - 2022-01-14
 
@@ -126,11 +143,7 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - `cert-manager` - updated chart and CRDs to 1.6.1 [@sossickd](url)
 - `kubectl provider` - enabled server-side-apply for fluent-bit, cert-manager [@sossickd](url)
 
-<br>
-
 > **IMPORTANT** - Providers have now been removed from the module which requires changes to the Terraform workspace. All providers **must** be declared and configuration for the `kubernetes`, `kubectl` & `helm` providers **must** be set. See [examples](/examples) for valid configuration and review the [CHANGELOG](/CHANGELOG.md) on each release.
-
-<br>
 
 ## [v1.0.0-beta.5] - 2021-12-14
 
@@ -140,6 +153,7 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 - `CSI` - added local volume provisioner for local nvme & ssd disks [@dutsmiller](url)
 - `Diagnostics` - AKS control plane logs written to log analytics workspace in cluster resource group [@sossickd](url)
+
 ### Changed
 
 - `API` - added version field to node_types (see **IMPORTANT** note below) [@dutsmiller](url)
@@ -165,19 +179,16 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - `Tags` - added cloud tags to all provisioned resources [@prikesh-patel](url)
 - `VM Types` - added gpd, mem, memd, and stor vm types (see [matrix](./modules/nodes/matrix.md) for node types) [@dutsmiller](url)
 
-<br>
-
 > **IMPORTANT** - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The beta.4 node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility .  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
 
 > **IMPORTANT** - If you are currently using `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
-
-<br>
 
 ## [v1.0.0-beta.4] - 2021-11-02
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Changed
+
 - ingress-nginx chart updated to version 4.0.6 [@jamurtag](url)
 - aad-pod-identity chart updated to version 4.1.5 [@jamurtag](url)
 - aad-pod-identity requests and limits lowered for both NMI and MIC pods [@jamurtag](url)
@@ -193,19 +204,19 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 - Set `allowSnippetAnnotations` to `false` on ingress-nginx chart to mitigate [security vulnerability](https://www.armosec.io/blog/new-kubernetes-high-severity-vulnerability-alert-cve-2021-25742) [@prikesh-patel](url)
 - Updated support policy regarding Windows node pools and nested Terraform modules [@jamurtag](url)
 
-<br>
-
 ## [v1.0.0-beta.3] - 2021-09-29
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - AzureUSGovernmentCloud support in cert-manager [@jhisc](url)
 - Helm chart for external-dns to create dns records in Azure private dns-zones [@sossickd](url)
 - Grafana dashboard for external-dns [@sossickd](url)
 - Grafana dashboard for ingress_internal_core [@sossickd](url)
 
 ### Changed
+
 - Helm chart renamed from external-dns to external-dns-public [@sossickd](url)
 - External dns helm chart moved from [bitnami external-dns](https://github.com/bitnami/charts/tree/master/bitnami/external-dns) to [kubernetes-sigs external-dns](https://github.com/kubernetes-sigs/external-dns/tree/master/charts/external-dns) [@sossickd](url)
 - Updated ingress_internal_core to helm version 4.0.2 [@sossickd](url)
@@ -213,30 +224,30 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 
 > **IMPORTANT** - Please change the core_services_config input for external_dns.
 
-<br>
-
 ## [v1.0.0-beta.2] - 2021-09-10
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - Cluster ID output [@dutsmiller](url)
 
 ### Changed
+
 - Set ingress-nginx & PrometheusOperator adminissionWebhook to run on system nodepool [@jamurtag](url)
 - Output changed:  aks_cluster_name -> cluster_name [@dutsmiller](url)
-
-<br>
 
 ## [v1.0.0-beta.1] - 2021-08-20
 
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - Azure Log Analytics support [@appkins](url)
 - Ingress node pool [@dutsmiller](url)
 
 ### Changed
+
 - Fix default-ssl-certificate in ingress_internal_core module [@sossickd](url)
 - User guide updates [@jamurtag](url)
 
@@ -245,15 +256,18 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - Support for k8s 1.21 [@dutsmiller](url)
 
 ### Changed
+
 - Node pool variable changes [@dutsmiller](url)
 - Change pod_cidr variable to podnet_cidr [@dutsmiller](url) 
 - Change core_services_config ingress_core_internal to ingress_internal_core [@dutsmiller](url)
 - Change multi-vmss node pool capacity format [@dutsmiller](url)
 
 ### Removed
+
 - Remove configmaps, secrets and namespaces variables [@dutsmiller](url)
 - Remove assignment of public IPs for nodes in public subnet [@dutsmiller](url)
 
@@ -262,16 +276,19 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - Calico network policy support [@jamurtag](url)
 - AKS API firewall support [@dutsmiller](url)
 
 ### Changed
+
 - Update README and simplify core_services_config variable input [@jamurtag](url)
 - Update upstream AKS module version [@dutsmiller](url)
 - Change name of UAI for AKS [@dutsmiller](url)
 - Force host encryption to true [@dutsmiller](url)
  
  ### Removed
+
 - Remove additional_priority_classes and additional_storage_classes api options [@jamurtag](url)
 - Remove autodoc from repo [@dutsmiller](url)
 
@@ -280,6 +297,7 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Changed
+
 - Tolerate stateful services on system nodepools [@jamurtag](url)
 - Rename config variable to core_services_config [@jamurtag](url)
 
@@ -288,8 +306,10 @@ To upgrade between pre-release versions please refer to [UPGRADE.md](/UPGRADE.md
 > **IMPORTANT** - This pre-release isn't guaranteed to be stable and should not be used in production.
 
 ### Added
+
 - Added wildcard certificate for core services [@sossickd](url)
 - Documentation for cert-manager, external-dns, priority classes and storage claasses [@fabiendelpierre](url)
 
 ### Changed
+
 - Node pool format to match EKS [@dutsmiller](url)

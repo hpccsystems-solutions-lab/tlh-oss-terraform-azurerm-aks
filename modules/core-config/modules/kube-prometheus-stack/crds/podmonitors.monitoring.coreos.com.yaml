@@ -2,6 +2,8 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: podmonitors.monitoring.coreos.com
+  labels:
+    lnrs.io/k8s-platform: "true"
 spec:
   group: monitoring.coreos.com
   names:
@@ -71,7 +73,7 @@ spec:
                         in contrast to a list restricting them.
                       type: boolean
                     matchNames:
-                      description: List of namespace names.
+                      description: List of namespace names to select from.
                       items:
                         type: string
                       type: array
@@ -191,6 +193,11 @@ spec:
                         required:
                           - key
                         type: object
+                      followRedirects:
+                        description:
+                          FollowRedirects configures whether scrape requests
+                          follow HTTP 3xx redirects.
+                        type: boolean
                       honorLabels:
                         description:
                           HonorLabels chooses the metric's labels on collisions
@@ -258,6 +265,11 @@ spec:
                                 separator and matched against the configured regular
                                 expression for the replace, keep, and drop actions.
                               items:
+                                description:
+                                  LabelName is a valid Prometheus label name
+                                  which may only contain ASCII letters, numbers, as
+                                  well as underscores.
+                                pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
                                 type: string
                               type: array
                             targetLabel:
@@ -387,8 +399,9 @@ spec:
                         description:
                           "RelabelConfigs to apply to samples before scraping.
                           Prometheus Operator automatically adds relabelings for a few
-                          standard Kubernetes fields and replaces original scrape job
-                          name with __tmp_prometheus_job_name. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config"
+                          standard Kubernetes fields. The original scrape job's name
+                          is available via the `__tmp_prometheus_job_name` label. More
+                          info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config"
                         items:
                           description:
                             "RelabelConfig allows dynamic rewriting of the
@@ -439,6 +452,11 @@ spec:
                                 separator and matched against the configured regular
                                 expression for the replace, keep, and drop actions.
                               items:
+                                description:
+                                  LabelName is a valid Prometheus label name
+                                  which may only contain ASCII letters, numbers, as
+                                  well as underscores.
+                                pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
                                 type: string
                               type: array
                             targetLabel:
@@ -674,9 +692,3 @@ spec:
           type: object
       served: true
       storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
