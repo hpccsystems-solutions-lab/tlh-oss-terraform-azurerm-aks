@@ -526,6 +526,7 @@ locals {
   resource_group_id                             = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
   oms_log_analytics_workspace_resource_group_id = var.oms_agent && length(var.oms_log_analytics_workspace_id) > 0 ? regex("([[:ascii:]]*)(/providers/)", var.oms_log_analytics_workspace_id)[0] : ""
 
-  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
-  resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+  resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
+  dashboard_templates = { for x in fileset(path.module, "resources/configmap-dashboard-*.yaml.tpl") : basename(x) => { path = "${path.module}/${x}", vars = { resource_id = var.control_plane_log_analytics_workspace_id, subscription_id = var.subscription_id } } }
 }

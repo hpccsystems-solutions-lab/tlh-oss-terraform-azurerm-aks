@@ -36,6 +36,19 @@ resource "kubectl_manifest" "resource_files" {
   ]
 }
 
+resource "kubectl_manifest" "resource_template_objects" {
+  for_each = local.dashboard_templates
+
+  yaml_body = templatefile(each.value.path, each.value.vars)
+
+  server_side_apply = true
+  wait              = true
+
+  depends_on = [
+    kubectl_manifest.crds
+  ]
+}
+
 resource "helm_release" "default" {
   name      = "kube-prometheus-stack"
   namespace = var.namespace

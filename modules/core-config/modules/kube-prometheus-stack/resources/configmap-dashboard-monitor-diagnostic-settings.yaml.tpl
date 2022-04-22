@@ -135,7 +135,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -155,9 +155,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -221,7 +221,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"I\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -241,9 +241,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -307,7 +307,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"W\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -327,9 +327,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -393,7 +393,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"E\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -413,9 +413,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -479,7 +479,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where Category has \"$category\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -499,9 +499,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -565,7 +565,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"I\"\n| where Category has \"$category\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -585,9 +585,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -651,7 +651,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"W\"\n| where Category has \"$category\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -671,9 +671,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -737,7 +737,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s startswith \"E\"\n| where Category has \"$category\"\n| summarize count()",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -757,9 +757,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -845,7 +845,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics\n| where $__timeFilter(TimeGenerated)\n| where log_s has \"$search\"\n| where Category has \"$category\"\n| summarize count() by Category, bin(TimeGenerated, 15m)\n| order by TimeGenerated asc",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "time_series"
               },
               "azureMonitor": {
@@ -865,9 +865,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -903,7 +903,7 @@ data:
               },
               "azureLogAnalytics": {
                 "query": "AzureDiagnostics                                                            //the table to query (e.g. Usage, Heartbeat, Perf)\n| where $__timeFilter()\n| project TimeGenerated, Category, stream_s, log_s, pod_s, Resource, ResourceGroup, SubscriptionId\n| where log_s has \"$search\"\n| where Category has \"$category\"\n| top 1000 by TimeGenerated desc",
-                "resource": "${azurerm_log_analytics_workspace.control-plane-law.id}",
+                "resource": "$azureLogAnalytics_resource",
                 "resultFormat": "table"
               },
               "azureMonitor": {
@@ -924,9 +924,9 @@ data:
               },
               "queryType": "Azure Log Analytics",
               "refId": "A",
-              "subscription": "${var.azure_subscription_id}",
+              "subscription": "$subscription",
               "subscriptions": [
-                "${var.azure_subscription_id}"
+                "$subscription"
               ]
             }
           ],
@@ -1012,6 +1012,52 @@ data:
             "query": "",
             "skipUrlSync": false,
             "type": "textbox"
+          },
+          {
+            "current": {
+              "selected": true,
+              "text": "${resource_id}",
+              "value": "${resource_id}"
+            },
+            "definition": "",
+            "hide": 2,
+            "includeAll": false,
+            "label": "Azure Log Analytics Control Plane ID",
+            "multi": false,
+            "name": "azureLogAnalytics_resource",
+            "options": [],
+            "query": {
+              "query": "",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "type": "query"
+          },
+          {
+            "current": {
+              "selected": true,
+              "text": "${subscription_id}",
+              "value": "${subscription_id}"
+            },
+            "definition": "",
+            "hide": 2,
+            "includeAll": false,
+            "label": "Subscription ID",
+            "multi": false,
+            "name": "subscription",
+            "options": [],
+            "query": {
+              "query": "",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "type": "query"
           }
         ]
       },
