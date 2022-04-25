@@ -27,6 +27,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Added
 
+- Added experimental support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli). [@stevehipwell](https://github.com/stevehipwell)
 - Support for `cpu` node types. [@stevehipwell](https://github.com/stevehipwell)
 - Support for `gp`, `gpd`, `mem` & `memd` `v2` node types. [@stevehipwell](https://github.com/stevehipwell)
 - Node type & size documentation has been added to the module README. [@stevehipwell](https://github.com/stevehipwell)

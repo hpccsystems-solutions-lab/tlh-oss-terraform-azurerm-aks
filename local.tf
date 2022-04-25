@@ -9,10 +9,11 @@ locals {
   module_version = "v1.0.0-beta"
 
   # az aks get-versions --location eastus --output table
-  cluster_full_versions = {
-    # "1.22" = "1.22.6"
+  cluster_full_versions = merge({
     "1.21" = "1.21.9"
-  }
+    }, lookup(var.experimental, "aks_v1_22", false) ? {
+    "1.22" = "1.22.6"
+  } : {})
 
   availability_zones = [1, 2, 3]
 
