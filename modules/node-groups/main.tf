@@ -39,7 +39,6 @@ module "bootstrap_node_group_hack" {
   cluster_name        = var.cluster_name
   subnet_id           = var.subnet_id
   bootstrap_vm_size   = var.bootstrap_vm_size
-  azure_auth_env      = var.azure_auth_env
 
   depends_on = [
     module.system_node_groups

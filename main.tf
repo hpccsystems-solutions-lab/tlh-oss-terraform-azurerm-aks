@@ -50,7 +50,6 @@ module "node_groups" {
   availability_zones   = local.availability_zones
   node_group_templates = var.node_group_templates
   bootstrap_vm_size    = local.bootstrap_vm_size
-  azure_auth_env       = local.azure_auth_env
   labels               = local.labels
   tags                 = local.tags
   experimental         = var.experimental

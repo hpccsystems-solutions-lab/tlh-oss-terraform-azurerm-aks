@@ -41,12 +41,6 @@ locals {
     "lnrs.io_k8s-platform"                      = "true"
   })
 
-  azure_auth_env = merge({
-    AZURE_TENANT_ID       = local.tenant_id
-    AZURE_SUBSCRIPTION_ID = local.subscription_id
-    AZURE_CLIENT_ID       = local.client_id
-  }, var.azure_auth_env)
-
   # Timeouts are in seconds for compatibility with all use cases and must be converted to string format to support Terraform resource timeout blocks
   # https://www.terraform.io/language/resources/syntax#operation-timeouts
   timeouts = {

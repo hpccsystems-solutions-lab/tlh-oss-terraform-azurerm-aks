@@ -22,8 +22,3 @@ variable "bootstrap_vm_size" {
   description = "VM size to use for the bootstrap node group."
   type        = string
 }
-
-variable "azure_auth_env" {
-  description = "Map containing the environment variables needed to authenticate the Azure CLI."
-  type        = map(string)
-}

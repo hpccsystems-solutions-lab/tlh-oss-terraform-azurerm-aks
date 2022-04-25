@@ -201,7 +201,6 @@ This module requires the following versions to be configured in the workspace `t
 | `core_services_config`                | Core service configuration.                                                                                                                                                           | `any` ([Appendix D](#appendix-d))    | `null`            |
 | `logging_storage_account_id`          | Optional ID of a storage account to add cluster logs to.                                                                                                                              | `string`                             | `""`              |
 | `tags`                                | Tags to apply to all resources.                                                                                                                                                       | `map(string)`                        | `{}`              |
-| `azure_auth_env`                      | Map containing the environment variables needed to authenticate the Azure CLI.                                                                                                        | `map(string)`                        | `{}`              |
 | `experimental`                        | Configure experimental features.                                                                                                                                                      | `any`                                | `{}`              |
 
 ### Appendix A

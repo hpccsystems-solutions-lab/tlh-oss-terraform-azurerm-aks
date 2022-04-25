@@ -192,12 +192,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "azure_auth_env" {
-  description = "Map containing the environment variables needed to authenticate the Azure CLI."
-  type        = map(string)
-  default     = {}
-}
-
 # tflint-ignore: terraform_unused_declarations
 variable "experimental" {
   description = "Configure experimental features."

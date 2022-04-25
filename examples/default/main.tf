@@ -244,8 +244,6 @@ module "aks" {
 
   core_services_config = local.core_services_config
 
-  azure_auth_env = local.azure_auth_env
-
   tags = module.metadata.tags
 }
 
