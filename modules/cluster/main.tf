@@ -119,12 +119,3 @@ resource "azurerm_kubernetes_cluster" "default" {
     azurerm_role_assignment.network_contributor_route_table
   ]
 }
-
-resource "azurerm_role_assignment" "default" {
-  count = length(var.admin_group_object_ids) == 0 ? 1 : 0
-
-  principal_id = data.azurerm_client_config.current.object_id
-
-  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  scope                = azurerm_kubernetes_cluster.default.id
-}
