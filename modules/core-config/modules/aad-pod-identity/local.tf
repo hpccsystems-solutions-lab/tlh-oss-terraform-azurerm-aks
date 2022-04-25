@@ -74,5 +74,7 @@ locals {
     }
   }
 
+  finalizer_wait = lookup(var.experimental, "aad_pod_identity_finalizer_wait", "120s")
+
   crd_files = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

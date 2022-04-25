@@ -51,3 +51,11 @@ resource "helm_release" "aad_pod_identity" {
     azurerm_role_assignment.k8s_virtual_machine_contributor_node
   ]
 }
+
+resource "time_sleep" "finalizer_wait" {
+  destroy_duration = local.finalizer_wait
+
+  depends_on = [
+    helm_release.aad_pod_identity
+  ]
+}

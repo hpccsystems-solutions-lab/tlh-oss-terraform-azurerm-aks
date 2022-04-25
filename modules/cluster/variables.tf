@@ -88,6 +88,14 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    cluster_read   = number
+    cluster_modify = number
+  })
+}
+
 # tflint-ignore: terraform_unused_declarations
 variable "experimental" {
   description = "Provide experimental feature flag configuration."

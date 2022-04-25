@@ -103,6 +103,13 @@ resource "azurerm_kubernetes_cluster" "default" {
 
   tags = var.tags
 
+  timeouts {
+    create = format("%vm", var.timeouts.cluster_modify / 60)
+    read   = format("%vm", var.timeouts.cluster_read / 60)
+    update = format("%vm", var.timeouts.cluster_modify / 60)
+    delete = format("%vm", var.timeouts.cluster_modify / 60)
+  }
+
   lifecycle {
     ignore_changes = [default_node_pool]
   }

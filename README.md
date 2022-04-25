@@ -119,6 +119,10 @@ kubelogin convert-kubeconfig -l azurecli
 > **Info**
 > Experimental features are not officially supported and do not follow SemVer like the rest of this module; use them at your own risk.
 
+### AAD Pod Identity Finalizer Wait
+
+If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity resources you can increase the time we wait before uninstalling the chart by setting `experimental = { aad_pod_identity_finalizer_wait = "300s" }`.
+
 ### OMS Agent Support
 
 This module supports enabling the OMS agent as it needs to be done when the cluster is created; but the operation of the agent is not managed by the module and needs to be handled by the cluster operators separately.

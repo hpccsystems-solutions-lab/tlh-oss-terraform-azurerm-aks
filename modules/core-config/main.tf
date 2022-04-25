@@ -36,6 +36,8 @@ module "aad_pod_identity" {
   namespace                = "kube-system"
   labels                   = var.labels
 
+  experimental = var.experimental
+
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds
   ]
@@ -92,8 +94,7 @@ module "external_dns" {
   additional_sources        = local.external_dns.additional_sources
   private_domain_filters    = local.ingress_internal_core.public_dns ? local.external_dns.private_domain_filters : distinct(concat([local.ingress_internal_core.domain], local.external_dns.private_domain_filters))
   public_domain_filters     = local.ingress_internal_core.public_dns ? distinct(concat([local.ingress_internal_core.domain], local.external_dns.public_domain_filters)) : local.external_dns.public_domain_filters
-
-  tags = var.tags
+  tags                      = var.tags
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,

@@ -18,10 +18,6 @@ resource "azurerm_role_assignment" "default" {
   scope                = var.roles[count.index].scope
 }
 
-resource "time_sleep" "finalizer" {
-  destroy_duration = "30s"
-}
-
 resource "kubectl_manifest" "azure_identity" {
   yaml_body = yamlencode(local.azure_identity)
 
@@ -29,7 +25,6 @@ resource "kubectl_manifest" "azure_identity" {
   wait              = true
 
   depends_on = [
-    time_sleep.finalizer,
     azurerm_user_assigned_identity.default
   ]
 }

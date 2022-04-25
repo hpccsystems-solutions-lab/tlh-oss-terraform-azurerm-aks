@@ -46,6 +46,14 @@ locals {
     AZURE_CLIENT_ID       = local.client_id
   }, var.azure_auth_env)
 
+  # Timeouts are in seconds for compatibility with all use cases and must be converted to string format to support Terraform resource timeout blocks
+  # https://www.terraform.io/language/resources/syntax#operation-timeouts
+  timeouts = {
+    cluster_read   = 300
+    cluster_modify = 5400
+    helm_modify    = 600
+  }
+
   experimental_oms_agent                      = lookup(var.experimental, "oms_agent", false)
   experimental_oms_log_analytics_workspace_id = lookup(var.experimental, "oms_log_analytics_workspace_id", "")
   experimental_windows_support                = lookup(var.experimental, "windows_support", false)

@@ -19,6 +19,7 @@ module "cluster" {
   oms_log_analytics_workspace_id = local.experimental_oms_log_analytics_workspace_id
   windows_support                = local.experimental_windows_support
   tags                           = local.tags
+  timeouts                       = local.timeouts
   experimental                   = var.experimental
 }
 
