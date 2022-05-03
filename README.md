@@ -363,4 +363,5 @@ Specification for the `core_services_config.prometheus` object.
 | `external_dns_public_identity`               | Identity that public ExternalDNS uses.                                                          | `object`       |
 | `fluentd_identity`                           | Identity that Fluentd uses.                                                                     | `object`       |
 | `grafana_identity`                           | Identity that Grafana uses.                                                                     | `object`       |
+| `oms_agent_identity`                         | Identity that the OMS agent uses.                                                               | `object`       |
 | `windows_config`                             | Windows configuration.                                                                          | `object`       |

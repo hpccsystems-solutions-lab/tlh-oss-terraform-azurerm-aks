@@ -73,6 +73,11 @@ output "grafana_identity" {
   value       = module.core_config.grafana_identity
 }
 
+output "oms_agent_identity" {
+  description = "Identity that the OMS agent uses."
+  value       = module.cluster.oms_agent_identity
+}
+
 output "windows_config" {
   description = "Windows configuration."
   value       = module.cluster.windows_config

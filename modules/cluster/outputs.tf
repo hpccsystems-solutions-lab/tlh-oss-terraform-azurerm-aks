@@ -48,9 +48,9 @@ output "control_plane_log_analytics_workspace_name" {
   value       = azurerm_log_analytics_workspace.default.name
 }
 
-output "oms_agent" {
-  description = "OMS agent configuration."
-  value       = var.oms_agent ? azurerm_kubernetes_cluster.default.oms_agent : null
+output "oms_agent_identity" {
+  description = "Identity that the OMS agent uses."
+  value       = var.oms_agent ? azurerm_kubernetes_cluster.default.oms_agent[0].oms_agent_identity : null
 }
 
 output "windows_config" {
