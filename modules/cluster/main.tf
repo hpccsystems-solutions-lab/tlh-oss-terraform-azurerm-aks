@@ -98,7 +98,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   node_resource_group = "mc_${var.cluster_name}"
 
   default_node_pool {
-    name = "bootstrap"
+    name = var.bootstrap_name
 
     type           = "VirtualMachineScaleSets"
     vnet_subnet_id = var.subnet_id

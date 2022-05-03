@@ -38,6 +38,7 @@ module "bootstrap_node_group_hack" {
   resource_group_name = var.resource_group_name
   cluster_name        = var.cluster_name
   subnet_id           = var.subnet_id
+  bootstrap_name      = var.bootstrap_name
   bootstrap_vm_size   = var.bootstrap_vm_size
 
   depends_on = [

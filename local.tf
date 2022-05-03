@@ -17,6 +17,7 @@ locals {
 
   availability_zones = [1, 2, 3]
 
+  bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
 
   cluster_version_full = local.cluster_full_versions[var.cluster_version]

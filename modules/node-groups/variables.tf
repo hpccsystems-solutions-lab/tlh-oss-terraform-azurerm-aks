@@ -65,6 +65,11 @@ variable "node_group_templates" {
   }))
 }
 
+variable "bootstrap_name" {
+  description = "Name to use for the bootstrap node group."
+  type        = string
+}
+
 variable "bootstrap_vm_size" {
   description = "VM size to use for the bootstrap node group."
   type        = string

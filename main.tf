@@ -13,6 +13,7 @@ module "cluster" {
   route_table_id                   = local.route_table_id
   podnet_cidr_block                = var.podnet_cidr_block
   admin_group_object_ids           = var.admin_group_object_ids
+  bootstrap_name                   = local.bootstrap_name
   bootstrap_vm_size                = local.bootstrap_vm_size
   logging_storage_account_id       = var.logging_storage_account_id
   oms_agent                        = local.experimental_oms_agent
@@ -53,6 +54,7 @@ module "node_groups" {
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
   node_group_templates = var.node_group_templates
+  bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
   labels               = local.labels
   tags                 = local.tags
