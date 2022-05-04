@@ -18,10 +18,10 @@ locals {
   # example: "app-dns-prod-eastus2"
 
   smtp_host = ""
-  # example: "smtp.rbxd.ds:25"
+  # example: "appmail-test.risk.regn.net"
 
   smtp_from = ""
-  # example: "${local.cluster_name}@lexisnexisrisk.com"
+  # example: "${local.cluster_name}@risk.regn.net"
 
   grafana_admin_password = ""
   # example: data.vault_generic_secret.default.data["grafana_admin_password"]
