@@ -81,7 +81,7 @@ locals {
       enabled      = true
       storageClass = "azure-disk-premium-ssd-delete"
       accessMode   = "ReadWriteOnce"
-      size         = "50Gi"
+      size         = "64Gi"
     }
 
     env = [for k, v in local.additional_env : { name = k, value = v }]
