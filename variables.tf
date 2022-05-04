@@ -192,6 +192,33 @@ variable "tags" {
   default     = {}
 }
 
+variable "maintenance_window_offset" {
+  description = "Maintenance window offset to utc."
+  type    = number
+  default = null
+}
+
+variable "maintenance_window_allowed_days" {
+  description = "List of allowed days covering the maintenance window."
+  type    = list(string)
+  default = []
+}
+
+variable "maintenance_window_allowed_hours" {
+  description = "List of allowed hours covering the maintenance window."
+  type    = list(number)
+  default = []
+}
+
+variable "maintenance_window_not_allowed" {
+  description = "Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
+  type = list(object({
+    start = string
+    end   = string
+  }))
+  default = []
+}
+
 # tflint-ignore: terraform_unused_declarations
 variable "experimental" {
   description = "Configure experimental features."

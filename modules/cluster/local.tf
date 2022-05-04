@@ -25,4 +25,33 @@ locals {
       retention_days             = 7
     }
   } : {})
+
+  maintenance_window_location_offsets = {
+    westeurope = 0
+    uksouth    = 0
+    eastus     = 5
+    eastus2    = 5
+    centralus  = 6
+    westus     = 8
+
+  }
+
+  maintenance_window_offset = var.maintenance_window_offset != null ? var.maintenance_window_offset : lookup(local.maintenance_window_location_offsets, var.location, 0)
+
+  maintenance_window_allowed_days = length(var.maintenance_window_allowed_days) == 0 ? ["Tuesday", "Wednesday", "Thursday"] : var.maintenance_window_allowed_days
+
+  maintenance_window_allowed_hours = length(var.maintenance_window_allowed_hours) == 0 ? [10, 11, 12, 13, 14, 15] : var.maintenance_window_allowed_hours
+
+  maintenance_window_not_allowed = length(var.maintenance_window_not_allowed) == 0 ? [] : var.maintenance_window_not_allowed
+
+  maintenance_window = {
+    allowed = [for d in local.maintenance_window_allowed_days : {
+      day   = d
+      hours = [for h in local.maintenance_window_allowed_hours : h + local.maintenance_window_offset]
+    }]
+    not_allowed = [for x in local.maintenance_window_not_allowed : {
+      start = timeadd(x.start, format("%vh", local.maintenance_window_offset))
+      end   = timeadd(x.end, format("%vh", local.maintenance_window_offset))
+    }]
+  }
 }

@@ -96,6 +96,29 @@ variable "timeouts" {
   })
 }
 
+variable "maintenance_window_offset" {
+  description = "Maintenance window offset to utc."
+  type    = number
+}
+
+variable "maintenance_window_allowed_days" {
+  description = "List of allowed days covering the maintenance window."
+  type    = list(string)
+}
+
+variable "maintenance_window_allowed_hours" {
+  description = "List of allowed hours covering the maintenance window."
+  type    = list(number)
+}
+
+variable "maintenance_window_not_allowed" {
+  description = "Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
+  type = list(object({
+    start = string
+    end   = string
+  }))
+}
+
 # tflint-ignore: terraform_unused_declarations
 variable "experimental" {
   description = "Provide experimental feature flag configuration."

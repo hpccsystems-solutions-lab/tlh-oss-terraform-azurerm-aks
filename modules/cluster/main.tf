@@ -78,6 +78,23 @@ resource "azurerm_kubernetes_cluster" "default" {
     }
   }
 
+  maintenance_window {
+    dynamic "allowed" {
+      for_each = local.maintenance_window.allowed
+      content {
+        day   = allowed.value.day
+        hours = allowed.value.hours
+      }
+    }
+    dynamic "not_allowed" {
+      for_each = local.maintenance_window.not_allowed
+      content {
+        end   = not_allowed.value.end
+        start = not_allowed.value.start
+      }
+    }
+  }
+
   node_resource_group = "mc_${var.cluster_name}"
 
   default_node_pool {
