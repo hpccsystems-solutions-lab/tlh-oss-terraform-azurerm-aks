@@ -121,7 +121,7 @@ locals {
   ]
 
   private_dns_zone_resource_group_name = one(distinct([for zone in var.private_domain_filters : var.dns_resource_group_lookup[zone]]))
-  public_dns_zone_resource_group_name  = one(distinct([for zone in var.private_domain_filters : var.dns_resource_group_lookup[zone]]))
+  public_dns_zone_resource_group_name  = one(distinct([for zone in var.public_domain_filters : var.dns_resource_group_lookup[zone]]))
 
   enable_private = length(var.private_domain_filters) > 0 && local.private_dns_zone_resource_group_name != null
   enable_public  = length(var.public_domain_filters) > 0 && local.public_dns_zone_resource_group_name != null
