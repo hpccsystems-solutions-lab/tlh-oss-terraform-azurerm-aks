@@ -215,7 +215,7 @@ locals {
 
               resources = {
                 requests = {
-                  storage = "10Gi"
+                  storage = "16Gi"
                 }
               }
             }
