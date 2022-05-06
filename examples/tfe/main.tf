@@ -1,3 +1,162 @@
+terraform {
+  required_version = "~> 1.0"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.1"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.5"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "~> 1.14"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.11"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1"
+    }
+    shell = {
+      source  = "scottwinkler/shell"
+      version = "~> 1.7"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.7.2"
+    }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 2.21"
+    }
+  }
+}
+
+data "azurerm_client_config" "current" {}
+
+locals {
+  cluster_name_short = trimprefix(local.cluster_name, "${local.account_code}-")
+
+  azuread_clusterrole_map = {
+    cluster_admin_users  = local.cluster_admin_users
+    cluster_view_users   = {}
+    standard_view_users  = {}
+    standard_view_groups = {}
+  }
+
+  node_group_templates = [
+    {
+      name                = "workers"
+      node_os             = "ubuntu"
+      node_type           = "gp"
+      node_type_version   = "v1"
+      node_size           = "large"
+      single_group        = false
+      min_capacity        = 0
+      max_capacity        = 18
+      placement_group_key = null
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+      taints = []
+      tags   = {}
+    }
+  ]
+
+  grafana_admin_password = data.vault_generic_secret.default.data["grafana_admin_password"]
+
+  alert_manager_recievers = []
+  alert_manager_routes    = []
+
+  k8s_exec_auth_env = {
+    AAD_SERVICE_PRINCIPAL_CLIENT_ID     = module.default_azure_credentials.client_id
+    AAD_SERVICE_PRINCIPAL_CLIENT_SECRET = module.default_azure_credentials.client_secret
+  }
+
+  azure_auth_env = {
+    AZURE_TENANT_ID       = module.default_azure_credentials.tenant_id
+    AZURE_SUBSCRIPTION_ID = module.default_azure_credentials.subscription_id
+    AZURE_CLIENT_ID       = module.default_azure_credentials.client_id
+    AZURE_CLIENT_SECRET   = module.default_azure_credentials.client_secret
+  }
+
+  admin_group_object_ids = [var.aad_group_id]
+}
+
+provider "vault" {
+  alias   = "azure_credentials"
+  address = var.default_connection_info.vault_address
+  token   = var.default_connection_info.vault_token
+}
+
+provider "azurerm" {
+  tenant_id       = module.default_azure_credentials.tenant_id
+  subscription_id = module.default_azure_credentials.subscription_id
+  client_id       = module.default_azure_credentials.client_id
+  client_secret   = module.default_azure_credentials.client_secret
+
+  features {}
+}
+
+provider "azuread" {
+  tenant_id     = module.default_azure_credentials.tenant_id
+  client_id     = module.default_azure_credentials.client_id
+  client_secret = module.default_azure_credentials.client_secret
+}
+
+provider "kubernetes" {
+  host                   = module.aks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.aks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "kubelogin"
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+    env         = local.k8s_exec_auth_env
+  }
+}
+
+provider "kubectl" {
+  host                   = module.aks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.aks.cluster_certificate_authority_data)
+  load_config_file       = false
+  apply_retry_count      = 6
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "kubelogin"
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+    env         = local.k8s_exec_auth_env
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = module.aks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.aks.cluster_certificate_authority_data)
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "kubelogin"
+      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+      env         = local.k8s_exec_auth_env
+    }
+  }
+
+  experiments {
+    manifest = true
+  }
+}
+
+provider "shell" {
+  sensitive_environment = local.azure_auth_env
+}
+
 resource "random_string" "random" {
   length  = 12
   upper   = false
@@ -134,9 +293,19 @@ module "aks" {
     ingress_internal_core = {
       domain           = local.internal_domain
       subdomain_suffix = local.cluster_name_short
-      public_dns       = true 
+      public_dns       = true
     }
   }
 
   tags = module.metadata.tags
+}
+
+variable "default_connection_info" {
+  description = "Vault AzureAD engine info."
+  # This variable is populated by the Terraform Enterprise workspace"
+}
+
+variable "aad_group_id" {
+  description = "Group id of the Vault Service Principal."
+  # This variable is populate by the Terraform Enterprise workspace"
 }

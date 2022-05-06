@@ -87,7 +87,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Update version of upstream AKS module. [@dutsmiller](url)
 
 > **IMPORTANT** - As part of the `cert-manager` upgrade, all of the cert manager crds need to be patched manually `prior` to upgrading to the `v1.0.0-beta.8` tag. An [issue](https://github.com/cert-manager/cert-manager/issues/4831) has been raised against the upstream repository to track this. Please see [UPGRADE.md](/UPGRADE.md#from-v100-beta7-to-v100-beta8) for details.
-
 > **IMPORTANT** - The _Cert Manager_ API versions `v1alpha2`, `v1alpha3`, and `v1beta1` have been removed. All _Cert Manager_ custom resources must only use `v1` before upgrading to this release. All certificates are already stored as `v1`, after this release you can only access deprecated API resources through the _Cert Manager_ API.
 
 ## [v1.0.0-beta.7] - 2022-02-08
@@ -118,9 +117,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - `module` - dropped support for Kubernetes version 1.19 (see **IMPORTANT** note below) [@dutsmiller](url)
 
 > **IMPORTANT** - Dropped support for Kubernetes version 1.19, patch versions updated for 1.20 and 1.21. This will instigate a cluster upgrade, refer to [UPGRADE.md](/UPGRADE.md) for module and Kubernetes version upgrade instructions and troubleshooting steps.
-
 > **IMPORTANT** - Due to an upgrade of the `kube-state-metrics` chart as part of the `kube-prometheus-stack` upgrade, removal of its deployment needs to done manually `prior` to upgrading to the `v1.0.0-beta.7` tag. Please see [UPGRADE.md](/UPGRADE.md#from-v100-beta6-to-v100-beta7) for details.
-
 > **IMPORTANT** - The following storage classes have been migrated to CSI drivers in the 1.21 release - `azure-disk-standard-ssd-retain`, `azure-disk-premium-ssd-retain`, `azure-disk-standard-ssd-delete` and `azure-disk-premium-ssd-delete`. If you created custom storage classes using the kubernetes.io/azure-disk or kubernetes.io/azure-file provisioners they will need to be [migrated to CSI drivers](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers#migrating-custom-in-tree-storage-classes-to-csi). Please use `v1.0.0-beta.7` or above to create new 1.21 clusters.
 
 ## [v1.0.0-beta.6] - 2022-01-14
@@ -181,7 +178,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - `VM Types` - added gpd, mem, memd, and stor vm types (see [matrix](./modules/nodes/matrix.md) for node types) [@dutsmiller](url)
 
 > **IMPORTANT** - Existing node types must have "-v1" appended to be compatible with beta.5.  Example:  The beta.4 node type of "x64-gp" would need to be changed to "x64-gp-v1" to maintain compatibility .  All future node types will be versioned.  See [matrix](./modules/nodes/matrix.md) for node types and details.
-
 > **IMPORTANT** - If you are currently using `filter_config`, `route_config` or `output_config` in the fluentd section of the core_services_config these will need to be renamed accordingly.
 
 ## [v1.0.0-beta.4] - 2021-11-02
@@ -263,7 +259,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Changed
 
 - Node pool variable changes [@dutsmiller](url)
-- Change pod_cidr variable to podnet_cidr [@dutsmiller](url) 
+- Change pod_cidr variable to podnet_cidr [@dutsmiller](url)
 - Change core_services_config ingress_core_internal to ingress_internal_core [@dutsmiller](url)
 - Change multi-vmss node pool capacity format [@dutsmiller](url)
 
@@ -287,8 +283,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Update upstream AKS module version [@dutsmiller](url)
 - Change name of UAI for AKS [@dutsmiller](url)
 - Force host encryption to true [@dutsmiller](url)
- 
- ### Removed
+
+### Removed
 
 - Remove additional_priority_classes and additional_storage_classes api options [@jamurtag](url)
 - Remove autodoc from repo [@dutsmiller](url)

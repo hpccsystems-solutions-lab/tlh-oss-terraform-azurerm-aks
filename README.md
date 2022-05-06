@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module is designed to provide a simple and opinionated way to build standard AKS clusters. This module takes a set of configuration options and creates a fully functional Kubernetes cluster with a common set of services.
+This module is designed to provide a simple and opinionated way to build standard AKS clusters. This module takes a generic set of configuration options and creates a fully functional _Kubernetes_ cluster with a common set of services.
 
 ---
 
@@ -19,21 +19,64 @@ This module is supported as a pattern by the core engineering team as long as th
   - Issues should have an example of how to replicate them on a test cluster unless not possible.
   - Issues not following this guidance will be closed.
 
+## Help
+
+Before using this module, the whole README should be read.
+
+If you require further help, you can open an issue on this project or write a post on the [OG-RBA Kubernetes Working Group](https://teams.microsoft.com/l/team/19%3a27e66f24235b48dd8b14bf784f1a4e6a%40thread.skype/conversations?groupId=dc4762e6-314d-4645-9919-bff7cc54b91c&tenantId=9274ee3f-9425-4109-a27f-9fb15c10675d).
+
 ---
 
 ## Architecture
 
 See [documentation](/docs) for system architecture, requirements and user guides for cluster services.
 
-### Authentication
+### Networking
 
-AKS clusters built with this module use [AKS-managed Azure Active Directory integration](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and have local accounts [disabled](https://docs.microsoft.com/en-us/azure/aks/managed-aad#disable-local-accounts) for security. Because of this the identity using the module will need to be given the [Azure Kubernetes Service RBAC Cluster Admin](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-rbac-cluster-admin) role, this can either be done external to the module and scoped to cover the new cluster or by the module via the `admin_group_object_ids` variable.
+A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and a unique route table for each AKS cluster. While it is technically possible to host multiple AKS cluster node pools in a subnet, this is not recommended.
+
+Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparision](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
+
+If the [dns_servers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network#dns_servers) attribute is set for the virtual network, the Azure DNS server "168.63.129.16" must be included in the list of values.
+
+### DNS
+
+Configuration for the DNS can be configured via inputs in the `core_services_config` variable.
+
+For example, the module exposes ingress endpoints for core services such as Prometheus, Grafana and AlertManager UIs. The endpoints must be secured via TLS and DNS records must be published to Azure DNS for clients to resolve.
+
+```yaml
+  core_services_config = {
+    cert_manager = {
+      dns_zones  = {
+        "us-accurint-prod.azure.lnrsg.io" = "us-accurint-prod-dns-rg"
+      }
+    }
+
+    external_dns= {
+      private_resource_group_name = "us-accurint-prod-dns-rg"
+      private_zones = [ "us-accurint-prod.azure.lnrsg.io" ]
+    }
+
+    ingress_internal_core = {
+      domain    = "us-accurint-prod.azure.lnrsg.io"
+    }
+  }
+```
+
+- The `cert_manager` block specifies the **public zone** Let's Encrypt will use to validate the domain and its resource group.
+- The `external_dns` block specifies domain(s) that user services can expose DNS records through and their resource group - all zones managed by _External DNS_ **must** be in a single resource group.
+- The `ingress_internal_core` block specifies the domain to expose ingress resources to, consuming DNS/TLS services above.
+
+It's very likely the same primary domain will be configured for all services, perhaps with _External DNS_ managing some additional domains. The resource group is a required input so the module can assign appropriate Azure role bindings. It is expected that in most cases all DNS domains will be hosted in a single resource group.
+
+While _External DNS_ supports both public and private zones, in split-horizon setups only the private zone should be configured, otherwise both zones will be updated with service records. The only scenario for configuring both public and private zones of the same name is to migrate public records to private records. Once this is done, the public zone should be removed and records manually deleted in the public zone.
 
 ### Node Groups
 
 The node group configuration (`node_group_templates`) allows a cluster to be created with multiple node groups that span multiple availability zones and can be configured with the specific required behaviour.
 
-### Node image upgrades
+#### Node image upgrades
 
 AKS supports upgrading the images on a node so you're up to date with the newest OS and runtime updates. AKS regularly provides new images with the latest updates, so it's beneficial to upgrade your node's images regularly for the latest AKS features. Linux node images are updated weekly, and Windows node images updated monthly. For more information please visit the official [Microsoft documentation](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade).
 
@@ -49,6 +92,8 @@ The module sets a default of a maintenance window of Tuesdays, Wednesdays and Th
 #### Node Sizes
 
 Node sizes are based on the number of CPUs, with the other resources being dependent on the node type; not all node types support all sizes.
+
+When creating persistent volumes in Azure, make sure you use a size supported by azure disk. This applies to [standard](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#standard-ssd-size) and [premium](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#premium-ssd-size) SSD sizes.
 
 |   **Name** | **CPU Count** |
 | ---------: | ------------: |
@@ -116,6 +161,69 @@ All the nodes provisioned by the module support permium storage.
 
 This module is expected to be referenced by it's major version (e.g. `v1`) and run regularly (at least every 4 weeks) to keep the cluster configuration up to date.
 
+### Core Service Configuration
+
+The core service configuration (`core_services_config`) allows the customisation of the core cluster services. All core services run on a dedicated system node group reserved only for these services, although DaemonSets will be scheduled on all cluster nodes.
+
+### Auto-scaling
+
+Cluster node groups will be auto scaled by using the [AKS Cluster Autoscaler](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler).
+
+### Logging
+
+Cluster logs are collected on the nodes using _Fluent Bit_ and are then aggregated into the stateful _Fluentd_ service running in-cluster. These logs can be manipulated and shipped anywhere based on custom _Fluentd_ configuration. If your application creates JSON log lines the fields of this object are extracted, otherwise there is a `log` field with the application log data as a string; for JSON logging we suggest using `msg` for the log text field.
+
+All logs collected from running pods have a `kube` tag and additional fields extracted from the Kubernetes metadata, please note that using [Kubernetes common labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/) makes the log fields more meaningful.
+
+Pods annotated with the `fluentbit.io/exclude: "true"` annotation wont have their logs collected as part of the cluster logging system, this shouldn't be used unless you have an alternative way of ensuring that you're in compliance.
+
+Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation wont have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate cluster services with _Loki_.
+
+As well as custom _Fluentd_ configuration it is also possible to provide a custom _Fluentd_ image if you need additional capabilities as long as the image has the required default plugins.
+
+### Metrics
+
+Cluster metrics are collected by Prometheus and visualised in Grafana. These metrics can be remotely written out to an external system.
+
+### Alerts
+
+Cluster alerts default to being ignored but can be fully customised with receivers and routes.
+
+### Ingress
+
+Ingress resources and controllers are used to route traffic into a cluster.
+
+In early versions of Kubernetes the only way to achieve this was though a service of type [LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer). In some clouds this requires a discrete load balancer be deployed for each service which has significant cost implications. This doesn't apply to Azure, it adds a new IP for each service to an existing load balancer - however Ingress is still the most effective route to expose services for the following reasons.
+
+- It integrates with _Cert Manager_ to automate TLS certificate generation and renewals
+- It integrates with _External DNS_ to automate DNS record management
+- It supports L7 routing based on host or paths (load balancers are L4 only)
+- Some ingress controllers (e.g. _Nginx_) also offer L4 support
+
+By default the platform deploys an internal ingress class (`core-internal`) to expose services such as Prometheus and Grafana UIs. This shouldn't be used for user services unless there is only minimal internal ingress requirements, instead deploy a dedicated ingress tier and ingress controller.
+
+### Upgrading
+
+Core service and node upgrades are automated as part of running this module and don't require any user interaction. Kubernetes minor version upgrades are supported by the module as long as the upgrade is only to the next minor version and the cluster has had the latest module version run against it.
+
+### Regular Upgrade Steps
+
+The following steps should be followed to automatically upgrade a clusters configuration.
+
+- Re-run `terraform plan` with no code changes and the module reference set to a major version tag such as `v1`
+- Review changes
+- Apply updated configuration if there are any changes
+
+### Kubernetes Minor Version Upgrade Steps
+
+The following steps should be followed to upgrade a cluster's Kubernetes minor version.
+
+- Follow the regular upgrade steps first
+- Increment the _cluster_version_ by a single minor version e.g. `1.21` -> `1.22`
+- Run `terraform plan`
+- Review changes
+- Apply changes
+
 ### Connecting to the Cluster
 
 AKS clusters created by this module use [Azure AD authentication](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and don't create local accounts. To connect to an AKS cluster after it's been created follow you can run the following commands; assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed, you are logged in.
@@ -129,6 +237,12 @@ az aks get-credentials --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUST
 kubelogin convert-kubeconfig -l azurecli
 ```
 
+### Examples
+
+- [Default example](./examples/default/)
+- [DSG example](./examples/dsg/)
+- [Windows example](./examples/windows/)
+
 ---
 
 ## Experimental Features
@@ -136,11 +250,11 @@ kubelogin convert-kubeconfig -l azurecli
 > **Info**
 > Experimental features are not officially supported and do not follow SemVer like the rest of this module; use them at your own risk.
 
+Experimental features allow end users to try out new functionality which isn't stable in the context of a stable module release, they are enabled by setting the required variables on the `experimental` module variable.
+
 ### AKS v1.22
 
-Support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) is currently experimental as it hasn't been fully tested yet.
-
-To enable AKS v1.22 support you need to set `experimental = { aks_v1_22 = true }`.
+Support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) can be currently enabled by setting `aks_v1_22 = true`. This AKS version hasn't been fully tested yet but when it has, the requirement to use an experimental flag will be removed.
 
 ### AAD Pod Identity Finalizer Wait
 
@@ -148,7 +262,7 @@ If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity reso
 
 ### OMS Agent Support
 
-This module supports enabling the OMS agent as it needs to be done when the cluster is created; but the operation of the agent is not managed by the module and needs to be handled by the cluster operators separately.
+This module supports enabling the OMS agent as it needs to be done when the cluster is created; but the operation of the agent is not managed by the module and needs to be handled by the cluster operators separately. All core namespaces should be excluded by the cluster operator, especially the _logging_ namespace, unless they are specifically wanted.
 
 To enable OMS agent support you need to set `experimental = { oms_agent = true, oms_log_analytics_workspace_id = "my-workspace-id" }`.
 
@@ -184,7 +298,7 @@ This module requires the following versions to be configured in the workspace `t
 | [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.14.0` |
 | [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.11.0` |
 | [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.1.0`  |
-| [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>=1.7.10`  |
+| [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>= 1.7.10` |
 | [hashicorp/time](https://registry.terraform.io/providers/hashicorp/time/latest)             | `>= 0.7.2`  |
 
 ---
