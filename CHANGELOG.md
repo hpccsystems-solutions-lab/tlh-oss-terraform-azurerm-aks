@@ -20,7 +20,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
-## [v1.0.0-beta.10] - UNRELEASED
+## [v1.0.0-beta.10] - 2022-05-09
 
 > **Important**
 > This release is a significant breaking change and intended to be the last in the `beta` series with a stable `rc` being planned for the next release.
