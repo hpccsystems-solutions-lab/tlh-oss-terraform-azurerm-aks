@@ -1,5 +1,5 @@
 locals {
-  chart_version = "0.19.23"
+  chart_version = "0.20.0"
 
   chart_values = {
     serviceMonitor = {
@@ -24,11 +24,11 @@ locals {
     resources = {
       requests = {
         cpu    = "100m"
-        memory = "64Mi"
+        memory = "128Mi"
       }
 
       limits = {
-        cpu    = "500m"
+        cpu    = "1000m"
         memory = "128Mi"
       }
     }
@@ -115,72 +115,71 @@ locals {
 
   service_config = <<-EOT
     [SERVICE]
-      Daemon                    Off
-      Log_Level                 info
+      daemon                    false
+      log_level                 info
       storage.path              /var/fluent-bit/state/flb-storage/
       storage.sync              normal
-      storage.checksum          off
-      storage.max_chunks_up     128
+      storage.checksum          false
+      storage.max_chunks_up     512
       storage.backlog.mem_limit 16M
-      storage.metrics           on
-      HTTP_Server               On
-      HTTP_Listen               0.0.0.0
-      HTTP_Port                 2020
-      Flush                     5
-      Parsers_File              parsers.conf
-      Parsers_File              custom_parsers.conf
+      storage.metrics           true
+      http_server               true
+      http_listen               0.0.0.0
+      http_port                 2020
+      flush                     5
+      parsers_file              parsers.conf
+      parsers_file              custom_parsers.conf
   EOT
 
   input_config = <<-EOT
     [INPUT]
-      Name              tail
-      Tag               kube.*
-      Path              /var/log/containers/*.log
-      Read_from_Head    true
-      Refresh_Interval  10
-      Rotate_Wait       30
-      multiline.parser  docker, cri
-      Skip_Long_Lines   on
-      Skip_Empty_Lines  on
-      Buffer_Chunk_Size 32k
-      Buffer_Max_Size   256k
-      DB                /var/fluent-bit/state/flb-storage/tail-containers.db
-      DB.Sync           normal
-      DB.locking        true
-      DB.journal_mode   wal
+      name              tail
+      tag               kube.*
+      path              /var/log/containers/*.log
+      read_from_head    true
+      refresh_interval  10
+      rotate_wait       30
+      multiline.parser  cri, docker
+      skip_long_lines   true
+      skip_empty_lines  true
+      buffer_chunk_size 32k
+      buffer_max_size   256k
+      db                /var/fluent-bit/state/flb-storage/tail-containers.db
+      db.sync           normal
+      db.locking        true
+      db.journal_mode   wal
       mem_buf_limit     16MB
       storage.type      filesystem
 
     [INPUT]
-      Name              systemd
-      Tag               node.*
-      Systemd_Filter    _SYSTEMD_UNIT=docker.service
-      Systemd_Filter    _SYSTEMD_UNIT=containerd.service
-      Systemd_Filter    _SYSTEMD_UNIT=kubelet.service
-      Strip_Underscores On
-      DB                /var/fluent-bit/state/flb-storage/systemd.db
-      DB.Sync           normal
+      name              systemd
+      tag               node.*
+      systemd_filter    _SYSTEMD_UNIT=docker.service
+      systemd_filter    _SYSTEMD_UNIT=containerd.service
+      systemd_filter    _SYSTEMD_UNIT=kubelet.service
+      strip_underscores true
+      db                /var/fluent-bit/state/flb-storage/systemd.db
+      db_sync           normal
       storage.type      filesystem
   EOT
 
   filter_config = <<-EOT
     [FILTER]
-      Name                kubernetes
-      Match               kube.*
-      Merge_Log           On
-      Merge_Log_Key       log_processed
-      Merge_Log_Trim      On
-      Keep_Log            On
-      K8S-Logging.Parser  On
-      K8S-Logging.Exclude On
+      name                kubernetes
+      match               kube.*
+      merge_log           true
+      merge_log_trim      true
+      keep_log            false
+      k8s-logging.parser  true
+      k8s-logging.exclude true
   EOT
 
   output_config = <<-EOT
     [OUTPUT]
-      Name                     forward
-      Match                    *
-      Host                     fluentd.logging.svc.cluster.local
-      Port                     24224
+      name                     forward
+      match                    *
+      host                     fluentd.logging.svc.cluster.local
+      port                     24224
       storage.total_limit_size 16GB
   EOT
 

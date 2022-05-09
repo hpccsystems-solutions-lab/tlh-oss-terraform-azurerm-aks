@@ -1,5 +1,5 @@
 locals {
-  chart_version = "1.7.2"
+  chart_version = "1.8.0"
 
   chart_values = {
     installCRDs = false
@@ -50,11 +50,11 @@ locals {
     resources = {
       requests = {
         cpu    = "100m"
-        memory = "256Mi"
+        memory = "512Mi"
       }
 
       limits = {
-        cpu    = "500m"
+        cpu    = "1000m"
         memory = "512Mi"
       }
     }
@@ -84,11 +84,11 @@ locals {
       resources = {
         requests = {
           cpu    = "100m"
-          memory = "256Mi"
+          memory = "512Mi"
         }
 
         limits = {
-          cpu    = "500m"
+          cpu    = "1000m"
           memory = "512Mi"
         }
       }
@@ -114,11 +114,11 @@ locals {
       resources = {
         requests = {
           cpu    = "50m"
-          memory = "64Mi"
+          memory = "128Mi"
         }
 
         requests = {
-          cpu    = "100m"
+          cpu    = "1000m"
           memory = "128Mi"
         }
       }
@@ -153,8 +153,8 @@ locals {
         }
 
         limits = {
-          cpu    = "200m"
-          memory = "128Mi"
+          cpu    = "1000m"
+          memory = "64Mi"
         }
       }
     }

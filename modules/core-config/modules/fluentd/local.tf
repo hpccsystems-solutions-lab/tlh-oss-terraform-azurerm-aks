@@ -1,5 +1,5 @@
 locals {
-  chart_version = "2.7.0"
+  chart_version = "2.7.1"
 
   chart_values = merge({
     nameOverride = "fluentd"
@@ -67,7 +67,7 @@ locals {
 
     resources = {
       requests = {
-        cpu    = "200m"
+        cpu    = "500m"
         memory = "512Mi"
       }
 
@@ -141,18 +141,23 @@ locals {
         subscriptionId "#{ENV['SUBSCRIPTION_ID']}"
         location "#{ENV['LOCATION']}"
         cluster "#{ENV['CLUSTER_NAME']}"
-        app $${record.dig("kubernetes","labels","app.kubernetes.io/name") || record.dig("kubernetes","container_name") || record.dig("kubernetes","pod_name")}
-        componentTemp $${ c = record.dig("kubernetes","labels","app.kubernetes.io/component"); c.nil? ? c : record["component"] = c; }
-        container $${record.dig("kubernetes","container_name")}
-        instance $${record.dig("kubernetes","labels","app.kubernetes.io/instance") || record.dig("kubernetes","pod_name")}
-        namespace $${record.dig("kubernetes","namespace") || record.dig("kubernetes","namespace_name") }
         node $${record.dig("kubernetes","host")}
+        namespace $${record.dig("kubernetes","namespace") || record.dig("kubernetes","namespace_name") }
         pod $${record.dig("kubernetes","pod_name")}
+        container $${record.dig("kubernetes","container_name")}
+        containerHash $${record.dig("kubernetes","container_hash")}
+        containerImage $${record.dig("kubernetes","container_image")}
+        app $${record.dig("kubernetes","labels","app.kubernetes.io/name") || record.dig("kubernetes","pod_name")}
+        instance $${record.dig("kubernetes","labels","app.kubernetes.io/instance") || record.dig("kubernetes","pod_name")}
+        componentTemp $${ c = record.dig("kubernetes","labels","app.kubernetes.io/component"); c.nil? ? c : record["component"] = c; }
         partOfTemp $${ p = record.dig("kubernetes","labels","app.kubernetes.io/part-of"); p.nil? ? p : record["partOf"] = p; }
         versionTemp $${ v = record.dig("kubernetes","labels","app.kubernetes.io/version"); v.nil? ? v : record["version"] = v; }
+        labels $${record.dig("kubernetes","labels")}
+        annotations $${record.dig("kubernetes","annotations")}
+        kubernetes
         stream
       </record>
-      remove_keys stream, versionTemp, partOfTemp, componentTemp
+      remove_keys stream, versionTemp, partOfTemp, componentTemp, kubernetes
     </filter>
     %{if length(var.filters) > 0~}
     ${var.filters}

@@ -1,5 +1,5 @@
 locals {
-  chart_version = "1.7.1"
+  chart_version = "1.9.0"
 
   chart_values = {
     serviceMonitor = {
@@ -30,11 +30,11 @@ locals {
     resources = {
       requests = {
         cpu    = "10m"
-        memory = "64Mi"
+        memory = "128Mi"
       }
 
       limits = {
-        cpu    = "100m"
+        cpu    = "1000m"
         memory = "128Mi"
       }
     }

@@ -1,7 +1,7 @@
 locals {
   name = "core-internal"
 
-  chart_version = "4.0.19"
+  chart_version = "4.1.0"
 
   chart_values = {
     commonLabels = var.labels
@@ -76,12 +76,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "20m"
+          cpu    = "50m"
           memory = "256Mi"
         }
 
         limits = {
-          cpu    = "200m"
+          cpu    = "1000m"
           memory = "256Mi"
         }
       }
@@ -181,12 +181,12 @@ locals {
       resources = {
         requests = {
           cpu    = "10m"
-          memory = "16Mi"
+          memory = "64Mi"
         }
 
         limits = {
-          cpu    = "100m"
-          memory = "128Mi"
+          cpu    = "1000m"
+          memory = "64Mi"
         }
       }
     }

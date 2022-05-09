@@ -1,5 +1,5 @@
 locals {
-  chart_version = "34.1.1"
+  chart_version = "35.0.3"
 
   chart_values = {
     global = {
@@ -37,11 +37,11 @@ locals {
       resources = {
         requests = {
           cpu    = "200m"
-          memory = "256Mi"
+          memory = "512Mi"
         }
 
         limits = {
-          cpu    = "500m"
+          cpu    = "1000m"
           memory = "512Mi"
         }
       }
@@ -52,13 +52,13 @@ locals {
       prometheusConfigReloader = {
         resources = {
           requests = {
-            cpu    = "20m"
+            cpu    = "50m"
             memory = "16Mi"
           }
 
           limits = {
-            cpu    = "50m"
-            memory = "32Mi"
+            cpu    = "050m"
+            memory = "16Mi"
           }
         }
       }
@@ -225,11 +225,11 @@ locals {
         resources = {
           requests = {
             cpu    = "10m"
-            memory = "16Mi"
+            memory = "64Mi"
           }
 
           limits = {
-            cpu    = "100m"
+            cpu    = "1000m"
             memory = "64Mi"
           }
         }
@@ -347,7 +347,7 @@ locals {
 
         limits = {
           cpu    = "1000m"
-          memory = "256Mi"
+          memory = "128Mi"
         }
       }
 
@@ -363,8 +363,8 @@ locals {
           }
 
           limits = {
-            cpu    = "200m"
-            memory = "256Mi"
+            cpu    = "1000m"
+            memory = "128Mi"
           }
         }
       }
@@ -435,13 +435,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
+          cpu    = "50m"
           memory = "128Mi"
         }
 
         limits = {
-          cpu    = "500m"
-          memory = "256Mi"
+          cpu    = "1000m"
+          memory = "128Mi"
         }
       }
     }
@@ -486,24 +486,87 @@ locals {
       resources = {
         requests = {
           cpu    = "100m"
-          memory = "32Mi"
+          memory = "64Mi"
         }
 
         limits = {
-          cpu    = "500m"
-          memory = "128Mi"
+          cpu    = "1000m"
+          memory = "64Mi"
         }
       }
     }
   }
 
-  alertmanager_base_receivers    = [{ name = "null" }]
-  alertmanager_default_receivers = length(var.alertmanager_receivers) > 0 ? [] : [{ name = "alerts" }]
-  alertmanager_receivers         = concat(local.alertmanager_base_receivers, local.alertmanager_default_receivers, var.alertmanager_receivers)
+  alertmanager_base_receivers = [{
+    name              = "null"
+    email_configs     = []
+    opsgenie_configs  = []
+    pagerduty_configs = []
+    pushover_configs  = []
+    slack_configs     = []
+    sns_configs       = []
+    victorops_configs = []
+    webhook_configs   = []
+    wechat_configs    = []
+    # telegram_configs  = []
+  }]
+  alertmanager_default_receivers = length(var.alertmanager_receivers) > 0 ? [] : [{
+    name              = "alerts"
+    email_configs     = []
+    opsgenie_configs  = []
+    pagerduty_configs = []
+    pushover_configs  = []
+    slack_configs     = []
+    sns_configs       = []
+    victorops_configs = []
+    webhook_configs   = []
+    wechat_configs    = []
+    # telegram_configs  = []
+  }]
+  alertmanager_receivers = concat(local.alertmanager_base_receivers, local.alertmanager_default_receivers, [for receiver in var.alertmanager_receivers : {
+    name              = receiver.name
+    email_configs     = lookup(receiver, "email_configs", [])
+    opsgenie_configs  = lookup(receiver, "opsgenie_configs", [])
+    pagerduty_configs = lookup(receiver, "pagerduty_configs", [])
+    pushover_configs  = lookup(receiver, "pushover_configs", [])
+    slack_configs     = lookup(receiver, "slack_configs", [])
+    sns_configs       = lookup(receiver, "sns_configs", [])
+    victorops_configs = lookup(receiver, "victorops_configs", [])
+    webhook_configs   = lookup(receiver, "webhook_configs", [])
+    wechat_configs    = lookup(receiver, "wechat_configs", [])
+    # telegram_configs  = lookup(receiver, "telegram_configs", [])
+  }])
 
-  alertmanager_base_routes    = [{ match = { alertname = "Watchdog" }, receiver = "null" }]
-  alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{ match_re = { severity = "warning|critical" }, receiver = "alerts" }]
-  alertmanager_routes         = concat(local.alertmanager_base_routes, local.alertmanager_default_routes, var.alertmanager_routes)
+  alertmanager_base_routes = [{
+    receiver            = "null"
+    group_by            = []
+    continue            = false
+    matchers            = ["alertname=Watchdog"]
+    group_wait          = "30s"
+    group_interval      = "5m"
+    repeat_interval     = "12h"
+    mute_time_intervals = []
+  }]
+  alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{
+    receiver            = "alerts"
+    group_by            = []
+    continue            = false
+    matchers            = ["severity=~warning|critical"]
+    group_wait          = "30s"
+    group_interval      = "5m"
+    repeat_interval     = "12h"
+    mute_time_intervals = []
+  }]
+  alertmanager_routes = concat(local.alertmanager_base_routes, local.alertmanager_default_routes, [for route in var.alertmanager_routes : {
+    receiver            = route.receiver
+    group_by            = lookup(route, "group_by", [])
+    continue            = lookup(route, "continue", false)
+    matchers            = route.matchers
+    group_wait          = lookup(route, "group_wait", "30s")
+    group_interval      = lookup(route, "group_interval", "5m")
+    repeat_interval     = lookup(route, "repeat_interval", "12h")
+    mute_time_intervals = lookup(route, "mute_time_intervals", [])
+  }])
 
   loki_data_source = {
     name   = "Loki"
