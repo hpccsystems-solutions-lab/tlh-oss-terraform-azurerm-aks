@@ -191,16 +191,52 @@ Cluster alerts default to being ignored but can be fully customised with receive
 
 ### Ingress
 
-Ingress resources and controllers are used to route traffic into a cluster.
+All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LodBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
 
-In early versions of Kubernetes the only way to achieve this was though a service of type [LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer). In some clouds this requires a discrete load balancer be deployed for each service which has significant cost implications. This doesn't apply to Azure, it adds a new IP for each service to an existing load balancer - however Ingress is still the most effective route to expose services for the following reasons.
+Out of the box the cluster supports automatically generating certificates with _Cert Manager_ and DNS records with _External DNS_ from `Ingress` resources.
 
-- It integrates with _Cert Manager_ to automate TLS certificate generation and renewals
-- It integrates with _External DNS_ to automate DNS record management
-- It supports L7 routing based on host or paths (load balancers are L4 only)
-- Some ingress controllers (e.g. _Nginx_) also offer L4 support
+#### Ingress Controllers
 
-By default the platform deploys an internal ingress class (`core-internal`) to expose services such as Prometheus and Grafana UIs. This shouldn't be used for user services unless there is only minimal internal ingress requirements, instead deploy a dedicated ingress tier and ingress controller.
+The following official Terraform modules for ingress controllers are supported by the core engineering team and have been tested on AKS (please note that these are currently hosted on GitLab so should be copied into the `./modules` folder in your workspace and checked in).
+
+- [K8s Ingress NGINX Terraform Module](https://gitlab.b2b.regn.net/terraform/official-modules/k8s/terraform-lnrs-k8s-ingress-nginx)
+
+#### Ingress Nodes
+
+Ingress nodes mush have the `lnrs.io/tier: ingress` label and the `ingress=true:NoSchedule` taint to enable the ingress controller(s) to be scheduled and to isolate ingress traffic from other pods. You can also add additional labels and taints to keep specific ingress traffic isolated to it's own nodes. As ingress traffic is stateless a single node group can be used to span multiple zones by setting `single_group = true`.
+
+An example of an ingress node group.
+
+```terraform
+locals {
+  ingress_node_group = {
+    {
+      name                = "ingress"
+      node_os             = "ubuntu"
+      node_type           = "gp"
+      node_type_version   = "v1"
+      node_size           = "large"
+      single_group        = true
+      min_capacity        = 3
+      max_capacity        = 6
+      placement_group_key = null
+      labels = {
+        "lnrs.io/tier" = "ingress"
+      }
+      taints = [{
+        key    = "ingress"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      tags   = {}
+    }
+  }
+}
+```
+
+#### Ingress Internal Core
+
+By default the platform deploys an internal `IngressClass`, named `core-internal`, to expose services such as _Prometheus_ and _Grafana_ UIs. This ingress shouldn't be used for user services but can be used for other internal dashboards; for user services instead deploy a dedicated ingress controller with it's own `IngressClass`.
 
 ### Upgrading
 
@@ -476,10 +512,10 @@ Specification for the `core_services_config.prometheus` object.
 
 Specification for the `maintenance_window_not_allowed` object.
 
-| **Variable**   | **Description**                                                              | **Type**       | **Required** |
-| :------------- | :--------------------------------------------------------------------------- | :------------- | :----------- |
-| `start`        | Start time for the not allowed maintenance window block in rfc 3339 format.  | `string`       | No           |
-| `end`          | End time for the not allowed maintenance window block in rfc 3339 format.    | `string`       | No           |
+| **Variable** | **Description**                                                             | **Type** | **Required** |
+| :----------- | :-------------------------------------------------------------------------- | :------- | :----------- |
+| `start`      | Start time for the not allowed maintenance window block in rfc 3339 format. | `string` | No           |
+| `end`        | End time for the not allowed maintenance window block in rfc 3339 format.   | `string` | No           |
 
 ---
 
