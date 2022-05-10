@@ -35,7 +35,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster, version \"1.21\" is supported & \"1.22\" is experimental."
+  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions \"1.22\" & \"1.21\" are supported."
   type        = string
 
   validation {
@@ -194,20 +194,20 @@ variable "tags" {
 
 variable "maintenance_window_offset" {
   description = "Maintenance window offset to utc."
-  type    = number
-  default = null
+  type        = number
+  default     = null
 }
 
 variable "maintenance_window_allowed_days" {
   description = "List of allowed days covering the maintenance window."
-  type    = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "maintenance_window_allowed_hours" {
   description = "List of allowed hours covering the maintenance window."
-  type    = list(number)
-  default = []
+  type        = list(number)
+  default     = []
 }
 
 variable "maintenance_window_not_allowed" {

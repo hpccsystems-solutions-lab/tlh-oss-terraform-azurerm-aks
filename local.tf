@@ -6,14 +6,13 @@ data "azurerm_client_config" "current" {
 
 locals {
   module_name    = "terraform-azurerm-aks"
-  module_version = "v1.0.0-beta.10"
+  module_version = "v1.0.0-beta"
 
   # az aks get-versions --location eastus --output table
-  cluster_full_versions = merge({
-    "1.21" = "1.21.9"
-    }, lookup(var.experimental, "aks_v1_22", false) ? {
+  cluster_full_versions = {
     "1.22" = "1.22.6"
-  } : {})
+    "1.21" = "1.21.9"
+  }
 
   availability_zones = [1, 2, 3]
 

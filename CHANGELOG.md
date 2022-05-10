@@ -20,6 +20,20 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
+## [v1.0.0-beta.11] - UNRELEASED
+
+### Added
+
+- Added support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli). [@stevehipwell](https://github.com/stevehipwell)
+
+### Changed
+
+### Updated
+
+### Deprecated
+
+### Removed
+
 ## [v1.0.0-beta.10] - 2022-05-09
 
 > **Important**

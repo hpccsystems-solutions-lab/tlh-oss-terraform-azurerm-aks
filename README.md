@@ -288,10 +288,6 @@ kubelogin convert-kubeconfig -l azurecli
 
 Experimental features allow end users to try out new functionality which isn't stable in the context of a stable module release, they are enabled by setting the required variables on the `experimental` module variable.
 
-### AKS v1.22
-
-Support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli) can be currently enabled by setting `aks_v1_22 = true`. This AKS version hasn't been fully tested yet but when it has, the requirement to use an experimental flag will be removed.
-
 ### AAD Pod Identity Finalizer Wait
 
 If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity resources you can increase the time we wait before uninstalling the chart by setting `experimental = { aad_pod_identity_finalizer_wait = "300s" }`.
@@ -347,7 +343,7 @@ This module requires the following versions to be configured in the workspace `t
 | `location`                            | Azure location to target.                                                                                                                                                             | `string`                                   | `null`            |
 | `resource_group_name`                 | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                           | `string`                                   | `null`            |
 | `cluster_name`                        | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.  | `string`                                   | `null`            |
-| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster, version `1.21` is supported & `1.22` is [experimental](#aks-v1.22).                                       | `string`                                   | `null`            |
+| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.22` & `1.21` are supported.                                                                   | `string`                                   | `null`            |
 | `network_plugin`                      | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                         | `string`                                   | `"kubenet"`       |
 | `sku_tier_paid`                       | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                      | `bool`                                     | `null`            |
 | `cluster_endpoint_public_access`      | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                          | `bool`                                     | `null`            |
