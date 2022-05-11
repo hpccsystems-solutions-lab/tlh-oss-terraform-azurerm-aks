@@ -48,18 +48,16 @@ For example, the module exposes ingress endpoints for core services such as Prom
 ```yaml
   core_services_config = {
     cert_manager = {
-      dns_zones  = {
-        "us-accurint-prod.azure.lnrsg.io" = "us-accurint-prod-dns-rg"
+      acme_dns_zones  = ["us-accurint-prod.azure.lnrsg.io"]
+      default_issuer_kind = letsencrypt # for production usage of letsencrypt
       }
-    }
-
     external_dns= {
-      private_resource_group_name = "us-accurint-prod-dns-rg"
-      private_zones = [ "us-accurint-prod.azure.lnrsg.io" ]
+      public_domain_filters = [ "us-accurint-prod.azure.lnrsg.io" ]
     }
 
     ingress_internal_core = {
       domain    = "us-accurint-prod.azure.lnrsg.io"
+      public_dns = true
     }
   }
 ```
@@ -441,7 +439,7 @@ Specification for the `core_services_config.cert_manager` object.
 | `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for. | `list(string)` | No           |
 | `additional_issuers`  | Additional issuers to install into the cluster.            | `map(any)`     | No           |
 | `default_issuer_kind` | Kind of the default issuer.                                | `string`       | No           |
-| `default_issuer_name` | Name of the default issuer.                                | `string`       | No           |
+| `default_issuer_name` | Name of the default issuer , use letsencrypt for prod certs| `string`       | No           |
 
 ### Appendix G
 
