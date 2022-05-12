@@ -439,7 +439,7 @@ Specification for the `core_services_config.cert_manager` object.
 | `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for. | `list(string)` | No           |
 | `additional_issuers`  | Additional issuers to install into the cluster.            | `map(any)`     | No           |
 | `default_issuer_kind` | Kind of the default issuer.                                | `string`       | No           |
-| `default_issuer_name` | Name of the default issuer , use letsencrypt for prod certs| `string`       | No           |
+| `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs.| `string`       | No           |
 
 ### Appendix G
 
