@@ -25,7 +25,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Added
 
 - Added support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli). [@stevehipwell](https://github.com/stevehipwell)
-- Added experimental support for excluding `kube-audit` logs from Log Analytics via the `kube_audit_oject_store_only` experimental flag; this should only be used for cost concerns and isn't recommended from a Kubernetes perspective. [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for excluding `kube-audit` logs from Log Analytics via the `kube_audit_object_store_only` experimental flag; this should only be used for cost concerns and isn't recommended from a Kubernetes perspective. [@stevehipwell](https://github.com/stevehipwell)
 
 ### Changed
 

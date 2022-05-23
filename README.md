@@ -294,7 +294,7 @@ If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity reso
 
 ### Kube Audit Logs Excluded from Log Analytics
 
-If you're concerned about the cost of having your `kube-audit` logs sent to the Log Analytics workspace you can set `experimental = { kube_audit_oject_store_only = true }` which will exclude the `kube-audit` logs from the Log Analytics workspace. To use this you will need to make sure that you're passing in a storage account via the `logging_storage_account_id` input variable to store the control plane logs; even with this set it's not advised to use this functionality without having a method of querying the audit logs from object storage and making sure you're compliant with security guidance. From a _Kubernetes_ perspective this is an anti-pattern and as such should be used carefully.
+If you're concerned about the cost of having your `kube-audit` logs sent to the Log Analytics workspace you can set `experimental = { kube_audit_object_store_only = true }` which will exclude the `kube-audit` logs from the Log Analytics workspace. To use this you will need to make sure that you're passing in a storage account via the `logging_storage_account_id` input variable to store the control plane logs; even with this set it's not advised to use this functionality without having a method of querying the audit logs from object storage and making sure you're compliant with security guidance. From a _Kubernetes_ perspective this is an anti-pattern and as such should be used carefully.
 
 ### OMS Agent Support
 

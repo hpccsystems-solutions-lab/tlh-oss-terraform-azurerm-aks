@@ -9,7 +9,7 @@ locals {
       name                       = "control-plane-workspace"
       log_analytics_workspace_id = azurerm_log_analytics_workspace.default.id
       storage_account_id         = null
-      logs                       = setsubtract(local.log_categories, local.experimental_kube_audit_oject_store_only ? ["kube-audit"] : [])
+      logs                       = setsubtract(local.log_categories, local.experimental_kube_audit_object_store_only ? ["kube-audit"] : [])
       metrics                    = []
       retention_enabled          = false
       retention_days             = 0
@@ -55,5 +55,5 @@ locals {
     }]
   }
 
-  experimental_kube_audit_oject_store_only = lookup(var.experimental, "kube_audit_oject_store_only", false)
+  experimental_kube_audit_object_store_only = lookup(var.experimental, "kube_audit_object_store_only", false)
 }
