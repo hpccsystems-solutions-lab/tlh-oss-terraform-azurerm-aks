@@ -292,6 +292,10 @@ Experimental features allow end users to try out new functionality which isn't s
 
 If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity resources you can increase the time we wait before uninstalling the chart by setting `experimental = { aad_pod_identity_finalizer_wait = "300s" }`.
 
+### Kube Audit Logs Excluded from Log Analytics
+
+If you're concerned about the cost of having your `kube-audit` logs sent to the Log Analytics workspace you can set `experimental = { kube_audit_oject_store_only = true }` which will exclude the `kube-audit` logs from the Log Analytics workspace. To use this you will need to make sure that you're passing in a storage account via the `logging_storage_account_id` input variable to store the control plane logs; even with this set it's not advised to use this functionality without having a method of querying the audit logs from object storage and making sure you're compliant with security guidance. From a _Kubernetes_ perspective this is an anti-pattern and as such should be used carefully.
+
 ### OMS Agent Support
 
 This module supports enabling the OMS agent as it needs to be done when the cluster is created; but the operation of the agent is not managed by the module and needs to be handled by the cluster operators separately. All core namespaces should be excluded by the cluster operator, especially the _logging_ namespace, unless they are specifically wanted.
@@ -436,12 +440,12 @@ Specification for the `core_services_config.alertmanager` object.
 
 Specification for the `core_services_config.cert_manager` object.
 
-| **Variable**          | **Description**                                            | **Type**       | **Required** |
-| :-------------------- | :--------------------------------------------------------- | :------------- | :----------- |
-| `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for. | `list(string)` | No           |
-| `additional_issuers`  | Additional issuers to install into the cluster.            | `map(any)`     | No           |
-| `default_issuer_kind` | Kind of the default issuer.                                | `string`       | No           |
-| `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs.| `string`       | No           |
+| **Variable**          | **Description**                                                | **Type**       | **Required** |
+| :-------------------- | :------------------------------------------------------------- | :------------- | :----------- |
+| `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for.     | `list(string)` | No           |
+| `additional_issuers`  | Additional issuers to install into the cluster.                | `map(any)`     | No           |
+| `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | No           |
+| `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | No           |
 
 ### Appendix G
 
