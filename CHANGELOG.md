@@ -20,14 +20,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
-## [v1.0.0-beta.11] - UNRELEASED
+## [v1.0.0-beta.11] - 2022-05-23
 
 ### Added
 
 - Added support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli). [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support for excluding `kube-audit` logs from Log Analytics via the `kube_audit_object_store_only` experimental flag; this should only be used for cost concerns and isn't recommended from a Kubernetes perspective. [@stevehipwell](https://github.com/stevehipwell)
-
-### Changed
 
 ### Updated
 
@@ -35,10 +33,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The _Fluent Bit_ chart has been upgraded to [v0.20.1](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.1) (contains _Fluent Bit_ [v1.9.3](https://github.com/fluent/fluent-bit/releases/tag/v1.9.3)). [@prikesh-patel](https://github.com/prikesh-patel)
 - The _Kube Prometheus Stack_ chart has been upgraded to [v35.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-35.2.0). [@prikesh-patel](https://github.com/prikesh-patel)
 - The _Ingress Nginx_ chart has been upgraded to [v4.1.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.1.1). [@prikesh-patel](https://github.com/prikesh-patel)
-
-### Deprecated
-
-### Removed
 
 ## [v1.0.0-beta.10] - 2022-05-09
 
