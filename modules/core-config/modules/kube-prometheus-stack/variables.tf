@@ -49,12 +49,12 @@ variable "alertmanager_smtp_from" {
 }
 
 variable "alertmanager_receivers" {
-  description = "Alertmanager recievers to add to the default null."
+  description = "Alertmanager recievers to add to the default null, will always be a list."
   type        = any
 }
 
 variable "alertmanager_routes" {
-  description = "Alertmanager routes."
+  description = "Alertmanager routes, will always be a list."
   type        = any
 }
 
@@ -105,6 +105,16 @@ variable "oms_agent" {
 
 variable "oms_log_analytics_workspace_id" {
   description = "ID of the log analytics workspace for the OMS agent."
+  type        = string
+}
+
+variable "storage_account_name" {
+  description = "Name of storage account."
+  type        = string
+}
+
+variable "storage_account_id" {
+  description = "ID of the data storage account."
   type        = string
 }
 

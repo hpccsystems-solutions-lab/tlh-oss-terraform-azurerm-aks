@@ -61,3 +61,7 @@ output "windows_config" {
     admin_password = var.windows_support ? random_password.windows_admin_password[0].result : null
   }
 }
+
+output "data_storage_account_id" {
+  value = azurerm_storage_account.data.id
+}

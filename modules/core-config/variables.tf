@@ -83,6 +83,11 @@ variable "oms_log_analytics_workspace_id" {
   type        = string
 }
 
+variable "storage_account_id" {
+  description = "ID of the data storage account."
+  type        = string
+}
+
 variable "labels" {
   description = "Labels to be applied to all Kubernetes resources."
   type        = map(string)

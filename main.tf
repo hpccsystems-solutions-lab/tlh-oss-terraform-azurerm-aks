@@ -92,6 +92,8 @@ module "core_config" {
   oms_agent                                = local.experimental_oms_agent
   oms_log_analytics_workspace_id           = local.experimental_oms_log_analytics_workspace_id
 
+  storage_account_id = module.cluster.data_storage_account_id
+
   labels = local.labels
   tags   = local.tags
 
