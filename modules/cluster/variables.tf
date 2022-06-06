@@ -93,6 +93,11 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "cluster_tags" {
+  description = "Tags to apply to the cluster."
+  type        = map(string)
+}
+
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({

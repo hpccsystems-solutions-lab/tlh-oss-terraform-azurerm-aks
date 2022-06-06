@@ -118,7 +118,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     tags = var.tags
   }
 
-  tags = var.tags
+  tags = merge(var.cluster_tags, var.tags)
 
   timeouts {
     create = format("%vm", var.timeouts.cluster_modify / 60)

@@ -25,6 +25,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Added
 
 - Added experimental support to specify the set of control plane log categories via the `workspace_log_categories` & `storage_log_categories` experimental arguments. [@stevehipwell](https://github.com/stevehipwell)
+- Added version tag to cluster resource. [@james1miller93](https://github.com/james1miller93)
 
 ### Changed
 

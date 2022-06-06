@@ -26,6 +26,7 @@ module "cluster" {
   maintenance_window_not_allowed   = var.maintenance_window_not_allowed
   timeouts                         = local.timeouts
   experimental                     = var.experimental
+  cluster_tags                     = local.cluster_tags
 }
 
 module "rbac" {
