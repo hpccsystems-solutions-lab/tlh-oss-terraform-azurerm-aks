@@ -8,8 +8,6 @@ locals {
 
   az_count = length(var.availability_zones)
 
-  storage_account_name = element(split("/", var.storage_account_id), length(split("/", var.storage_account_id))-1)
-
   namespaces = [
     "cert-manager",
     "dns",

@@ -183,8 +183,6 @@ module "kube_prometheus_stack" {
   control_plane_log_analytics_workspace_id = var.control_plane_log_analytics_workspace_id
   oms_agent                                = var.oms_agent
   oms_log_analytics_workspace_id           = var.oms_log_analytics_workspace_id
-  storage_account_name                     = local.storage_account_name
-  storage_account_id                       = var.storage_account_id
   skip_crds                                = true
   tags                                     = var.tags
 
