@@ -103,17 +103,17 @@ variable "timeouts" {
 
 variable "maintenance_window_offset" {
   description = "Maintenance window offset to utc."
-  type    = number
+  type        = number
 }
 
 variable "maintenance_window_allowed_days" {
   description = "List of allowed days covering the maintenance window."
-  type    = list(string)
+  type        = list(string)
 }
 
 variable "maintenance_window_allowed_hours" {
   description = "List of allowed hours covering the maintenance window."
-  type    = list(number)
+  type        = list(number)
 }
 
 variable "maintenance_window_not_allowed" {

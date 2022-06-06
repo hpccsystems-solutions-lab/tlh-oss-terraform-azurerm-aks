@@ -83,6 +83,11 @@ variable "oms_log_analytics_workspace_id" {
   type        = string
 }
 
+variable "oms_log_analytics_workspace_different_resource_group" {
+  description = "If the oms agent log analytics workspace is in a different resource group to the cluster."
+  type        = bool
+}
+
 variable "labels" {
   description = "Labels to be applied to all Kubernetes resources."
   type        = map(string)

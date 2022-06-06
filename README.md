@@ -310,6 +310,8 @@ This module supports enabling the OMS agent as it needs to be done when the clus
 
 To enable OMS agent support you need to set `experimental = { oms_agent = true, oms_log_analytics_workspace_id = "my-workspace-id" }`.
 
+If the log analytics workspace is created in a different resource group to the cluster, `experimental.oms_log_analytics_workspace_different_resource_group` must also be set to `true`.
+
 ### Windows Node Support
 
 > **Important**

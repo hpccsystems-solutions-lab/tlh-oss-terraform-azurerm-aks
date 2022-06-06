@@ -30,6 +30,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Fixed indentation on `node-exporter` Prometheus rule. [@prikesh-patel](https://github.com/prikesh-patel)
 - Changed the default control plane log categories to use `kube-audit-admin` instead of `kube-audit`. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed bug where count cannot be determined until apply when resource group is created and `experimental.oms_agent` is enabled in same workspace. [@james1miller93](https://github.com/james1miller93)
 
 ### Removed
 
