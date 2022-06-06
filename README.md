@@ -292,9 +292,17 @@ Experimental features allow end users to try out new functionality which isn't s
 
 If your cluster isn't being destroyed cleanly due to stuck AAD Pod Identity resources you can increase the time we wait before uninstalling the chart by setting `experimental = { aad_pod_identity_finalizer_wait = "300s" }`.
 
-### Kube Audit Logs Excluded from Log Analytics
+### Control Plane Log Categories
 
-If you're concerned about the cost of having your `kube-audit` logs sent to the Log Analytics workspace you can set `experimental = { kube_audit_object_store_only = true }` which will exclude the `kube-audit` logs from the Log Analytics workspace. To use this you will need to make sure that you're passing in a storage account via the `logging_storage_account_id` input variable to store the control plane logs; even with this set it's not advised to use this functionality without having a method of querying the audit logs from object storage and making sure you're compliant with security guidance. From a _Kubernetes_ perspective this is an anti-pattern and as such should be used carefully.
+This experimental feature allows you to influence the volume of control plane logs collected by specifying the set of control plane log categories you wish to be captured. This is achieved by setting `workspace_log_categories` for the log categories sent to the module created log analytics workspace and setting `storage_log_categories` if you've passed in an additional storage account. The available values are one of `all`, `recommended` or `limited`; for example setting `experimental = { workspace_log_categories = "recommended", storage_log_categories = "all" }` will send the recommended set of logs to the log analytics workspace and all of the logs to object storage.
+
+By default and if these values aren't specified the recommended log categories will be collected.
+
+| **Value**     | **Log Categories**                                                                                                                                                                                                                  |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `all`         | `["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]`       |
+| `recommended` | `["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]` |
+| `limited`     | `["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"]`                                                                                                                                                |
 
 ### OMS Agent Support
 

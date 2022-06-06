@@ -22,9 +22,18 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.12] - UNRELEASED
 
+### Added
+
+- Added experimental support to specify the set of control plane log categories via the `workspace_log_categories` & `storage_log_categories` experimental arguments. [@stevehipwell](https://github.com/stevehipwell)
+
 ### Changed
 
-- Fixed indentation on 'node-exporter' prometheus rule. [@prikesh-patel](https://github.com/prikesh-patel)
+- Fixed indentation on `node-exporter` Prometheus rule. [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed the default control plane log categories to use `kube-audit-admin` instead of `kube-audit`. [@stevehipwell](https://github.com/stevehipwell)
+
+### Removed
+
+- Removed experimental `kube_audit_object_store_only` variable and replaced it with the new `workspace_log_categories` & `storage_log_categories` experiments. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.11] - 2022-05-23
 

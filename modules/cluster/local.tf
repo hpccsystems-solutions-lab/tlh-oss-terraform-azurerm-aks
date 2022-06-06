@@ -2,14 +2,20 @@ data "azurerm_client_config" "current" {
 }
 
 locals {
-  log_categories = ["kube-apiserver", "kube-audit", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
+  log_categories = {
+    all = ["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
+
+    recommended = ["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
+
+    limited = ["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"]
+  }
 
   logging_config = merge({
     workspace = {
       name                       = "control-plane-workspace"
       log_analytics_workspace_id = azurerm_log_analytics_workspace.default.id
       storage_account_id         = null
-      logs                       = setsubtract(local.log_categories, local.experimental_kube_audit_object_store_only ? ["kube-audit"] : [])
+      logs                       = local.log_categories[local.workspace_log_categories]
       metrics                    = []
       retention_enabled          = false
       retention_days             = 0
@@ -19,7 +25,7 @@ locals {
       name                       = "control-plane-storage-account"
       log_analytics_workspace_id = null
       storage_account_id         = var.logging_storage_account_id
-      logs                       = local.log_categories
+      logs                       = local.log_categories[local.storage_log_categories]
       metrics                    = []
       retention_enabled          = true
       retention_days             = 7
@@ -55,5 +61,6 @@ locals {
     }]
   }
 
-  experimental_kube_audit_object_store_only = lookup(var.experimental, "kube_audit_object_store_only", false)
+  workspace_log_categories = lookup(var.experimental, "workspace_log_categories", "recommended")
+  storage_log_categories   = lookup(var.experimental, "storage_log_categories", "recommended")
 }
