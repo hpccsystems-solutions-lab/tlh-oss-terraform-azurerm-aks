@@ -149,17 +149,17 @@ resource "random_string" "random" {
 }
 
 module "subscription" {
-  source  = "git@github.com:Azure-Terraform/terraform-azurerm-subscription-data.git?ref=v1.0.0"
+  source = "git@github.com:Azure-Terraform/terraform-azurerm-subscription-data.git?ref=v1.0.0"
 
   subscription_id = data.azurerm_client_config.current.subscription_id
 }
 
 module "naming" {
-  source  = "git@github.com:LexisNexis-RBA/terraform-azurerm-naming.git?ref=v1.0.81"
+  source = "git@github.com:LexisNexis-RBA/terraform-azurerm-naming.git?ref=v1.0.81"
 }
 
 module "metadata" {
-  source  = "git@github.com:Azure-Terraform/terraform-azurerm-metadata.git?ref=v1.5.1"
+  source = "git@github.com:Azure-Terraform/terraform-azurerm-metadata.git?ref=v1.5.1"
 
   naming_rules = module.naming.yaml
 
@@ -176,7 +176,7 @@ module "metadata" {
 }
 
 module "resource_group" {
-  source  = "git@github.com:Azure-Terraform/terraform-azurerm-resource-group.git?ref=v2.1.0"
+  source = "git@github.com:Azure-Terraform/terraform-azurerm-resource-group.git?ref=v2.1.0"
 
   location = module.metadata.location
   names    = module.metadata.names
@@ -184,7 +184,7 @@ module "resource_group" {
 }
 
 module "virtual_network" {
-  source  = "git@github.com:Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v6.0.0"
+  source = "git@github.com:Azure-Terraform/terraform-azurerm-virtual-network.git?ref=v6.0.0"
 
   naming_rules = module.naming.yaml
 

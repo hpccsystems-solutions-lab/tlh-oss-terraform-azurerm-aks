@@ -63,7 +63,7 @@ data "vault_generic_secret" "default" {
 }
 
 data "vault_generic_secret" "azure_creds" {
-  path = "kv/terraform/azure/${substr(local.account_code,0,2)}/${local.account_code}/credentials"
+  path = "kv/terraform/azure/${substr(local.account_code, 0, 2)}/${local.account_code}/credentials"
 }
 
 locals {
@@ -75,7 +75,7 @@ locals {
   private_access_cidrs = []
 
   azuread_clusterrole_map = {
-    cluster_admin_users = local.cluster_admin_users
+    cluster_admin_users  = local.cluster_admin_users
     cluster_view_users   = {}
     standard_view_users  = {}
     standard_view_groups = {}

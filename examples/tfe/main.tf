@@ -166,7 +166,7 @@ resource "random_string" "random" {
 
 module "default_azure_credentials" {
   providers = { vault = vault.azure_credentials }
-  source = "github.com/openrba/terraform-enterprise-azure-credentials.git?ref=v0.3.0"
+  source    = "github.com/openrba/terraform-enterprise-azure-credentials.git?ref=v0.3.0"
 
   connection_info = var.default_connection_info
 }
