@@ -20,6 +20,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
+## [v1.0.0-beta.12] - UNRELEASED
+
+### Changed
+
+- Fixed indentation on 'node-exporter' prometheus rule. [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.0.0-beta.11] - 2022-05-23
 
 ### Added

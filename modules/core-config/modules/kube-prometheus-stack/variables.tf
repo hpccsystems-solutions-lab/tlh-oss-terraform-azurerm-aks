@@ -49,12 +49,12 @@ variable "alertmanager_smtp_from" {
 }
 
 variable "alertmanager_receivers" {
-  description = "Alertmanager recievers to add to the default null."
+  description = "Alertmanager recievers to add to the default null, will always be a list."
   type        = any
 }
 
 variable "alertmanager_routes" {
-  description = "Alertmanager routes."
+  description = "Alertmanager routes, will always be a list."
   type        = any
 }
 
