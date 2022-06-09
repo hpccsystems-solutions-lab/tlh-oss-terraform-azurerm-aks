@@ -20,7 +20,7 @@ locals {
       retention_enabled          = false
       retention_days             = 0
     }
-    }, length(var.logging_storage_account_id) > 0 ? {
+    }, var.logging_storage_account_enabled ? {
     storage_account = {
       name                       = "control-plane-storage-account"
       log_analytics_workspace_id = null

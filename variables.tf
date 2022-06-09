@@ -180,10 +180,16 @@ variable "core_services_config" {
   }
 }
 
+variable "logging_storage_account_enabled" {
+  description = "Whether a storage account should be used for storing cluster logs."
+  type        = bool
+  default     = false
+}
+
 variable "logging_storage_account_id" {
   description = "Optional ID of a storage account to add cluster logs to."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "tags" {

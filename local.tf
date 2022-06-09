@@ -6,7 +6,7 @@ data "azurerm_client_config" "current" {
 
 locals {
   module_name    = "terraform-azurerm-aks"
-  module_version = "v1.0.0-beta.12"
+  module_version = "v1.0.0-beta.13"
 
   cluster_tags = {
     "lnrs.io_terraform-module-version" = local.module_version
@@ -55,6 +55,6 @@ locals {
 
   experimental_oms_agent                                            = lookup(var.experimental, "oms_agent", false)
   experimental_oms_log_analytics_workspace_different_resource_group = lookup(var.experimental, "oms_log_analytics_workspace_different_resource_group", false)
-  experimental_oms_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", "")
+  experimental_oms_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", null)
   experimental_windows_support                                      = lookup(var.experimental, "windows_support", false)
 }

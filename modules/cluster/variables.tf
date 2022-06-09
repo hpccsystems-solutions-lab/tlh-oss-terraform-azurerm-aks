@@ -68,6 +68,11 @@ variable "bootstrap_vm_size" {
   type        = string
 }
 
+variable "logging_storage_account_enabled" {
+  description = "Whether a storage account should be used for storing cluster logs."
+  type        = bool
+}
+
 variable "logging_storage_account_id" {
   description = "Optional ID of a storage account to add cluster logs to.."
   type        = string

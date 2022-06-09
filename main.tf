@@ -15,6 +15,7 @@ module "cluster" {
   admin_group_object_ids           = var.admin_group_object_ids
   bootstrap_name                   = local.bootstrap_name
   bootstrap_vm_size                = local.bootstrap_vm_size
+  logging_storage_account_enabled  = var.logging_storage_account_enabled
   logging_storage_account_id       = var.logging_storage_account_id
   oms_agent                        = local.experimental_oms_agent
   oms_log_analytics_workspace_id   = local.experimental_oms_log_analytics_workspace_id
