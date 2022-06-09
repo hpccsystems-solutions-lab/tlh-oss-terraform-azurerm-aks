@@ -33,9 +33,9 @@ See [documentation](/docs) for system architecture, requirements and user guides
 
 ### Networking
 
-A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and a unique route table for each AKS cluster. While it is technically possible to host multiple AKS cluster node pools in a subnet, this is not recommended.
+A VNet can contain multiple AKS clusters and be shared with non-AKS resources, however there **should** be a dedicated subnet and a unique route table for each AKS cluster. It is technically possible to host multiple AKS cluster node pools in a subnet, this is not recommended and may cause connectivity issues but can be achieved by passing in a unique non-overlapping CIDR block to each cluster via the `podnet_cidr_block` input variable.
 
-Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparision](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
+Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparison](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
 
 If the [dns_servers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network#dns_servers) attribute is set for the virtual network, the Azure DNS server "168.63.129.16" must be included in the list of values.
 
@@ -85,7 +85,7 @@ Within the AKS module we use two features to automatically upgrade the node imag
 - [Automatic upgrade channel](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade)
 - [Maintenance Window](https://docs.microsoft.com/en-us/azure/aks/upgrade-cluster#set-auto-upgrade-channel)
 
-Unlike EKS there is no way of specifying the node image version via Terraform so we use the Automatic upgrade channel set to node-image. this enables automatic node image upgrades outside of Terraform. Note kubernetes patch, minor and major versions are controlled separately. Combining the automatic upgrade channel with a maintenance window gives us the ability to control when the upgrades take place.
+Unlike EKS there is no way of specifying the node image version via Terraform so we use the Automatic upgrade channel set to node-image. this enables automatic node image upgrades outside of Terraform. Note Kubernetes patch, minor and major versions are controlled separately. Combining the automatic upgrade channel with a maintenance window gives us the ability to control when the upgrades take place.
 
 The module sets a default of a maintenance window of Tuesdays, Wednesdays and Thursdays between the hours of 10am and 4pm. The default maintenance window can be overwritten in the client side code, for an example please visit the [central documentation](https://gitlab.b2b.regn.net/kubernetes/kubernetes-core/-/blob/master/README.md).
 
@@ -115,7 +115,7 @@ Node types describe the purpose of the node and maps down to the underlaying [Az
 
 Due to the availability issues with specific Azure VMs when choosing a node type you also need to select the version; newer versions may well be less available in popular regions.
 
-All the nodes provisioned by the module support permium storage.
+All the nodes provisioned by the module support premium storage.
 
 ##### General Purpose
 
@@ -262,7 +262,34 @@ The following steps should be followed to upgrade a cluster's Kubernetes minor v
 
 ### Connecting to the Cluster
 
-AKS clusters created by this module use [Azure AD authentication](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and don't create local accounts. To connect to an AKS cluster after it's been created follow you can run the following commands; assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed, you are logged in.
+AKS clusters created by this module use [Azure AD authentication](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and don't create local accounts.
+
+#### Tooling Access
+
+When running this module or using a Kubernetes based provider (`kubernetes`, `helm` or `kubectl`) the Terraform identity either needs to have the [Azure Kubernetes Service RBAC Cluster Admin](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-rbac-cluster-admin) scoped to the cluster or you need to pass the identities AD group ID into the `admin_group_object_ids` module input variable.
+
+> **INFO**
+> If you're using TFE you need to use the `admin_group_object_ids` input variable unless specifically told otherwise.
+
+From Terraform workspaces all Kubernetes based providers should be configured to use the [exec plugin](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs#exec-plugins) pattern and for AKS clusters this is [Kubelogin](https://github.com/Azure/kubelogin) which should be configured as below, note the constant `--server-id` of `6dae42f8-4368-4678-94ff-3960e28e3630` and the values which need to be defined in locals (or elsewhere). The `exec` block is the same as `kubernetes` for the `helm` and `kubectl` providers but is nested under the `kubernetes` block in them.
+
+```terraform
+provider "kubernetes" {
+  host                   = module.aks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.aks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "kubelogin"
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", local.azure_environment, "--tenant-id", local.tenant_id]
+    env         =  { AAD_SERVICE_PRINCIPAL_CLIENT_ID = local.client_id, AAD_SERVICE_PRINCIPAL_CLIENT_SECRET = local.client_secret }
+  }
+}
+```
+
+#### End User Access
+
+To connect to an AKS cluster after it's been created your AD user will need to have been added to the cluster via the `azuread_clusterrole_map` input variable. You can run the following commands, assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and you are logged in to it.
 
 ```shell
 az aks install-cli
@@ -351,35 +378,35 @@ This module requires the following versions to be configured in the workspace `t
 
 ## Variables
 
-| **Variable**                          | **Description**                                                                                                                                                                       | **Type**                                   | **Default**       |
-| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------- | :---------------- |
-| `azure_env`                           | Azure cloud environment type, `public` & `usgovernment` are supported.                                                                                                                | `string`                                   | `"public"`        |
-| `location`                            | Azure location to target.                                                                                                                                                             | `string`                                   | `null`            |
-| `resource_group_name`                 | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                           | `string`                                   | `null`            |
-| `cluster_name`                        | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.  | `string`                                   | `null`            |
-| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.22` & `1.21` are supported.                                                                   | `string`                                   | `null`            |
-| `network_plugin`                      | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                         | `string`                                   | `"kubenet"`       |
-| `sku_tier_paid`                       | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                      | `bool`                                     | `null`            |
-| `cluster_endpoint_public_access`      | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                          | `bool`                                     | `null`            |
-| `cluster_endpoint_access_cidrs`       | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint.                                                                                | `list(string)`                             | `null`            |
-| `virtual_network_resource_group_name` | Name of the resource group containing the virtual network.                                                                                                                            | `string`                                   | `null`            |
-| `virtual_network_name`                | Name of the virtual network to use for the cluster.                                                                                                                                   | `string`                                   | `null`            |
-| `subnet_name`                         | Name of the AKS subnet in the virtual network.                                                                                                                                        | `string`                                   | `null`            |
-| `route_table_name`                    | Name of the AKS subnet route table.                                                                                                                                                   | `string`                                   | `null`            |
-| `dns_resource_group_lookup`           | Lookup from DNS zone to resource group name.                                                                                                                                          | `map(string)`                              | `null`            |
-| `podnet_cidr_block`                   | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a virtual network this value needs to be unique.                  | `string`                                   | `"100.65.0.0/16"` |
-| `admin_group_object_ids`              | AD Object IDs to be added to the cluster admin group. The identity running the module should either be in a group passed in here or configured as a cluster admin outside the module. | `list(string)`                             | `[]`              |
-| `azuread_clusterrole_map`             | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                   | `object` ([Appendix A](#appendix-a))       | `{}`              |
-| `node_group_templates`                | Templates describing the requires node groups.                                                                                                                                        | `object` ([Appendix B](#appendix-b))       | `null`            |
-| `core_services_config`                | Core service configuration.                                                                                                                                                           | `any` ([Appendix D](#appendix-d))          | `null`            |
-| `logging_storage_account_enabled`     | Boolean to indicate whether a storage account should be used for cluster log storage.                                                                                                 | `bool`                                     | `false`           |
-| `logging_storage_account_id`          | Optional ID of a storage account to add cluster logs to.                                                                                                                              | `string`                                   | `null`            |
-| `maintenance_window_offset`           | Maintenance window offset to utc.                                                                                                                                                     | `number`                                   | `null`            |
-| `maintenance_window_allowed_days`     | List of allowed days covering the maintenance window.                                                                                                                                 | `list(string)`                             | `[]`              |
-| `maintenance_window_allowed_hours`    | List of allowed hours covering the maintenance window.                                                                                                                                | `list(number)`                             | `[]`              |
-| `maintenance_window_not_allowed`      | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.   | `list(object)` ([Appendix M](#appendix-m)) | `[]`              |
-| `tags`                                | Tags to apply to all resources.                                                                                                                                                       | `map(string)`                              | `{}`              |
-| `experimental`                        | Configure experimental features.                                                                                                                                                      | `any`                                      | `{}`              |
+| **Variable**                          | **Description**                                                                                                                                                                        | **Type**                                   | **Default**       |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :---------------- |
+| `azure_env`                           | Azure cloud environment type, `public` & `usgovernment` are supported.                                                                                                                 | `string`                                   | `"public"`        |
+| `location`                            | Azure location to target.                                                                                                                                                              | `string`                                   | `null`            |
+| `resource_group_name`                 | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                            | `string`                                   | `null`            |
+| `cluster_name`                        | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.   | `string`                                   | `null`            |
+| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.22` & `1.21` are supported.                                                                    | `string`                                   | `null`            |
+| `network_plugin`                      | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                          | `string`                                   | `"kubenet"`       |
+| `sku_tier_paid`                       | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                       | `bool`                                     | `null`            |
+| `cluster_endpoint_public_access`      | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                           | `bool`                                     | `null`            |
+| `cluster_endpoint_access_cidrs`       | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster.       | `list(string)`                             | `null`            |
+| `virtual_network_resource_group_name` | Name of the resource group containing the virtual network.                                                                                                                             | `string`                                   | `null`            |
+| `virtual_network_name`                | Name of the virtual network to use for the cluster.                                                                                                                                    | `string`                                   | `null`            |
+| `subnet_name`                         | Name of the AKS subnet in the virtual network.                                                                                                                                         | `string`                                   | `null`            |
+| `route_table_name`                    | Name of the AKS subnet route table.                                                                                                                                                    | `string`                                   | `null`            |
+| `dns_resource_group_lookup`           | Lookup from DNS zone to resource group name.                                                                                                                                           | `map(string)`                              | `null`            |
+| `podnet_cidr_block`                   | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a subnet (or sharing a route table) this value needs to be unique. | `string`                                   | `"100.65.0.0/16"` |
+| `admin_group_object_ids`              | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                    | `list(string)`                             | `[]`              |
+| `azuread_clusterrole_map`             | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                    | `object` ([Appendix A](#appendix-a))       | `{}`              |
+| `node_group_templates`                | Templates describing the requires node groups.                                                                                                                                         | `object` ([Appendix B](#appendix-b))       | `null`            |
+| `core_services_config`                | Core service configuration.                                                                                                                                                            | `any` ([Appendix D](#appendix-d))          | `null`            |
+| `logging_storage_account_enabled`     | Boolean to indicate whether a storage account should be used for cluster log storage.                                                                                                  | `bool`                                     | `false`           |
+| `logging_storage_account_id`          | Optional ID of a storage account to add cluster logs to.                                                                                                                               | `string`                                   | `null`            |
+| `maintenance_window_offset`           | Maintenance window offset to UTC.                                                                                                                                                      | `number`                                   | `null`            |
+| `maintenance_window_allowed_days`     | List of allowed days covering the maintenance window.                                                                                                                                  | `list(string)`                             | `[]`              |
+| `maintenance_window_allowed_hours`    | List of allowed hours covering the maintenance window.                                                                                                                                 | `list(number)`                             | `[]`              |
+| `maintenance_window_not_allowed`      | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.    | `list(object)` ([Appendix M](#appendix-m)) | `[]`              |
+| `tags`                                | Tags to apply to all resources.                                                                                                                                                        | `map(string)`                              | `{}`              |
+| `experimental`                        | Configure experimental features.                                                                                                                                                       | `any`                                      | `{}`              |
 
 ### Appendix A
 
@@ -525,8 +552,8 @@ Specification for the `maintenance_window_not_allowed` object.
 
 | **Variable** | **Description**                                                             | **Type** | **Required** |
 | :----------- | :-------------------------------------------------------------------------- | :------- | :----------- |
-| `start`      | Start time for the not allowed maintenance window block in rfc 3339 format. | `string` | No           |
-| `end`        | End time for the not allowed maintenance window block in rfc 3339 format.   | `string` | No           |
+| `start`      | Start time for the not allowed maintenance window block in RFC 3339 format. | `string` | No           |
+| `end`        | End time for the not allowed maintenance window block in RFC 3339 format.   | `string` | No           |
 
 ---
 

@@ -66,8 +66,13 @@ variable "cluster_endpoint_public_access" {
 }
 
 variable "cluster_endpoint_access_cidrs" {
-  description = "List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint."
+  description = "List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster."
   type        = list(string)
+
+  validation {
+    condition     = length(var.cluster_endpoint_access_cidrs) > 0
+    error_message = "Cluster endpoint access CIDRS need to be explicitly set."
+  }
 }
 
 variable "virtual_network_resource_group_name" {
@@ -102,7 +107,7 @@ variable "podnet_cidr_block" {
 }
 
 variable "admin_group_object_ids" {
-  description = "AD Object IDs to be added to the cluster admin group, if not set the current user will be made a cluster administrator."
+  description = "AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module."
   type        = list(string)
   default     = []
 }
