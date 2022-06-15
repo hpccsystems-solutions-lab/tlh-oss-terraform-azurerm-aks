@@ -1,4 +1,6 @@
 resource "random_string" "workspace_suffix" {
+  count = var.control_plane_logging_external_workspace ? 1 : 0
+
   length  = 5
   special = false
   lower   = true
@@ -6,10 +8,12 @@ resource "random_string" "workspace_suffix" {
 }
 
 resource "azurerm_log_analytics_workspace" "default" {
+  count = var.control_plane_logging_external_workspace ? 1 : 0
+
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  name              = "${regex("aks-\\d+", var.cluster_name)}-control-plane-logs-${random_string.workspace_suffix.result}"
+  name              = "${regex("aks-\\d+", var.cluster_name)}-control-plane-logs-${random_string.workspace_suffix[0].result}"
   retention_in_days = 30
   tags              = merge(var.tags, { description = "control-plane-logs" })
 }

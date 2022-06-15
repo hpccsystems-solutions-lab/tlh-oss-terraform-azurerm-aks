@@ -68,14 +68,54 @@ variable "bootstrap_vm_size" {
   type        = string
 }
 
-variable "logging_storage_account_enabled" {
-  description = "Whether a storage account should be used for storing cluster logs."
+variable "control_plane_logging_external_workspace" {
+  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs."
   type        = bool
 }
 
-variable "logging_storage_account_id" {
-  description = "Optional ID of a storage account to add cluster logs to.."
+variable "control_plane_logging_external_workspace_id" {
+  description = "ID of the log analytics workspace to send control plane logs to if control_plane_logging_external_workspace is true."
   type        = string
+}
+
+variable "control_plane_logging_workspace_categories" {
+  description = "The control plane log categories to send to the log analytics workspace."
+  type        = string
+}
+
+variable "control_plane_logging_workspace_retention_enabled" {
+  description = "If the control plane logs being sent to log analytics should have a retention specified, if not set the log analytics workspace default retention will be used."
+  type        = bool
+}
+
+variable "control_plane_logging_workspace_retention_days" {
+  description = "How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
+  type        = number
+}
+
+variable "control_plane_logging_storage_account_enabled" {
+  description = "If true, cluster control plane logs will be sent to the storage account referenced in control_plane_logging_storage_account_id as well as the default log analytics workspace."
+  type        = bool
+}
+
+variable "control_plane_logging_storage_account_id" {
+  description = "ID of the storage account to add cluster control plane logs to if control_plane_logging_storage_account_id is true. "
+  type        = string
+}
+
+variable "control_plane_logging_storage_account_categories" {
+  description = "The control plane log categories to send to the storage account."
+  type        = string
+}
+
+variable "control_plane_logging_storage_account_retention_enabled" {
+  description = "If true, the control plane logs being sent to log analytics will use the retention specified in control_plane_logging_workspace_retention_days otherwise the log analytics workspace default retention will be used."
+  type        = bool
+}
+
+variable "control_plane_logging_storage_account_retention_days" {
+  description = "How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
+  type        = number
 }
 
 variable "oms_agent" {

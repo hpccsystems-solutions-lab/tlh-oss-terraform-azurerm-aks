@@ -20,22 +20,22 @@ locals {
   logging_config = merge({
     workspace = {
       name                       = "control-plane-workspace"
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.default.id
+      log_analytics_workspace_id = var.control_plane_logging_external_workspace ? var.control_plane_logging_external_workspace_id : azurerm_log_analytics_workspace.default[0].id
       storage_account_id         = null
-      logs                       = local.log_categories[local.workspace_log_categories]
+      logs                       = local.log_categories[var.control_plane_logging_workspace_categories]
       metrics                    = []
-      retention_enabled          = false
-      retention_days             = 0
+      retention_enabled          = var.control_plane_logging_workspace_retention_enabled
+      retention_days             = var.control_plane_logging_workspace_retention_days
     }
-    }, var.logging_storage_account_enabled ? {
+    }, var.control_plane_logging_storage_account_enabled ? {
     storage_account = {
       name                       = "control-plane-storage-account"
       log_analytics_workspace_id = null
-      storage_account_id         = var.logging_storage_account_id
-      logs                       = local.log_categories[local.storage_log_categories]
+      storage_account_id         = var.control_plane_logging_storage_account_id
+      logs                       = local.log_categories[var.control_plane_logging_storage_account_categories]
       metrics                    = []
-      retention_enabled          = true
-      retention_days             = 7
+      retention_enabled          = var.control_plane_logging_storage_account_retention_enabled
+      retention_days             = var.control_plane_logging_storage_account_retention_days
     }
   } : {})
 

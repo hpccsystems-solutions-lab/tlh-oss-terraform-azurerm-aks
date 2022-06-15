@@ -230,7 +230,7 @@ locals {
       apiVersion = "cert-manager.io/v1"
       kind       = "ClusterIssuer"
       metadata = {
-        name = "zerossl"
+        name   = "zerossl"
         labels = var.labels
       }
       spec = {
@@ -243,7 +243,7 @@ locals {
           externalAccountBinding = {
             keyID = "5HWD3Esqen2kNewF0URgjg"
             keySecretRef = {
-              key = local.zerossl_eab_secret_key
+              key  = local.zerossl_eab_secret_key
               name = kubernetes_secret.zerossl_eabsecret.metadata[0].name
             }
             keyAlgorithm = "HS256"
