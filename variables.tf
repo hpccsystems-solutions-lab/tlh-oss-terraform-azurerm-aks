@@ -186,13 +186,13 @@ variable "core_services_config" {
 }
 
 variable "logging_storage_account_enabled" {
-  description = "Whether a storage account should be used for storing cluster logs."
+  description = "If true, cluster control plane logs will be sent to the storage account referenced in logging_storage_account_id as well as the default log analytics workspace."
   type        = bool
   default     = false
 }
 
 variable "logging_storage_account_id" {
-  description = "Optional ID of a storage account to add cluster logs to."
+  description = "ID of the storage account to add cluster control plane logs to if logging_storage_account_enabled is true. "
   type        = string
   default     = null
 }

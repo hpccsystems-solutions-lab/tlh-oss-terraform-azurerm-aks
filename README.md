@@ -171,7 +171,9 @@ Cluster node groups will be auto scaled by using the [AKS Cluster Autoscaler](ht
 
 ### Logging
 
-Cluster logs are collected on the nodes using _Fluent Bit_ and are then aggregated into the stateful _Fluentd_ service running in-cluster. These logs can be manipulated and shipped anywhere based on custom _Fluentd_ configuration. If your application creates JSON log lines the fields of this object are extracted, otherwise there is a `log` field with the application log data as a string; for JSON logging we suggest using `msg` for the log text field.
+Cluster control plane logs are sent to an Azure log analytics workspace created by this module with a 30 day expiry. If you want to add the control plane logs to object storage you can enable this by setting `logging_storage_account_enabled` and `logging_storage_account_id` (the current retention of these logs is 7 days but should be made user defined).
+
+Cluster node & pod logs are collected on the nodes using _Fluent Bit_ and are then aggregated into the stateful _Fluentd_ service running in-cluster. These logs can be manipulated and shipped anywhere based on custom _Fluentd_ configuration. If your application creates JSON log lines the fields of this object are extracted, otherwise there is a `log` field with the application log data as a string; for JSON logging we suggest using `msg` for the log text field.
 
 All logs collected from running pods have a `kube` tag and additional fields extracted from the Kubernetes metadata, please note that using [Kubernetes common labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/) makes the log fields more meaningful.
 
@@ -189,11 +191,17 @@ Cluster metrics are collected by Prometheus and visualised in Grafana. These met
 
 Cluster alerts default to being ignored but can be fully customised with receivers and routes.
 
+#### DNS
+
+DNS is only generated when using an `Ingress` resource with the `lnrs.io/zone-type` annotation set on it. The value will depend on whether External DNS is running as an internal or external service. For an internal service the annotation should be set to `private`, and for an external service the annotation should be set to `public`. For an External DNS service running as both an internal and external service, the annotation should be set to `public-private`.
+
+Additional Kubernetes resource types to be observed for new DNS entries can be supplied through `core_services_config.external_dns.additional_sources`. By default, this is set to `service` and `ingress`.
+
 ### Ingress
 
 All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LodBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
 
-Out of the box the cluster supports automatically generating certificates with _Cert Manager_ and DNS records with _External DNS_ from `Ingress` resources.
+Out of the box the cluster supports automatically generating certificates with the _Cert Manager_ default issuer, this can be overridden by the following `Ingress` annotations `cert-manager.io/cluster-issuer` or `cert-manager.io/issuer`. DNS records will be created by _External DNS_ from `Ingress` resources when the `lnrs.io/zone-type` is set, see the [DNS](#dns-1) config for how this works.
 
 #### Ingress Controllers
 
@@ -399,8 +407,8 @@ This module requires the following versions to be configured in the workspace `t
 | `azuread_clusterrole_map`             | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                    | `object` ([Appendix A](#appendix-a))       | `{}`              |
 | `node_group_templates`                | Templates describing the requires node groups.                                                                                                                                         | `object` ([Appendix B](#appendix-b))       | `null`            |
 | `core_services_config`                | Core service configuration.                                                                                                                                                            | `any` ([Appendix D](#appendix-d))          | `null`            |
-| `logging_storage_account_enabled`     | Boolean to indicate whether a storage account should be used for cluster log storage.                                                                                                  | `bool`                                     | `false`           |
-| `logging_storage_account_id`          | Optional ID of a storage account to add cluster logs to.                                                                                                                               | `string`                                   | `null`            |
+| `logging_storage_account_enabled`     | If `true`, cluster control plane logs will be sent to the storage account referenced in `logging_storage_account_id` as well as the default log analytics workspace.                   | `bool`                                     | `false`           |
+| `logging_storage_account_id`          | ID of the storage account to add cluster control plane logs to if `logging_storage_account_enabled` is `true`.                                                                         | `string`                                   | `null`            |
 | `maintenance_window_offset`           | Maintenance window offset to UTC.                                                                                                                                                      | `number`                                   | `null`            |
 | `maintenance_window_allowed_days`     | List of allowed days covering the maintenance window.                                                                                                                                  | `list(string)`                             | `[]`              |
 | `maintenance_window_allowed_hours`    | List of allowed hours covering the maintenance window.                                                                                                                                 | `list(number)`                             | `[]`              |
