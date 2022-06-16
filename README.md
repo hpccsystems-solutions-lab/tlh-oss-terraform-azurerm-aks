@@ -191,6 +191,10 @@ Cluster metrics are collected by Prometheus and visualised in Grafana. These met
 
 Cluster alerts default to being ignored but can be fully customised with receivers and routes.
 
+### Certificates
+
+All Cert Manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request. Issuers can be of the `Issuer` or `Cluster Issuer` kind. Any `Issuer` or can be referenced on the `Ingress` resources by using the `cert-manager.io/issuer` or `cert-manager.io/cluster-issuer` annotation. If this is not specified, the default `ClusterIssuer` will be used to generate certificates.
+
 #### DNS
 
 DNS is only generated when using an `Ingress` resource with the `lnrs.io/zone-type` annotation set on it. The value will depend on whether External DNS is running as an internal or external service. For an internal service the annotation should be set to `private`, and for an external service the annotation should be set to `public`. For an External DNS service running as both an internal and external service, the annotation should be set to `public-private`.
