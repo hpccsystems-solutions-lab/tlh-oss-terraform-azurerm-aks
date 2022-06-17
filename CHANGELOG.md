@@ -25,6 +25,18 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Added
 
 - Added `azure-disk-standard-ssd-ephemeral` and `azure-disk-premium-ssd-ephemeral` storage classes to support generic ephemeral volumes. [@james1miller93](https://github.com/james1miller93)
+- Set `kube_token_ttl` to 600 in `Fluent-bit` configuration. [@peterabarr](https://github.com/peterabarr)
+
+### Changed
+
+- Changed the `systemd` configuration paramater from `db_sync` to `db.sync`. [@peterabarr](https://github.com/peterabarr)
+- Increase resources for _Kube Prometheus Stack/Kube State Metrics_. [@aydosman](https://github.com/aydosman)
+
+### Updated
+
+- Updated _Kube Prometheus Stack_ chart to [v36.0.2](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-36.0.2)(contains _Kube State Metrics_ [v4.9.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.9.0), _Grafana_ [v6.29.6](https://github.com/grafana/helm-charts/releases/tag/grafana-6.29.6), _Prometheus Node Exporter_ [v3.3.0](https://github.com/prometheus-community/helm-charts/releases/tag/prometheus-node-exporter-3.3.0), _Prometheus Operator_ [v0.57.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.57.0), _Prometheus_ [v2.36.1](https://github.com/prometheus/prometheus/releases/tag/v2.36.1)). (#458) [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.20.2](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.2) (contains _Fluent Bit_ [v1.9.4](https://github.com/fluent/fluent-bit/releases/tag/v1.9.4)). (#461) [@peterabarr](https://github.com/peterabarr)
+- The _Ingress Nginx_ chart has been upgraded to [v4.1.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.1.1)(contains _Ingress Nginx Image_ [v1.2.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.2.1)). (#459) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.13] - 2022-06-09
 

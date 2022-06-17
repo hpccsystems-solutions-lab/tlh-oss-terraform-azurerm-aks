@@ -1,5 +1,5 @@
 locals {
-  chart_version = "0.20.1"
+  chart_version = "0.20.2"
 
   chart_values = {
     serviceMonitor = {
@@ -159,7 +159,7 @@ locals {
       systemd_filter    _SYSTEMD_UNIT=kubelet.service
       strip_underscores true
       db                /var/fluent-bit/state/flb-storage/systemd.db
-      db_sync           normal
+      db.sync           normal
       storage.type      filesystem
   EOT
 
@@ -172,6 +172,7 @@ locals {
       keep_log            false
       k8s-logging.parser  true
       k8s-logging.exclude true
+      kube_token_ttl      600
   EOT
 
   output_config = <<-EOT

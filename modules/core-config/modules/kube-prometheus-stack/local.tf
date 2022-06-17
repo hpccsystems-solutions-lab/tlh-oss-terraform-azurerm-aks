@@ -1,5 +1,5 @@
 locals {
-  chart_version = "35.4.2"
+  chart_version = "36.0.2"
 
   chart_values = {
     global = {
@@ -436,12 +436,12 @@ locals {
       resources = {
         requests = {
           cpu    = "50m"
-          memory = "128Mi"
+          memory = "256Mi"
         }
 
         limits = {
           cpu    = "1000m"
-          memory = "128Mi"
+          memory = "256Mi"
         }
       }
     }
