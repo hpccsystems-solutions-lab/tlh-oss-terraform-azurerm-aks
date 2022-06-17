@@ -47,5 +47,29 @@ locals {
       volume_binding_mode    = "WaitForFirstConsumer"
       allow_volume_expansion = true
     }
+
+    azure-disk-standard-ssd-ephemeral = {
+      parameters = {
+        cachingmode        = "ReadOnly"
+        kind               = "Managed"
+        storageaccounttype = "StandardSSD_LRS"
+      }
+      reclaim_policy         = "Delete"
+      mount_options          = ["debug"]
+      volume_binding_mode    = "WaitForFirstConsumer"
+      allow_volume_expansion = true
+    }
+
+    azure-disk-premium-ssd-ephemeral = {
+      parameters = {
+        cachingmode        = "ReadOnly"
+        kind               = "Managed"
+        storageaccounttype = "Premium_LRS"
+      }
+      reclaim_policy         = "Delete"
+      mount_options          = ["debug"]
+      volume_binding_mode    = "WaitForFirstConsumer"
+      allow_volume_expansion = true
+    }
   }
 }
