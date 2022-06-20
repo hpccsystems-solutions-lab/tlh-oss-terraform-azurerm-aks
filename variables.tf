@@ -73,6 +73,11 @@ variable "cluster_endpoint_access_cidrs" {
     condition     = length(var.cluster_endpoint_access_cidrs) > 0
     error_message = "Cluster endpoint access CIDRS need to be explicitly set."
   }
+
+  validation {
+    condition     = alltrue([for c in var.cluster_endpoint_access_cidrs : can(regex("^(\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})\\/(\\d{1,2})$", c))])
+    error_message = "Cluster endpoint access CIDRS can only contain valid cidr blocks."
+  }
 }
 
 variable "virtual_network_resource_group_name" {
