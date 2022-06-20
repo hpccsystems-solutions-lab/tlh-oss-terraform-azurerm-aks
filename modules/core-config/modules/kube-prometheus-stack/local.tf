@@ -586,8 +586,8 @@ locals {
     }
   }
 
-  resource_group_id                             = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
-  oms_log_analytics_workspace_resource_group_id = var.oms_agent && var.oms_log_analytics_workspace_id != null ? regex("([[:ascii:]]*)(/providers/)", var.oms_log_analytics_workspace_id)[0] : ""
+  resource_group_id                                   = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
+  oms_agent_log_analytics_workspace_resource_group_id = var.oms_agent && var.oms_agent_log_analytics_workspace_id != null ? regex("([[:ascii:]]*)(/providers/)", var.oms_agent_log_analytics_workspace_id)[0] : ""
 
   crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

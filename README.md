@@ -351,6 +351,8 @@ To enable OMS agent support you need to set `experimental = { oms_agent = true, 
 
 If the log analytics workspace is created in a different resource group to the cluster, `experimental.oms_log_analytics_workspace_different_resource_group` must also be set to `true`.
 
+By default the module will configure the OMS agent by creating the `container-azm-ms-agentconfig` ConfigMap; this specifically excludes core namespaces from log collection. You can append additional data keys to the `ConfigMap` via the [config_map_v1_data](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map_v1_data) Terraform resource. It is possible to disable this behaviour by setting the `experimental.oms_agent_create_configmap` input variable to `false`; by doing this you're taking full responsibility for managing your own OMS agent configuration and should make sure that the default configuration log exclusion is replicated.
+
 ### Windows Node Support
 
 > **Important**

@@ -83,7 +83,7 @@ variable "oms_agent" {
   type        = bool
 }
 
-variable "oms_log_analytics_workspace_id" {
+variable "oms_agent_log_analytics_workspace_id" {
   description = "ID of the log analytics workspace for the OMS agent."
   type        = string
 }

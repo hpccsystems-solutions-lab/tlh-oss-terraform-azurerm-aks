@@ -103,12 +103,12 @@ variable "oms_agent" {
   type        = bool
 }
 
-variable "oms_log_analytics_workspace_id" {
+variable "oms_agent_log_analytics_workspace_id" {
   description = "ID of the log analytics workspace for the OMS agent."
   type        = string
 }
 
-variable "oms_log_analytics_workspace_different_resource_group" {
+variable "oms_agent_log_analytics_workspace_different_resource_group" {
   description = "If the oms agent log analytics workspace is in a different resource group to the cluster."
   type        = bool
 }

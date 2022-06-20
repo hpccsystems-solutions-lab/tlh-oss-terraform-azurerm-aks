@@ -78,13 +78,18 @@ variable "oms_agent" {
   type        = bool
 }
 
-variable "oms_log_analytics_workspace_id" {
+variable "oms_agent_log_analytics_workspace_id" {
   description = "ID of the log analytics workspace for the OMS agent."
   type        = string
 }
 
-variable "oms_log_analytics_workspace_different_resource_group" {
-  description = "If the oms agent log analytics workspace is in a different resource group to the cluster."
+variable "oms_agent_log_analytics_workspace_different_resource_group" {
+  description = "If the OMS agent log analytics workspace is in a different resource group to the cluster."
+  type        = bool
+}
+
+variable "oms_agent_create_configmap" {
+  description = "If the OMS agent ConfigMap should be created with default settings."
   type        = bool
 }
 

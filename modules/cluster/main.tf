@@ -66,7 +66,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   dynamic "oms_agent" {
     for_each = var.oms_agent ? ["default"] : []
     content {
-      log_analytics_workspace_id = var.oms_log_analytics_workspace_id
+      log_analytics_workspace_id = var.oms_agent_log_analytics_workspace_id
     }
   }
 

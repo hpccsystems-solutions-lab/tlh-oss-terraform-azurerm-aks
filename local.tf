@@ -53,8 +53,9 @@ locals {
     helm_modify    = 600
   }
 
-  experimental_oms_agent                                            = lookup(var.experimental, "oms_agent", false)
-  experimental_oms_log_analytics_workspace_different_resource_group = lookup(var.experimental, "oms_log_analytics_workspace_different_resource_group", false)
-  experimental_oms_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", null)
-  experimental_windows_support                                      = lookup(var.experimental, "windows_support", false)
+  experimental_oms_agent                                                  = lookup(var.experimental, "oms_agent", false)
+  experimental_oms_agent_log_analytics_workspace_different_resource_group = lookup(var.experimental, "oms_log_analytics_workspace_different_resource_group", false)
+  experimental_oms_agent_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", null)
+  experimental_oms_agent_create_configmap                                 = lookup(var.experimental, "oms_agent_create_configmap", true)
+  experimental_windows_support                                            = lookup(var.experimental, "windows_support", false)
 }
