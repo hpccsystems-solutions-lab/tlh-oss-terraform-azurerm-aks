@@ -8,9 +8,11 @@ locals {
 
     controller = {
       service = {
-        annotations = {
-          "service.beta.kubernetes.io/azure-load-balancer-internal"        = "true"
-        }
+        annotations = merge({
+          "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
+        }, var.lb_subnet_name != null ? {
+          "service.beta.kubernetes.io/azure-load-balancer-internal-subnet" = var.lb_subnet_name
+        } : {})
 
         type                  = "LoadBalancer"
         externalTrafficPolicy = "Local"

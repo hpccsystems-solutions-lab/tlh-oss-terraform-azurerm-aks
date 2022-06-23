@@ -60,6 +60,7 @@ locals {
     domain           = null
     subdomain_suffix = var.cluster_name
     lb_source_cidrs  = ["10.0.0.0/8", "100.65.0.0/16"]
+    lb_subnet_name   = null
     public_dns       = false
   }, lookup(var.core_services_config, "ingress_internal_core", {}))
 

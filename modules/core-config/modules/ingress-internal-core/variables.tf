@@ -8,6 +8,11 @@ variable "labels" {
   type        = map(string)
 }
 
+variable "lb_subnet_name" {
+  description = "Name of the subnets to create the LB in."
+  type        = string
+}
+
 variable "lb_source_cidrs" {
   description = "CIDR range for LB traffic sources."
   type        = list(string)
