@@ -89,7 +89,6 @@ module "core_config" {
   cluster_version = var.cluster_version
   network_plugin  = var.network_plugin
 
-  subnet_name        = var.subnet_name
   availability_zones = local.availability_zones
 
   kubelet_identity_id      = module.cluster.kubelet_identity.object_id

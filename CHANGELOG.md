@@ -127,6 +127,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed `logging_storage_account_enabled` & `logging_storage_account_id` input variables in favour of the new `control_plane_logging_storage_account_enabled` & `control_plane_logging_storage_account_id` input variables. (#474) [@stevehipwell](https://github.com/stevehipwell)
 - Removed experimental `workspace_log_categories` & `storage_log_categories` settings in favour of the new control plane logging input variables. (#474) [@stevehipwell](https://github.com/stevehipwell)
 
+### Changed
+
+- Remove subnet name from `ingress-internal-core` configuration to fix error when cloud controller tries to update immutable field on loadbalancer. [@james1miller93](https://github.com/james1miller93)
+
 ## [v1.0.0-beta.14] - 2022-06-20
 
 ### Added

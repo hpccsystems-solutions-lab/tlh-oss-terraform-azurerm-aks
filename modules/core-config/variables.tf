@@ -38,11 +38,6 @@ variable "network_plugin" {
   type        = string
 }
 
-variable "subnet_name" {
-  description = "name of the node group subnet."
-  type        = string
-}
-
 variable "availability_zones" {
   description = "Availability zones to use for the node groups."
   type        = list(number)

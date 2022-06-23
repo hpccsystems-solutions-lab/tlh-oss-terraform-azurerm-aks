@@ -10,7 +10,6 @@ locals {
       service = {
         annotations = {
           "service.beta.kubernetes.io/azure-load-balancer-internal"        = "true"
-          "service.beta.kubernetes.io/azure-load-balancer-internal-subnet" = var.lb_subnet_name
         }
 
         type                  = "LoadBalancer"
