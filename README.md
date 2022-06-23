@@ -579,13 +579,13 @@ Specification for the `core_services_config.grafana` object.
 
 Specification for the `core_services_config.ingress_internal_core` object.
 
-| **Variable**       | **Description**                                                                                                     | **Type**       | **Required** |
-|:-------------------|:--------------------------------------------------------------------------------------------------------------------|:---------------|:-------------|
-| `domain`           | Internal ingress domain.                                                                                            | `string`       | **Yes**      |
-| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                                 | `string`       | No           |
-| `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.                                        | `list(string)` | No           |
-| `lb_subnet_name`   | Name of the subnet to create the loadbalancer in, if not set subnet where node groups reside will be auto selected. | `string`       | No           |
-| `public_dns`       | If the internal ingress DNS should be public or private.                                                            | `bool`         | No           |
+| **Variable**       | **Description**                                                                                                                                                       | **Type**       | **Required** |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------|:-------------|
+| `domain`           | Internal ingress domain.                                                                                                                                              | `string`       | **Yes**      |
+| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                                                                                   | `string`       | No           |
+| `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.                                                                                          | `list(string)` | No           |
+| `lb_subnet_name`   | Name of the subnet to create the loadbalancer in, if not set subnet where node groups reside will be auto selected. _Should not be set unless specifically required._ | `string`       | No           |
+| `public_dns`       | If the internal ingress DNS should be public or private.                                                                                                              | `bool`         | No           |
 
 ### Appendix L
 

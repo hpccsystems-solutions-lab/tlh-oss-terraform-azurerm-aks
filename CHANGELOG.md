@@ -132,7 +132,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Changed
 
-- Remove subnet name from `ingress-internal-core` configuration to fix error when cloud controller tries to update immutable field on loadbalancer. [@james1miller93](https://github.com/james1miller93)
+- Revert change from `beta.10` where subnet annotation was added to `ingress-internal-core` loadbalancer configuration, creating undesirable behaviour. [@james1miller93](https://github.com/james1miller93)
 
 ## [v1.0.0-beta.14] - 2022-06-20
 
