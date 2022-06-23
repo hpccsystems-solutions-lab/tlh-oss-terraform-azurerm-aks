@@ -98,7 +98,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 > Control plane logging has been made fully configurable in this release so if you're currently overriding the defaults you will need to use the new variables to continue to do this (the behaviour is consistent). The main changes have been to allow control plane logs to be sent to a custom log analytics workspace, and to enable custom retention to be specified alongside the log categories to collect.
 
 > **Important**
-> Ingress internal core load balancer configuration was previously incorrect. This has been fixed in this release, but may require manual intervention to resolve. If you discover the error described in [issue 499](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/499), you may need to set the subnet name using the `core_services_config.ingress_internal_core.lb_subnet_name` input or manually remove the nginx ingress chart and recreate.
+> Ingress internal core load balancer configuration was previously incorrect. This may require manually deleting the `core-internal` helm release before reinstating via the module. If it's not safe to do this immediately, we advise setting the load balancer subnet name manually using the `core_services_config.ingress_internal_core.lb_subnet_name` input until the loadbalancer can be recreated safely. See [issue 499](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/499) for more detail.
 
 ### Added
 
