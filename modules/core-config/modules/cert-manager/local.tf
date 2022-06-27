@@ -1,5 +1,5 @@
 locals {
-  chart_version = "1.8.0"
+  chart_version = "1.8.2"
 
   chart_values = {
     installCRDs = false
@@ -225,8 +225,46 @@ locals {
           }]
         }
       }
+    },
+    zerossl = {
+      apiVersion = "cert-manager.io/v1"
+      kind       = "ClusterIssuer"
+      metadata = {
+        name = "zerossl"
+        labels = var.labels
+      }
+      spec = {
+        acme = {
+          email  = "systems.engineering@reedbusiness.com"
+          server = "https://acme.zerossl.com/v2/DV90"
+          privateKeySecretRef = {
+            name = "zerossl"
+          }
+          externalAccountBinding = {
+            keyID = "5HWD3Esqen2kNewF0URgjg"
+            keySecretRef = {
+              key = local.zerossl_eab_secret_key
+              name = kubernetes_secret.zerossl_eabsecret.metadata[0].name
+            }
+            keyAlgorithm = "HS256"
+          }
+          solvers = [{
+            dns01 = {
+              route53 = {
+                region = var.region
+              }
+            }
+            selector = {
+              dnsZones = var.acme_dns_zones
+            }
+          }]
+        }
+      }
     }
   })
+
+  zerossl_eab_secret_key = "secret"
+  zerossl_eabsecret      = "X3Nkc3MwNExIbUdlVXdsQmxBU1Brd0xESWFEZnIxUThxSXlubnppWFFaeFpRYWJGaDkyODZKbVZBQ1NjdHJUU2NFUm1IaC1pUjZXUkZ1cnQxcmRlanc="
 
   crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

@@ -25,6 +25,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Added
 
 - Added cidr validation to `var.cluster_endpoint_access_cidrs`. [@james1miller93](https://github.com/james1miller93)
+- Add [ZeroSSL](https://zerossl.com/features/acme/) cluster issuer. (#365) [@sossickd](https://github.com/sossickd)
+
+### Updated
+
+- Update _Cert Manager_ chart to [1.8.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.2). (#504) [@sossickd](https://github.com/sossickd)
 
 ## [v1.0.0-beta.14] - 2022-06-20
 

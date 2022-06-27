@@ -53,3 +53,16 @@ resource "kubectl_manifest" "issuers" {
     helm_release.default
   ]
 }
+
+resource "kubernetes_secret" "zerossl_eabsecret" {
+  metadata {
+    name      = "zerossl-eabsecret"
+    namespace = var.namespace
+  }
+
+  type = "Opaque"
+
+  binary_data = {
+    "${local.zerossl_eab_secret_key}" = "${local.zerossl_eabsecret}"
+  }
+}
