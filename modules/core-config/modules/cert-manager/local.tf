@@ -248,14 +248,17 @@ locals {
             }
             keyAlgorithm = "HS256"
           }
-          solvers = [{
-            dns01 = {
-              route53 = {
-                region = var.region
-              }
-            }
+          solvers = [for zone in var.acme_dns_zones : {
             selector = {
-              dnsZones = var.acme_dns_zones
+              dnsZones = [zone]
+            }
+            dns01 = {
+              azureDNS = {
+                environment       = var.azure_environment
+                subscriptionID    = var.subscription_id
+                resourceGroupName = var.dns_resource_group_lookup[zone]
+                hostedZoneName    = zone
+              }
             }
           }]
         }
