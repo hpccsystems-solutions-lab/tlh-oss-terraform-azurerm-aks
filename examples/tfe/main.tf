@@ -49,24 +49,16 @@ locals {
     standard_view_groups = {}
   }
 
-  node_group_templates = [
-    {
-      name                = "workers"
-      node_os             = "ubuntu"
-      node_type           = "gp"
-      node_type_version   = "v1"
-      node_size           = "large"
-      single_group        = false
-      min_capacity        = 0
-      max_capacity        = 18
-      placement_group_key = null
+  node_groups = {
+    workers = {
+      node_type_version = "v1"
+      node_size         = "large"
+      max_capacity      = 18
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      taints = []
-      tags   = {}
     }
-  ]
+  }
 
   grafana_admin_password = data.vault_generic_secret.default.data["grafana_admin_password"]
 
@@ -276,7 +268,7 @@ module "aks" {
 
   azuread_clusterrole_map = local.azuread_clusterrole_map
 
-  node_group_templates = local.node_group_templates
+  node_groups = local.node_groups
 
   core_services_config = {
     alertmanager = {

@@ -17,8 +17,8 @@ locals {
   ]
 
   alertmanager = merge({
-    smtp_host = ""
-    smtp_from = ""
+    smtp_host = null
+    smtp_from = null
     receivers = []
     routes    = []
   }, lookup(var.core_services_config, "alertmanager", {}))
@@ -41,13 +41,13 @@ locals {
   }, lookup(var.core_services_config, "external_dns", {}))
 
   fluentd = merge({
-    image_repository = ""
-    image_tag        = ""
+    image_repository = null
+    image_tag        = null
     additional_env   = {}
     debug            = true
-    filters          = ""
-    routes           = ""
-    outputs          = ""
+    filters          = null
+    routes           = null
+    outputs          = null
   }, lookup(var.core_services_config, "fluentd", {}))
 
   grafana = merge({
@@ -57,7 +57,7 @@ locals {
   }, lookup(var.core_services_config, "grafana", {}))
 
   ingress_internal_core_tmp = merge({
-    domain           = ""
+    domain           = null
     subdomain_suffix = var.cluster_name
     lb_source_cidrs  = ["10.0.0.0/8", "100.65.0.0/16"]
     public_dns       = false

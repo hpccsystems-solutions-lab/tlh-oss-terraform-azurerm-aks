@@ -43,10 +43,10 @@ variable "availability_zones" {
   type        = list(number)
 }
 
-variable "node_group_templates" {
-  description = "Node group templates to be expanded."
-  type = list(object({
-    name                = string
+variable "node_groups" {
+  description = "Node groups to configure."
+  type = map(object({
+    system              = bool
     node_os             = string
     node_type           = string
     node_type_version   = string

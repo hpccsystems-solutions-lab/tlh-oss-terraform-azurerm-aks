@@ -12,7 +12,7 @@ module "system_node_groups" {
   source   = "./modules/node-group"
   for_each = local.system_node_groups
 
-  name                         = each.value.name
+  name                         = each.key
   cluster_id                   = var.cluster_id
   cluster_version_full         = var.cluster_version_full
   network_plugin               = var.network_plugin
@@ -50,7 +50,7 @@ module "user_node_groups" {
   source   = "./modules/node-group"
   for_each = local.user_node_groups
 
-  name                         = each.value.name
+  name                         = each.key
   cluster_id                   = var.cluster_id
   cluster_version_full         = var.cluster_version_full
   network_plugin               = var.network_plugin

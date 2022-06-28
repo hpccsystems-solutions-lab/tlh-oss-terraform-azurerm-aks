@@ -20,6 +20,7 @@ locals {
   }
 
   availability_zones = [1, 2, 3]
+  az_count           = length(local.availability_zones)
 
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
@@ -34,6 +35,42 @@ locals {
   virtual_network_id                = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}"
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
+
+  node_group_defaults = {
+    node_os             = "ubuntu"
+    node_type           = "gp"
+    node_type_version   = "v1"
+    single_group        = false
+    min_capacity        = 0
+    placement_group_key = null
+    labels              = {}
+    taints              = []
+    tags                = {}
+  }
+
+  system_node_group = {
+    system            = true
+    node_os           = "ubuntu"
+    node_type         = "gp"
+    node_type_version = "v1"
+    node_size         = "xlarge"
+    min_capacity      = local.az_count
+    max_capacity      = local.az_count * 4
+    labels = {
+      "lnrs.io/tier" = "system"
+    }
+    taints = [{
+      key    = "CriticalAddonsOnly"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }]
+  }
+
+  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }) } : { for x in var.node_group_templates : x.name => x }
+
+  system_node_groups = {
+    system = merge(local.node_group_defaults, local.system_node_group, { system = true })
+  }
 
   labels = {
     "lnrs.io/k8s-platform" = "true"

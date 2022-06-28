@@ -64,7 +64,7 @@ module "node_groups" {
   network_plugin       = var.network_plugin
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
-  node_group_templates = var.node_group_templates
+  node_groups          = merge(local.node_groups, local.system_node_groups)
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
   labels               = local.labels

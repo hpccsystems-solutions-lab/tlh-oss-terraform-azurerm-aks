@@ -144,8 +144,34 @@ variable "azuread_clusterrole_map" {
   }
 }
 
+variable "node_groups" {
+  description = "Node groups to configure."
+  type        = any
+  default     = {}
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : length(k) <= 10])
+    error_message = "Node group template names must be 10 characters or less."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows"], lookup(v, "node_os", "ubuntu"))])
+    error_message = "Node group template OS must be either \"ubuntu\" or \"windows\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["gp", "gpd", "mem", "memd", "cpu", "stor"], lookup(v, "node_type", "gp"))])
+    error_message = "Node group template type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : length(lookup(v, "placement_group_key", "")) <= 11])
+    error_message = "Node group template placement key must be 11 characters or less."
+  }
+}
+
 variable "node_group_templates" {
-  description = "Templates describing the requires node groups."
+  description = "DEPRECATED Templates describing the requires node groups."
   type = list(object({
     name                = string
     node_os             = string
@@ -164,6 +190,7 @@ variable "node_group_templates" {
     }))
     tags = map(string)
   }))
+  default = []
 
   validation {
     condition     = alltrue([for x in var.node_group_templates : x.name != null && length(x.name) <= 10])
@@ -267,12 +294,6 @@ variable "control_plane_logging_storage_account_retention_days" {
   default     = 30
 }
 
-variable "tags" {
-  description = "Tags to apply to all resources."
-  type        = map(string)
-  default     = {}
-}
-
 variable "maintenance_window_offset" {
   description = "Maintenance window offset to utc."
   type        = number
@@ -298,6 +319,12 @@ variable "maintenance_window_not_allowed" {
     end   = string
   }))
   default = []
+}
+
+variable "tags" {
+  description = "Tags to apply to all resources."
+  type        = map(string)
+  default     = {}
 }
 
 # tflint-ignore: terraform_unused_declarations

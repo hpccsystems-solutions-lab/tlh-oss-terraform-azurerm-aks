@@ -142,40 +142,26 @@ module "aks" {
     standard_view_groups = {}
   }
 
-  node_group_templates = [
-    {
-      name                = "workers"
-      node_os             = "ubuntu"
-      node_type           = "gp"
-      node_type_version   = "v1"
-      node_size           = "large"
-      single_group        = false
-      min_capacity        = 0
-      max_capacity        = 18
-      placement_group_key = null
+  node_groups = {
+    workers = {
+      node_type_version = "v1"
+      node_size         = "large"
+      max_capacity      = 18
       labels = {
         "lnrs.io/tier" = "standard"
       }
-      taints = []
-      tags   = {}
-    },
-    {
-      name                = "windows"
-      node_os             = "windows"
-      node_type           = "gp"
-      node_type_version   = "v1"
-      node_size           = "large"
-      single_group        = false
-      min_capacity        = 0
-      max_capacity        = 18
-      placement_group_key = null
-      labels = {
-        "lnrs.io/tier" = "standard"
-      }
-      taints = []
-      tags   = {}
     }
-  ]
+
+    windows = {
+      node_os           = "windows"
+      node_type_version = "v1"
+      node_size         = "large"
+      max_capacity      = 18
+      labels = {
+        "lnrs.io/tier" = "standard"
+      }
+    }
+  }
 
   core_services_config = {
     alertmanager = {

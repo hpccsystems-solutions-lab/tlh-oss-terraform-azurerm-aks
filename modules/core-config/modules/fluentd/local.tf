@@ -96,7 +96,7 @@ locals {
     }
   }, local.image_override)
 
-  image_override = length(var.image_repository) > 0 && length(var.image_tag) > 0 ? {
+  image_override = var.image_repository != null && var.image_tag != null ? {
     image = {
       repository = var.image_repository
       tag        = var.image_tag
@@ -159,7 +159,7 @@ locals {
       </record>
       remove_keys stream, versionTemp, partOfTemp, componentTemp, kubernetes
     </filter>
-    %{if length(var.filters) > 0~}
+    %{if var.filters != null~}
     ${var.filters}
     %{endif~}
   EOT
@@ -171,11 +171,11 @@ locals {
         copy
         @label @PROMETHEUS
       </route>
-      ${indent(2, length(var.routes) > 0 ? var.routes : local.default_route)}
+      ${indent(2, var.routes != null ? var.routes : local.default_route)}
     </match>
   EOT
 
-  output_config = length(var.outputs) > 0 ? var.outputs : local.default_output
+  output_config = var.outputs != null ? var.outputs : local.default_output
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

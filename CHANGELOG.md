@@ -16,6 +16,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## Deprecations
 
 - Support for Kubernetes v1.21 has been deprecated following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1) (Azure drops support on the 31st of July 2022, likely to be removed in release `v1.0.0-beta.17`)
+- Use of the `node_group_templates` has been deprecated in favour of `node_groups` (due to be removed in release `v1.0.0`)
 
 ---
 
@@ -31,15 +32,21 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Added
 
+- Added new `node_groups` input variable to replace `node_group_templates`; this variable is a map and supports default values for simplicity. (#511) [@stevehipwell](https://github.com/stevehipwell)
 - Add support for the [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) series for storage optimised VMs. (#465) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ### Changed
+
+- Changed the README to show all default values for variables. [@stevehipwell](https://github.com/stevehipwell)
+- Changed the README to show no value in the default column in the variable grids if a user defined value is required. [@stevehipwell](https://github.com/stevehipwell)
 
 ### Updated
 
 ### Fixed
 
 ### Deprecated
+
+- Deprecated `node_group_templates` in favour of `node_groups`. Switching to the new variable is as simple as creating a map with the name of the old object as the key and the rest of the object as the body, many of the fields can be omitted if you're using the defaults. (#511) [@stevehipwell](https://github.com/stevehipwell)
 
 ### Removed
 

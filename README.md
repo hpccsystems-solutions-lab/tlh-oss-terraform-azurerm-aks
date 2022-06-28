@@ -74,7 +74,7 @@ While _External DNS_ supports both public and private zones, in split-horizon se
 
 ### Node Groups
 
-The node group configuration (`node_group_templates`) allows a cluster to be created with multiple node groups that span multiple availability zones and can be configured with the specific required behaviour.
+The node group configuration provided by the `node_groups` input variable allows a cluster to be created with node groups that span multiple availability zones and can be configured with the specific required behaviour. The node group name prefix is the map key and at a minimum `node_size` & `max_capacity` must be provided with the other values having a default (see [Appendix B](#appendix-b)).
 
 #### Node image upgrades
 
@@ -395,45 +395,46 @@ This module requires the following versions to be configured in the workspace `t
 
 ## Variables
 
-| **Variable**                                                        | **Description**                                                                                                                                                                                                          | **Type**                                   | **Default**       |
-| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :---------------- |
-| `azure_env`                                                         | Azure cloud environment type, `public` & `usgovernment` are supported.                                                                                                                                                   | `string`                                   | `"public"`        |
-| `location`                                                          | Azure location to target.                                                                                                                                                                                                | `string`                                   | `null`            |
-| `resource_group_name`                                               | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                                                              | `string`                                   | `null`            |
-| `cluster_name`                                                      | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.                                     | `string`                                   | `null`            |
-| `cluster_version`                                                   | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.23`, `1.22` or `1.21` (**DEPRECATED**) are supported.                                                                            | `string`                                   | `null`            |
-| `network_plugin`                                                    | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                                                            | `string`                                   | `"kubenet"`       |
-| `sku_tier_paid`                                                     | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                                                         | `bool`                                     | `null`            |
-| `cluster_endpoint_public_access`                                    | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                                                             | `bool`                                     | `null`            |
-| `cluster_endpoint_access_cidrs`                                     | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster.                                         | `list(string)`                             | `null`            |
-| `virtual_network_resource_group_name`                               | Name of the resource group containing the virtual network.                                                                                                                                                               | `string`                                   | `null`            |
-| `virtual_network_name`                                              | Name of the virtual network to use for the cluster.                                                                                                                                                                      | `string`                                   | `null`            |
-| `subnet_name`                                                       | Name of the AKS subnet in the virtual network.                                                                                                                                                                           | `string`                                   | `null`            |
-| `route_table_name`                                                  | Name of the AKS subnet route table.                                                                                                                                                                                      | `string`                                   | `null`            |
-| `dns_resource_group_lookup`                                         | Lookup from DNS zone to resource group name.                                                                                                                                                                             | `map(string)`                              | `null`            |
-| `podnet_cidr_block`                                                 | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a subnet (or sharing a route table) this value needs to be unique.                                   | `string`                                   | `"100.65.0.0/16"` |
-| `managed_outbound_ip_count`                                         | Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive."                                                                                                               | `number`                                   | `1`               |
-| `admin_group_object_ids`                                            | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                      | `list(string)`                             | `[]`              |
-| `azuread_clusterrole_map`                                           | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                                                      | `object` ([Appendix A](#appendix-a))       | `{}`              |
-| `node_group_templates`                                              | Templates describing the requires node groups.                                                                                                                                                                           | `object` ([Appendix B](#appendix-b))       | `null`            |
-| `core_services_config`                                              | Core service configuration.                                                                                                                                                                                              | `any` ([Appendix D](#appendix-d))          | `null`            |
-| `control_plane_logging_external_workspace`                          | If `true`, the log analytics workspace referenced in `control_plane_logging_external_workspace_id` will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs.                | `bool`                                     | `false`           |
-| `control_plane_logging_external_workspace_id`                       | ID of the log analytics workspace to send control plane logs to if `control_plane_logging_external_workspace` is `true`.                                                                                                 | `string`                                   | `null`            |
-| `control_plane_logging_external_workspace_different_resource_group` | If true, the log analytics workspace referenced in `control_plane_logging_external_workspace_id` is created in a different resource group to the cluster.                                                                | `bool`                                     | `false`           |
-| `control_plane_logging_workspace_categories`                        | The control plane log categories to send to the log analytics workspace.                                                                                                                                                 | `string`                                   | `recommended`     |
-| `control_plane_logging_workspace_retention_enabled`                 | If `true`, the control plane logs being sent to log analytics will use the retention specified in `control_plane_logging_workspace_retention_days` otherwise the log analytics workspace default retention will be used. | `bool`                                     | `false`           |
-| `control_plane_logging_workspace_retention_days`                    | How long the logs should be retained by the log analytics workspace if `control_plane_logging_workspace_retention_enabled` is `true`, in days.                                                                           | `number`                                   | `0`               |
-| `control_plane_logging_storage_account_enabled`                     | If `true`, cluster control plane logs will be sent to the storage account referenced in `control_plane_logging_storage_account_id` as well as the default log analytics workspace.                                       | `bool`                                     | `false`           |
-| `control_plane_logging_storage_account_id`                          | ID of the storage account to add cluster control plane logs to if `control_plane_logging_storage_account_enabled` is `true`.                                                                                             | `string`                                   | `null`            |
-| `control_plane_logging_storage_account_categories`                  | The control plane log categories to send to the storage account.                                                                                                                                                         | `string`                                   | `all`             |
-| `control_plane_logging_storage_account_retention_enabled`           | If `true`, the control plane logs being sent to the storage account will use the retention specified in `control_plane_logging_storage_account_retention_days` otherwise no retention will be set.                       | `bool`                                     | `true`            |
-| `control_plane_logging_storage_account_retention_days`              | How long the logs should be retained by the storage account if `control_plane_logging_storage_account_retention_enabled` is `true`, in days.                                                                             | `number`                                   | `30`              |
-| `maintenance_window_offset`                                         | Maintenance window offset to UTC.                                                                                                                                                                                        | `number`                                   | `null`            |
-| `maintenance_window_allowed_days`                                   | List of allowed days covering the maintenance window.                                                                                                                                                                    | `list(string)`                             | `[]`              |
-| `maintenance_window_allowed_hours`                                  | List of allowed hours covering the maintenance window.                                                                                                                                                                   | `list(number)`                             | `[]`              |
-| `maintenance_window_not_allowed`                                    | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.                                      | `list(object)` ([Appendix M](#appendix-m)) | `[]`              |
-| `tags`                                                              | Tags to apply to all resources.                                                                                                                                                                                          | `map(string)`                              | `{}`              |
-| `experimental`                                                      | Configure experimental features.                                                                                                                                                                                         | `any`                                      | `{}`              |
+| **Variable**                                                        | **Description**                                                                                                                                                                                                          | **Type**                                     | **Default**       |
+| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------------- |
+| `azure_env`                                                         | Azure cloud environment type, `public` & `usgovernment` are supported.                                                                                                                                                   | `string`                                     | `"public"`        |
+| `location`                                                          | Azure location to target.                                                                                                                                                                                                | `string`                                     |                   |
+| `resource_group_name`                                               | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                                                              | `string`                                     |                   |
+| `cluster_name`                                                      | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.                                     | `string`                                     |                   |
+| `cluster_version`                                                   | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.23`, `1.22` or `1.21` (**DEPRECATED**) are supported.                                                                            | `string`                                     |                   |
+| `network_plugin`                                                    | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                                                            | `string`                                     | `"kubenet"`       |
+| `sku_tier_paid`                                                     | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                                                         | `bool`                                       |                   |
+| `cluster_endpoint_public_access`                                    | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                                                             | `bool`                                       |                   |
+| `cluster_endpoint_access_cidrs`                                     | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster.                                         | `list(string)`                               |                   |
+| `virtual_network_resource_group_name`                               | Name of the resource group containing the virtual network.                                                                                                                                                               | `string`                                     |                   |
+| `virtual_network_name`                                              | Name of the virtual network to use for the cluster.                                                                                                                                                                      | `string`                                     |                   |
+| `subnet_name`                                                       | Name of the AKS subnet in the virtual network.                                                                                                                                                                           | `string`                                     |                   |
+| `route_table_name`                                                  | Name of the AKS subnet route table.                                                                                                                                                                                      | `string`                                     |                   |
+| `dns_resource_group_lookup`                                         | Lookup from DNS zone to resource group name.                                                                                                                                                                             | `map(string)`                                |                   |
+| `podnet_cidr_block`                                                 | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a subnet (or sharing a route table) this value needs to be unique.                                   | `string`                                     | `"100.65.0.0/16"` |
+| `managed_outbound_ip_count`                                         | Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive.                                                                                                               | `number`                                   | `1`               |
+| `admin_group_object_ids`                                            | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                      | `list(string)`                               | `[]`              |
+| `azuread_clusterrole_map`                                           | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                                                      | `object` ([Appendix A](#appendix-a))         | `{}`              |
+| `node_groups`                                                       | Node groups to configure.                                                                                                                                                                                                | `map(object)` ([Appendix B](#appendix-b))    | `{}`              |
+| `node_group_templates`                                              | **DEPRECATED** - Templates describing the requires node groups.                                                                                                                                                          | `list(object)` ([Appendix BB](#appendix-bb)) | `[]`              |
+| `core_services_config`                                              | Core service configuration.                                                                                                                                                                                              | `any` ([Appendix D](#appendix-d))            |                   |
+| `control_plane_logging_external_workspace`                          | If `true`, the log analytics workspace referenced in `control_plane_logging_external_workspace_id` will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs.                | `bool`                                       | `false`           |
+| `control_plane_logging_external_workspace_id`                       | ID of the log analytics workspace to send control plane logs to if `control_plane_logging_external_workspace` is `true`.                                                                                                 | `string`                                     | `null`            |
+| `control_plane_logging_external_workspace_different_resource_group` | If true, the log analytics workspace referenced in `control_plane_logging_external_workspace_id` is created in a different resource group to the cluster.                                                                | `bool`                                       | `false`           |
+| `control_plane_logging_workspace_categories`                        | The control plane log categories to send to the log analytics workspace.                                                                                                                                                 | `string`                                     | `recommended`     |
+| `control_plane_logging_workspace_retention_enabled`                 | If `true`, the control plane logs being sent to log analytics will use the retention specified in `control_plane_logging_workspace_retention_days` otherwise the log analytics workspace default retention will be used. | `bool`                                       | `false`           |
+| `control_plane_logging_workspace_retention_days`                    | How long the logs should be retained by the log analytics workspace if `control_plane_logging_workspace_retention_enabled` is `true`, in days.                                                                           | `number`                                     | `0`               |
+| `control_plane_logging_storage_account_enabled`                     | If `true`, cluster control plane logs will be sent to the storage account referenced in `control_plane_logging_storage_account_id` as well as the default log analytics workspace.                                       | `bool`                                       | `false`           |
+| `control_plane_logging_storage_account_id`                          | ID of the storage account to add cluster control plane logs to if `control_plane_logging_storage_account_enabled` is `true`.                                                                                             | `string`                                     | `null`            |
+| `control_plane_logging_storage_account_categories`                  | The control plane log categories to send to the storage account.                                                                                                                                                         | `string`                                     | `all`             |
+| `control_plane_logging_storage_account_retention_enabled`           | If `true`, the control plane logs being sent to the storage account will use the retention specified in `control_plane_logging_storage_account_retention_days` otherwise no retention will be set.                       | `bool`                                       | `true`            |
+| `control_plane_logging_storage_account_retention_days`              | How long the logs should be retained by the storage account if `control_plane_logging_storage_account_retention_enabled` is `true`, in days.                                                                             | `number`                                     | `30`              |
+| `maintenance_window_offset`                                         | Maintenance window offset to UTC.                                                                                                                                                                                        | `number`                                     | `null`            |
+| `maintenance_window_allowed_days`                                   | List of allowed days covering the maintenance window.                                                                                                                                                                    | `list(string)`                               | `[]`              |
+| `maintenance_window_allowed_hours`                                  | List of allowed hours covering the maintenance window.                                                                                                                                                                   | `list(number)`                               | `[]`              |
+| `maintenance_window_not_allowed`                                    | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.                                      | `list(object)` ([Appendix M](#appendix-m))   | `[]`              |
+| `tags`                                                              | Tags to apply to all resources.                                                                                                                                                                                          | `map(string)`                                | `{}`              |
+| `experimental`                                                      | Configure experimental features.                                                                                                                                                                                         | `any`                                        | `{}`              |
 
 ### Appendix A
 
@@ -441,39 +442,57 @@ Specification for the `azuread_clusterrole_map` object.
 
 | **Variable**           | **Description**                                                                           | **Type**      | **Default** |
 | :--------------------- | :---------------------------------------------------------------------------------------- | :------------ | :---------- |
-| `cluster_admin_users`  | Users to add to the cluster admin role, identifier as the key and group ID as the value.  | `map(string)` | `null`      |
-| `cluster_view_users`   | Users to add to the cluster view role, identifier as the key and group ID as the value.   | `map(string)` | `null`      |
-| `standard_view_users`  | Users to add to the standard view role, identifier as the key and group ID as the value.  | `map(string)` | `null`      |
-| `standard_view_groups` | Groups to add to the standard view role, identifier as the key and group ID as the value. | `map(string)` | `null`      |
+| `cluster_admin_users`  | Users to add to the cluster admin role, identifier as the key and group ID as the value.  | `map(string)` |             |
+| `cluster_view_users`   | Users to add to the cluster view role, identifier as the key and group ID as the value.   | `map(string)` |             |
+| `standard_view_users`  | Users to add to the standard view role, identifier as the key and group ID as the value.  | `map(string)` |             |
+| `standard_view_groups` | Groups to add to the standard view role, identifier as the key and group ID as the value. | `map(string)` |             |
 
 ### Appendix B
 
+Specification for the `node_groups` objects.
+
+| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                          | **Type**                                   | **Default** |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :---------- |
+| `node_os`             | OS to use for the node group(s), `ubuntu` & `windows` are supported, [Windows node support](#windows-node-support) is experimental and needs manually enabling.                                                                                                                                                          | `string`                                   | `ubuntu`    |
+| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                                   | `gp`        |
+| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                   | `v1`        |
+| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                                   |             |
+| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                                     | `false`     |
+| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                   | `0`         |
+| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                   |             |
+| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `string`                                   | `null`      |
+| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                | `map(string)`                              | `{}`        |
+| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                | `list(object)` ([Appendix C](#appendix-c)) | `[]`        |
+| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                           | `map(string)`                              | `{}`        |
+
+### Appendix BB
+
 Specification for the `node_group_templates` objects.
 
-| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                          | **Type**                             | **Default** |
-| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :---------- |
-| `name`                | User defined component of the node group(s) name.                                                                                                                                                                                                                                                                        | `string`                             | `null`      |
-| `node_os`             | OS to use for the node group(s), `ubuntu` & `windows` are supported, [Windows node support](#windows-node-support) is experimental and needs manually enabling.                                                                                                                                                          | `string`                             | `null`      |
-| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                             | `null`      |
-| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                             | `null`      |
-| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                             | `null`      |
-| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                               | `null`      |
-| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                             | `null`      |
-| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                             | `null`      |
-| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `string`                             | `null`      |
-| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                | `map(string)`                        | `null`      |
-| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                | `object` ([Appendix C](#appendix-c)) | `null`      |
-| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                           | `map(string)`                        | `null`      |
+| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                          | **Type**                                   | **Default** |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :---------- |
+| `name`                | User defined component of the node group(s) name.                                                                                                                                                                                                                                                                        | `string`                                   |             |
+| `node_os`             | OS to use for the node group(s), `ubuntu` & `windows` are supported, [Windows node support](#windows-node-support) is experimental and needs manually enabling.                                                                                                                                                          | `string`                                   |             |
+| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                                   |             |
+| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                   |             |
+| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                                   |             |
+| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                                     |             |
+| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                   |             |
+| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                   |             |
+| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `string`                                   |             |
+| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                | `map(string)`                              |             |
+| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                | `list(object)` ([Appendix C](#appendix-c)) |             |
+| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                           | `map(string)`                              |             |
 
 ### Appendix C
 
-Specification for the `node_group_templates.taints` objects.
+Specification for the `node_groups.taints` & `node_group_templates.taints` objects.
 
 | **Variable** | **Description**                                                                           | **Type** | **Default** |
 | :----------- | :---------------------------------------------------------------------------------------- | :------- | :---------- |
-| `key`        | The key of the taint. Maximum length of 63.                                               | `string` | `null`      |
-| `value`      | The value of the taint. Maximum length of 63.                                             | `string` | `null`      |
-| `effect`     | The effect of the taint. Valid values: `NO_SCHEDULE`, `NO_EXECUTE`, `PREFER_NO_SCHEDULE`. | `string` | `null`      |
+| `key`        | The key of the taint. Maximum length of 63.                                               | `string` |             |
+| `value`      | The value of the taint. Maximum length of 63.                                             | `string` |             |
+| `effect`     | The effect of the taint. Valid values: `NO_SCHEDULE`, `NO_EXECUTE`, `PREFER_NO_SCHEDULE`. | `string` |             |
 
 ### Appendix D
 
@@ -481,106 +500,106 @@ Specification for the `core_services_config` object.
 
 | **Variable**            | **Description**                      | **Type**                          | **Default** |
 | :---------------------- | :----------------------------------- | :-------------------------------- | :---------- |
-| `alertmanager`          | Alertmanager configuration.          | `any` ([Appendix E](#appendix-e)) | `null`      |
-| `cert_manager`          | Cert Manager configuration.          | `any` ([Appendix F](#appendix-f)) | `null`      |
-| `coredns`               | CoreDNS configuration.               | `any` ([Appendix G](#appendix-g)) | `null`      |
-| `external_dns`          | ExternalDNS configuration.           | `any` ([Appendix H](#appendix-h)) | `null`      |
-| `fluentd`               | Fluentd configuration.               | `any` ([Appendix I](#appendix-i)) | `null`      |
-| `grafana`               | Grafana configuration.               | `any` ([Appendix J](#appendix-j)) | `null`      |
-| `ingress_internal_core` | Ingress internal-core configuration. | `any` ([Appendix K](#appendix-k)) | `null`      |
-| `prometheus`            | Prometheus configuration.            | `any` ([Appendix L](#appendix-l)) | `null`      |
+| `alertmanager`          | Alertmanager configuration.          | `any` ([Appendix E](#appendix-e)) | `{}`        |
+| `cert_manager`          | Cert Manager configuration.          | `any` ([Appendix F](#appendix-f)) | `{}`        |
+| `coredns`               | CoreDNS configuration.               | `any` ([Appendix G](#appendix-g)) | `{}`        |
+| `external_dns`          | ExternalDNS configuration.           | `any` ([Appendix H](#appendix-h)) | `{}`        |
+| `fluentd`               | Fluentd configuration.               | `any` ([Appendix I](#appendix-i)) | `{}`        |
+| `grafana`               | Grafana configuration.               | `any` ([Appendix J](#appendix-j)) | `{}`        |
+| `ingress_internal_core` | Ingress internal-core configuration. | `any` ([Appendix K](#appendix-k)) | `{}`        |
+| `prometheus`            | Prometheus configuration.            | `any` ([Appendix L](#appendix-l)) | `{}`        |
 
 ### Appendix E
 
 Specification for the `core_services_config.alertmanager` object.
 
-| **Variable** | **Description**                                                                               | **Type** | **Required** |
-| :----------- | :-------------------------------------------------------------------------------------------- | :------- | :----------- |
-| `smtp_host`  | SMTP host to send alert emails.                                                               | `string` | **Yes**      |
-| `smtp_from`  | SMTP from address for alert emails.                                                           | `string` | **Yes**      |
-| `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `any`    | No           |
-| `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `any`    | No           |
+| **Variable** | **Description**                                                                               | **Type** | **Default** |
+| :----------- | :-------------------------------------------------------------------------------------------- | :------- | :---------- |
+| `smtp_host`  | SMTP host to send alert emails.                                                               | `string` |             |
+| `smtp_from`  | SMTP from address for alert emails.                                                           | `string` |             |
+| `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `any`    | `[]`        |
+| `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `any`    | `[]`        |
 
 ### Appendix F
 
 Specification for the `core_services_config.cert_manager` object.
 
-| **Variable**          | **Description**                                                | **Type**       | **Required** |
-| :-------------------- | :------------------------------------------------------------- | :------------- | :----------- |
-| `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for.     | `list(string)` | No           |
-| `additional_issuers`  | Additional issuers to install into the cluster.                | `map(any)`     | No           |
-| `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | No           |
-| `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | No           |
+| **Variable**          | **Description**                                                | **Type**       | **Default**           |
+| :-------------------- | :------------------------------------------------------------- | :------------- | :-------------------- |
+| `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for.     | `list(string)` | `[]`                  |
+| `additional_issuers`  | Additional issuers to install into the cluster.                | `map(any)`     | `{}`                  |
+| `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | `ClusterIssuer`       |
+| `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | `letsencrypt-staging` |
 
 ### Appendix G
 
 Specification for the `core_services_config.coredns` object.
 
-| **Variable**    | **Description**                                                          | **Type**      | **Required** |
-| :-------------- | :----------------------------------------------------------------------- | :------------ | :----------- |
-| `forward_zones` | Map of DNS zones and DNS server IP addresses to forward DNS requests to. | `map(string)` | No           |
+| **Variable**    | **Description**                                                          | **Type**      | **Default** |
+| :-------------- | :----------------------------------------------------------------------- | :------------ | :---------- |
+| `forward_zones` | Map of DNS zones and DNS server IP addresses to forward DNS requests to. | `map(string)` | `{}`        |
 
 ### Appendix H
 
 Specification for the `core_services_config.external_dns` object.
 
-| **Variable**             | **Description**                                                                                                 | **Type**       | **Required** |
-| :----------------------- | :-------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
-| `additional_sources`     | Additional _Kubernetes_ objects to be watched.                                                                  | `list(string)` | No           |
-| `private_domain_filters` | Domains that can have DNS records created for them, these must be set up in the VPC as private hosted zones.    | `list(string)` | No           |
-| `public_domain_filters`  | Domains that can have DNS records created for them, these must be set up in the account as public hosted zones. | `list(string)` | No           |
+| **Variable**             | **Description**                                                                                                 | **Type**       | **Default** |
+| :----------------------- | :-------------------------------------------------------------------------------------------------------------- | :------------- | :---------- |
+| `additional_sources`     | Additional _Kubernetes_ objects to be watched.                                                                  | `list(string)` | `[]`        |
+| `private_domain_filters` | Domains that can have DNS records created for them, these must be set up in the VPC as private hosted zones.    | `list(string)` | `[]`        |
+| `public_domain_filters`  | Domains that can have DNS records created for them, these must be set up in the account as public hosted zones. | `list(string)` | `[]`        |
 
 ### Appendix I
 
 Specification for the `core_services_config.fluentd` object.
 
-| **Variable**       | **Description**                                                                                                                    | **Type**      | **Required** |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :------------ | :----------- |
-| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                              | `map(string)` | No           |
-| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                              | `map(string)` | No           |
-| `additional_env`   | Additional environment variables.                                                                                                  | `map(string)` | No           |
-| `debug`            | If `true` all logs are printed to stdout.                                                                                          | `bool`        | No           |
-| `filters`          | [Fluentd filter configuration](https://docs.fluentd.org/filter), can be multiple `<filter>` blocks.                                | `string`      | No           |
-| `routes`           | _Fluentd_ [fluent-plugin-route](https://github.com/tagomoris/fluent-plugin-route) configuration, can be multiple `<route>` blocks. | `string`      | No           |
-| `outputs`          | [Fluentd output configuration](https://docs.fluentd.org/output), can be multiple `<label>` blocks referencing the routes.          | `string`      | No           |
+| **Variable**       | **Description**                                                                                                                    | **Type**      | **Default** |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :------------ | :---------- |
+| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                              | `map(string)` | `null`      |
+| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                              | `map(string)` | `null`      |
+| `additional_env`   | Additional environment variables.                                                                                                  | `map(string)` | `{}`        |
+| `debug`            | If `true` all logs are printed to stdout.                                                                                          | `bool`        | `true`      |
+| `filters`          | [Fluentd filter configuration](https://docs.fluentd.org/filter), can be multiple `<filter>` blocks.                                | `string`      | `null`      |
+| `routes`           | _Fluentd_ [fluent-plugin-route](https://github.com/tagomoris/fluent-plugin-route) configuration, can be multiple `<route>` blocks. | `string`      | `null`      |
+| `outputs`          | [Fluentd output configuration](https://docs.fluentd.org/output), can be multiple `<label>` blocks referencing the routes.          | `string`      | `null`      |
 
 ### Appendix J
 
 Specification for the `core_services_config.grafana` object.
 
-| **Variable**              | **Description**                | **Type**       | **Required** |
-| :------------------------ | :----------------------------- | :------------- | :----------- |
-| `admin_password`          | Admin password.                | `string`       | No           |
-| `additional_data_sources` | Additional data sources.       | `list(any)`    | No           |
-| `additional_plugins`      | Additional plugins to install. | `list(string)` | No           |
+| **Variable**              | **Description**                | **Type**       | **Default** |
+| :------------------------ | :----------------------------- | :------------- | :---------- |
+| `admin_password`          | Admin password.                | `string`       | `changeme`  |
+| `additional_data_sources` | Additional data sources.       | `list(any)`    | `[]`        |
+| `additional_plugins`      | Additional plugins to install. | `list(string)` | `[]`        |
 
 ### Appendix K
 
 Specification for the `core_services_config.ingress_internal_core` object.
 
-| **Variable**       | **Description**                                                                     | **Type**       | **Required** |
-| :----------------- | :---------------------------------------------------------------------------------- | :------------- | :----------- |
-| `domain`           | Internal ingress domain.                                                            | `string`       | **Yes**      |
-| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used. | `string`       | No           |
-| `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.        | `list(string)` | No           |
-| `public_dns`       | If the internal ingress DNS should be public or private.                            | `bool`         | No           |
+| **Variable**       | **Description**                                                                     | **Type**       | **Default**                       |
+| :----------------- | :---------------------------------------------------------------------------------- | :------------- | :-------------------------------- |
+| `domain`           | Internal ingress domain.                                                            | `string`       |                                   |
+| `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used. | `string`       | _{CLUSTER_NAME}_                  |
+| `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.        | `list(string)` | `["10.0.0.0/8", "100.65.0.0/16"]` |
+| `public_dns`       | If the internal ingress DNS should be public or private.                            | `bool`         | `false`                           |
 
 ### Appendix L
 
 Specification for the `core_services_config.prometheus` object.
 
-| **Variable**   | **Description**                     | **Type**       | **Required** |
-| :------------- | :---------------------------------- | :------------- | :----------- |
-| `remote_write` | Remote write endpoints for metrics. | `list(string)` | No           |
+| **Variable**   | **Description**                     | **Type**       | **Default** |
+| :------------- | :---------------------------------- | :------------- | :---------- |
+| `remote_write` | Remote write endpoints for metrics. | `list(string)` | `[]`        |
 
 ### Appendix M
 
 Specification for the `maintenance_window_not_allowed` object.
 
-| **Variable** | **Description**                                                             | **Type** | **Required** |
-| :----------- | :-------------------------------------------------------------------------- | :------- | :----------- |
-| `start`      | Start time for the not allowed maintenance window block in RFC 3339 format. | `string` | No           |
-| `end`        | End time for the not allowed maintenance window block in RFC 3339 format.   | `string` | No           |
+| **Variable** | **Description**                                                             | **Type** | **Default** |
+| :----------- | :-------------------------------------------------------------------------- | :------- | :---------- |
+| `start`      | Start time for the not allowed maintenance window block in RFC 3339 format. | `string` | No          |
+| `end`        | End time for the not allowed maintenance window block in RFC 3339 format.   | `string` | No          |
 
 ---
 
