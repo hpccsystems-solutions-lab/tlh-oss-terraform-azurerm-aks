@@ -30,6 +30,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Updated
 
 - Update _Cert Manager_ chart to [1.8.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.2). (#504) [@sossickd](https://github.com/sossickd)
+- Updated _Kube Prometheus Stack_ chart to [v36.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-36.2.0) (contains _Grafana_ [v9.0.1](https://github.com/grafana/grafana/releases/tag/v9.0.1)). (#498) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.14] - 2022-06-20
 
