@@ -30,7 +30,7 @@ output "kubelet_identity" {
 
 output "effective_outbound_ips" {
   description = "Outbound IPs from the managed Kubernetes cluster."
-  value       = azurerm_kubernetes_cluster.default.network_profile[0].load_balancer_profile[0].effective_outbound_ips
+  value       = [for ip in data.azurerm_public_ip.outbound : ip.ip_address]
 }
 
 output "node_resource_group_name" {

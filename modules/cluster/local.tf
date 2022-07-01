@@ -1,6 +1,13 @@
 data "azurerm_client_config" "current" {
 }
 
+data "azurerm_public_ip" "outbound" {
+  for_each = toset(azurerm_kubernetes_cluster.default.network_profile[0].load_balancer_profile[0].effective_outbound_ips)
+
+  name                = reverse(split("/", each.value))[0]
+  resource_group_name = azurerm_kubernetes_cluster.default.node_resource_group
+}
+
 locals {
   log_categories = {
     all = ["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
