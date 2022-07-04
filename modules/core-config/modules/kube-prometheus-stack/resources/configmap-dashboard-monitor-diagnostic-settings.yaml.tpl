@@ -972,19 +972,27 @@ data:
       "templating": {
         "list": [
           {
-            "allValue": null,
             "current": {},
-            "datasource": "Azure Monitor",
+            "datasource": {
+              "type": "grafana-azure-monitor-datasource",
+              "uid": "$${datasource}"
+            },
             "definition": "AzureDiagnostics\n| project Category",
-            "description": null,
-            "error": null,
             "hide": 0,
             "includeAll": false,
             "label": "category",
             "multi": false,
             "name": "category",
             "options": [],
-            "query": "AzureDiagnostics\n| project Category",
+            "query": {
+              "azureLogAnalytics": {
+                "query": "AzureDiagnostics\n| project Category",
+                "resource": "$azureLogAnalytics_resource"
+              },
+              "queryType": "Azure Log Analytics",
+              "refId": "A",
+              "subscription": "${subscription_id}"
+            },
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
@@ -997,10 +1005,7 @@ data:
               "text": "",
               "value": ""
             },
-            "description": null,
-            "error": null,
             "hide": 0,
-            "label": null,
             "name": "search",
             "options": [
               {
@@ -1014,50 +1019,38 @@ data:
             "type": "textbox"
           },
           {
-            "current": {
-              "selected": true,
-              "text": "${resource_id}",
-              "value": "${resource_id}"
-            },
-            "definition": "",
+            "description": "",
             "hide": 2,
-            "includeAll": false,
             "label": "Azure Log Analytics Control Plane ID",
-            "multi": false,
             "name": "azureLogAnalytics_resource",
-            "options": [],
-            "query": {
-              "query": "",
-              "refId": "StandardVariableQuery"
-            },
-            "refresh": 1,
-            "regex": "",
+            "query": "${resource_id}",
             "skipUrlSync": false,
-            "sort": 0,
-            "type": "query"
+            "type": "constant"
+          },
+          {
+            "hide": 2,
+            "label": "Subscription ID",
+            "name": "subscription",
+            "query": "${subscription_id}",
+            "skipUrlSync": false,
+            "type": "constant"
           },
           {
             "current": {
-              "selected": true,
-              "text": "${subscription_id}",
-              "value": "${subscription_id}"
+              "selected": false,
+              "text": "Azure Monitor",
+              "value": "Azure Monitor"
             },
-            "definition": "",
             "hide": 2,
             "includeAll": false,
-            "label": "Subscription ID",
             "multi": false,
-            "name": "subscription",
+            "name": "datasource",
             "options": [],
-            "query": {
-              "query": "",
-              "refId": "StandardVariableQuery"
-            },
+            "query": "grafana-azure-monitor-datasource",
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
-            "sort": 0,
-            "type": "query"
+            "type": "datasource"
           }
         ]
       },

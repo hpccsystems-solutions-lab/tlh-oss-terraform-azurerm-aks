@@ -98,6 +98,11 @@ variable "control_plane_log_analytics_workspace_id" {
   type        = string
 }
 
+variable "control_plane_log_analytics_workspace_different_resource_group" {
+  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
+  type        = bool
+}
+
 variable "oms_agent" {
   description = "If the OMS agent addon should be installed."
   type        = bool

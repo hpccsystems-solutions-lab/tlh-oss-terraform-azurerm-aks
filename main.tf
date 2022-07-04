@@ -98,11 +98,12 @@ module "core_config" {
 
   core_services_config = var.core_services_config
 
-  control_plane_log_analytics_workspace_id                   = module.cluster.control_plane_log_analytics_workspace_id
-  oms_agent                                                  = local.experimental_oms_agent
-  oms_agent_log_analytics_workspace_id                       = local.experimental_oms_agent_log_analytics_workspace_id
-  oms_agent_log_analytics_workspace_different_resource_group = local.experimental_oms_agent_log_analytics_workspace_different_resource_group
-  oms_agent_create_configmap                                 = local.experimental_oms_agent_create_configmap
+  control_plane_log_analytics_workspace_id                       = module.cluster.control_plane_log_analytics_workspace_id
+  control_plane_log_analytics_workspace_different_resource_group = var.control_plane_logging_external_workspace_different_resource_group
+  oms_agent                                                      = local.experimental_oms_agent
+  oms_agent_log_analytics_workspace_id                           = local.experimental_oms_agent_log_analytics_workspace_id
+  oms_agent_log_analytics_workspace_different_resource_group     = local.experimental_oms_agent_log_analytics_workspace_different_resource_group
+  oms_agent_create_configmap                                     = local.experimental_oms_agent_create_configmap
 
   labels = local.labels
   tags   = local.tags

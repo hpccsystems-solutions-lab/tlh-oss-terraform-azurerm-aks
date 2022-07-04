@@ -202,6 +202,12 @@ variable "control_plane_logging_external_workspace_id" {
   default     = null
 }
 
+variable "control_plane_logging_external_workspace_different_resource_group" {
+  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
+  type        = bool
+  default     = false
+}
+
 variable "control_plane_logging_workspace_categories" {
   description = "The control plane log categories to send to the log analytics workspace."
   type        = string

@@ -1,5 +1,5 @@
 resource "random_string" "workspace_suffix" {
-  count = var.control_plane_logging_external_workspace ? 1 : 0
+  count = var.control_plane_logging_external_workspace ? 0 : 1
 
   length  = 5
   special = false
@@ -8,7 +8,7 @@ resource "random_string" "workspace_suffix" {
 }
 
 resource "azurerm_log_analytics_workspace" "default" {
-  count = var.control_plane_logging_external_workspace ? 1 : 0
+  count = var.control_plane_logging_external_workspace ? 0 : 1
 
   location            = var.location
   resource_group_name = var.resource_group_name
