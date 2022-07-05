@@ -27,7 +27,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ---
 
-## [v1.0.0-beta.15] - UNRELEASED
+## [v1.0.0-beta.15] - 2022-07-05
 
 > **IMPORTANT**
 > Control plane logging has been made fully configurable in this release so if you're currently overriding the defaults you will need to use the new variables to continue to do this (the behaviour is consistent). The main changes have been to allow control plane logs to be sent to a custom log analytics workspace, and to enable custom retention to be specified alongside the log categories to collect.
