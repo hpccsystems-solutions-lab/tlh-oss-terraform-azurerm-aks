@@ -21,6 +21,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
+## Deprecations
+
+- Support for Kubernetes v1.21 has been deprecated following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1) (Azure drops support on the 31st of July 2022, likely to be removed in release `v1.0.0-beta.17`)
+
+---
+
 ## [v1.0.0-beta.15] - UNRELEASED
 
 ### Added
@@ -36,6 +42,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Fixed
 
 - Fixed output `effective_outbound_ips` to provide correct value. [@prikesh-patel](https://github.com/prikesh-patel)
+
+## Deprecated
+
+- Deprecated Kubernetes version v1.21 following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1). (#519) [@sossickd](https://github.com/sossickd)
 
 ## [v1.0.0-beta.14] - 2022-06-20
 
