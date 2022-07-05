@@ -173,7 +173,7 @@ Cluster node groups will be auto scaled by using the [AKS Cluster Autoscaler](ht
 
 #### Control Plane Logs
 
-Cluster control plane logs are sent to an Azure log analytics workspace created by this module with a 30 day expiry. If you want to add the control plane logs to object storage you can enable this by setting `logging_storage_account_enabled` and `logging_storage_account_id` (the current retention of these logs is 7 days but should be made user defined).
+By default the cluster control plane logs in the `recommended` categories are sent to an Azure log analytics workspace created by this module with a 30 day retention; it is possible to change the categories and retention as well as use an external log analytics workspace. If you also want to add the control plane logs to object storage you can enable this by setting `control_plane_logging_storage_account_enabled` and `control_plane_logging_storage_account_id` which will by default send logs in the `all` category with a 30 day retention; both the log categories and retention can be changed.
 
 ##### Control Plane Log Categories
 

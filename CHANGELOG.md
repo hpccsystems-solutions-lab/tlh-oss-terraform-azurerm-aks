@@ -29,10 +29,20 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.15] - UNRELEASED
 
+> **IMPORTANT**
+> Control plane logging has been made fully configurable in this release so if you're currently overriding the defaults you will need to use the new variables to continue to do this (the behaviour is consistent). The main changes have been to allow control plane logs to be sent to a custom log analytics workspace, and to enable custom retention to be specified alongside the log categories to collect.
+
 ### Added
 
-- Added cidr validation to `var.cluster_endpoint_access_cidrs`. [@james1miller93](https://github.com/james1miller93)
-- Add [ZeroSSL](https://zerossl.com/features/acme/) cluster issuer. (#365) [@sossickd](https://github.com/sossickd)
+- Added CIDR validation to `var.cluster_endpoint_access_cidrs`. [@james1miller93](https://github.com/james1miller93)
+- Added [ZeroSSL](https://zerossl.com/features/acme/) cluster issuer. (#365) [@sossickd](https://github.com/sossickd)
+- Added control plane logging customisation via the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_external_workspace_different_resource_group`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled` & `control_plane_logging_storage_account_retention_days` input variables. (#474) [@stevehipwell](https://github.com/stevehipwell)
+
+### Changed
+
+- Changed default retention for control plane logs sent to a storage account from 7 days to 30 days. (#474) [@stevehipwell](https://github.com/stevehipwell)
+- Increased the _Grafana_ memory request/limit to support more intensive dashboards. (#516) [@prikesh-patel](https://github.com/prikesh-patel)
+- Improved the _AKS Control Plane Logs_ _Grafana_ dashboard. [@prikesh-patel](https://github.com/prikesh-patel)
 
 ### Updated
 
@@ -46,6 +56,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## Deprecated
 
 - Deprecated Kubernetes version v1.21 following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1). (#519) [@sossickd](https://github.com/sossickd)
+
+## Removed
+
+- Removed `logging_storage_account_enabled` & `logging_storage_account_id` input variables in favour of the new `control_plane_logging_storage_account_enabled` & `control_plane_logging_storage_account_id` input variables. (#474) [@stevehipwell](https://github.com/stevehipwell)
+- Removed experimental `workspace_log_categories` & `storage_log_categories` settings in favour of the new control plane logging input variables. (#474) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.14] - 2022-06-20
 
