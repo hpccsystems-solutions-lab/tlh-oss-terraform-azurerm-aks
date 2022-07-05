@@ -13,6 +13,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ---
 
+## Deprecations
+
+- Support for Kubernetes v1.21 has been deprecated following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1) (Azure drops support on the 31st of July 2022, likely to be removed in release `v1.0.0-beta.17`)
+
+---
+
 <!-- ## [vX.Y.Z] - UNRELEASED
 ### Added
 ### Changed
@@ -21,11 +27,19 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
-## Deprecations
+[v1.0.0-beta.16] - UNRELEASED
 
-- Support for Kubernetes v1.21 has been deprecated following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1) (Azure drops support on the 31st of July 2022, likely to be removed in release `v1.0.0-beta.17`)
+### Added
 
----
+### Changed
+
+### Updated
+
+### Fixed
+
+### Deprecated
+
+### Removed
 
 ## [v1.0.0-beta.15] - 2022-07-05
 
