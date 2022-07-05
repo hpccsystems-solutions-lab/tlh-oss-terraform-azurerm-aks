@@ -14,6 +14,7 @@ locals {
 
   # az aks get-versions --location eastus --output table
   cluster_full_versions = {
+    "1.23" = "1.23.5"
     "1.22" = "1.22.6"
     "1.21" = "1.21.9"
   }

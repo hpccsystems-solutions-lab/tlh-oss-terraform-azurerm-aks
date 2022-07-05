@@ -8,7 +8,7 @@ locals {
   # example: "${local.account_code}-aks-000"
 
   cluster_version = ""
-  # example : "1.21"
+  # example : "1.23"
 
   cluster_admin_users = {}
   # example: { "user@risk.regn.net" = "aaa-bbb-ccc-ddd-eee" }

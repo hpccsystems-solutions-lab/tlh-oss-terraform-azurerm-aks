@@ -6,7 +6,7 @@ locals {
   # example: "ioa-aks-1"
 
   cluster_version = ""
-  # example: "1.21"
+  # example: "1.23"
 
   podnet_cidr_block = ""
   # example: "100.65.0.0/16"
