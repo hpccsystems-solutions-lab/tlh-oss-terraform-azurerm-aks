@@ -39,6 +39,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Fixed
 
+- Fix `kube-audit-admin` and `AllMetrics` being incorrectly re-enabled in external storage account. [@prikesh-patel](https://github.com/prikesh-patel)
+
 ### Deprecated
 
 ### Removed

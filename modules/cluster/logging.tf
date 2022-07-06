@@ -38,8 +38,8 @@ resource "azurerm_monitor_diagnostic_setting" "default" {
       category = log.value
       enabled  = contains(each.value.logs, log.value)
       retention_policy {
-        enabled = each.value.retention_enabled
-        days    = each.value.retention_days
+        enabled = contains(each.value.logs, log.value) && each.value.retention_enabled
+        days    = contains(each.value.logs, log.value) && each.value.retention_enabled ? each.value.retention_days : "0"
       }
     }
   }
@@ -51,8 +51,8 @@ resource "azurerm_monitor_diagnostic_setting" "default" {
       category = metric.value
       enabled  = contains(each.value.metrics, metric.value)
       retention_policy {
-        enabled = each.value.retention_enabled
-        days    = each.value.retention_days
+        enabled = contains(each.value.metrics, metric.value) && each.value.retention_enabled
+        days    = contains(each.value.metrics, metric.value) && each.value.retention_enabled ? each.value.retention_days : "0"
       }
     }
   }
