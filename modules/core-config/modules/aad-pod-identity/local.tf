@@ -1,5 +1,5 @@
 locals {
-  chart_version = "4.1.10"
+  chart_version = "4.1.11"
 
   chart_values = {
     rbac = {
