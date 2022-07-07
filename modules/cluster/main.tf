@@ -42,12 +42,17 @@ resource "azurerm_kubernetes_cluster" "default" {
     dns_service_ip     = "172.20.0.10"
     docker_bridge_cidr = "172.17.0.1/16"
     pod_cidr           = var.network_plugin == "kubenet" ? var.podnet_cidr_block : null
+
+    load_balancer_profile {
+      managed_outbound_ip_count = var.managed_outbound_ip_count
+    }
   }
 
   dns_prefix = var.cluster_name
 
   local_account_disabled            = true
   role_based_access_control_enabled = true
+
   azure_active_directory_role_based_access_control {
     managed                = true
     azure_rbac_enabled     = true

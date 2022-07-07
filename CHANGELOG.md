@@ -32,8 +32,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Added
 
 - Added support for [AKS v1.22](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli). (#518) [@sossickd](https://github.com/sossickd)
+- New variable `managed_outbound_ip_count`. [@prikesh-patel](https://github.com/prikesh-patel)
 
 ### Changed
+
+- Increase _Cert Manager_ `startupapicheck` timeout. [@prikesh-patel](https://github.com/prikesh-patel)
 
 ### Updated
 

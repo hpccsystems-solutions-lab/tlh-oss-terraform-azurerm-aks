@@ -95,6 +95,8 @@ locals {
     }
 
     startupapicheck = {
+      timeout = "2m"
+
       nodeSelector = {
         "kubernetes.io/os" = "linux"
         "lnrs.io/tier"     = "system"

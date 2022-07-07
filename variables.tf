@@ -111,6 +111,17 @@ variable "podnet_cidr_block" {
   default     = "100.65.0.0/16"
 }
 
+variable "managed_outbound_ip_count" {
+  description = "Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.managed_outbound_ip_count > 0 && var.managed_outbound_ip_count <= 100
+    error_message = "Managed outbound IP count must be between 1 and 100 inclusive."
+  }
+}
+
 variable "admin_group_object_ids" {
   description = "AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module."
   type        = list(string)

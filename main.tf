@@ -12,6 +12,7 @@ module "cluster" {
   subnet_id                                               = local.subnet_id
   route_table_id                                          = local.route_table_id
   podnet_cidr_block                                       = var.podnet_cidr_block
+  managed_outbound_ip_count                               = var.managed_outbound_ip_count
   admin_group_object_ids                                  = var.admin_group_object_ids
   bootstrap_name                                          = local.bootstrap_name
   bootstrap_vm_size                                       = local.bootstrap_vm_size

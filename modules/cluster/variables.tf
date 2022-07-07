@@ -53,6 +53,11 @@ variable "podnet_cidr_block" {
   type        = string
 }
 
+variable "managed_outbound_ip_count" {
+  description = "Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive."
+  type        = number
+}
+
 variable "admin_group_object_ids" {
   description = "AD Object IDs to be added to the cluster admin group, if not set the current user will be made a cluster administrator."
   type        = list(string)
