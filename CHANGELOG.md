@@ -31,6 +31,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Added
 
+- Add ability to create custom folders in Grafana. (#357) [@sossickd](https://github.com/sossickd)
+
 ### Changed
 
 ### Updated

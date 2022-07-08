@@ -353,8 +353,16 @@ locals {
 
       sidecar = {
         dashboards = {
+          enabled = true
+          folderAnnotation = "grafana_folder"
+          label = "grafana_dashboard"
+          provider = {
+            allowUiUpdates = true
+            foldersFromFilesStructure = true
+          }
           searchNamespace = "ALL"
         }
+
 
         resources = {
           requests = {
