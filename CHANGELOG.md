@@ -56,7 +56,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The _AAD Pod Identity_ chart has been upgraded to `4.1.11` (contains [v1.8.10](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.10) of the aad-pod-identity image). [@peterabarr](https://github.com/peterabarr)
 
-- Fix `kube-audit-admin` and `AllMetrics` being incorrectly re-enabled in external storage account. [@prikesh-patel](https://github.com/prikesh-patel)
+### Fixed
+
+- Fixed `kube-audit-admin` and `AllMetrics` being incorrectly re-enabled in external storage account. [@prikesh-patel](https://github.com/prikesh-patel)
+- Fixed a bug introduced in v1.0.0-beta.15 where operators could not create a cluster from scratch. (#525) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.15] - 2022-07-05
 
