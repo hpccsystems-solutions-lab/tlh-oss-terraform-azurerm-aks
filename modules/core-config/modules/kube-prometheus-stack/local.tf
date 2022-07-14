@@ -1,5 +1,5 @@
 locals {
-  chart_version = "36.2.0"
+  chart_version = "37.2.0"
 
   chart_values = {
     global = {

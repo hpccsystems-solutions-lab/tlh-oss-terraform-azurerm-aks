@@ -37,6 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Updated
 
+- Update _Kube Prometheus Stack_ chart to [v37.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-37.2.0)(contains _Kube State Metrics_ [v4.13.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.13.0), _Grafana_ [v6.32.2](https://github.com/grafana/helm-charts/releases/tag/grafana-6.32.2)). (#515) [@peterabarr](https://github.com/peterabarr)]
+
 ### Fixed
 
 ### Deprecated
