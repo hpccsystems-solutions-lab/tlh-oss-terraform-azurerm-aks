@@ -43,6 +43,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Fixed
 
+- Fixed `ingress-nginx-core-internal` grafana dashboard (#541) [@james1miller93](https://github.com/james1miller93)
+
 ### Deprecated
 
 ### Removed

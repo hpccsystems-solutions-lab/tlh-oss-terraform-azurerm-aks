@@ -52,7 +52,7 @@ data:
             "type": "dashboard"
           },
           {
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$datasource",
             "enable": true,
             "expr": "sum(changes(nginx_ingress_controller_config_last_reload_successful_timestamp_seconds{instance!=\"unknown\",controller_class=~\"$controller_class\",namespace=~\"$namespace\"}[30s])) by (controller_class)",
             "hide": false,
@@ -96,7 +96,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "#d44a3a"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 1,
           "description": "This is the total number of requests made in this period (top-right period selected)",
           "fieldConfig": {
@@ -155,7 +155,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(increase(nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]))",
+              "expr": "sum(increase(nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]))",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "",
@@ -241,7 +241,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\", controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n      )\n   )   \n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n        )\n     ) - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\", controller_class=~\"$controller_class\", ingress=~\"$ingress\",namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n        )\n     ) \n  or vector(0)\n  )\n)",
+              "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\", controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   )   \n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\", controller_class=~\"$controller_class\", ingress=~\"$ingress\",namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) \n  or vector(0)\n  )\n)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -548,7 +548,7 @@ data:
             "#73BF69",
             "#73BF69"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 0,
           "description": "This is the number of successful requests in the last minute.  Successful being 1xx or 2xx by the standard HTTP definition.",
           "fieldConfig": {
@@ -640,7 +640,7 @@ data:
             "#3274D9",
             "#3274D9"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 0,
           "description": "This is the number of 3xx requests in the last minute.",
           "fieldConfig": {
@@ -731,7 +731,7 @@ data:
             "#FF9830",
             "#FF9830"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 0,
           "description": "This is the number of 4xx requests in the last minute.",
           "fieldConfig": {
@@ -822,7 +822,7 @@ data:
             "#F2495C",
             "#F2495C"
           ],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 0,
           "description": "This is the number of 5xx requests in the last minute.",
           "fieldConfig": {
@@ -1207,7 +1207,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 2,
           "editable": true,
           "error": false,
@@ -1323,7 +1323,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 2,
           "editable": false,
           "error": false,
@@ -1425,7 +1425,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "decimals": 3,
           "editable": false,
           "error": false,
@@ -1528,7 +1528,7 @@ data:
         },
         {
           "columns": [],
-          "datasource": "$${DS_PROMETHEUS}",
+          "datasource": "$datasource",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -2450,7 +2450,7 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\", controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n      )\n   ) by (ingress)\n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n        )\n     ) by (ingress)\n     - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\", controller_class=~\"$controller_class\", ingress=~\"$ingress\",namespace=~\"$namespace\", controller_pod=~\"$pod\"}[$${__range_s}s]\n        )\n     ) by (ingress)\n  or vector(0)\n  )\n)",
+                  "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\", controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{ controller_class=~\"$controller_class\", ingress=~\"$ingress\", namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) by (ingress)\n     - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\", controller_class=~\"$controller_class\", ingress=~\"$ingress\",namespace=~\"$namespace\", controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) by (ingress)\n  or vector(0)\n  )\n)",
                   "format": "time_series",
                   "interval": "",
                   "intervalFactor": 1,
@@ -2616,7 +2616,7 @@ data:
             "includeAll": false,
             "label": "datasource",
             "multi": false,
-            "name": "DS_PROMETHEUS",
+            "name": "datasource",
             "options": [],
             "query": "prometheus",
             "refresh": 1,
@@ -2631,7 +2631,7 @@ data:
               "text": "k8s.io/nginx-internal-core",
               "value": "k8s.io/nginx-internal-core"
             },
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$datasource",
             "definition": "label_values(nginx_ingress_controller_config_hash, controller_class) ",
             "hide": 2,
             "includeAll": false,
@@ -2659,7 +2659,7 @@ data:
               "text": "ingress-internal-core",
               "value": "ingress-internal-core"
             },
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$datasource",
             "definition": "label_values(nginx_ingress_controller_requests{ controller_class=~\"$controller_class\"},namespace)",
             "hide": 0,
             "includeAll": false,
@@ -2690,7 +2690,7 @@ data:
                 "$__all"
               ]
             },
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$datasource",
             "definition": "label_values(nginx_ingress_controller_requests{namespace=~\"$namespace\",controller_class=~\"$controller_class\"}, ingress) ",
             "hide": 0,
             "includeAll": true,
@@ -2722,7 +2722,7 @@ data:
                 "$__all"
               ]
             },
-            "datasource": "$${DS_PROMETHEUS}",
+            "datasource": "$datasource",
             "definition": "label_values(nginx_ingress_controller_config_hash{controller_class=~\"$controller_class\"}, controller_pod) ",
             "hide": 0,
             "includeAll": true,
