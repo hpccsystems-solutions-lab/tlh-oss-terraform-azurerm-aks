@@ -27,6 +27,20 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Deprecated
 ### Removed -->
 
+## [v1.0.0-beta.18] - UNRELEASED
+
+### Added
+
+### Changed
+
+### Updated
+
+### Fixed
+
+### Deprecated
+
+### Removed
+
 ## [v1.0.0-beta.17] - 2022-07-18
 
 ### Added
@@ -35,7 +49,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Updated
 
-- Update _Kube Prometheus Stack_ chart to [v37.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-37.2.0)(contains _Kube State Metrics_ [v4.13.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.13.0), _Grafana_ [v6.32.2](https://github.com/grafana/helm-charts/releases/tag/grafana-6.32.2)). (#515) [@peterabarr](https://github.com/peterabarr)]
+- Update _Kube Prometheus Stack_ chart to [v37.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-37.2.0)(contains _Kube State Metrics_ [v4.13.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.13.0), _Grafana_ [v6.32.2](https://github.com/grafana/helm-charts/releases/tag/grafana-6.32.2)). (#515) [@peterabarr](https://github.com/peterabarr)
 - Update _Fluent Bit_ chart to [v0.20.3](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.3) (contains _Fluent Bit_ [v1.9.5](https://github.com/fluent/fluent-bit/releases/tag/v1.9.5)). (#506) [@peterabarr](https://github.com/peterabarr)
 - Update _External DNS_ chart to [v1.10.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.10.1) (contains _External DNS_ [v0.12.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.0)). (#543) [@peterabarr](https://github.com/peterabarr)
 
