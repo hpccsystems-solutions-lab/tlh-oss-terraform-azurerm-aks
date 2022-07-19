@@ -17,6 +17,7 @@ resource "azurerm_role_assignment" "network_contributor_route_table" {
   scope                = var.route_table_id
 }
 
+#tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
   name                      = var.cluster_name
   kubernetes_version        = var.cluster_version_full

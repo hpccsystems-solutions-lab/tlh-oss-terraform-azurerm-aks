@@ -23,7 +23,8 @@ The following tasks need to be completed to release the module.
 - [ ] Update release information
 - [ ] Open PR
 - [ ] Merge PR
-- [ ] Create GH release
+- [ ] Create release tag
+- [ ] Wait for release
 - [ ] Close release issue & milestone
 
 ### Create Release Branch
@@ -53,15 +54,26 @@ git push
 
 ### Open PR
 
-Open a [PR](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/pulls) to merge the release branch in the `main` branch and add it to the release milestone. Add any additional content for the release to the PR. Assign a reviewer with the correct permissions to merge the changes and create the tags.
+Open a [PR](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/pulls) to merge the release branch in the `main` branch and add it to the release milestone. Add any additional content for the release to the PR. Assign yourself and add a reviewer; if you don;t have the correct permissions to merge the changes and create the tag you will need to add another assignee after the PR has been approved.
 
 ### Merge PR
 
-The PR assignee can merge the branch into `main` once they are happy with the release.
+The PR assignee (who needs to be a maintainer) can merge the branch into `main` once they are happy with the release.
 
-### Create GH Release
+### Create release tag
 
-[Create a new GH release](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/releases/new), enter the release into the input provided by clicking `Choose a tag` and click `Create new tag` at the bottom of the dropdown. Don't add a title and add any additional release content into the description followed by the release notes from [CHANGELOG.md](./CHANGELOG.md). Publish the release.
+The PR assignee  (who needs to be a maintainer) needs to run the following commands locally to create the release tag, the actual release will be created by GitHub actions.
+
+```shell
+git checkout main
+git pull
+git tag v1.1.0
+git push --tags
+```
+
+### Wait For Release
+
+The release automation will be created as a [GitHub Action](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/actions/workflows/publish-release.yaml) which when it succeeds will create the GitHub release for the tag.
 
 ### Close Release Issue & Milestone
 

@@ -2,7 +2,7 @@ blank_issues_enabled: true
 contact_links:
   - name: Documentation
     url: https://lexisnexis-rba.github.io/rsg-kubernetes
-    about: For more information about the platform, it's components and the community use the RSG Kubernetes Documentation.
+    about: For more information about the platform, it's components, and the community please use the RSG Kubernetes Documentation.
   - name: GitHub Discussions
     url: https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions
     about: If you're asking a question or aren't sure if you have an issue please use the RSG Kubernetes GitHub Discussions.

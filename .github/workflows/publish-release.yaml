@@ -1,0 +1,14 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  workflow:
+    name: Reusable Workflow
+    uses: LexisNexis-TF/terraform-workflows/.github/workflows/module-publish-release.yaml@main
+    secrets: inherit
+    with:
+      module_name: terraform-azurerm-aks

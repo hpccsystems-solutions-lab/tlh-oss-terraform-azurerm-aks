@@ -29,8 +29,8 @@ Please describe the testing required and provide a list of the tests to run.
 Please make sure that the following tasks are completed before making the PR ready; if any of these are unchecked please create the PR as a draft.
 -->
 
-- [ ] Tested locally
+- [ ] Validated locally
 - [ ] Updated documentation (where applicable)
 - [ ] Updated CHANGELOG (where applicable)
 - [ ] PR has assignee(s)
-- [ ] PR has `needs triage` label
+- [ ] PR has `needs triage` label (non-core contributors)

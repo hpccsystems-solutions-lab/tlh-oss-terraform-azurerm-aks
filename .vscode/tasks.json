@@ -41,7 +41,7 @@
       "problemMatcher": []
     },
     {
-      "label": "lint:init",
+      "label": "tflint:init",
       "type": "shell",
       "command": "tflint",
       "args": [
@@ -50,9 +50,18 @@
       "problemMatcher": []
     },
     {
-      "label": "lint",
+      "label": "tflint",
       "type": "shell",
       "command": "tflint",
+      "args": [
+        "./"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "tfsec",
+      "type": "shell",
+      "command": "tfsec",
       "args": [
         "./"
       ],

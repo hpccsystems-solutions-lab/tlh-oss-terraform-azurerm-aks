@@ -1,8 +1,8 @@
 data "azurerm_subscription" "current" {
 }
 
-data "azurerm_client_config" "current" {
-}
+# data "azurerm_client_config" "current" {
+# }
 
 locals {
   module_name    = "terraform-azurerm-aks"
@@ -28,7 +28,7 @@ locals {
 
   tenant_id       = data.azurerm_subscription.current.tenant_id
   subscription_id = data.azurerm_subscription.current.subscription_id
-  client_id       = data.azurerm_client_config.current.client_id
+  # client_id       = data.azurerm_client_config.current.client_id
 
   virtual_network_resource_group_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.virtual_network_resource_group_name}"
   virtual_network_id                = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}"
