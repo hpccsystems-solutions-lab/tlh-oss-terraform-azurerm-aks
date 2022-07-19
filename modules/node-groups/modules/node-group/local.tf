@@ -117,6 +117,15 @@ locals {
       "16xlarge" = "Standard_L64s_v2"
       "20xlarge" = "Standard_L80s_v2"
     }
+
+    "amd64-stor-v2" = {
+      "2xlarge"  = "Standard_L8s_v3"
+      "4xlarge"  = "Standard_L16s_v3"
+      "8xlarge"  = "Standard_L32s_v3"
+      "12xlarge" = "Standard_L48s_v3"
+      "16xlarge" = "Standard_L64s_v3"
+      "20xlarge" = "Standard_L80s_v3"
+    }
   }
 
   vm_labels = {

@@ -151,9 +151,10 @@ All the nodes provisioned by the module support premium storage.
 
 [Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
 
-| **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
-| -------- | ----------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| **Type** | **Version** | **VM Type**                                                                   | **Sizes**                                                            |
+| -------- | ----------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series)   | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| `stor`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series)   | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 
 ---
 

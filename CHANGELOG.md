@@ -31,6 +31,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Added
 
+- Add support for the [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) series for storage optimised VMs. (#465) [@prikesh-patel](https://github.com/prikesh-patel)
+
 ### Changed
 
 ### Updated
