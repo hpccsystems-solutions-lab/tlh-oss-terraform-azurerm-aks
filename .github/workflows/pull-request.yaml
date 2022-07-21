@@ -8,7 +8,7 @@ on:
 jobs:
   workflow:
     name: Reusable Workflow
-    uses: LexisNexis-TF/terraform-workflows/.github/workflows/module-pull-request.yaml@main
+    uses: LexisNexis-RBA/rsg-terraform-workflows/.github/workflows/module-pull-request.yaml@main
     secrets: inherit
     with:
       module_name: terraform-azurerm-aks
