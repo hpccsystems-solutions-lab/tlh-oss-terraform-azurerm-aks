@@ -42,6 +42,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Updated
 
+- Update _Fluent Bit_ chart to [v0.20.4](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.4) (contains _Fluent Bit_ [v1.9.6](https://github.com/fluent/fluent-bit/releases/tag/v1.9.6)). ([#559](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/559)) [@peterabarr](https://github.com/peterabarr)
+
 ### Fixed
 
 ### Deprecated
