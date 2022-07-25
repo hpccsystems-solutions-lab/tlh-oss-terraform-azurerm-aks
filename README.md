@@ -89,6 +89,10 @@ Unlike EKS there is no way of specifying the node image version via Terraform so
 
 The module sets a default of a maintenance window of Tuesdays, Wednesdays and Thursdays between the hours of 10am and 4pm. The default maintenance window can be overwritten in the client side code, for an example please visit the [central documentation](https://gitlab.b2b.regn.net/kubernetes/kubernetes-core/-/blob/master/README.md).
 
+#### System Node Group
+
+AKS always created a system node pool upon creation and modifying the system node pool results in the cluster being destroyed and re-built. An "initial" bootstrap node pool allows us to modify the system node pools without requiring a cluster re-build every time the system node pool gets modified. Once the cluster is ready, we attach our 3 system node pools (we need 3 to use storage) and when they are ready, we remove the "bootstrap" node pool.
+
 #### Node Sizes
 
 Node sizes are based on the number of CPUs, with the other resources being dependent on the node type; not all node types support all sizes.
