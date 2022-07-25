@@ -73,16 +73,6 @@ The module `resource_group_name` variable specifies the resource group to deploy
 
 ---
 
-### Virtual Network Requirements
-
-A VNet could be shared with non-AKS resources, however there **must** be a pair of dedicated public and private subnets and a unique route table for each AKS cluster (use the [terraform-azure-virtual-network](https://github.com/Azure-Terraform/terraform-azurerm-virtual-network) module `aks_subnets` variable to meet this requirement, see [examples](/examples) for usage). While it is technically possible to host multiple AKS cluster node pools in a subnet, see [guidance](#multiple-clusters-per-subnet) on why this is not recommended.
-
-Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used, see [CNI Options](#cni-options) below.
-
-If the [dns_servers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network#dns_servers) attribute is set for the virtual network, the Azure DNS server "168.63.129.16" must be included in the list of values.
-
----
-
 ### CNI Options
 
 The following table lists properties and considerations when choosing the CNI plugin.
@@ -150,32 +140,6 @@ Setting to `Paid` increases control plane scalability, performance and availabil
 
 ---
 
-### Cluster Upgrades
-
-A cluster upgrade is initiated by one of the following changes:
-
-* A user updates the `cluster_version` module input to the next minor/major AKS version
-* The module internally updates the supported patch revision for a supported AKS version
-
-When changes are applied, the following workflow commences:
-
-* The AKS control plane and default node pool are updated to the new version
-* Once complete, all other node pools are updated **simultaneously** by rolling through nodes sequentially
-
-Given the above, here are some best practices and considerations:
-
-* Consult the [Upgrade Guide](/UPGRADE.md) for necessary manual steps or considerations - if not the operation **will fail**
-* Ensure the Terraform pipeline has a sufficient timeout to allow the operation to complete
-  * It is recommended to provide 10 minutes per node (or 2 hours as a minimum)
-* Scale down node pools if possible, in particular batch workloads that may be stopped and resumed
-* For `Azure CNI`, ensure at least (*no of node pools*)*30 free IP addresses in the subnet
-  * Azure CNI pre-allocates 30 IPs for each node (see [CNI Options](#cni-options) above)
-* Ensure workloads are spread across pools, if necessary use [Pod Disruption Budgets](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) or other availability options
-* Don't perform upgrades when the cluster is processing high-intensity workloads
-* Fewer, larger nodes will take less time to upgrade than many smaller nodes
-
----
-
 ### Kubernetes RBAC
 
 [Cluster authentication](https://docs.microsoft.com/en-us/azure/aks/azure-ad-integration-cli#access-cluster-with-azure-ad) is managed via Azure AD (SSO) in the `RBAHosting` tenant.
@@ -202,46 +166,6 @@ In `AzureUSGovernmentCloud` environments the map key **must** be the User Princi
 After handover it's possible for teams to create additional roles and bindings for Azure AD users, however this **must not** include the `cluster-admin` role - this high privileged role must be fully managed by this variable for transparency and auditing by InfoSec and SRE teams. See the [RBAC](/modules/core-config/modules/rbac/README.md) documentation for full implementation details.
 
 For service accounts, a managed identity can be configured for non-interactive `kubectl` access, see [kubelogin](https://docs.microsoft.com/en-us/azure/aks/managed-aad#non-interactive-sign-in-with-kubelogin) for details.
-
----
-
-### DNS, TLS Certificates & Ingress
-
-Configuration for these areas is closely aligned and configured via inputs in the `core_services_config` variable.
-
-For example, the module exposes ingress endpoints for core services such as Prometheus, Grafana and AlertManager UIs. The endpoints must be secured via TLS and DNS records must be published to Azure DNS for clients to resolve.
-
-
-```yaml
-  core_services_config = {
-    cert_manager = {
-      dns_zones  = {
-        "us-accurint-prod.azure.lnrsg.io" = "us-accurint-prod-dns-rg"
-      }
-    }
-
-    external_dns= {
-      private_resource_group_name = "us-accurint-prod-dns-rg"
-      private_zones = [ "us-accurint-prod.azure.lnrsg.io" ]
-    }
-
-    ingress_internal_core = {
-      domain    = "us-accurint-prod.azure.lnrsg.io"
-    }
-  }
-```
-
-The `cert-manager` block specifies the **public zone** Let's Encrypt will use to validate the domain and its resource group. 
-
-The `external-dns` block specifies domain(s) that user services can expose DNS records through and their resource group - all zones managed by `external-dns` **must** be in a single resource group. 
-
-The `ingress_internal_core` block specifies the domain to expose ingress resources to, consuming DNS/TLS services above. 
-
-It's very likely the same primary domain will be configured for all services, perhaps with `external-dns` managing some additional domains. The resource group is a required input so the module can assign appropriate Azure role bindings. It is expected that in most cases all DNS domains will be hosted in a single resource group.
-
-While `external-dns` supports both public and private zones, in split-horizon setups only the private zone should be configured, otherwise both zones will be updated with service records. The only scenario for configuring both public and private zones of the same name is to migrate public records to private records. Once this is done, the public zone should be removed and records manually deleted in the public zone.
-
-See the [Ingress](/modules/core-config/modules/ingress_internal_core/README.md) documentation for implementation details.
 
 ---
 

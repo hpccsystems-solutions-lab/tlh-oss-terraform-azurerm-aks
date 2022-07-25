@@ -37,8 +37,6 @@ A VNet can contain multiple AKS clusters and be shared with non-AKS resources, h
 
 Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparison](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
 
-If the [dns_servers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network#dns_servers) attribute is set for the virtual network, the Azure DNS server "168.63.129.16" must be included in the list of values.
-
 ### DNS
 
 Configuration for the DNS can be configured via inputs in the `core_services_config` variable.
