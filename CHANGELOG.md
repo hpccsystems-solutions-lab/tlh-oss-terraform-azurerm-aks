@@ -54,6 +54,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Removed
 
+- Dropped support for Kubernetes version v1.21 following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1). (#519) [@sossickd](https://github.com/sossickd)
+
 ## [v1.0.0-beta.17] - 2022-07-18
 
 ### Added
