@@ -1,5 +1,5 @@
 locals {
-  chart_version = "1.8.2"
+  chart_version = "1.9.1"
 
   chart_values = {
     installCRDs = false
