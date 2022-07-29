@@ -4,6 +4,8 @@
 
 This module is designed to provide a simple and opinionated way to build standard AKS clusters. This module takes a generic set of configuration options and creates a fully functional _Kubernetes_ cluster with a common set of services.
 
+Please visit the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/) for more information on the Kubernetes ecosystem.
+
 ---
 
 ## Support Policy
@@ -23,7 +25,7 @@ This module is supported as a pattern by the core engineering team as long as th
 
 Before using this module, the whole README should be read.
 
-If you require further help, you can open an issue on this project or write a post on the [OG-RBA Kubernetes Working Group](https://teams.microsoft.com/l/team/19%3a27e66f24235b48dd8b14bf784f1a4e6a%40thread.skype/conversations?groupId=dc4762e6-314d-4645-9919-bff7cc54b91c&tenantId=9274ee3f-9425-4109-a27f-9fb15c10675d).
+If you require further help, please visit [RSG Kubernetes Discussions](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions) where you can start your own discussion related to Kubernetes.
 
 ---
 
@@ -85,7 +87,7 @@ Within the AKS module we use two features to automatically upgrade the node imag
 
 Unlike EKS there is no way of specifying the node image version via Terraform so we use the Automatic upgrade channel set to node-image. this enables automatic node image upgrades outside of Terraform. Note Kubernetes patch, minor and major versions are controlled separately. Combining the automatic upgrade channel with a maintenance window gives us the ability to control when the upgrades take place.
 
-The module sets a default of a maintenance window of Tuesdays, Wednesdays and Thursdays between the hours of 10am and 4pm. The default maintenance window can be overwritten in the client side code, for an example please visit the [central documentation](https://gitlab.b2b.regn.net/kubernetes/kubernetes-core/-/blob/master/README.md).
+The module sets a default of a maintenance window of Tuesdays, Wednesdays and Thursdays between the hours of 10am and 4pm. The default maintenance window can be overwritten in the client side code, for an example please visit the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/).
 
 #### System Node Group
 
@@ -226,9 +228,9 @@ Out of the box the cluster supports automatically generating certificates with t
 
 #### Ingress Controllers
 
-The following official Terraform modules for ingress controllers are supported by the core engineering team and have been tested on AKS (please note that these are currently hosted on GitLab so should be copied into the `./modules` folder in your workspace and checked in).
+The following official Terraform modules for ingress controllers are supported by the core engineering team and have been tested on AKS (please note that these are currently hosted on Github so should be copied into the `./modules` folder in your workspace and checked in).
 
-- [K8s Ingress NGINX Terraform Module](https://gitlab.b2b.regn.net/terraform/official-modules/k8s/terraform-lnrs-k8s-ingress-nginx)
+- [K8s Ingress NGINX Terraform Module](https://github.com/LexisNexis-RBA/rsg-terraform-kubernetes-ingress-nginx)
 
 #### Ingress Nodes
 
