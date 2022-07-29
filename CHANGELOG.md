@@ -52,9 +52,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Fixed
 
+- Fixed OMS Agent config namespaces. ([#577](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/577)) [@stevehipwell](https://github.com/stevehipwell)
+
 ### Deprecated
 
-- Deprecated `node_group_templates` in favour of `node_groups`. Switching to the new variable is as simple as creating a map with the name of the old object as the key and the rest of the object as the body, many of the fields can be omitted if you're using the defaults. (#511) [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `node_group_templates` in favour of `node_groups`. Switching to the new variable is as simple as creating a map with the name of the old object as the key and the rest of the object as the body, many of the fields can be omitted if you're using the defaults. ([#511](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/511)) [@stevehipwell](https://github.com/stevehipwell)
 
 ### Removed
 

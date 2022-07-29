@@ -6,11 +6,11 @@ locals {
 
        [log_collection_settings.stdout]
           enabled  = true
-          exclude_namespaces = [${join(",", [for x in var.core_namespaces : "\"x\""])}]
+          exclude_namespaces = [${join(",", [for x in var.core_namespaces : "\"${x}\""])}]
 
        [log_collection_settings.stderr]
           enabled  = true
-          exclude_namespaces = [${join(",", [for x in var.core_namespaces : "\"x\""])}]
+          exclude_namespaces = [${join(",", [for x in var.core_namespaces : "\"${x}\""])}]
 
        [log_collection_settings.env_var]
           enabled = true
