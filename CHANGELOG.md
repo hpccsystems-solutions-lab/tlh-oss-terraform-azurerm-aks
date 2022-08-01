@@ -21,44 +21,58 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ---
 
 <!-- ## [vX.Y.Z] - UNRELEASED
-### Added
-### Changed
-### Updated
-### Fixed
-### Deprecated
-### Removed -->
+### Highlights
+### All Changes
+#### Added
+#### Changed
+#### Updated
+#### Fixed
+#### Deprecated
+#### Removed -->
 
-## [v1.0.0-beta.18] - UNRELEASED
+## [v1.0.0-beta.18] - 2022-08-01
+
+### Highlights
+
+The 'v1.0.0-beta.18' release is a minor release of the Azure AKS Terraform Module. Support for Kubernetes v1.21 has been removed. Deprecated `node_group_templates` in favour of `node_groups`. The core services were updated to their latest chart versions.
+
+### Latest Chart versions
+
+The v1.0.0-beta.18 release includes the following chart version updates: _Fluent Bit_, _Kube Prometheus Stack_ and _Cert Manager_.
+
+Thank you to [@stevehipwell](https://github.com/stevehipwell), [@prikesh-patel](https://github.com/prikesh-patel), [@james1miller93](https://github.com/james1miller93) and [@peterabarr](https://github.com/peterabarr) for their contributions.
+
+### All Changes
 
 > **Important**
 > Ingress internal core load balancer configuration was previously incorrect. This may require manually deleting the `core-internal` helm release before reinstating via the module. If it's not safe to do this immediately, we advise setting the load balancer subnet name manually using the `core_services_config.ingress_internal_core.lb_subnet_name` input until the loadbalancer can be recreated safely. See [issue 499](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/499) for more detail.
 
-### Added
+#### Added
 
 - Added new `node_groups` input variable to replace `node_group_templates`; this variable is a map and supports default values for simplicity. (#511) [@stevehipwell](https://github.com/stevehipwell)
 - Add support for the [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) series for storage optimised VMs. (#465) [@prikesh-patel](https://github.com/prikesh-patel)
 
-### Changed
+#### Changed
 
 - Changed the README to show all default values for variables. [@stevehipwell](https://github.com/stevehipwell)
 - Changed the README to show no value in the default column in the variable grids if a user defined value is required. [@stevehipwell](https://github.com/stevehipwell)
 - Revert change from `beta.10` where subnet annotation was added to `ingress-internal-core` loadbalancer configuration, creating undesirable behaviour. [@james1miller93](https://github.com/james1miller93)
 
-### Updated
+#### Updated
 
 - Update _Fluent Bit_ chart to [v0.20.4](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.4) (contains _Fluent Bit_ [v1.9.6](https://github.com/fluent/fluent-bit/releases/tag/v1.9.6)). ([#559](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/559)) [@peterabarr](https://github.com/peterabarr)
 - Update _Kube Prometheus Stack_ chart to [v38.0.2](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-38.0.2)(contains _Grafana_ [v6.32.7](https://github.com/grafana/helm-charts/releases/tag/grafana-6.32.7))). ([#564](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/564)) [@peterabarr](https://github.com/peterabarr)
 - Update _Cert Manager_ chart to [1.9.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.9.1). ([#571](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/571)) [@peterabarr](https://github.com/peterabarr)
 
-### Fixed
+#### Fixed
 
 - Fixed OMS Agent config namespaces. ([#577](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/577)) [@stevehipwell](https://github.com/stevehipwell)
 
-### Deprecated
+#### Deprecated
 
 - Deprecated `node_group_templates` in favour of `node_groups`. Switching to the new variable is as simple as creating a map with the name of the old object as the key and the rest of the object as the body, many of the fields can be omitted if you're using the defaults. ([#511](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/511)) [@stevehipwell](https://github.com/stevehipwell)
 
-### Removed
+#### Removed
 
 - Dropped support for Kubernetes version v1.21 following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1). (#519) [@sossickd](https://github.com/sossickd)
 
