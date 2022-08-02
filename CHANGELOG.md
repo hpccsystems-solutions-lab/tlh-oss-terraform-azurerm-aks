@@ -23,12 +23,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 <!-- ## [vX.Y.Z] - UNRELEASED
 ### Highlights
 ### All Changes
-#### Added
-#### Changed
-#### Updated
-#### Fixed
-#### Deprecated
-#### Removed -->
+- Added
+- Updated
+- Changed
+- Fixed
+- Deprecated
+- Removed
+ -->
+
+## [v1.0.0-beta.19] - UNRELEASED
+
+### All Changes
 
 ## [v1.0.0-beta.18] - 2022-08-01
 

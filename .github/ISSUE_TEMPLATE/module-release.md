@@ -25,6 +25,7 @@ The following tasks need to be completed to release the module.
 - [ ] Merge PR
 - [ ] Create release tag
 - [ ] Wait for release
+- [ ] Sync release to GitLab
 - [ ] Close release issue & milestone
 
 ### Create Release Branch
@@ -74,6 +75,28 @@ git push --tags
 ### Wait For Release
 
 The release automation will be created as a [GitHub Action](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/actions/workflows/publish-release.yaml) which when it succeeds will create the GitHub release for the tag.
+
+### Sync release to GitLab
+
+> **IMPORTANT**
+> You need to add a GitLab a remote if you have not done so already.
+> Inside the AKS GitHub project you can add the GitLab remote by running the following command:  
+> `git remote add gitlab git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git`  
+> Verify that the remote is set by running the following command:  
+> `git remote -v`  
+> The output should look like:  
+> `gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (fetch)`
+> `gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (push)`
+> `origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (fetch)`
+> `origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (push)`
+
+After pushing the release tag to GitHub, push the release tag to GitLab:
+
+```shell
+git push -u gitlab && origin
+```
+
+On the [Azure AKS Gitlab project](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks) go to [tags](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks/-/tags) and create a new tag with the name of the release. Inside the `Release notes` paste the changelog contents from the relevant release and make sure you create from `main`.
 
 ### Close Release Issue & Milestone
 
