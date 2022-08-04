@@ -36,7 +36,8 @@
       "type": "shell",
       "command": "terraform",
       "args": [
-        "fmt"
+        "fmt",
+        "-recursive"
       ],
       "problemMatcher": []
     },

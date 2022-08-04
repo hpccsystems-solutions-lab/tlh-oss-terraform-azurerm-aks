@@ -10,7 +10,7 @@ locals {
       service = {
         annotations = merge({
           "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
-        }, var.lb_subnet_name != null ? {
+          }, var.lb_subnet_name != null ? {
           "service.beta.kubernetes.io/azure-load-balancer-internal-subnet" = var.lb_subnet_name
         } : {})
 
