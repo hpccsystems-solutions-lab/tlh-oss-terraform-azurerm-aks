@@ -1,0 +1,18 @@
+name: Add All Issues
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add all issues to project
+    runs-on: ubuntu-latest
+    environment: project
+    steps:
+      - name: Add Issue
+        uses: actions/add-to-project@a9f041ddd462ed185893ea1024cec954f50dbe42
+        with:
+          project-url: https://github.com/orgs/LexisNexis-RBA/projects/55
+          github-token: ${{ secrets.SECRET }}
