@@ -63,6 +63,11 @@ variable "node_size" {
   type        = string
 }
 
+variable "ultra_ssd" {
+  description = "If the node group can use Azure ultra disks."
+  type        = bool
+}
+
 variable "proximity_placement_group_id" {
   description = "Proximity placement group ID to use if set."
   type        = string

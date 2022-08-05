@@ -41,6 +41,7 @@ locals {
     node_type_version   = "v1"
     single_group        = false
     min_capacity        = 0
+    ultra_ssd           = false
     placement_group_key = null
     labels              = {}
     taints              = []

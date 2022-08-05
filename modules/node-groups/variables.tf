@@ -64,6 +64,7 @@ variable "node_groups" {
     single_group        = bool
     min_capacity        = number
     max_capacity        = number
+    ultra_ssd           = bool
     placement_group_key = string
     labels              = map(string)
     taints = list(object({

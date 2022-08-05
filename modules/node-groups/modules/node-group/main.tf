@@ -28,6 +28,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   enable_host_encryption = true
   enable_node_public_ip  = false
 
+  ultra_ssd_enabled = var.ultra_ssd
+
   proximity_placement_group_id = var.proximity_placement_group_id
 
   max_pods = local.max_pods[var.network_plugin]
