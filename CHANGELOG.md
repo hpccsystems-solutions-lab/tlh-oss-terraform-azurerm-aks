@@ -35,6 +35,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Added experimental support for FIPS 140-2 via the `experimental = { fips = true }` module input. ([#593](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/593)) [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.0.0-beta.18] - 2022-08-01
 
 ### Highlights

@@ -121,6 +121,8 @@ resource "azurerm_kubernetes_cluster" "default" {
     enable_host_encryption = true
     enable_node_public_ip  = false
 
+    fips_enabled = var.fips
+
     tags = var.tags
   }
 

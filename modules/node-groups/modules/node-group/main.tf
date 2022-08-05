@@ -30,7 +30,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
 
   proximity_placement_group_id = var.proximity_placement_group_id
 
-  max_pods    = local.max_pods[var.network_plugin]
+  max_pods = local.max_pods[var.network_plugin]
+
+  fips_enabled = var.fips
+
   node_labels = merge(local.vm_labels["${local.node_arch}-${var.node_type}"], { "lnrs.io/lifecycle" = "ondemand", "lnrs.io/size" = var.node_size }, var.labels)
   node_taints = [for taint in concat(local.vm_taints["${local.node_arch}-${var.node_type}"], var.taints) : "${taint.key}=${taint.value}:${local.taint_effects[taint.effect]}"]
 

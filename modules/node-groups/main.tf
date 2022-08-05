@@ -26,6 +26,7 @@ module "system_node_groups" {
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
   proximity_placement_group_id = each.value.proximity_placement_group_id
+  fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)
@@ -40,6 +41,7 @@ module "bootstrap_node_group_hack" {
   subnet_id           = var.subnet_id
   bootstrap_name      = var.bootstrap_name
   bootstrap_vm_size   = var.bootstrap_vm_size
+  fips                = var.fips
 
   depends_on = [
     module.system_node_groups
@@ -64,6 +66,7 @@ module "user_node_groups" {
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
   proximity_placement_group_id = each.value.proximity_placement_group_id
+  fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)

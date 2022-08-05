@@ -155,10 +155,10 @@ All the nodes provisioned by the module support premium storage.
 
 [Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
 
-| **Type** | **Version** | **VM Type**                                                                   | **Sizes**                                                            |
-| -------- | ----------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series)   | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
-| `stor`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series)   | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                            |
+| -------- | ----------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| `stor`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 
 ---
 
@@ -371,6 +371,10 @@ There may be other requirements or specific configuration required for Windows n
 
 To enable Windows support you need to set `experimental = { windows_support = true }`.
 
+### FIPS Support
+
+To enable the experimental FIPS 140-2 mode for a new cluster you can set `experimental = { fips = true }`; please note that FIPS can only be enabled when creating a new cluster.
+
 ---
 
 ## Requirements
@@ -405,7 +409,7 @@ This module requires the following versions to be configured in the workspace `t
 | `location`                                                          | Azure location to target.                                                                                                                                                                                                | `string`                                     |                   |
 | `resource_group_name`                                               | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                                                              | `string`                                     |                   |
 | `cluster_name`                                                      | Name of the Azure Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}`.                                     | `string`                                     |                   |
-| `cluster_version`                                                   | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.23` or `1.22` (**DEPRECATED**) are supported.                                                                            | `string`                                     |                   |
+| `cluster_version`                                                   | Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions `1.23` or `1.22` (**DEPRECATED**) are supported.                                                                                    | `string`                                     |                   |
 | `network_plugin`                                                    | Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                                                            | `string`                                     | `"kubenet"`       |
 | `sku_tier_paid`                                                     | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                                                         | `bool`                                       |                   |
 | `cluster_endpoint_public_access`                                    | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                                                             | `bool`                                       |                   |
@@ -416,7 +420,7 @@ This module requires the following versions to be configured in the workspace `t
 | `route_table_name`                                                  | Name of the AKS subnet route table.                                                                                                                                                                                      | `string`                                     |                   |
 | `dns_resource_group_lookup`                                         | Lookup from DNS zone to resource group name.                                                                                                                                                                             | `map(string)`                                |                   |
 | `podnet_cidr_block`                                                 | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a subnet (or sharing a route table) this value needs to be unique.                                   | `string`                                     | `"100.65.0.0/16"` |
-| `managed_outbound_ip_count`                                         | Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive.                                                                                                               | `number`                                   | `1`               |
+| `managed_outbound_ip_count`                                         | Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive.                                                                                                                | `number`                                     | `1`               |
 | `admin_group_object_ids`                                            | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                      | `list(string)`                               | `[]`              |
 | `azuread_clusterrole_map`                                           | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                                                      | `object` ([Appendix A](#appendix-a))         | `{}`              |
 | `node_groups`                                                       | Node groups to configure.                                                                                                                                                                                                | `map(object)` ([Appendix B](#appendix-b))    | `{}`              |
@@ -582,7 +586,7 @@ Specification for the `core_services_config.grafana` object.
 Specification for the `core_services_config.ingress_internal_core` object.
 
 | **Variable**       | **Description**                                                                                                                                                       | **Type**       | **Required** |
-|:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------|:-------------|
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- | :----------- |
 | `domain`           | Internal ingress domain.                                                                                                                                              | `string`       | **Yes**      |
 | `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                                                                                   | `string`       | No           |
 | `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.                                                                                          | `list(string)` | No           |

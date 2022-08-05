@@ -123,37 +123,9 @@ variable "control_plane_logging_storage_account_retention_days" {
   type        = number
 }
 
-variable "oms_agent" {
-  description = "If the OMS agent addon should be installed."
+variable "fips" {
+  description = "If the node groups should be FIPS 140-2 enabled."
   type        = bool
-}
-
-variable "oms_agent_log_analytics_workspace_id" {
-  description = "ID of the log analytics workspace for the OMS agent."
-  type        = string
-}
-
-variable "windows_support" {
-  description = "If the Kubernetes cluster should support Windows nodes."
-  type        = bool
-}
-
-variable "tags" {
-  description = "Tags to apply to all resources."
-  type        = map(string)
-}
-
-variable "cluster_tags" {
-  description = "Tags to apply to the cluster."
-  type        = map(string)
-}
-
-variable "timeouts" {
-  description = "Timeout configuration."
-  type = object({
-    cluster_read   = number
-    cluster_modify = number
-  })
 }
 
 variable "maintenance_window_offset" {
@@ -177,6 +149,39 @@ variable "maintenance_window_not_allowed" {
     start = string
     end   = string
   }))
+}
+
+variable "oms_agent" {
+  description = "If the OMS agent addon should be installed."
+  type        = bool
+}
+
+variable "oms_agent_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the OMS agent."
+  type        = string
+}
+
+variable "windows_support" {
+  description = "If the Kubernetes cluster should support Windows nodes."
+  type        = bool
+}
+
+variable "cluster_tags" {
+  description = "Tags to apply to the cluster."
+  type        = map(string)
+}
+
+variable "tags" {
+  description = "Tags to apply to all resources."
+  type        = map(string)
+}
+
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    cluster_read   = number
+    cluster_modify = number
+  })
 }
 
 # tflint-ignore: terraform_unused_declarations

@@ -26,17 +26,18 @@ module "cluster" {
   control_plane_logging_storage_account_categories        = var.control_plane_logging_storage_account_categories
   control_plane_logging_storage_account_retention_enabled = var.control_plane_logging_storage_account_retention_enabled
   control_plane_logging_storage_account_retention_days    = var.control_plane_logging_storage_account_retention_days
-  oms_agent                                               = local.experimental_oms_agent
-  oms_agent_log_analytics_workspace_id                    = local.experimental_oms_agent_log_analytics_workspace_id
-  windows_support                                         = local.experimental_windows_support
-  tags                                                    = local.tags
+  fips                                                    = local.experimental_fips
   maintenance_window_offset                               = var.maintenance_window_offset
   maintenance_window_allowed_days                         = var.maintenance_window_allowed_days
   maintenance_window_allowed_hours                        = var.maintenance_window_allowed_hours
   maintenance_window_not_allowed                          = var.maintenance_window_not_allowed
+  oms_agent                                               = local.experimental_oms_agent
+  oms_agent_log_analytics_workspace_id                    = local.experimental_oms_agent_log_analytics_workspace_id
+  windows_support                                         = local.experimental_windows_support
+  cluster_tags                                            = local.cluster_tags
+  tags                                                    = local.tags
   timeouts                                                = local.timeouts
   experimental                                            = var.experimental
-  cluster_tags                                            = local.cluster_tags
 }
 
 module "rbac" {
@@ -64,9 +65,10 @@ module "node_groups" {
   network_plugin       = var.network_plugin
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
-  node_groups          = merge(local.node_groups, local.system_node_groups)
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
+  node_groups          = merge(local.node_groups, local.system_node_groups)
+  fips                 = local.experimental_fips
   labels               = local.labels
   tags                 = local.tags
   experimental         = var.experimental

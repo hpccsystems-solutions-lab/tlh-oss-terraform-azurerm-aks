@@ -68,6 +68,11 @@ variable "proximity_placement_group_id" {
   type        = string
 }
 
+variable "fips" {
+  description = "If the node groups should be FIPS 140-2 enabled."
+  type        = bool
+}
+
 variable "labels" {
   description = "Labels to set on the nodes."
   type        = map(string)

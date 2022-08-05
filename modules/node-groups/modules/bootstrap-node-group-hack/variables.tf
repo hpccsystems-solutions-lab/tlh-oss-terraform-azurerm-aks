@@ -27,3 +27,8 @@ variable "bootstrap_vm_size" {
   description = "VM size to use for the bootstrap node group."
   type        = string
 }
+
+variable "fips" {
+  description = "If the node groups should be FIPS 140-2 enabled."
+  type        = bool
+}

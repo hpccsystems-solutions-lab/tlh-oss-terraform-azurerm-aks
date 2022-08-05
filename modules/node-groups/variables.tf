@@ -43,6 +43,16 @@ variable "availability_zones" {
   type        = list(number)
 }
 
+variable "bootstrap_name" {
+  description = "Name to use for the bootstrap node group."
+  type        = string
+}
+
+variable "bootstrap_vm_size" {
+  description = "VM size to use for the bootstrap node group."
+  type        = string
+}
+
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
@@ -65,14 +75,9 @@ variable "node_groups" {
   }))
 }
 
-variable "bootstrap_name" {
-  description = "Name to use for the bootstrap node group."
-  type        = string
-}
-
-variable "bootstrap_vm_size" {
-  description = "VM size to use for the bootstrap node group."
-  type        = string
+variable "fips" {
+  description = "If the node groups should be FIPS 140-2 enabled."
+  type        = bool
 }
 
 variable "labels" {
