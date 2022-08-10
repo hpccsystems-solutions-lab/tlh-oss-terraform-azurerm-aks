@@ -37,6 +37,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Added experimental support for FIPS 140-2 via the `experimental = { fips = true }` module input. ([#593](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/593)) [@stevehipwell](https://github.com/stevehipwell)
 - Added support for enabling [Azure ultra disks](https://docs.microsoft.com/en-gb/azure/aks/use-ultra-disks) on a node group by setting `ultra_ssd` to `true`. ([#382](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/382)) [@stevehipwell](https://github.com/stevehipwell)
+- Updated _AAD Pod Identity_ chart to `4.1.12` (contains _AAD Pod Identity_ [v1.8.11](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.11)). ([#591](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/591)) [@peterabarr](https://github.com/peterabarr) 
 
 ## [v1.0.0-beta.18] - 2022-08-01
 
