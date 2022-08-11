@@ -39,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added support for enabling [Azure ultra disks](https://docs.microsoft.com/en-gb/azure/aks/use-ultra-disks) on a node group by setting `ultra_ssd` to `true`. ([#382](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/382)) [@stevehipwell](https://github.com/stevehipwell)
 - Updated _AAD Pod Identity_ chart to `4.1.12` (contains _AAD Pod Identity_ [v1.8.11](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.11)). ([#591](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/591)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Ingress Nginx_ chart to [v4.2.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.2.1)(contains _Ingress Nginx Image_ [v1.3.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.3.0)). ([#597](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/597)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Kube Prometheus Stack_ chart to [v39.5.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.5.0) (contains _Grafana_ [v9.0.5](https://github.com/grafana/grafana/releases/tag/v9.0.5) & _Prometheus Operator_ [v0.58.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.58.0). ([#582](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/582)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.18] - 2022-08-01
 
