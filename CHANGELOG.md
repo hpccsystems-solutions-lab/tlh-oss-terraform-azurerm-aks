@@ -31,7 +31,27 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed
  -->
 
-## [v1.0.0-beta.19] - UNRELEASED
+## [v1.0.0-beta.19] - 2022-08-15
+
+### Highlights
+
+The `v1.0.0-beta.19` release is a minor release of the Azure AKS Terraform Module. FIPS experimental support and Azure ultra disk support has been added. Several core service charts and images have been updated.
+
+To discuss any topics regarding this release, please refer to the [AKS Release v1.0.0-beta.19 Discussion](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions/22).
+
+#### FIPS
+
+Experimental support for FIPS 140-2 has been added. This can be enabled by setting the `experimental = { fips = true }` module input.
+
+#### Azure Ultra Disks
+
+Azure ultra disks can be enabled on a node group by setting `ultra_ssd` to `true`, within the `node_groups` variable.
+
+#### Latest Chart versions
+
+The `v1.0.0-beta.19` release brings chart and image updates to _AAD Pod Identity_, _Ingress Nginx_ & _Kube Prometheus Stack_.
+
+Thank you to [@stevehipwell](https://github.com/stevehipwell) and [@peterabarr](https://github.com/peterabarr) for their contributions.
 
 ### All Changes
 
