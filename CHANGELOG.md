@@ -15,7 +15,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- Support for Kubernetes v1.21 has been deprecated following recent [announcement](https://github.com/Azure/AKS/releases/tag/2022-06-26.1) (Azure drops support on the 31st of July 2022, likely to be removed in release `v1.0.0-beta.17`)
 - Use of the `node_group_templates` has been deprecated in favour of `node_groups` (due to be removed in release `v1.0.0`)
 
 ---
@@ -28,8 +27,13 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Changed
 - Fixed
 - Deprecated
-- Removed
- -->
+- Removed -->
+
+## [v1.0.0-beta.20] - UNRELEASED
+
+### Highlights
+
+### All Changes
 
 ## [v1.0.0-beta.19] - 2022-08-15
 
