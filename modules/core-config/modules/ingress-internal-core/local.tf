@@ -51,6 +51,8 @@ locals {
         }
       ]
 
+      labels = var.labels
+
       affinity = {
         podAntiAffinity = {
           preferredDuringSchedulingIgnoredDuringExecution = [
@@ -176,6 +178,8 @@ locals {
           operator = "Exists"
         }
       ]
+
+      labels = var.labels
 
       priorityClassName = ""
 

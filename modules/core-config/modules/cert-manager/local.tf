@@ -12,6 +12,8 @@ locals {
       aadpodidbinding = module.identity.name
     })
 
+    serviceLabels = var.labels
+
     securityContext = {
       fsGroup = 65534
     }
@@ -81,6 +83,8 @@ locals {
         }
       ]
 
+      podLabels = var.labels
+
       resources = {
         requests = {
           cpu    = "100m"
@@ -113,6 +117,8 @@ locals {
         }
       ]
 
+      podLabels = var.labels
+
       resources = {
         requests = {
           cpu    = "50m"
@@ -129,6 +135,8 @@ locals {
     webhook = {
       securePort  = 10251
       hostNetwork = true
+
+      serviceLabels = var.labels
 
       replicaCount = 2
 
@@ -147,6 +155,8 @@ locals {
           operator = "Exists"
         }
       ]
+
+      podLabels = var.labels
 
       resources = {
         requests = {

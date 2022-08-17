@@ -11,6 +11,8 @@ locals {
 
     priorityClassName = ""
 
+    commonLabels = var.labels
+
     nodeSelector = {
       "kubernetes.io/os" = "linux"
       "lnrs.io/tier"     = "system"

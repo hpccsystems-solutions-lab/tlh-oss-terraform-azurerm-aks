@@ -1,8 +1,15 @@
 locals {
   chart_version = "2.7.1"
 
-  chart_values = merge({
+  chart_values = {
     nameOverride = "fluentd"
+
+    image = var.image_repository != null && var.image_tag != null ? {
+      repository = var.image_repository
+      tag        = var.image_tag
+    } : {}
+
+    commonLabels = var.labels
 
     podLabels = merge(var.labels, {
       aadpodidbinding = module.identity.name
@@ -94,14 +101,7 @@ locals {
       route   = local.route_config
       output  = local.output_config
     }
-  }, local.image_override)
-
-  image_override = var.image_repository != null && var.image_tag != null ? {
-    image = {
-      repository = var.image_repository
-      tag        = var.image_tag
-    }
-  } : {}
+  }
 
   additional_env = merge({
     "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR" = "0.9"

@@ -120,6 +120,10 @@ locals {
 
         priorityClassName = ""
 
+        podMetadata = {
+          labels = var.labels
+        }
+
         nodeSelector = {
           "kubernetes.io/os" = "linux"
           "lnrs.io/tier"     = "system"
@@ -187,6 +191,10 @@ locals {
         priorityClassName = ""
 
         retention = "120h"
+
+        podMetadata = {
+          labels = var.labels
+        }
 
         nodeSelector = {
           "kubernetes.io/os" = "linux"
@@ -278,9 +286,11 @@ locals {
         pspEnabled = false
       }
 
-      podLabels = {
+      podLabels = merge(var.labels, {
         aadpodidbinding = module.identity_grafana.name
-      }
+      })
+
+      extraLabels = var.labels
 
       admin = {
         existingSecret = kubernetes_secret.grafana_auth.metadata[0].name
@@ -425,6 +435,8 @@ locals {
 
       priorityClassName = ""
 
+      customLabels = var.labels
+
       nodeSelector = {
         "kubernetes.io/os" = "linux"
         "lnrs.io/tier"     = "system"
@@ -474,6 +486,8 @@ locals {
       }
 
       priorityClassName = "system-node-critical"
+
+      podLabels = var.labels
 
       nodeSelector = {
         "kubernetes.io/os" = "linux"

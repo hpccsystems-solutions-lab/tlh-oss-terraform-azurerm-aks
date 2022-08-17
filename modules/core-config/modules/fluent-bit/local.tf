@@ -9,6 +9,10 @@ locals {
       }
     }
 
+    service = {
+      labels = var.labels
+    }
+
     dashboards = {
       enabled = true
     }
@@ -40,6 +44,8 @@ locals {
     tolerations = [{
       operator = "Exists"
     }]
+
+    labels = var.labels
 
     podLabels = var.labels
 

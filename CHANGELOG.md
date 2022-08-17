@@ -35,6 +35,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Added `lnrs.io/k8s-platform = true` common label to most k8s resources that allow custom labels via the Helm chart. ([#302](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/302)) [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.0.0-beta.19] - 2022-08-15
 
 ### Highlights
