@@ -42,6 +42,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Kube Prometheus Stack_ chart to [v39.9.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.9.0). ([#606](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/606)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated full AKS versions for `v1.23` to `v1.23.8` & `v1.22` to `v1.22.11`. ([#600](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/600)) [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support for AKS v1.24; this can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`. ([#599](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/599)) [@stevehipwell](https://github.com/stevehipwell)
+- Added `managed_outbound_ports_allocated` & `managed_outbound_idle_timeout` variables to enable further configuration of the cluster load balancer for egress. ([#618](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/618)) [@stevehipwell](https://github.com/stevehipwell)
+- Changed default for cluster load balancer `outbound_idle_timeout` from `1800` to `240`. ([#618](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/618)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.19] - 2022-08-15
 

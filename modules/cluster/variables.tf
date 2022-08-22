@@ -58,6 +58,16 @@ variable "managed_outbound_ip_count" {
   type        = number
 }
 
+variable "managed_outbound_ports_allocated" {
+  description = "Number of desired SNAT port for each VM in the clusters load balancer. Must be between 0 and 64000 inclusive."
+  type        = number
+}
+
+variable "managed_outbound_idle_timeout" {
+  description = "Desired outbound flow idle timeout in seconds for the cluster load balancer. Must be between 240 and 7200 inclusive."
+  type        = number
+}
+
 variable "admin_group_object_ids" {
   description = "AD Object IDs to be added to the cluster admin group, if not set the current user will be made a cluster administrator."
   type        = list(string)

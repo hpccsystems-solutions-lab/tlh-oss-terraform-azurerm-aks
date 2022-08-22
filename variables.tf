@@ -122,6 +122,28 @@ variable "managed_outbound_ip_count" {
   }
 }
 
+variable "managed_outbound_ports_allocated" {
+  description = "Number of desired SNAT port for each VM in the clusters load balancer. Must be between 0 & 64000 inclusive and divisible by 8."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.managed_outbound_ports_allocated >= 0 && var.managed_outbound_ports_allocated <= 64000 && (var.managed_outbound_ports_allocated % 8 == 0)
+    error_message = "Number of desired SNAT port for each VM must be between 0 & 64000 inclusive and divisible by 8."
+  }
+}
+
+variable "managed_outbound_idle_timeout" {
+  description = "Desired outbound flow idle timeout in seconds for the cluster load balancer. Must be between 240 and 7200 inclusive."
+  type        = number
+  default     = 240
+
+  validation {
+    condition     = var.managed_outbound_idle_timeout >= 240 && var.managed_outbound_idle_timeout <= 7200
+    error_message = "Outbound flow idle timeout must be between 240 and 7200 inclusive."
+  }
+}
+
 variable "admin_group_object_ids" {
   description = "AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module."
   type        = list(string)

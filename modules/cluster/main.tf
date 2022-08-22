@@ -46,6 +46,8 @@ resource "azurerm_kubernetes_cluster" "default" {
 
     load_balancer_profile {
       managed_outbound_ip_count = var.managed_outbound_ip_count
+      outbound_ports_allocated  = var.managed_outbound_ports_allocated
+      idle_timeout_in_minutes   = var.managed_outbound_idle_timeout / 60
     }
   }
 
