@@ -15,10 +15,12 @@ locals {
   # az aks get-versions --location eastus --output table
   # az aks get-versions --location westeurope --output table
   # https://releases.aks.azure.com/webpage/index.html
-  cluster_full_versions = {
+  cluster_full_versions = merge({
     "1.23" = "1.23.8"
     "1.22" = "1.22.11"
-  }
+    }, local.experimental_v1_24 ? {
+    "1.24" = "1.24.3"
+  } : {})
 
   availability_zones = [1, 2, 3]
   az_count           = length(local.availability_zones)
@@ -99,4 +101,5 @@ locals {
   experimental_oms_agent_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", null)
   experimental_oms_agent_create_configmap                                 = lookup(var.experimental, "oms_agent_create_configmap", true)
   experimental_windows_support                                            = lookup(var.experimental, "windows_support", false)
+  experimental_v1_24                                                      = lookup(var.experimental, "v1_24", false)
 }

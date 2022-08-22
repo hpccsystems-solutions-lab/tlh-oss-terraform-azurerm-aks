@@ -35,12 +35,12 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster, versions \"1.23\" or \"1.22\" (DEPRECATED) are supported."
+  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions \"1.24\" (EXPERIMENTAL), \"1.23\" or \"1.22\" are supported."
   type        = string
 
   validation {
-    condition     = contains(["1.23", "1.22"], var.cluster_version)
-    error_message = "Available versions are \"1.23\" or \"1.22\"."
+    condition     = contains(["1.24", "1.23", "1.22"], var.cluster_version)
+    error_message = "Available versions are \"1.24\", \"1.23\" or \"1.22\"."
   }
 }
 
