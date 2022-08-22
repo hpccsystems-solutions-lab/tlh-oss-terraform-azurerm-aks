@@ -638,6 +638,8 @@ Specification for the `maintenance_window_not_allowed` object.
 | `cluster_identity`                           | User assigned identity used by the cluster.                                                                               | `object`       |
 | `kubelet_identity`                           | Kubelet identity.                                                                                                         | `object`       |
 | `cert_manager_identity`                      | Identity that Cert Manager uses.                                                                                          | `object`       |
+| `coredns_custom_config_map_name`             | Name of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                              | `string`       |
+| `coredns_custom_config_map_namespace`        | Namespace of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                         | `object`       |
 | `external_dns_private_identity`              | Identity that private ExternalDNS uses.                                                                                   | `object`       |
 | `external_dns_public_identity`               | Identity that public ExternalDNS uses.                                                                                    | `object`       |
 | `fluentd_identity`                           | Identity that Fluentd uses.                                                                                               | `object`       |

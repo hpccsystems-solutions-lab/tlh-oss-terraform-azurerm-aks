@@ -14,7 +14,7 @@ When multiple clusters are deployed into the same subnet or different subnets wh
 Where this is the case, we advise planning the address spaces used for the clusters using a pattern like the one outlined below.
 
 | Cluster name | Podnet cidr block |
-|:------------:|:-----------------:|
+| :----------: | :---------------: |
 |    aks-1     |   100.65.0.0/16   |
 |    aks-2     |   100.66.0.0/16   |
 |    aks-3     |   100.67.0.0/16   |

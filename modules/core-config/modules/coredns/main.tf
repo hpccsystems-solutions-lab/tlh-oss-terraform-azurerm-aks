@@ -7,11 +7,15 @@ resource "kubectl_manifest" "resource_files" {
   wait              = true
 }
 
-resource "kubectl_manifest" "resource_objects" {
-  for_each = local.resource_objects
+resource "kubernetes_config_map_v1_data" "onpremzones_server" {
+  count = length(var.forward_zones) > 0 ? 1 : 0
 
-  yaml_body = yamlencode(each.value)
+  metadata {
+    name      = local.custom_config_map_name
+    namespace = var.namespace
+  }
 
-  server_side_apply = true
-  wait              = true
+  data = {
+    "onpremzones.server" = local.forward_zone_config
+  }
 }

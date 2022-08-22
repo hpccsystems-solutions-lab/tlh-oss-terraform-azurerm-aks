@@ -53,6 +53,16 @@ output "cert_manager_identity" {
   value       = module.core_config.cert_manager_identity
 }
 
+output "coredns_custom_config_map_name" {
+  description = "Name of the CoreDNS custom ConfigMap."
+  value       = module.core_config.coredns_custom_config_map_name
+}
+
+output "coredns_custom_config_map_namespace" {
+  description = "Namespace of the CoreDNS custom ConfigMap."
+  value       = module.core_config.coredns_custom_config_map_namespace
+}
+
 output "external_dns_private_identity" {
   description = "Identity that private ExternalDNS uses."
   value       = module.core_config.external_dns_private_identity
