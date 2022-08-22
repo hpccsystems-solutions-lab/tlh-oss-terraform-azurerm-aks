@@ -13,9 +13,11 @@ locals {
   }
 
   # az aks get-versions --location eastus --output table
+  # az aks get-versions --location westeurope --output table
+  # https://releases.aks.azure.com/webpage/index.html
   cluster_full_versions = {
-    "1.23" = "1.23.5"
-    "1.22" = "1.22.6"
+    "1.23" = "1.23.8"
+    "1.22" = "1.22.11"
   }
 
   availability_zones = [1, 2, 3]
