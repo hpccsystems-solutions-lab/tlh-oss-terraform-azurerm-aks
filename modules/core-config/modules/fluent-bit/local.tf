@@ -1,5 +1,5 @@
 locals {
-  chart_version = "0.20.5"
+  chart_version = "0.20.6"
 
   chart_values = {
     serviceMonitor = {
