@@ -36,7 +36,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Added `lnrs.io/k8s-platform = true` common label to most k8s resources that allow custom labels via the Helm chart. ([#302](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/302)) [@prikesh-patel](https://github.com/prikesh-patel)
-- Update _Fluent Bit_ chart to [v0.20.5](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.5) (contains _Fluent Bit_ [v1.9.7](https://github.com/fluent/fluent-bit/releases/tag/v1.9.7)). ([#607](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/607)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.20.5](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.5) (contains _Fluent Bit_ [v1.9.7](https://github.com/fluent/fluent-bit/releases/tag/v1.9.7)). ([#607](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/607)) [@peterabarr](https://github.com/peterabarr)
+- Updated _External DNS_ chart to [v1.11.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.11.0) (contains _External DNS_ [v0.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.2)). ([#608](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/608)) [@sossickd](https://github.com/sossickd)
 
 ## [v1.0.0-beta.19] - 2022-08-15
 
