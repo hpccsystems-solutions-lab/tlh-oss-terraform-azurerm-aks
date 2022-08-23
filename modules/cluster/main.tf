@@ -17,6 +17,14 @@ resource "azurerm_role_assignment" "network_contributor_route_table" {
   scope                = var.route_table_id
 }
 
+resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
+  count = var.nat_gateway_id != null ? 1 : 0
+
+  principal_id         = azurerm_user_assigned_identity.default.principal_id
+  role_definition_name = "Network Contributor"
+  scope                = var.nat_gateway_id
+}
+
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
   name                      = var.cluster_name
@@ -38,16 +46,20 @@ resource "azurerm_kubernetes_cluster" "default" {
   network_profile {
     network_plugin     = var.network_plugin
     network_policy     = "calico"
-    outbound_type      = "loadBalancer"
     service_cidr       = "172.20.0.0/16"
     dns_service_ip     = "172.20.0.10"
     docker_bridge_cidr = "172.17.0.1/16"
     pod_cidr           = var.network_plugin == "kubenet" ? var.podnet_cidr_block : null
 
-    load_balancer_profile {
-      managed_outbound_ip_count = var.managed_outbound_ip_count
-      outbound_ports_allocated  = var.managed_outbound_ports_allocated
-      idle_timeout_in_minutes   = var.managed_outbound_idle_timeout / 60
+    outbound_type = var.nat_gateway_id != null ? "userAssignedNATGateway" : "loadBalancer"
+
+    dynamic "load_balancer_profile" {
+      for_each = var.nat_gateway_id == null ? ["default"] : []
+      content {
+        managed_outbound_ip_count = var.managed_outbound_ip_count
+        outbound_ports_allocated  = var.managed_outbound_ports_allocated
+        idle_timeout_in_minutes   = var.managed_outbound_idle_timeout / 60
+      }
     }
   }
 

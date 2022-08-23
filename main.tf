@@ -12,6 +12,7 @@ module "cluster" {
   subnet_id                                               = local.subnet_id
   route_table_id                                          = local.route_table_id
   podnet_cidr_block                                       = var.podnet_cidr_block
+  nat_gateway_id                                          = local.experimental_nat_gateway_id
   managed_outbound_ip_count                               = var.managed_outbound_ip_count
   managed_outbound_ports_allocated                        = var.managed_outbound_ports_allocated
   managed_outbound_idle_timeout                           = var.managed_outbound_idle_timeout

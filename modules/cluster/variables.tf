@@ -53,18 +53,23 @@ variable "podnet_cidr_block" {
   type        = string
 }
 
+variable "nat_gateway_id" {
+  description = "ID of a user-assigned NAT Gateway to use for cluster egress traffic, if not set a cluster managed load balancer will be used."
+  type        = string
+}
+
 variable "managed_outbound_ip_count" {
-  description = "Count of desired managed outbound IPs for the cluster load balancer. Must be between 1 and 100 inclusive."
+  description = "Count of desired managed outbound IPs for the cluster managed load balancer. Ignored if NAT gateway is specified, must be between 1 and 100 inclusive."
   type        = number
 }
 
 variable "managed_outbound_ports_allocated" {
-  description = "Number of desired SNAT port for each VM in the clusters load balancer. Must be between 0 and 64000 inclusive."
+  description = "Number of desired SNAT port for each VM in the cluster managed load balancer. Ignored if NAT gateway is specified, must be between 0 and 64000 inclusive."
   type        = number
 }
 
 variable "managed_outbound_idle_timeout" {
-  description = "Desired outbound flow idle timeout in seconds for the cluster load balancer. Must be between 240 and 7200 inclusive."
+  description = "Desired outbound flow idle timeout in seconds for the cluster managed load balancer. Ignored if NAT gateway is specified, must be between 240 and 7200 inclusive."
   type        = number
 }
 
