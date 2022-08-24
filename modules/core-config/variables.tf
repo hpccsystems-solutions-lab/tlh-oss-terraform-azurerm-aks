@@ -38,6 +38,11 @@ variable "network_plugin" {
   type        = string
 }
 
+variable "ingress_node_group" {
+  description = "If an ingress node group is provisioned."
+  type        = bool
+}
+
 variable "availability_zones" {
   description = "Availability zones to use for the node groups."
   type        = list(number)

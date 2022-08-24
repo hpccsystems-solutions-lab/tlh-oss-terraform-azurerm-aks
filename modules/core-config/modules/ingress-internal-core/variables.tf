@@ -8,6 +8,11 @@ variable "labels" {
   type        = map(string)
 }
 
+variable "ingress_node_group" {
+  description = "If an ingress node group is provisioned."
+  type        = bool
+}
+
 variable "lb_subnet_name" {
   description = "Name of the subnets to create the LB in."
   type        = string

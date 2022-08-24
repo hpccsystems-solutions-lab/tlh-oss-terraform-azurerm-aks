@@ -146,6 +146,7 @@ module "ingress_internal_core" {
 
   namespace               = kubernetes_namespace.default["ingress-core-internal"].metadata[0].name
   labels                  = var.labels
+  ingress_node_group      = var.ingress_node_group
   lb_source_cidrs         = local.ingress_internal_core.lb_source_cidrs
   lb_subnet_name          = local.ingress_internal_core.lb_subnet_name == null ? null : local.ingress_internal_core.lb_subnet_name
   domain                  = local.ingress_internal_core.domain

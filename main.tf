@@ -94,6 +94,8 @@ module "core_config" {
   cluster_version = var.cluster_version
   network_plugin  = var.network_plugin
 
+  ingress_node_group = local.ingress_node_group
+
   availability_zones = local.availability_zones
 
   kubelet_identity_id      = module.cluster.kubelet_identity.object_id

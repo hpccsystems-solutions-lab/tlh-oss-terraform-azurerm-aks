@@ -35,12 +35,20 @@ locals {
         }
       }
 
-      nodeSelector = {
+      nodeSelector = merge({
         "kubernetes.io/os" = "linux"
-        "lnrs.io/tier"     = "system"
-      }
+        }, var.ingress_node_group ? {
+        "lnrs.io/tier" = "ingress"
+        } : {
+        "lnrs.io/tier" = "system"
+      })
 
-      tolerations = [
+      tolerations = var.ingress_node_group ? [
+        {
+          key      = "ingress"
+          operator = "Exists"
+        }
+        ] : [
         {
           key      = "CriticalAddonsOnly"
           operator = "Exists"
@@ -139,12 +147,20 @@ locals {
         patch = {
           priorityClassName = ""
 
-          nodeSelector = {
+          nodeSelector = merge({
             "kubernetes.io/os" = "linux"
-            "lnrs.io/tier"     = "system"
-          }
+            }, var.ingress_node_group ? {
+            "lnrs.io/tier" = "ingress"
+            } : {
+            "lnrs.io/tier" = "system"
+          })
 
-          tolerations = [
+          tolerations = var.ingress_node_group ? [
+            {
+              key      = "ingress"
+              operator = "Exists"
+            }
+            ] : [
             {
               key      = "CriticalAddonsOnly"
               operator = "Exists"
@@ -165,7 +181,6 @@ locals {
 
       nodeSelector = {
         "kubernetes.io/os" = "linux"
-        "lnrs.io/tier"     = "system"
       }
 
       tolerations = [

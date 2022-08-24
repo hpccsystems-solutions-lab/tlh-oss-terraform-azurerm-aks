@@ -76,6 +76,8 @@ locals {
     system = merge(local.node_group_defaults, local.system_node_group, { system = true })
   }
 
+  ingress_node_group = anytrue([for group in local.node_groups : group.labels["lnrs.io/tier"] == "ingress" && (length(group.taints) == 0 || (length(group.taints) == 1 && try(group.taints[0].key == "ingress", false)))])
+
   labels = {
     "lnrs.io/k8s-platform" = "true"
   }
