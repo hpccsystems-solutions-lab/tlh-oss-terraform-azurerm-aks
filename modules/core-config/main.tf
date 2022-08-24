@@ -181,6 +181,8 @@ module "kube_prometheus_stack" {
   ingress_domain                                                 = local.ingress_internal_core.domain
   ingress_subdomain_suffix                                       = local.ingress_internal_core.subdomain_suffix
   ingress_annotations                                            = local.ingress_internal_core.annotations
+  storage_account_name                                           = local.storage_account_name
+  storage_account_id                                             = var.storage_account_id
   control_plane_log_analytics_workspace_id                       = var.control_plane_log_analytics_workspace_id
   control_plane_log_analytics_workspace_different_resource_group = var.control_plane_log_analytics_workspace_different_resource_group
   oms_agent                                                      = var.oms_agent
@@ -188,6 +190,8 @@ module "kube_prometheus_stack" {
   oms_agent_log_analytics_workspace_different_resource_group     = var.oms_agent_log_analytics_workspace_different_resource_group
   skip_crds                                                      = true
   tags                                                           = var.tags
+
+  experimental = var.experimental
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,

@@ -69,8 +69,8 @@ variable "grafana_additional_plugins" {
 }
 
 variable "grafana_additional_data_sources" {
-  description = "Additional Grafana data sources to add."
-  type        = list(any)
+  description = "Additional Grafana data sources to add, will always be a list."
+  type        = any
 }
 
 variable "ingress_class_name" {
@@ -118,6 +118,16 @@ variable "oms_agent_log_analytics_workspace_different_resource_group" {
   type        = bool
 }
 
+variable "storage_account_name" {
+  description = "Name of storage account."
+  type        = string
+}
+
+variable "storage_account_id" {
+  description = "ID of the data storage account."
+  type        = string
+}
+
 variable "skip_crds" {
   description = "Skip installing the CRDs as part of the module."
   type        = bool
@@ -126,4 +136,9 @@ variable "skip_crds" {
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)
+}
+
+variable "experimental" {
+  description = "Provide experimental feature flag configuration."
+  type        = any
 }

@@ -112,6 +112,8 @@ module "core_config" {
   oms_agent_log_analytics_workspace_different_resource_group     = local.experimental_oms_agent_log_analytics_workspace_different_resource_group
   oms_agent_create_configmap                                     = local.experimental_oms_agent_create_configmap
 
+  storage_account_id = module.cluster.data_storage_account_id
+
   labels = local.labels
   tags   = local.tags
 

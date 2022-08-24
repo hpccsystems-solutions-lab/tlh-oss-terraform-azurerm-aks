@@ -50,6 +50,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added experimental support for using a user-assigned NAT Gateway for cluster egress traffic by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`. ([#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623)) [@stevehipwell](https://github.com/stevehipwell)
 - Added support for running internal core ingress pods on ingress nodes. ([#567](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/567)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added module outputs `coredns_custom_config_map_name` & `coredns_custom_config_map_namespace` to allow adding additional data to the CoreDNS custom `ConfigMap`. ([#581](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/581)) [@stevehipwell](https://github.com/stevehipwell)
+- Added Thanos to support HA Prometheus in cluster. ([#160](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/160)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.19] - 2022-08-15
 
