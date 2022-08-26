@@ -36,6 +36,30 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Highlights
 
+#### Updated AKS Versions
+
+The full AKS versions have been updated which include patch versions for `v1.23` to `v1.23.8` & `v1.22` to `v1.22.11`. This will trigger an automatic rollout of all nodes in the cluster.
+
+#### CoreDNS Custom Config Map
+
+Users have additional control over the CoreDNS custom confimap. The additional module outputs `coredns_custom_config_map_name` & `coredns_custom_config_map_namespace` can be exported and used to add data to the configmap outside the module by using one or more `kubernetes_config_map_v1_data` resources.
+
+#### Internal Ingress Pod Scheduling
+
+If you are provisioning any ingress nodes through the `node_groups` or `node_group_templates` variables, the core internal ingress pods will schedule onto these nodes automatically.
+
+Any core internal ingress pods will now run on ingress nodes, if any have been provisioned in the cluster. This is done by detecting any ingress nodes being passed in through the `node_groups` input variable. If no ingress nodes are provisioned, the core internal ingress pods will continue to run on system nodes.
+
+#### Thanos Support
+
+Thanos is now installed as a core service as the implementation for HA Prometheus.
+
+#### Experimental Features
+
+- AKS v1.24 is now supported as an experimental feature. This can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`.
+- Using a user-assigned NAT Gateway for cluster egress is supported as an experimental feature. This can be enabled by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`.
+experimental support for using a user-assigned NAT Gateway for cluster egress traffic by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`
+
 ### All Changes
 
 - Added `lnrs.io/k8s-platform = true` common label to most k8s resources that allow custom labels via the Helm chart. ([#302](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/302)) [@prikesh-patel](https://github.com/prikesh-patel)
