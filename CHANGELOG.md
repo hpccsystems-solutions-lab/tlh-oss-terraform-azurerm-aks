@@ -31,9 +31,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.20] - UNRELEASED
 
-> **Important**
-> If you're setting CoreDNS forward zones via the module you need to run `terraform state rm -lock=true 'module.aks.module.core_config.module.coredns.kubectl_manifest.resource_objects'` (assuming your AKS module is called `aks`) before applying this version, if you don't do this your apply might fail and your CoreDNS config might be incorrect until the apply passes. If the apply errors due to the `coredns-custom` `ConfigMap` not being there re-running the pipeline will resolve this.
-
 ### Highlights
 
 #### Updated AKS Versions

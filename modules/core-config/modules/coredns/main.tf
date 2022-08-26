@@ -7,6 +7,18 @@ resource "kubectl_manifest" "resource_files" {
   wait              = true
 }
 
+resource "kubectl_manifest" "resource_objects" {
+  for_each = { coredns_custom = local.coredns_custom_overwrite }
+
+  yaml_body  = yamlencode(each.value)
+  apply_only = true
+
+  ignore_fields = ["data"]
+
+  server_side_apply = true
+  wait              = true
+}
+
 resource "kubernetes_config_map_v1_data" "onpremzones_server" {
   count = length(var.forward_zones) > 0 ? 1 : 0
 
