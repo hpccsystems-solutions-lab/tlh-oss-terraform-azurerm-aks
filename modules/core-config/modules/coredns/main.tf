@@ -18,4 +18,6 @@ resource "kubernetes_config_map_v1_data" "onpremzones_server" {
   data = {
     "onpremzones.server" = local.forward_zone_config
   }
+
+  force = true
 }
