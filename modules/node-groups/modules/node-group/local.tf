@@ -133,6 +133,7 @@ locals {
     "amd64-gpd"  = { "lnrs.io/local-storage" = "true" }
     "amd64-mem"  = {}
     "amd64-memd" = { "lnrs.io/local-storage" = "true" }
+    "amd64-cpu"  = {}
     "amd64-stor" = { "lnrs.io/local-storage" = "true" }
   }
 
@@ -141,6 +142,7 @@ locals {
     "amd64-gpd"  = []
     "amd64-mem"  = []
     "amd64-memd" = []
+    "amd64-cpu"  = []
     "amd64-stor" = []
   }
 
