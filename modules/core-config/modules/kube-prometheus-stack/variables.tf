@@ -118,15 +118,15 @@ variable "oms_agent_log_analytics_workspace_different_resource_group" {
   type        = bool
 }
 
-variable "storage_account_name" {
-  description = "Name of storage account."
-  type        = string
-}
+# variable "storage_account_name" {
+#   description = "Name of storage account."
+#   type        = string
+# }
 
-variable "storage_account_id" {
-  description = "ID of the data storage account."
-  type        = string
-}
+# variable "storage_account_id" {
+#   description = "ID of the data storage account."
+#   type        = string
+# }
 
 variable "skip_crds" {
   description = "Skip installing the CRDs as part of the module."

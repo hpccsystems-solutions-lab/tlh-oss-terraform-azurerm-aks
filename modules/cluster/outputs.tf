@@ -62,6 +62,6 @@ output "windows_config" {
   }
 }
 
-output "data_storage_account_id" {
-  value = azurerm_storage_account.data.id
-}
+# output "data_storage_account_id" {
+#   value = azurerm_storage_account.data.id
+# }

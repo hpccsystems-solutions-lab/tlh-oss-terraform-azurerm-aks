@@ -47,10 +47,6 @@ If you are provisioning any ingress nodes through the `node_groups` or `node_gro
 
 Any core internal ingress pods will now run on ingress nodes, if any have been provisioned in the cluster. This is done by detecting any ingress nodes being passed in through the `node_groups` input variable. If no ingress nodes are provisioned, the core internal ingress pods will continue to run on system nodes.
 
-#### Thanos Support
-
-Thanos is now installed as a core service as the implementation for HA Prometheus.
-
 #### Experimental Features
 
 - AKS v1.24 is now supported as an experimental feature. This can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`.
@@ -71,7 +67,6 @@ experimental support for using a user-assigned NAT Gateway for cluster egress tr
 - Added experimental support for using a user-assigned NAT Gateway for cluster egress traffic by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`. ([#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623)) [@stevehipwell](https://github.com/stevehipwell)
 - Added support for running internal core ingress pods on ingress nodes. ([#567](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/567)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added module outputs `coredns_custom_config_map_name` & `coredns_custom_config_map_namespace` to allow adding additional data to the CoreDNS custom `ConfigMap`. ([#581](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/581)) [@stevehipwell](https://github.com/stevehipwell)
-- Added Thanos to support HA Prometheus in cluster. ([#160](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/160)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Fixed labels and taints for node group type `amd64-cpu`. ([#634](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/634)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.19] - 2022-08-15
