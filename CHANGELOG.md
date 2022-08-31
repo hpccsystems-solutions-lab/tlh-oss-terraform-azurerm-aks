@@ -49,7 +49,6 @@ Any core internal ingress pods will now run on ingress nodes, if any have been p
 
 #### Experimental Features
 
-- AKS v1.24 is now supported as an experimental feature. This can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`.
 - Using a user-assigned NAT Gateway for cluster egress is supported as an experimental feature. This can be enabled by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`.
 experimental support for using a user-assigned NAT Gateway for cluster egress traffic by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`
 
@@ -61,7 +60,6 @@ experimental support for using a user-assigned NAT Gateway for cluster egress tr
 - Updated the _Ingress Nginx_ chart to [v4.2.3](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.2.3). ([#626](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/626)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Kube Prometheus Stack_ chart to [v39.9.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.9.0). ([#606](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/606)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated full AKS versions for `v1.23` to `v1.23.8` & `v1.22` to `v1.22.11`. ([#600](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/600)) [@stevehipwell](https://github.com/stevehipwell)
-- Added experimental support for AKS v1.24; this can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`. ([#599](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/599)) [@stevehipwell](https://github.com/stevehipwell)
 - Added `managed_outbound_ports_allocated` & `managed_outbound_idle_timeout` variables to enable further configuration of the cluster load balancer for egress. ([#618](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/618)) [@stevehipwell](https://github.com/stevehipwell)
 - Changed default for cluster load balancer `outbound_idle_timeout` from `1800` to `240`. ([#618](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/618)) [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support for using a user-assigned NAT Gateway for cluster egress traffic by setting `experimental = { nat_gateway_id = "<nat_gateway_id>" }`. ([#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623)) [@stevehipwell](https://github.com/stevehipwell)
