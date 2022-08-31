@@ -2,7 +2,7 @@ data "azurerm_client_config" "current" {
 }
 
 data "azurerm_public_ip" "outbound" {
-  count = var.managed_outbound_ip_count
+  count = var.nat_gateway_id == null ? var.managed_outbound_ip_count : 0
 
   name                = reverse(split("/", tolist(azurerm_kubernetes_cluster.default.network_profile[0].load_balancer_profile[0].effective_outbound_ips)[count.index]))[0]
   resource_group_name = azurerm_kubernetes_cluster.default.node_resource_group

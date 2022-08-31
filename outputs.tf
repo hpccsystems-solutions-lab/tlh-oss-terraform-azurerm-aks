@@ -34,7 +34,7 @@ output "node_resource_group_name" {
 }
 
 output "effective_outbound_ips" {
-  description = "Outbound IPs from the Azure Kubernetes Service managed cluster."
+  description = "Outbound IPs from the Azure Kubernetes Service cluster managed load balancer (this will be an empty array if the cluster is uisng a user-assigned NAT Gateway)."
   value       = module.cluster.effective_outbound_ips
 }
 

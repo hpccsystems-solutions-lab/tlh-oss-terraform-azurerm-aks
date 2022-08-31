@@ -29,7 +29,7 @@ output "kubelet_identity" {
 }
 
 output "effective_outbound_ips" {
-  description = "Outbound IPs from the managed Kubernetes cluster."
+  description = "Outbound IPs from the Azure Kubernetes Service cluster managed load balancer (this will be an empty array if the cluster is uisng a user-assigned NAT Gateway)."
   value       = [for ip in data.azurerm_public_ip.outbound : ip.ip_address]
 }
 

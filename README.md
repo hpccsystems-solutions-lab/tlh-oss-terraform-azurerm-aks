@@ -625,24 +625,24 @@ Specification for the `maintenance_window_not_allowed` object.
 
 ## Outputs
 
-| **Variable**                                 | **Description**                                                                                                           | **Type**       |
-| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :------------- |
-| `cluster_id`                                 | Azure Kubernetes Service (AKS) managed cluster ID.                                                                        | `string`       |
-| `cluster_fqdn`                               | FQDN of the Azure Kubernetes Service managed cluster.                                                                     | `string`       |
-| `cluster_endpoint`                           | Endpoint for the Azure Kubernetes Service managed cluster API server.                                                     | `string`       |
-| `cluster_certificate_authority_data`         | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                              | `string`       |
-| `control_plane_log_analytics_workspace_id`   | ID of the default log analytics workspace used for control plane logs.                                                    | `string`       |
-| `control_plane_log_analytics_workspace_name` | Name of the default log analytics workspace used for control plane logs, this will be empty if an external one is in use. | `string`       |
-| `node_resource_group_name`                   | Auto-generated resource group which contains the resources for this managed Kubernetes cluster.                           | `string`       |
-| `effective_outbound_ips`                     | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                              | `list(string)` |
-| `cluster_identity`                           | User assigned identity used by the cluster.                                                                               | `object`       |
-| `kubelet_identity`                           | Kubelet identity.                                                                                                         | `object`       |
-| `cert_manager_identity`                      | Identity that Cert Manager uses.                                                                                          | `object`       |
-| `coredns_custom_config_map_name`             | Name of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                              | `string`       |
-| `coredns_custom_config_map_namespace`        | Namespace of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                         | `object`       |
-| `external_dns_private_identity`              | Identity that private ExternalDNS uses.                                                                                   | `object`       |
-| `external_dns_public_identity`               | Identity that public ExternalDNS uses.                                                                                    | `object`       |
-| `fluentd_identity`                           | Identity that Fluentd uses.                                                                                               | `object`       |
-| `grafana_identity`                           | Identity that Grafana uses.                                                                                               | `object`       |
-| `oms_agent_identity`                         | Identity that the OMS agent uses.                                                                                         | `object`       |
-| `windows_config`                             | Windows configuration.                                                                                                    | `object`       |
+| **Variable**                                 | **Description**                                                                                                                                                 | **Type**       |
+| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
+| `cluster_id`                                 | Azure Kubernetes Service (AKS) managed cluster ID.                                                                                                              | `string`       |
+| `cluster_fqdn`                               | FQDN of the Azure Kubernetes Service managed cluster.                                                                                                           | `string`       |
+| `cluster_endpoint`                           | Endpoint for the Azure Kubernetes Service managed cluster API server.                                                                                           | `string`       |
+| `cluster_certificate_authority_data`         | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                                                                    | `string`       |
+| `control_plane_log_analytics_workspace_id`   | ID of the default log analytics workspace used for control plane logs.                                                                                          | `string`       |
+| `control_plane_log_analytics_workspace_name` | Name of the default log analytics workspace used for control plane logs, this will be empty if an external one is in use.                                       | `string`       |
+| `node_resource_group_name`                   | Auto-generated resource group which contains the resources for this managed Kubernetes cluster.                                                                 | `string`       |
+| `effective_outbound_ips`                     | Outbound IPs from the Azure Kubernetes Service cluster managed load balancer (this will be an empty array if the cluster is uisng a user-assigned NAT Gateway). | `list(string)` |
+| `cluster_identity`                           | User assigned identity used by the cluster.                                                                                                                     | `object`       |
+| `kubelet_identity`                           | Kubelet identity.                                                                                                                                               | `object`       |
+| `cert_manager_identity`                      | Identity that Cert Manager uses.                                                                                                                                | `object`       |
+| `coredns_custom_config_map_name`             | Name of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                                    | `string`       |
+| `coredns_custom_config_map_namespace`        | Namespace of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                               | `object`       |
+| `external_dns_private_identity`              | Identity that private ExternalDNS uses.                                                                                                                         | `object`       |
+| `external_dns_public_identity`               | Identity that public ExternalDNS uses.                                                                                                                          | `object`       |
+| `fluentd_identity`                           | Identity that Fluentd uses.                                                                                                                                     | `object`       |
+| `grafana_identity`                           | Identity that Grafana uses.                                                                                                                                     | `object`       |
+| `oms_agent_identity`                         | Identity that the OMS agent uses.                                                                                                                               | `object`       |
+| `windows_config`                             | Windows configuration.                                                                                                                                          | `object`       |
