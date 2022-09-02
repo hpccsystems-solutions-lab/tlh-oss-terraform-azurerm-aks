@@ -35,6 +35,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated the `azurerm` Terraform provider to [v3.21.1](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.21.1) to support AKS v1.24. [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for AKS v1.24; this can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`. ([#599](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/599)) [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.0.0-beta.20] - 2022-08-31
 
 ### Highlights
