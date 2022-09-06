@@ -37,6 +37,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Updated the `azurerm` Terraform provider to [v3.21.1](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.21.1) to support AKS v1.24. [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support for AKS v1.24; this can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`. ([#599](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/599)) [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Kube Prometheus Stack_ chart to [v39.11.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.11.0). ([#641](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/641)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.20] - 2022-08-31
 
