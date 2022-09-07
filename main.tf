@@ -1,3 +1,15 @@
+# This version will never be less than 1.0.0-beta.21 as that's when it was added
+resource "static_data" "creation_metadata" {
+  data = {
+    creation_date    = timestamp()
+    creation_version = local.module_version
+  }
+
+  lifecycle {
+    ignore_changes = [data]
+  }
+}
+
 module "cluster" {
   source = "./modules/cluster"
 
@@ -122,6 +134,24 @@ module "core_config" {
   depends_on = [
     module.rbac,
     module.node_groups
+  ]
+}
+
+resource "kubernetes_config_map" "terraform_modules" {
+  metadata {
+    name      = "terraform-modules"
+    namespace = "default"
+  }
+
+  data = {
+    (local.module_name) = local.module_version
+  }
+
+  depends_on = [
+    module.cluster,
+    module.rbac,
+    module.node_groups,
+    module.core_config
   ]
 }
 

@@ -31,6 +31,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.21] - UNRELEASED
 
+> **Note**
+> If you're using the `lnrs.io_terraform-module-version` AKS cluster tag please be aware that the `v` prefix has been removed.
+
 ### Highlights
 
 ### All Changes
@@ -39,6 +42,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added experimental support for AKS v1.24; this can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `"1.24"`. ([#599](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/599)) [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Kube Prometheus Stack_ chart to [v39.11.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.11.0). ([#641](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/641)) [@peterabarr](https://github.com/peterabarr)
 - Updated the _Ingress Nginx_ chart to [v4.2.5](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.2.5) (contains _Ingress Nginx Image_ [v1.3.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.3.1)). ([#650](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/650)) [@peterabarr](https://github.com/peterabarr)
+- Added creation metadata to help with cluster maintenance. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed module version syntax to remove erroneous `v` prefix. [@stevehipwell](https://github.com/stevehipwell)
+- Added `terraform-modules` `ConfigMap` to the `default` namespace to register the installed module versions. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.20] - 2022-08-31
 

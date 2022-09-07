@@ -26,6 +26,10 @@ terraform {
       source  = "scottwinkler/shell"
       version = ">=1.7.10"
     }
+    static = {
+      source  = "tiwood/static"
+      version = ">= 0.1.0"
+    }
     time = {
       source  = "hashicorp/time"
       version = ">=0.7.2"
