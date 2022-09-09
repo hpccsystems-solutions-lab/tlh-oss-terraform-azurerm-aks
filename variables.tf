@@ -30,7 +30,7 @@ variable "cluster_name" {
 
   validation {
     condition     = length(regexall("(?i)^(?:.+-)aks-\\d+", var.cluster_name)) > 0
-    error_message = "Cluster name should contain a unique \"aks-<ordinal>\" component."
+    error_message = "Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}` (e.g. `app-aks-0` or `app-aks-1`)."
   }
 }
 
