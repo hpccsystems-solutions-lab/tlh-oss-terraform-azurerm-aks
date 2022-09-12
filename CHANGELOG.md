@@ -31,10 +31,19 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.21] - UNRELEASED
 
-> **Note**
+> **Warning**
 > If you're using the `lnrs.io_terraform-module-version` AKS cluster tag please be aware that the `v` prefix has been removed.
 
+> **Warning**
+> Updated the minimum version of the [AzureRM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Terraform provider to `v3.21.1`.
+
 ### Highlights
+
+The Kube Prometheus Stack and Ingress Nginx helm charts were updated in this release.
+
+#### Experimental Features
+
+- AKS `v1.24` (see [Kubernetes v1.24 release announcement](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/) for more details) is supported as an experimental feature and can be enabled by setting `experimental = { v1_24 = true }` and then setting `cluster_version` to `1.24`.
 
 ### All Changes
 
