@@ -29,7 +29,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0-beta.21] - UNRELEASED
+## [v1.0.0-beta.21] - 2022-09-12
 
 > **Warning**
 > If you're using the `lnrs.io_terraform-module-version` AKS cluster tag please be aware that the `v` prefix has been removed.
