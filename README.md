@@ -160,6 +160,15 @@ All the nodes provisioned by the module support premium storage.
 | `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 | `stor`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 
+### RBAC
+
+This module currently only supports user access by users or groups passed into the module by the `rbac_bindings` (and the deprecated `azuread_clusterrole_map`) input variable; these users and groups are linked to a `ClusterRole` via a `ClusterRoleBinding`. The following `ClusterRoles` can be bound to (the `ClusterRoles` with a `*` are [Kubernetes defaults](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings)).
+
+| **ClusterRole**             | **Description**                                                                                                                                                                                                                                                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cluster-admin`<sup>*</sup> | Allows super-user access to perform any action on any resource. It gives full control over every resource in the cluster and in all namespaces.                                                                                                                                                                                             |
+| `view`<sup>*</sup>          | Allows read-only access to see most objects in all namespaces. It does not allow viewing roles or role bindings. This role does not allow viewing `Secrets`, since reading the contents of `Secrets` enables access to `ServiceAccount` credentials, which would allow API access as any `ServiceAccount` (a form of privilege escalation). |
+
 ---
 
 ## Usage
@@ -320,7 +329,7 @@ provider "kubernetes" {
 
 #### End User Access
 
-To connect to an AKS cluster after it's been created your AD user will need to have been added to the cluster via the `azuread_clusterrole_map` input variable. You can run the following commands, assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and you are logged in to it.
+To connect to an AKS cluster after it's been created your AD user will need to have been added to the cluster via the `rbac_bindings` or the deprecated `azuread_clusterrole_map` input variables. You can run the following commands, assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and you are logged in to it.
 
 ```shell
 az aks install-cli
@@ -433,7 +442,8 @@ This module requires the following versions to be configured in the workspace `t
 | `managed_outbound_ports_allocated`                                  | Number of desired SNAT port for each VM in the cluster managed load balancer, do not manually set this unless you've read the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-allocated-outbound-ports) carefully and fully understand the impact of the change. Ignored if NAT gateway is specified, must be between `0` & `64000` inclusive and divisible by `8`. | `number`                                     | `0`               |
 | `managed_outbound_idle_timeout`                                     | Desired outbound flow idle timeout in seconds for the cluster managed load balancer, see the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-load-balancer-idle-timeout). Ignored if NAT gateway is specified, must be between `240` and `7200` inclusive.                                                                                                          | `number`                                     | `240`             |
 | `admin_group_object_ids`                                            | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                                                                                                                                                                                                                 | `list(string)`                               | `[]`              |
-| `azuread_clusterrole_map`                                           | Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                                                                                                                                                                                                                                                 | `object` ([Appendix A](#appendix-a))         | `{}`              |
+| `rbac_bindings`                                                     | User and groups to configure in Kubernetes `ClusterRoleBindings`; for Azure AD these are the IDs.                                                                                                                                                                                                                                                                                                                   | `object` ([Appendix A](#appendix-a))         | `{}`              |
+| `azuread_clusterrole_map`                                           | **DEPRECATED** - Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings.                                                                                                                                                                                                                                                                                                                | `object` ([Appendix AA](#appendix-aa))       | `{}`              |
 | `node_groups`                                                       | Node groups to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix B](#appendix-b))    | `{}`              |
 | `node_group_templates`                                              | **DEPRECATED** - Templates describing the requires node groups.                                                                                                                                                                                                                                                                                                                                                     | `list(object)` ([Appendix BB](#appendix-bb)) | `[]`              |
 | `core_services_config`                                              | Core service configuration.                                                                                                                                                                                                                                                                                                                                                                                         | `any` ([Appendix D](#appendix-d))            |                   |
@@ -456,6 +466,19 @@ This module requires the following versions to be configured in the workspace `t
 | `experimental`                                                      | Configure experimental features.                                                                                                                                                                                                                                                                                                                                                                                    | `any`                                        | `{}`              |
 
 ### Appendix A
+
+Specification for the `rbac_bindings` object.
+
+> **Note**
+> User and group IDs can be found in Azure Active Directory.
+
+| **Variable**          | **Description**                                                                                      | **Type**       | **Default** |
+| :-------------------- | :--------------------------------------------------------------------------------------------------- | :------------- | :---------- |
+| `cluster_admin_users` | Users to bind to the `cluster-admin` `ClusterRole`, identifier as the key and group ID as the value. | `map(string)`  |             |
+| `cluster_view_users`  | Users to bind to the `view` `ClusterRole`, identifier as the key and group ID as the value.          | `map(string)`  |             |
+| `cluster_view_groups` | Groups to bind to the `view` `ClusterRole`, list of group IDs.                                       | `list(string)` |             |
+
+### Appendix AA
 
 Specification for the `azuread_clusterrole_map` object.
 

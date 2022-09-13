@@ -156,8 +156,18 @@ variable "admin_group_object_ids" {
   default     = []
 }
 
+variable "rbac_bindings" {
+  description = "User and groups to configure in Kubernetes ClusterRoleBindings; for Azure AD these are the IDs."
+  type        = any
+  default = {
+    cluster_admin_users = {}
+    cluster_view_users  = {}
+    cluster_view_groups = []
+  }
+}
+
 variable "azuread_clusterrole_map" {
-  description = "Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings."
+  description = "DEPRECATED - Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings."
   type = object({
     cluster_admin_users  = map(string)
     cluster_view_users   = map(string)

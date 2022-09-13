@@ -58,10 +58,10 @@ module "cluster" {
 module "rbac" {
   source = "./modules/rbac"
 
-  azure_env               = var.azure_env
-  cluster_id              = module.cluster.id
-  azuread_clusterrole_map = var.azuread_clusterrole_map
-  labels                  = local.labels
+  azure_env     = var.azure_env
+  cluster_id    = module.cluster.id
+  rbac_bindings = local.rbac_bindings
+  labels        = local.labels
 
   depends_on = [
     module.cluster

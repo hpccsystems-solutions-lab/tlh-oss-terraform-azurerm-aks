@@ -39,6 +39,21 @@ locals {
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
+  # # This can be used when azuread_clusterrole_map is removed
+  # rbac_bindings = merge({
+  #   cluster_admin_users  = {}
+  #   cluster_admin_groups = []
+  #   cluster_view_users   = {}
+  #   cluster_view_groups  = []
+  # }, var.rbac_bindings, {cluster_admin_groups = []})
+
+  rbac_bindings = {
+    cluster_admin_users  = merge(var.azuread_clusterrole_map.cluster_admin_users, try(var.rbac_bindings.cluster_admin_users, {}))
+    cluster_admin_groups = []
+    cluster_view_users   = merge(var.azuread_clusterrole_map.standard_view_users, var.azuread_clusterrole_map.cluster_view_users, try(var.rbac_bindings.cluster_view_users, {}))
+    cluster_view_groups  = distinct(concat(values(var.azuread_clusterrole_map.standard_view_groups), try(var.rbac_bindings.cluster_view_groups, [])))
+  }
+
   node_group_defaults = {
     node_os             = "ubuntu"
     node_type           = "gp"

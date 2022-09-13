@@ -15,7 +15,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- Use of the `node_group_templates` has been deprecated in favour of `node_groups` (due to be removed in release `v1.0.0`)
+- Module input variable `node_group_templates` is deprecated and will be removed in release `v1.0.0-rc.1`.
+- Module input variable `azuread_clusterrole_map` is deprecated and will be removed in release `v1.0.0-rc.1`.
 
 ---
 
@@ -34,6 +35,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Highlights
 
 ### All Changes
+
+- Updated the RBAC bindings to use the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
+- Changed all viewers specified via `azuread_clusterrole_map` to be bound to the `view` `ClusterRole` instead of our own custom `ClusterRoles`, this fixes a potential privilege escalation with the previous implementation. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated the `azuread_clusterrole_map` input variable in favour of the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.21] - 2022-09-12
 
