@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Changed all viewers specified via `azuread_clusterrole_map` to be bound to the `view` `ClusterRole` instead of our own custom `ClusterRoles`, this fixes a potential privilege escalation with the previous implementation. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `azuread_clusterrole_map` input variable in favour of the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _AAD Pod Identity_ chart to `4.1.13` (contains _AAD Pod Identity_ [v1.8.12](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#654](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/654)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.20.8](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.8) (contains _Fluent Bit_ [v1.9.8](https://github.com/fluent/fluent-bit/releases/tag/v1.9.8)). ([#663](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/663)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.21] - 2022-09-12
 
