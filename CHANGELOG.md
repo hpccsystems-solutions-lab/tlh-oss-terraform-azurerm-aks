@@ -36,6 +36,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+> **Warning**
+> There is a bug in Terraform [v1.3.0](https://github.com/hashicorp/terraform/releases/tag/v1.3.0) which is likely to cause an [error](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/672) when applying the latest release, after running the manual deletions below. Pinning Terraform [v1.2.9](https://github.com/hashicorp/terraform/releases/tag/v1.2.9) should allow the upgrade to complete without any errors, or you can run TF apply a second time to get around the error.
+
+> **Warning**
+> The following cluster roles and cluster role bindings will need to be deleted before applying this release. You will need cluster admin access to do this.
+>
+> ```shell
+> kubectl delete clusterrole 'lnrs:cluster-view' 'lnrs:node-view' 'lnrs:view'
+> kubectl delete clusterrolebinding 'lnrs:cluster-view' 'lnrs:standard-view'
+> ```
+
 - Updated the RBAC bindings to use the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Changed all viewers specified via `azuread_clusterrole_map` to be bound to the `view` `ClusterRole` instead of our own custom `ClusterRoles`, this fixes a potential privilege escalation with the previous implementation. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `azuread_clusterrole_map` input variable in favour of the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
