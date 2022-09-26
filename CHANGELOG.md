@@ -30,11 +30,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0-beta.22] - UNRELEASED
-
-### Highlights
-
-### All Changes
+## [v1.0.0-beta.22] - 2022-09-26
 
 > **Warning**
 > There is a bug in Terraform [v1.3.0](https://github.com/hashicorp/terraform/releases/tag/v1.3.0) which is likely to cause an [error](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/672) when applying the latest release, after running the manual deletions below. Pinning Terraform [v1.2.9](https://github.com/hashicorp/terraform/releases/tag/v1.2.9) should allow the upgrade to complete without any errors, or you can run TF apply a second time to get around the error.
@@ -46,6 +42,20 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 > kubectl delete clusterrole 'lnrs:cluster-view' 'lnrs:node-view' 'lnrs:view'
 > kubectl delete clusterrolebinding 'lnrs:cluster-view' 'lnrs:standard-view'
 > ```
+
+### Highlights
+
+Fluent Bit and AAD Pod Identity helm charts were updated in this release.
+
+#### RBAC
+
+The RBAC binding logic has been updated to use the built in `view` `ClusterRole` and adds support to aggregate on top of the built in `ClusterRoles`. User access can be granted by passing the users and groups into the `rbac_bindings` module input variable.
+
+#### Deprecations
+
+- The `azuread_clusterrole_map` input variable has been deprecated in favour of the new `rbac_bindings` input variable.
+
+### All Changes
 
 - Updated the RBAC bindings to use the new `rbac_bindings` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Changed all viewers specified via `azuread_clusterrole_map` to be bound to the `view` `ClusterRole` instead of our own custom `ClusterRoles`, this fixes a potential privilege escalation with the previous implementation. [@stevehipwell](https://github.com/stevehipwell)
