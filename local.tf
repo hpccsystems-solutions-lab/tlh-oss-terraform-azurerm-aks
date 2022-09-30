@@ -61,6 +61,7 @@ locals {
     single_group        = false
     min_capacity        = 0
     ultra_ssd           = false
+    os_config           = { sysctl = {} }
     placement_group_key = null
     labels              = {}
     taints              = []
@@ -85,7 +86,7 @@ locals {
     }]
   }
 
-  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }) } : { for x in var.node_group_templates : x.name => x }
+  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.experimental_node_group_os_config ? {} : { os_config = { sysctl = {} } }) } : { for x in var.node_group_templates : x.name => x }
 
   system_node_groups = {
     system = merge(local.node_group_defaults, local.system_node_group, { system = true })
@@ -119,4 +120,5 @@ locals {
   experimental_oms_agent_create_configmap                                 = lookup(var.experimental, "oms_agent_create_configmap", true)
   experimental_windows_support                                            = lookup(var.experimental, "windows_support", false)
   experimental_v1_24                                                      = lookup(var.experimental, "v1_24", false)
+  experimental_node_group_os_config                                       = lookup(var.experimental, "node_group_os_config", false)
 }

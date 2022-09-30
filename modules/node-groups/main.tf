@@ -25,6 +25,7 @@ module "system_node_groups" {
   node_type                    = each.value.node_type
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
+  os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
   proximity_placement_group_id = each.value.proximity_placement_group_id
   fips                         = var.fips
@@ -66,6 +67,7 @@ module "user_node_groups" {
   node_type                    = each.value.node_type
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
+  os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
   proximity_placement_group_id = each.value.proximity_placement_group_id
   fips                         = var.fips

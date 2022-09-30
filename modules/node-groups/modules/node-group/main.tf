@@ -40,4 +40,17 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   node_taints = [for taint in concat(local.vm_taints["${local.node_arch}-${var.node_type}"], var.taints) : "${taint.key}=${taint.value}:${local.taint_effects[taint.effect]}"]
 
   tags = var.tags
+
+  dynamic "linux_os_config" {
+    for_each = var.node_os == "ubuntu" && length(var.os_config.sysctl) > 0 ? ["default"] : []
+
+    content {
+
+      sysctl_config {
+        net_core_rmem_max           = lookup(var.os_config.sysctl, "net_core_rmem_max", null)
+        net_core_wmem_max           = lookup(var.os_config.sysctl, "net_core_wmem_max", null)
+        net_ipv4_tcp_keepalive_time = lookup(var.os_config.sysctl, "net_ipv4_tcp_keepalive_time", null)
+      }
+    }
+  }
 }

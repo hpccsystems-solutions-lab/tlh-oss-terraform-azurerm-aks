@@ -68,6 +68,13 @@ variable "ultra_ssd" {
   type        = bool
 }
 
+variable "os_config" {
+  description = "Operating system configuration."
+  type = object({
+    sysctl = map(any)
+  })
+}
+
 variable "proximity_placement_group_id" {
   description = "Proximity placement group ID to use if set."
   type        = string

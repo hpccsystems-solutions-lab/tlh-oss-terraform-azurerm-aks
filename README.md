@@ -389,6 +389,36 @@ To enable the experimental FIPS 140-2 mode for a new cluster you can set `experi
 
 To enable experimental support for [AKS v1.24](https://azure.microsoft.com/en-us/updates/generally-available-kubernetes-124-support/) you can set `experimental = { v1_24 = true }` and then set `cluster_version` to `1.24`.
 
+### Custom OS Configuration
+
+To enable experimental support for [OS custom configuration](https://learn.microsoft.com/en-us/azure/aks/custom-node-configuration#linux-os-custom-configuration) you can set `experimental = { node_group_os_config = true }` and then add an `os_config` block to applicable `node_groups` objects.
+
+```terraform
+  node_groups = {
+    workers = {
+      node_os           = "ubuntu"
+      node_type         = "gp"
+      node_type_version = "v1"
+      node_size         = "large"
+      single_group      = false
+      min_capacity      = 3
+      max_capacity      = 6
+      os_config = {
+        sysctl = {
+          net_core_rmem_max           = 2500000
+          net_core_wmem_max           = 2500000
+          net_ipv4_tcp_keepalive_time = 120
+        }
+      }
+      labels = {}
+      taints = []
+      tags   = {}
+    }
+  }
+```
+
+Only a subset of Linux `systcl` configuration is supported (see above or [in code](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/blob/main/modules/node-groups/modules/node-group/main.tf)). Note not all parameters are required, please raise an issue for additional tunables.
+
 ---
 
 ## Requirements

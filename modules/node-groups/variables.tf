@@ -56,15 +56,18 @@ variable "bootstrap_vm_size" {
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
-    system              = bool
-    node_os             = string
-    node_type           = string
-    node_type_version   = string
-    node_size           = string
-    single_group        = bool
-    min_capacity        = number
-    max_capacity        = number
-    ultra_ssd           = bool
+    system            = bool
+    node_os           = string
+    node_type         = string
+    node_type_version = string
+    node_size         = string
+    single_group      = bool
+    min_capacity      = number
+    max_capacity      = number
+    ultra_ssd         = bool
+    os_config = object({
+      sysctl = map(any)
+    })
     placement_group_key = string
     labels              = map(string)
     taints = list(object({

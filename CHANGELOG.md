@@ -38,6 +38,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Added support for user defined NAT gateway. ([#620](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/620), [#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623))  [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Fluent Bit_ chart to [v0.20.9](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.9) (contains _Fluent Bit_ [v1.9.9](https://github.com/fluent/fluent-bit/releases/tag/v1.9.9)). ([#683](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/683)) [@peterabarr](https://github.com/peterabarr)
+- Added experimental support for [OS customization](https://learn.microsoft.com/en-us/azure/aks/custom-node-configuration#linux-os-custom-configuration), enabled by setting `experimental = { node_group_os_config = true }` and then an `os_config` block to applicable `node_groups`. ([667](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/667), [#686](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/686)) [@jamurtag](https://github.com/jamurtag)
 
 ## [v1.0.0-beta.22] - 2022-09-26
 
