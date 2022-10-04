@@ -39,6 +39,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.0.0-beta.22] - 2022-09-26
 
 > **Warning**
+> Terraform [v1.3.1](https://github.com/hashicorp/terraform/releases/tag/v1.3.1) was released shortly after `v1.0.0-beta.22` was released. It is recommended to use this Terraform version as it fixes issues mentioned below. When using Terraform `v1.3.1`, no cycle error occurs when carrying out the AKS module upgrade and no additional manual steps are required.
+
+> **Warning**
 > There is a bug in Terraform [v1.3.0](https://github.com/hashicorp/terraform/releases/tag/v1.3.0) which is likely to cause an [error](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/672) when applying the latest release, after running the manual deletions below. Pinning Terraform [v1.2.9](https://github.com/hashicorp/terraform/releases/tag/v1.2.9) should allow the upgrade to complete without any errors, or you can run TF apply a second time to get around the error.
 
 > **Warning**
