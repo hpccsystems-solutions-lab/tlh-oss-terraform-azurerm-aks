@@ -112,7 +112,6 @@ locals {
     helm_modify    = 600
   }
 
-  experimental_nat_gateway_id                                             = lookup(var.experimental, "nat_gateway_id", null)
   experimental_fips                                                       = lookup(var.experimental, "fips", false)
   experimental_oms_agent                                                  = lookup(var.experimental, "oms_agent", false)
   experimental_oms_agent_log_analytics_workspace_different_resource_group = lookup(var.experimental, "oms_log_analytics_workspace_different_resource_group", false)

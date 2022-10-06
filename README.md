@@ -35,7 +35,7 @@ See [documentation](/docs) for system architecture, requirements and user guides
 
 ### Networking
 
-A VNet can contain multiple AKS clusters and be shared with non-AKS resources, however there **should** be a dedicated subnet and a unique route table for each AKS cluster. It is technically possible to host multiple AKS cluster node pools in a subnet, this is not recommended and may cause connectivity issues but can be achieved by passing in a unique non-overlapping CIDR block to each cluster via the `podnet_cidr_block` input variable.
+A VNet can contain multiple AKS clusters and be shared with non-AKS resources, however there **should** be a dedicated subnet and a unique route table for each AKS cluster. It is technically possible to host multiple AKS cluster node pools in a subnet, this is not recommended and may cause connectivity issues but can be achieved by passing in a unique non-overlapping CIDR block to each cluster via the `podnet_cidr_block` input variable. The two modes of network outbound traffic from the pods can be through a [load balancer](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview) or a [managed NAT gateway](https://learn.microsoft.com/en-us/azure/aks/nat-gateway). The load balancer is configured by AKS within the module, while the NAT gateway needs to be configured externally.
 
 Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparison](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
 
@@ -48,17 +48,18 @@ For example, the module exposes ingress endpoints for core services such as Prom
 ```yaml
   core_services_config = {
     cert_manager = {
-      acme_dns_zones  = ["us-accurint-prod.azure.lnrsg.io"]
+      acme_dns_zones      = ["us-accurint-prod.azure.lnrsg.io"]
       default_issuer_name = letsencrypt # for production usage of letsencrypt
-      }
-    external_dns= {
+    }
+
+    external_dns = {
       private_resource_group_name = "us-accurint-prod-dns-rg"
-      private_zones = [ "us-accurint-prod.azure.lnrsg.io" ]
-     #public_domain_filters = [ "us-accurint-prod.azure.lnrsg.io" ] ## use this if you use public dns zone
+      private_zones               = ["us-accurint-prod.azure.lnrsg.io"]
+      # public_domain_filters       = ["us-accurint-prod.azure.lnrsg.io"] # use this if you use public dns zone
     }
 
     ingress_internal_core = {
-      domain    = "us-accurint-prod.azure.lnrsg.io"
+      domain     = "us-accurint-prod.azure.lnrsg.io"
       public_dns = false # use true if you use public_domain_filters as above
     }
   }
@@ -388,10 +389,6 @@ To enable the experimental FIPS 140-2 mode for a new cluster you can set `experi
 
 To enable experimental support for [AKS v1.24](https://azure.microsoft.com/en-us/updates/generally-available-kubernetes-124-support/) you can set `experimental = { v1_24 = true }` and then set `cluster_version` to `1.24`.
 
-### User-Assigned NAT Gateway
-
-To enable experimental support for using a user-assigned NAT Gateway you can set `experimental = { nat_gateway_id = "<nat_gateway_id>" }`; please note that this can only be enabled when creating a new cluster.
-
 ---
 
 ## Requirements
@@ -438,6 +435,7 @@ This module requires the following versions to be configured in the workspace `t
 | `route_table_name`                                                  | Name of the AKS subnet route table.                                                                                                                                                                                                                                                                                                                                                                                 | `string`                                     |                   |
 | `dns_resource_group_lookup`                                         | Lookup from DNS zone to resource group name.                                                                                                                                                                                                                                                                                                                                                                        | `map(string)`                                |                   |
 | `podnet_cidr_block`                                                 | CIDR range for pod IP addresses when using the `kubenet` network plugin, if you're running more than one cluster in a subnet (or sharing a route table) this value needs to be unique.                                                                                                                                                                                                                              | `string`                                     | `"100.65.0.0/16"` |
+| `nat_gateway_id`                                                    | ID of a user-assigned NAT Gateway to use for cluster egress traffic, if not set a cluster managed load balancer will be used. Please note that this can only be enabled when creating a new cluster.                                                                                                                                                                                                                | `string`                                     | `null`            |
 | `managed_outbound_ip_count`                                         | Count of desired managed outbound IPs for the cluster managed load balancer, see the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#scale-the-number-of-managed-outbound-public-ips). Ignored if NAT gateway is specified, must be between `1` and `100` inclusive.                                                                                                              | `number`                                     | `1`               |
 | `managed_outbound_ports_allocated`                                  | Number of desired SNAT port for each VM in the cluster managed load balancer, do not manually set this unless you've read the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-allocated-outbound-ports) carefully and fully understand the impact of the change. Ignored if NAT gateway is specified, must be between `0` & `64000` inclusive and divisible by `8`. | `number`                                     | `0`               |
 | `managed_outbound_idle_timeout`                                     | Desired outbound flow idle timeout in seconds for the cluster managed load balancer, see the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-load-balancer-idle-timeout). Ignored if NAT gateway is specified, must be between `240` and `7200` inclusive.                                                                                                          | `number`                                     | `240`             |

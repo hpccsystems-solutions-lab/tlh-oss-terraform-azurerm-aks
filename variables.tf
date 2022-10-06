@@ -111,11 +111,11 @@ variable "podnet_cidr_block" {
   default     = "100.65.0.0/16"
 }
 
-# variable "nat_gateway_id" {
-#   description = "ID of a user-assigned NAT Gateway to use for cluster egress traffic, if not set a cluster managed load balancer will be used."
-#   type        = string
-#   default     = null
-# }
+variable "nat_gateway_id" {
+  description = "ID of a user-assigned NAT Gateway to use for cluster egress traffic, if not set a cluster managed load balancer will be used."
+  type        = string
+  default     = null
+}
 
 variable "managed_outbound_ip_count" {
   description = "Count of desired managed outbound IPs for the cluster managed load balancer. Ignored if NAT gateway is specified, must be between 1 and 100 inclusive."
