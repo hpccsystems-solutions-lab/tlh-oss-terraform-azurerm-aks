@@ -2,30 +2,43 @@
 
 ## Overview
 
-This module is designed to provide a simple and opinionated way to build standard AKS clusters. This module takes a generic set of configuration options and creates a fully functional _Kubernetes_ cluster with a common set of services.
+This module provides a simple and opinionated way to build a standard [Azure AKS](https://azure.microsoft.com/en-us/products/kubernetes-service/#overview) Kubernetes cluster with a common set of services. By providing a standard Kubernetes pattern we reduce the cognitive load on the teams who need to run these clusters and benefit from an economy of scale. The module API and behaviour is designed (as far as possible) to be common across all RSG Kubernetes implementations which allows for greater portability between implementations.
 
-Please visit the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/) for more information on the Kubernetes ecosystem.
+The module follows a [SemVer](https://semver.org/) versioning strategy and is packaged and released as a tested pattern with a corresponding [support policy](#support-policy). For detailed documentation and more information on the Kubernetes ecosystem please visit the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/).
 
 ---
 
 ## Support Policy
 
-This module is supported as a pattern by the core engineering team as long as the following constraints have been followed. This support **isn't** operational and by using this module you're agreeing that operational support will be provided to your end-users and the core engineering team will interact with your operational teams.
+Support for this module **isn't** operational; by using this module you're agreeing that operational support will be provided to your end-users by your cluster operators and that the core engineering team will only interact with these operational teams.
 
-- Clusters **must** be updated periodically by updating this module within 4 weeks of the latest release.
-  - Issues must be demonstrated on a cluster running the latest version of the module.
-- Core engineering and architecture teams **only** support clusters deployed using this module.
-  - Issues must be demonstrated by calling the module directly (_i.e. not nesting within multi-layer modules_).
-- Issues should only be created by the cluster operators **after** they have confirmed that the problem hasn't already been documented, cluster users should work with the cluster operators if they have an issue.
-  - Issues need to have context such as Kubernetes version, module version, region, etc.
-  - Issues should have an example of how to replicate them on a test cluster unless not possible.
-  - Issues not following this guidance will be closed.
+At any given time the last 3 minor versions of this module are supported; this means these versions will get patch fixes for critical bugs, core service CVEs & AKS patches. It is the module operators and end-users responsibility to make sure that clusters are running the latest patch version of a supported version, failure to do this in a timely manner could expose the cluster to significant risks.
 
-## Help
+> **Info**
+> If there have been versions `v3.0.0`, `v3.1.0`, `v3.1.1`, `v3.2.0`, `v3.3.0` & `v3.3.1` released then the supported versions would be `v3.1.1`, `v3.2.0` & `v3.3.1` (latest patch versions of the last 3 minor versions).
 
-Before using this module, the whole README should be read.
+### General Help
 
-If you require further help, please visit [RSG Kubernetes Discussions](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions) where you can start your own discussion related to Kubernetes.
+Before using this module, the whole README should be read and you should be familiar with the concepts in the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/); some common questions are answered in the module [FAQ](./FAQ.md).
+
+If you have unanswered questions after reading the documentation, please visit [RSG Kubernetes Discussions](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions) where you can either join an existing discussion or start your own.
+
+### Issues
+
+The core engineering team are responsible for triaging bugs in a timely manner and providing fixes either in the next minor release or as a patch to supported versions. The following constraints need to be met before an issue can be reported, failure to meet these may result in the issue being closed if not addressed promptly.
+
+- The reporter **must** be a cluster operator
+  - The core team doesn't have the capacity to deal directly with end-users
+- Clusters **must** be running a supported minor version with the latest patch
+  - Complex issues may need to be demonstrated on a cluster running the latest version
+- **Only** clusters deployed using this module are supported
+  - Forks of this module are not supported
+  - Nesting this module in a wrapper module is not supported
+- Issues should **only** be reported where the only change is this module
+  - Terraform has a number of issues when using a large graph of changes
+- Issues should **only** be created **after** checking there isn't already an open issue
+  - Issues need to have context such as Kubernetes version, module version, region, etc
+  - Issues should have an example of how to replicate them
 
 ---
 
