@@ -30,9 +30,19 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0-beta.23] - UNRELEASED
+## [v1.0.0-beta.23] - 2022-10-10
 
 ### Highlights
+
+_Fluent Bit_ Helm Chart was updated to `v0.20.9` which was the only core service updated in this release.
+
+#### User Defined NAT Gateway
+
+A user defined NAT gateway can now be configured with the `nat_gateway_id` module input. The two modes of network outbound traffic from the pods can be through a [load balancer](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview) or a [managed NAT gateway](https://learn.microsoft.com/en-us/azure/aks/nat-gateway). The load balancer is configured by AKS within the module, while the NAT gateway needs to be configured externally.
+
+#### Experimental Features
+
+- Experimental support for [OS customization](https://learn.microsoft.com/en-us/azure/aks/custom-node-configuration#linux-os-custom-configuration) can be enabled by setting `experimental = { node_group_os_config = true }` and then an `os_config` block to applicable `node_groups`.
 
 ### All Changes
 
