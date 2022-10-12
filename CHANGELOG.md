@@ -36,7 +36,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
-- Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`.
+- Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`. [@peterabarr](https://github.com/peterabarr)
+- Remove `hashicorp/helm` provider [v2.7.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.0). ([#699](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/699)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.23] - 2022-10-10
 
@@ -54,7 +55,7 @@ A user defined NAT gateway can now be configured with the `nat_gateway_id` modul
 
 ### All Changes
 
-- Added support for user defined NAT gateway. ([#620](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/620), [#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623))  [@prikesh-patel](https://github.com/prikesh-patel)
+- Added support for user defined NAT gateway. ([#620](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/620), [#623](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/623)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Fluent Bit_ chart to [v0.20.9](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.9) (contains _Fluent Bit_ [v1.9.9](https://github.com/fluent/fluent-bit/releases/tag/v1.9.9)). ([#683](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/683)) [@peterabarr](https://github.com/peterabarr)
 - Added experimental support for [OS customization](https://learn.microsoft.com/en-us/azure/aks/custom-node-configuration#linux-os-custom-configuration), enabled by setting `experimental = { node_group_os_config = true }` and then an `os_config` block to applicable `node_groups`. ([667](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/667), [#686](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/686)) [@jamurtag](https://github.com/jamurtag)
 
