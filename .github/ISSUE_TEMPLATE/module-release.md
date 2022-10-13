@@ -63,13 +63,13 @@ The PR assignee (who needs to be a maintainer) can merge the branch into `main` 
 
 ### Create release tag
 
-The PR assignee  (who needs to be a maintainer) needs to run the following commands locally to create the release tag, the actual release will be created by GitHub actions.
+The PR assignee (who needs to be a maintainer) needs to run the following commands locally to create the release tag, the actual release will be created by GitHub actions.
 
 ```shell
 git checkout main
 git pull
 git tag v1.1.0
-git push --tags
+git push origin v1.1.0
 ```
 
 ### Wait For Release
@@ -80,24 +80,36 @@ The release automation will be created as a [GitHub Action](https://github.com/L
 
 > **IMPORTANT**
 > You need to add a GitLab a remote if you have not done so already.
-> Inside the AKS GitHub project you can add the GitLab remote by running the following command:  
-> `git remote add gitlab git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git`  
-> Verify that the remote is set by running the following command:  
-> `git remote -v`  
-> The output should look like:  
-> `gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (fetch)`
-> `gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (push)`
-> `origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (fetch)`
-> `origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (push)`
+>
+> Inside the AKS GitHub project you can add the GitLab remote by running the following command:
+>
+> `git remote add gitlab git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git`
+>
+> Verify that the remote is set by running the following command:
+>
+> `git remote -v`
+>
+> The output should look like:
+>
+> ```shell
+> gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (fetch)
+> gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (push)
+> origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (fetch)
+> origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (push)
+> ```
 
 After pushing the release tag to GitHub, push the release tag to GitLab:
 
 ```shell
-git push -u gitlab && origin
+git fetch -u gitlab
+git push -u gitlab
+git push -u gitlab v1.1.0
+git branch main --set-upstream-to origin/main
+git pull
 ```
 
-On the [Azure AKS Gitlab project](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks) go to [tags](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks/-/tags) and create a new tag with the name of the release. Inside the `Release notes` paste the changelog contents from the relevant release and make sure you create from `main`.
+On the [Azure AKS Gitlab project](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks) go to [tags](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks/-/tags). Populate the release notes of the pushed release tag (`v1.1.0`), to align with the GitHub release. Create the minor version sliding tag (`v1.1`), and recreate the major version sliding tag (`v1`) that is currently there. Ensure these are created from `main`.
 
 ### Close Release Issue & Milestone
 
-Once these steps have been completed this issue should be closed and then the release milestone should be closed.
+Once these steps have been completed this issue should be closed and the release milestone should be closed.
