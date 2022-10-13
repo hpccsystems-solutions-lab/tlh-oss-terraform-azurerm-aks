@@ -144,6 +144,8 @@ locals {
       allowSnippetAnnotations = "false"
 
       admissionWebhooks = {
+        port = 10250
+
         patch = {
           priorityClassName = ""
 
