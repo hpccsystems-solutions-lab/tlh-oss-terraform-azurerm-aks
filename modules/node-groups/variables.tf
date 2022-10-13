@@ -57,6 +57,7 @@ variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
     system            = bool
+    node_arch         = string
     node_os           = string
     node_type         = string
     node_type_version = string

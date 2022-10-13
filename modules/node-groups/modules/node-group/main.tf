@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   os_type = local.os_types[var.node_os]
   os_sku  = local.os_skus[var.node_os]
 
-  vm_size                = local.vm_sizes["${local.node_arch}-${var.node_type}-${var.node_type_version}"][var.node_size]
+  vm_size                = local.vm_sizes["${var.node_arch}_${var.node_type}_${var.node_type_version}"][var.node_size]
   os_disk_size_gb        = 128
   os_disk_type           = "Managed"
   enable_host_encryption = true
@@ -36,8 +36,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
 
   fips_enabled = var.fips
 
-  node_labels = merge(local.vm_labels["${local.node_arch}-${var.node_type}"], { "lnrs.io/lifecycle" = "ondemand", "lnrs.io/size" = var.node_size }, var.labels)
-  node_taints = [for taint in concat(local.vm_taints["${local.node_arch}-${var.node_type}"], var.taints) : "${taint.key}=${taint.value}:${local.taint_effects[taint.effect]}"]
+  node_labels = merge(local.vm_labels[var.node_type], { "lnrs.io/lifecycle" = "ondemand", "lnrs.io/size" = var.node_size }, var.labels)
+  node_taints = [for taint in concat(local.vm_taints[var.node_type], var.taints) : "${taint.key}=${taint.value}:${local.taint_effects[taint.effect]}"]
 
   tags = var.tags
 

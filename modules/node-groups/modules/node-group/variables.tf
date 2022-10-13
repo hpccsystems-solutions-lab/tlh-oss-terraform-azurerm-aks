@@ -33,6 +33,11 @@ variable "system" {
   type        = bool
 }
 
+variable "node_arch" {
+  description = "Architecture of the node."
+  type        = string
+}
+
 variable "min_capacity" {
   description = "Minimum number of nodes in the group."
   type        = number

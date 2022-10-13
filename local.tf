@@ -55,6 +55,7 @@ locals {
   }
 
   node_group_defaults = {
+    node_arch           = "amd64"
     node_os             = "ubuntu"
     node_type           = "gp"
     node_type_version   = "v1"
@@ -68,8 +69,15 @@ locals {
     tags                = {}
   }
 
+  node_group_overrides = merge({
+    }, lookup(var.experimental, "arm64", false) ? {} : {
+    node_arch = "amd64"
+    }, lookup(var.experimental, "node_group_os_config", false) ? {} : {
+    os_config = { sysctl = {} }
+  })
+
   system_node_group = {
-    system            = true
+    node_arch         = "amd64"
     node_os           = "ubuntu"
     node_type         = "gp"
     node_type_version = "v1"
@@ -86,11 +94,11 @@ locals {
     }]
   }
 
-  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.experimental_node_group_os_config ? {} : { os_config = { sysctl = {} } }) } : { for x in var.node_group_templates : x.name => x }
-
   system_node_groups = {
-    system = merge(local.node_group_defaults, local.system_node_group, { system = true })
+    system = merge(local.node_group_defaults, local.system_node_group, { system = true }, local.node_group_overrides)
   }
+
+  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.node_group_overrides) } : { for x in var.node_group_templates : x.name => x }
 
   ingress_node_group = anytrue([for group in local.node_groups : try(group.labels["lnrs.io/tier"] == "ingress", false) && (length(group.taints) == 0 || (length(group.taints) == 1 && try(group.taints[0].key == "ingress", false)))])
 
@@ -120,5 +128,4 @@ locals {
   experimental_oms_agent_create_configmap                                 = lookup(var.experimental, "oms_agent_create_configmap", true)
   experimental_windows_support                                            = lookup(var.experimental, "windows_support", false)
   experimental_v1_24                                                      = lookup(var.experimental, "v1_24", false)
-  experimental_node_group_os_config                                       = lookup(var.experimental, "node_group_os_config", false)
 }

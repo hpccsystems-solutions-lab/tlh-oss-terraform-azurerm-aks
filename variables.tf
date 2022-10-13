@@ -193,6 +193,11 @@ variable "node_groups" {
   }
 
   validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["amd64", "arm64"], lookup(v, "node_arch", "amd64"))])
+    error_message = "Node group architecture must be either \"amd64\" or \"arm64\"."
+  }
+
+  validation {
     condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows"], lookup(v, "node_os", "ubuntu"))])
     error_message = "Node group template OS must be either \"ubuntu\" or \"windows\"."
   }
