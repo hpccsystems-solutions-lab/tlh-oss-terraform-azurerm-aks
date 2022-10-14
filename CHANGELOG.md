@@ -39,6 +39,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`. [@peterabarr](https://github.com/peterabarr)
 - Changed _Ingress Internal Core_ admission webhook port to `10250`. [#697](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/697) [@prikesh-patel](https://github.com/prikesh-patel)
 - Remove `hashicorp/helm` provider [v2.7.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.0). ([#699](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/699)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`.
+- Updated _Ingress Nginx_ chart to [v4.3.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.3.0)(contains _Ingress Nginx Image_ [v1.4.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.4.0)). ([#681](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/681)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.23] - 2022-10-10
 
