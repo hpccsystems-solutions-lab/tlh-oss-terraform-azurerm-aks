@@ -42,6 +42,15 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`.
 - Updated _Ingress Nginx_ chart to [v4.3.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.3.0)(contains _Ingress Nginx Image_ [v1.4.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.4.0)). ([#681](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/681)) [@peterabarr](https://github.com/peterabarr)
 
+## [v1.0.0-beta.18.1] - 2022-10-14
+
+> **Warning**
+> Once applying this patch version, you should upgrade directly to `v1.0.0-beta.23`. To avoid the AKS version being downgraded, the minimum version you can upgrade to is `v1.0.0-beta.20`.
+
+### All Changes
+
+- Updated AKS versions which include patch versions for `v1.23` to `v1.28.8` & `v1.22` to `v1.22.11`. [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.0.0-beta.23] - 2022-10-10
 
 ### Highlights
