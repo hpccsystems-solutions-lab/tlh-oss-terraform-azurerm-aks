@@ -43,6 +43,11 @@ variable "ingress_node_group" {
   type        = bool
 }
 
+variable "subnet_id" {
+  description = "ID of the subnet."
+  type        = string
+}
+
 variable "availability_zones" {
   description = "Availability zones to use for the node groups."
   type        = list(number)
@@ -97,11 +102,6 @@ variable "oms_agent_create_configmap" {
   description = "If the OMS agent ConfigMap should be created with default settings."
   type        = bool
 }
-
-# variable "storage_account_id" {
-#   description = "ID of the data storage account."
-#   type        = string
-# }
 
 variable "labels" {
   description = "Labels to be applied to all Kubernetes resources."

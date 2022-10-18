@@ -28,6 +28,11 @@ variable "labels" {
   type        = map(string)
 }
 
+variable "subnet_id" {
+  description = "ID of the subnet."
+  type        = string
+}
+
 variable "zones" {
   description = "The number of zones this chart should be run on."
   type        = number
@@ -117,16 +122,6 @@ variable "oms_agent_log_analytics_workspace_different_resource_group" {
   description = "If the oms agent log analytics workspace is in a different resource group to the cluster."
   type        = bool
 }
-
-# variable "storage_account_name" {
-#   description = "Name of storage account."
-#   type        = string
-# }
-
-# variable "storage_account_id" {
-#   description = "ID of the data storage account."
-#   type        = string
-# }
 
 variable "skip_crds" {
   description = "Skip installing the CRDs as part of the module."

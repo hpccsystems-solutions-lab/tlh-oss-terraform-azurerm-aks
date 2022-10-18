@@ -28,20 +28,20 @@ module "identity_grafana" {
   tags = var.tags
 }
 
-# module "identity_thanos" {
-#   source = "../../../identity"
+module "identity_thanos" {
+  source = "../../../identity"
 
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
-#   name      = "${var.cluster_name}-thanos"
-#   namespace = var.namespace
-#   labels    = var.labels
+  name      = "${var.cluster_name}-thanos"
+  namespace = var.namespace
+  labels    = var.labels
 
-#   roles = [{
-#     id    = "Storage Blob Data Contributor"
-#     scope = "${var.storage_account_id}"
-#   }]
+  roles = [{
+    id    = "Storage Blob Data Contributor"
+    scope = azurerm_storage_account.data.id
+  }]
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}

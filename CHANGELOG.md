@@ -32,10 +32,25 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## [v1.0.0-beta.24] - UNRELEASED
 
+> **Warning**
+> A storage account is created with the Thanos deployment which has network rules set to deny by default. A [service endpoint](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) will need to be added to your subnet [resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet#service_endpoints).
+
+> **Warning**
+> Introducing Thanos allows the Prometheus volume to largely reduce its size. However, this large volume will remain unless the Kube Prometheus Stack chart is removed and the volume is deleted, before applying this module upgrade. Check the Azure disk also gets deleted after removing the volume claims. Alternatively, you can upgrade and reinstall the helm chart and volume in a maintenance window. This would mean the existing metrics will be kept with just an outage period for the reinstallation.
+>
+> ```shell
+> # Remove helm release
+> helm delete -n monitoring kube-prometheus-stack
+>
+> # Remove persistent volume claim
+> kubectl delete pvc -n monitoring prometheus-kube-prometheus-stack-prometheus-db-prometheus-kube-prometheus-stack-prometheus-0
+> ```
+
 ### Highlights
 
 ### All Changes
 
+- Added Thanos to support HA Prometheus in cluster. ([#160](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/160)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`. [@peterabarr](https://github.com/peterabarr)
 - Changed _Ingress Internal Core_ admission webhook port to `10250`. [#697](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/697) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed support for the Helm provider [v2.7.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.0) and [v2.7.1](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.1) due to it being buggy. ([#699](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/699)) [@prikesh-patel](https://github.com/prikesh-patel)
