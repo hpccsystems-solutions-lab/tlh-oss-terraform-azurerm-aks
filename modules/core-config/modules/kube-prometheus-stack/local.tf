@@ -104,7 +104,8 @@ locals {
     prometheus = {
       prometheusSpec = {
         # retention = "6h"
-        retention = "28d"
+        retention      = "28d"
+        scrapeInterval = local.scrapeInterval
 
         remoteWrite = var.prometheus_remote_write
 
@@ -378,7 +379,7 @@ locals {
         "grafana-piechart-panel"
       ], var.grafana_additional_plugins))
 
-      additionalDataSources = concat([local.grafana_azure_monitor_data_source], [for datasource in var.grafana_additional_data_sources : {
+      additionalDataSources = concat(local.grafana_data_sources, [for datasource in var.grafana_additional_data_sources : {
         name            = datasource.name
         type            = datasource.type
         access          = datasource.access
@@ -445,9 +446,9 @@ locals {
       }
 
       sidecar = {
-        # datasources = {
-        #   url = "http://thanos-query-frontend.${var.namespace}.svc.cluster.local:10902"
-        # }
+        datasources = {
+          defaultDatasourceEnabled = false
+        }
 
         dashboards = {
           enabled          = true
@@ -1121,6 +1122,8 @@ locals {
   #   }
   # }
 
+  scrapeInterval = "30s"
+
   alertmanager_base_receivers = [{
     name              = "null"
     email_configs     = []
@@ -1192,15 +1195,64 @@ locals {
     mute_time_intervals = lookup(route, "mute_time_intervals", [])
   }])
 
-  grafana_azure_monitor_data_source = {
-    name      = "Azure Monitor"
-    type      = "grafana-azure-monitor-datasource"
-    orgId     = "1"
-    isDefault = false
-    jsonData = {
-      subscriptionId = var.subscription_id
+  grafana_data_sources = [
+    {
+      name            = "Alertmanager"
+      type            = "alertmanager"
+      access          = "proxy"
+      orgId           = "1"
+      uid             = "alertmanager"
+      url             = "http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093"
+      basicAuth       = null
+      basicAuthUser   = null
+      withCredentials = null
+      isDefault       = false
+      jsonData = {
+        implementation = "prometheus"
+      }
+      secureJsonData = null
+      version        = null
+      editable       = false
+    },
+    {
+      name            = "Prometheus"
+      type            = "prometheus"
+      access          = "proxy"
+      orgId           = "1"
+      uid             = "prometheus"
+      url             = "http://kube-prometheus-stack-prometheus.${var.namespace}.svc.cluster.local:9090"
+      basicAuth       = null
+      basicAuthUser   = null
+      withCredentials = null
+      isDefault       = true
+      jsonData = {
+        manageAlerts    = true
+        alertmanagerUid = "alertmanager"
+        timeInterval    = local.scrapeInterval
+      }
+      secureJsonData = null
+      version        = null
+      editable       = false
+    },
+    {
+      name            = "Azure Monitor"
+      type            = "grafana-azure-monitor-datasource"
+      access          = "proxy"
+      orgId           = "1"
+      uid             = "azuremonitor"
+      url             = null
+      basicAuth       = null
+      basicAuthUser   = null
+      withCredentials = null
+      isDefault       = false
+      jsonData = {
+        subscriptionId = var.subscription_id
+      }
+      secureJsonData = null
+      version        = null
+      editable       = false
     }
-  }
+  ]
 
   resource_group_id                                                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
   control_plane_log_analytics_workspace_external_resource_group_id = var.control_plane_log_analytics_workspace_different_resource_group ? regex("([[:ascii:]]*)(/providers/)", var.control_plane_log_analytics_workspace_id)[0] : ""
