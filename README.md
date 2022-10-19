@@ -657,15 +657,27 @@ Specification for the `core_services_config.external_dns` object.
 
 Specification for the `core_services_config.fluentd` object.
 
-| **Variable**       | **Description**                                                                                                                    | **Type**      | **Default** |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :------------ | :---------- |
-| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                              | `map(string)` | `null`      |
-| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                              | `map(string)` | `null`      |
-| `additional_env`   | Additional environment variables.                                                                                                  | `map(string)` | `{}`        |
-| `debug`            | If `true` all logs are printed to stdout.                                                                                          | `bool`        | `true`      |
-| `filters`          | [Fluentd filter configuration](https://docs.fluentd.org/filter), can be multiple `<filter>` blocks.                                | `string`      | `null`      |
-| `routes`           | _Fluentd_ [fluent-plugin-route](https://github.com/tagomoris/fluent-plugin-route) configuration, can be multiple `<route>` blocks. | `string`      | `null`      |
-| `outputs`          | [Fluentd output configuration](https://docs.fluentd.org/output), can be multiple `<label>` blocks referencing the routes.          | `string`      | `null`      |
+| **Variable**       | **Description**                                                                                                                                                                    | **Type**                                     | **Default** |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
+| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                | `null`      |
+| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                | `null`      |
+| `additional_env`   | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
+| `debug`            | If `true` all logs are printed to stdout.                                                                                                                                          | `bool`                                       | `true`      |
+| `filters`          | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
+| `route_config`     | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix I1](#appendix-i1)) | `[]`        |
+| `routes`           | **DEPRECATED** - _Fluentd_ [fluent-plugin-route](https://github.com/tagomoris/fluent-plugin-route) configuration, can be multiple `<route>` blocks.                                | `string`                                     | `null`      |
+| `outputs`          | **DEPRECATED** - [Fluentd output configuration](https://docs.fluentd.org/output), can be multiple `<label>` blocks referencing the routes.                                         | `string`                                     | `null`      |
+
+### Appendix I1
+
+Specification for the `core_services_config.fluentd.route_config` object.
+
+| **Variable** | **Description**                                       | **Type** | **Default** |
+| :----------- | :---------------------------------------------------- | :------- | :---------- |
+| `match`      | The log tag match to use for this route.              | `string` |             |
+| `label`      | The label to use for this route.                      | `string` |             |
+| `copy`       | If the matched logs should be copied to later routes. | `bool`   |             |
+| `config`     | The output configuration to use for the route.        | `string` |             |
 
 ### Appendix J
 

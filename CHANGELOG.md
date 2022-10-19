@@ -15,8 +15,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- Module input variable `node_group_templates` is deprecated and will be removed in release `v1.0.0-rc.1`.
-- Module input variable `azuread_clusterrole_map` is deprecated and will be removed in release `v1.0.0-rc.1`.
+- Module input variable `node_group_templates` is deprecated and will be removed in the `v1.0.0-rc.1` release.
+- Module input variable `azuread_clusterrole_map` is deprecated and will be removed in the `v1.0.0-rc.1` release.
+- Module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs` are deprecated and will be removed in the `v1.0.0-rc.1` release.
 
 ---
 
@@ -59,7 +60,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added Alertmanager data source to Grafana to allow the UI to show Prometheus alerts and the configuration (the Grafana pod needs starting to pick up the data source changes). ([#554](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/554)) [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support to run Fluent Bit with memory buffers to work around a defect. [@aydosman](https://github.com/aydosman)
 - Added experimental options to override service memory requests for specific services. ([#486](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/486)) [@aydosman](https://github.com/aydosman)
-- Updated _AAD Pod Identity_ chart to `4.1.14` (contains _AAD Pod Identity_ [v1.8.13](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#701](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/701)) [@peterabarr](https://github.com/peterabarr)
+- Updated _AAD Pod Identity_ chart to [v4.1.14](https://artifacthub.io/packages/helm/aad-pod-identity/aad-pod-identity/4.1.14) (contains _AAD Pod Identity_ [v1.8.13](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#701](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/701)) [@peterabarr](https://github.com/peterabarr)
+- Updated Fluentd metadata processing to better capture `app` (this was missed when the change was made to EKS). [@stevehipwell](https://github.com/stevehipwell)
+- Added new `core_config.fluentd.route_config` module variable to enable strongly typed Fluentd output configuration. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `core_config.fluentd.routes` & `core_config.fluentd.outputs` module variables in favour of the new `core_config.fluentd.route_config` module variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.18.1] - 2022-10-14
 

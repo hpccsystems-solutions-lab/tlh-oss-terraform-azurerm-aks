@@ -54,17 +54,27 @@ variable "debug" {
 }
 
 variable "filters" {
-  description = "The filter config split into multiple strings."
+  description = "Global filter configuration."
   type        = string
 }
 
+variable "route_config" {
+  description = "list of route configuration."
+  type = list(object({
+    match  = string
+    label  = string
+    copy   = bool
+    config = string
+  }))
+}
+
 variable "routes" {
-  description = "The route config, split into multiple strings."
+  description = "DEPRECATED - Route configuration."
   type        = string
 }
 
 variable "outputs" {
-  description = "The output config, split into multiple strings."
+  description = "DEPRECATED - Output configuration."
   type        = string
 }
 

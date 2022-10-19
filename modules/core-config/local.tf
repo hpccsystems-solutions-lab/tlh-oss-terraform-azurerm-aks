@@ -46,6 +46,7 @@ locals {
     additional_env   = {}
     debug            = true
     filters          = null
+    route_config     = []
     routes           = null
     outputs          = null
   }, lookup(var.core_services_config, "fluentd", {}))
