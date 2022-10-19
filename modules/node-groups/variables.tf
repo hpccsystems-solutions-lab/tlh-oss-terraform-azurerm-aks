@@ -70,6 +70,7 @@ variable "node_groups" {
       sysctl = map(any)
     })
     placement_group_key = string
+    max_pods            = number
     labels              = map(string)
     taints = list(object({
       key    = string

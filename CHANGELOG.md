@@ -64,6 +64,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated Fluentd metadata processing to better capture `app` (this was missed when the change was made to EKS). [@stevehipwell](https://github.com/stevehipwell)
 - Added new `core_config.fluentd.route_config` module variable to enable strongly typed Fluentd output configuration. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `core_config.fluentd.routes` & `core_config.fluentd.outputs` module variables in favour of the new `core_config.fluentd.route_config` module variable. [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for defining a custom maximum number of pods per node group when using the Azure CNI. ([#712](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/712)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.18.1] - 2022-10-14
 

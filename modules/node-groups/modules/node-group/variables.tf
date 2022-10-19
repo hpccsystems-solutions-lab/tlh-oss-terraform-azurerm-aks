@@ -85,6 +85,11 @@ variable "proximity_placement_group_id" {
   type        = string
 }
 
+variable "max_pods" {
+  description = "Maximum number of pods per node, this only apples to clusters using the AzureCNI."
+  type        = string
+}
+
 variable "fips" {
   description = "If the node groups should be FIPS 140-2 enabled."
   type        = bool

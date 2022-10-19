@@ -29,6 +29,7 @@ module "system_node_groups" {
   os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
   proximity_placement_group_id = each.value.proximity_placement_group_id
+  max_pods                     = each.value.max_pods
   fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
@@ -72,6 +73,7 @@ module "user_node_groups" {
   os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
   proximity_placement_group_id = each.value.proximity_placement_group_id
+  max_pods                     = each.value.max_pods
   fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints

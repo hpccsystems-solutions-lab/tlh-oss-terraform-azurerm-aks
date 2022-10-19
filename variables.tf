@@ -189,7 +189,7 @@ variable "node_groups" {
 
   validation {
     condition     = alltrue([for k, v in var.node_groups : length(k) <= 10])
-    error_message = "Node group template names must be 10 characters or less."
+    error_message = "Node group names must be 10 characters or less."
   }
 
   validation {
@@ -199,17 +199,22 @@ variable "node_groups" {
 
   validation {
     condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows"], lookup(v, "node_os", "ubuntu"))])
-    error_message = "Node group template OS must be either \"ubuntu\" or \"windows\"."
+    error_message = "Node group OS must be either \"ubuntu\" or \"windows\"."
   }
 
   validation {
     condition     = alltrue([for k, v in var.node_groups : contains(["gp", "gpd", "mem", "memd", "cpu", "stor"], lookup(v, "node_type", "gp"))])
-    error_message = "Node group template type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
+    error_message = "Node group type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
   }
 
   validation {
     condition     = alltrue([for k, v in var.node_groups : length(lookup(v, "placement_group_key", "")) <= 11])
-    error_message = "Node group template placement key must be 11 characters or less."
+    error_message = "Node group placement key must be 11 characters or less."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : lookup(v, "max_pods", -1) == -1 || (lookup(v, "max_pods", -1) >= 20 && lookup(v, "max_pods", -1) <= 110)])
+    error_message = "Node group max pads must either be -1 or between 20 & 110."
   }
 }
 

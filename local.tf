@@ -64,6 +64,7 @@ locals {
     ultra_ssd           = false
     os_config           = { sysctl = {} }
     placement_group_key = null
+    max_pods            = -1
     labels              = {}
     taints              = []
     tags                = {}
@@ -74,6 +75,8 @@ locals {
     node_arch = "amd64"
     }, lookup(var.experimental, "node_group_os_config", false) ? {} : {
     os_config = { sysctl = {} }
+    }, lookup(var.experimental, "azure_cni_max_pods", false) ? {} : {
+    max_pods = -1
   })
 
   system_node_group = {
