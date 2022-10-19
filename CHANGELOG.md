@@ -59,6 +59,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added Alertmanager data source to Grafana to allow the UI to show Prometheus alerts and the configuration (the Grafana pod needs starting to pick up the data source changes). ([#554](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/554)) [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support to run Fluent Bit with memory buffers to work around a defect. [@aydosman](https://github.com/aydosman)
 - Added experimental options to override service memory requests for specific services. ([#486](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/486)) [@aydosman](https://github.com/aydosman)
+- Updated _AAD Pod Identity_ chart to `4.1.14` (contains _AAD Pod Identity_ [v1.8.13](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#701](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/701)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.18.1] - 2022-10-14
 
