@@ -54,10 +54,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`. [@peterabarr](https://github.com/peterabarr)
 - Changed _Ingress Internal Core_ admission webhook port to `10250`. [#697](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/697) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed support for the Helm provider [v2.7.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.0) and [v2.7.1](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.7.1) due to it being buggy. ([#699](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/699)) [@prikesh-patel](https://github.com/prikesh-patel)
-- Updated full AKS versions which include patch versions for `1.24` to `1.24.6`, `v1.23` to `v1.23.12` & `v1.22` to `v1.22.15`.
 - Updated _Ingress Nginx_ chart to [v4.3.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.3.0)(contains _Ingress Nginx Image_ [v1.4.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.4.0)). ([#681](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/681)) [@peterabarr](https://github.com/peterabarr)
 - Added experimental support for ARM64 nodes. ([#704](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/704)) [@stevehipwell](https://github.com/stevehipwell)
 - Added Alertmanager data source to Grafana to allow the UI to show Prometheus alerts and the configuration (the Grafana pod needs starting to pick up the data source changes). ([#554](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/554)) [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support to run Fluent Bit with memory buffers to work around a defect. [@aydosman](https://github.com/aydosman)
+- Added experimental options to override service memory requests for specific services. ([#486](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/486)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.0.0-beta.18.1] - 2022-10-14
 

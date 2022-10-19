@@ -75,12 +75,12 @@ locals {
     resources = {
       requests = {
         cpu    = "500m"
-        memory = "512Mi"
+        memory = coalesce(local.experimental_memory_override, "512Mi")
       }
 
       limits = {
         cpu    = "1000m"
-        memory = "512Mi"
+        memory = coalesce(local.experimental_memory_override, "512Mi")
       }
     }
 
@@ -176,6 +176,8 @@ locals {
   EOT
 
   output_config = var.outputs != null ? var.outputs : local.default_output
+
+  experimental_memory_override = lookup(var.experimental, "fluentd_memory_override", "")
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

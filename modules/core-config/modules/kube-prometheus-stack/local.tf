@@ -185,12 +185,12 @@ locals {
         resources = {
           requests = {
             cpu    = "500m"
-            memory = "4096Mi"
+            memory = coalesce(local.experimental_memory_override, "4096Mi")
           }
 
           limits = {
             cpu    = "2000m"
-            memory = "4096Mi"
+            memory = coalesce(local.experimental_memory_override, "4096Mi")
           }
         }
 
@@ -1272,6 +1272,8 @@ locals {
   thanos_query_frontend_downstream_tripper_config = <<-EOT
     max_idle_conns_per_host: 100
   EOT
+
+  experimental_memory_override = lookup(var.experimental, "prometheus_memory_override", "")
 
   crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

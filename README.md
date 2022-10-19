@@ -387,6 +387,17 @@ If the log analytics workspace is created in a different resource group to the c
 
 By default the module will configure the OMS agent by creating the `container-azm-ms-agentconfig` ConfigMap; this specifically excludes core namespaces from log collection. You can append additional data keys to the `ConfigMap` via the [config_map_v1_data](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map_v1_data) Terraform resource. It is possible to disable this behaviour by setting the `experimental.oms_agent_create_configmap` input variable to `false`; by doing this you're taking full responsibility for managing your own OMS agent configuration and should make sure that the default configuration log exclusion is replicated.
 
+## Fluent Bit Memory Buffer
+
+Due to a [Fluent Bit issue](https://github.com/fluent/fluent-bit/issues/5214) clusters with high log throughputs have issues when using the filesystem log buffer in Fluent Bit, by setting `fluent_bit_use_memory_buffer = true` you can use memory to buffer the chunks and work around this issue; this option does mean that if the pod restarts logs may be lost.
+
+### Manual Service Memory Override
+
+There are a number of services which can't be dynamically scaled horizontally but still need to be scaled as the cluster size and or load grows. in the future this will be handled by a combination of functionality, but until we have a working solution you can manually override the default memory given to them by setting one of the following variables  (e.g. `experimental = { fluentd_memory_override = "1024Mi" }`).
+
+- _Fluentd_ - `fluentd_memory_override`
+- _Prometheus_ - `prometheus_memory_override`
+
 ### Windows Node Support
 
 > **Important**

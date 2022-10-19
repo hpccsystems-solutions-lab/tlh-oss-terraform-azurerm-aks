@@ -72,3 +72,9 @@ variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)
 }
+
+# tflint-ignore: terraform_unused_declarations
+variable "experimental" {
+  description = "Provide experimental feature flag configuration."
+  type        = any
+}

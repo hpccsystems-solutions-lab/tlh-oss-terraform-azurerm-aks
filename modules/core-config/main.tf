@@ -108,6 +108,8 @@ module "fluent_bit" {
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
 
+  experimental = var.experimental
+
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
     module.storage,
@@ -133,6 +135,8 @@ module "fluentd" {
   routes              = local.fluentd.routes
   outputs             = local.fluentd.outputs
   tags                = var.tags
+
+  experimental = var.experimental
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
