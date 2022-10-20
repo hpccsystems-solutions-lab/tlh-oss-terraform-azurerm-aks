@@ -18,6 +18,11 @@ output "certificate_authority_data" {
   value       = azurerm_kubernetes_cluster.default.kube_config[0].cluster_ca_certificate
 }
 
+output "oidc_issuer_url" {
+  description = "URL for the cluster OpenID Connect identity provider."
+  value       = var.workload_identity ? azurerm_kubernetes_cluster.default.oidc_issuer_url : null
+}
+
 output "cluster_identity" {
   description = "User assigned identity used by the cluster."
   value       = azurerm_user_assigned_identity.default

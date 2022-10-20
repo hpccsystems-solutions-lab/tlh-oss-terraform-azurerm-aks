@@ -40,6 +40,16 @@ variable "cluster_version" {
   nullable    = false
 }
 
+variable "workload_identity" {
+  description = "If the cluster has workload identity enabled."
+  type        = bool
+}
+
+variable "cluster_oidc_issuer_url" {
+  description = "The URL of the cluster OIDC issuer."
+  type        = string
+}
+
 variable "network_plugin" {
   description = "Kubernetes Network Plugin."
   type        = string

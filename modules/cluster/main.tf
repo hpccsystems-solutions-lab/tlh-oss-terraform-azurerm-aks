@@ -35,7 +35,8 @@ resource "azurerm_kubernetes_cluster" "default" {
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  oidc_issuer_enabled = true
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = var.workload_identity
 
   identity {
     type         = "UserAssigned"

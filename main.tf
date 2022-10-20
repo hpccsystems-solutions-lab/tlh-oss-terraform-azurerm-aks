@@ -18,6 +18,7 @@ module "cluster" {
   cluster_name                                            = var.cluster_name
   cluster_version_full                                    = local.cluster_version_full
   sku_tier_paid                                           = var.sku_tier_paid
+  workload_identity                                       = var.experimental.workload_identity
   cluster_endpoint_public_access                          = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs                           = var.cluster_endpoint_access_cidrs
   network_plugin                                          = var.network_plugin
@@ -102,9 +103,11 @@ module "core_config" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  network_plugin  = var.network_plugin
+  cluster_name            = var.cluster_name
+  cluster_version         = var.cluster_version
+  workload_identity       = var.experimental.workload_identity
+  cluster_oidc_issuer_url = module.cluster.oidc_issuer_url
+  network_plugin          = var.network_plugin
 
   ingress_node_group = module.node_groups.ingress_node_group
 

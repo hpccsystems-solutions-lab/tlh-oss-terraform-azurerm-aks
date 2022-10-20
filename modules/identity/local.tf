@@ -1,4 +1,8 @@
 locals {
+  subject_prefix = "system:serviceaccount:"
+
+  subjects = [for x in var.subjects : startswith(x, local.subject_prefix) ? x : "${local.subject_prefix}${x}"]
+
   azure_identity = {
     apiVersion = "aadpodidentity.k8s.io/v1"
     kind       = "AzureIdentity"

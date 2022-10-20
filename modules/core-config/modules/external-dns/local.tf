@@ -1,6 +1,8 @@
 locals {
   chart_version = "1.11.0"
 
+  use_aad_workload_identity = false
+
   chart_values = {
     serviceMonitor = {
       enabled = true
@@ -64,7 +66,20 @@ locals {
   chart_values_private = merge(local.chart_values, {
     nameOverride = "external-dns-private"
 
-    podLabels = merge(var.labels, {
+    serviceAccount = {
+      create = true
+      name   = local.private_service_account_name
+
+      labels = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/use" = "true"
+      } : {}
+
+      annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/client-id" = local.enable_private ? module.identity_private[0].id : ""
+      } : {}
+    }
+
+    podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
       aadpodidbinding = local.enable_private ? module.identity_private[0].name : ""
     })
 
@@ -92,7 +107,20 @@ locals {
   chart_values_public = merge(local.chart_values, {
     nameOverride = "external-dns-public"
 
-    podLabels = merge(var.labels, {
+    serviceAccount = {
+      create = true
+      name   = local.public_service_account_name
+
+      labels = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/use" = "true"
+      } : {}
+
+      annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/client-id" = local.enable_public ? module.identity_public[0].id : ""
+      } : {}
+    }
+
+    podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
       aadpodidbinding = local.enable_public ? module.identity_public[0].name : ""
     })
 
@@ -116,6 +144,9 @@ locals {
       "--annotation-filter=lnrs.io/zone-type in (public, public-private)"
     ], contains(var.additional_sources, "crd") ? local.crd_args : [])
   })
+
+  private_service_account_name = "external-dns-private"
+  public_service_account_name  = "external-dns-public"
 
   crd_args = [
     "--crd-source-apiversion=externaldns.k8s.io/v1alpha1",

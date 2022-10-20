@@ -34,6 +34,11 @@ variable "sku_tier_paid" {
   nullable    = false
 }
 
+variable "workload_identity" {
+  description = "If the cluster has workload identity enabled."
+  type        = bool
+}
+
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Azure Kubernetes managed cluster public API server endpoint is enabled."
   type        = bool

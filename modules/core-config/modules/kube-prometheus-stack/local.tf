@@ -6,6 +6,8 @@ locals {
   # Thanos image version should match version in Thanos chart
   thanos_image_version = "0.28.1"
 
+  use_aad_workload_identity = false
+
   chart_values = {
     global = {
       rbac = {
@@ -127,6 +129,15 @@ locals {
           }
         }
 
+        podMetadata = {
+          labels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
+            aadpodidbinding = module.identity_thanos.name
+          })
+          annotations = {
+            "checksum/thanos-objstore-config" = local.thanos_objstore_secret_checksum
+          }
+        }
+
         logLevel  = "info"
         logFormat = "json"
 
@@ -154,15 +165,6 @@ locals {
 
         podAntiAffinity            = "hard"
         podAntiAffinityTopologyKey = "topology.kubernetes.io/zone"
-
-        podMetadata = {
-          labels = merge(var.labels, {
-            aadpodidbinding = module.identity_thanos.name
-          })
-          annotations = {
-            "checksum/thanos-objstore-config" = local.thanos_objstore_secret_checksum
-          }
-        }
 
         storageSpec = {
           volumeClaimTemplate = {
@@ -218,6 +220,15 @@ locals {
 
       serviceAccount = {
         create = true
+        name   = local.prometheus_service_account_name
+
+        labels = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/use" = "true"
+        } : {}
+
+        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/client-id" = module.identity_thanos.id
+        } : {}
       }
 
       thanosService = {
@@ -346,7 +357,20 @@ locals {
         pspEnabled = false
       }
 
-      podLabels = merge(var.labels, {
+      serviceAccount = {
+        create = true
+        name   = local.grafana_service_account_name
+
+        labels = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/use" = "true"
+        } : {}
+
+        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/client-id" = module.identity_grafana.id
+        } : {}
+      }
+
+      podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_grafana.name
       })
 
@@ -627,9 +651,18 @@ locals {
 
       serviceAccount = {
         create = true
+        name   = local.thanos_compact_service_account_name
+
+        labels = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/use" = "true"
+        } : {}
+
+        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/client-id" = module.identity_thanos.id
+        } : {}
       }
 
-      podLabels = {
+      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 
@@ -876,9 +909,18 @@ locals {
 
       serviceAccount = {
         create = true
+        name   = local.thanos_rule_service_account_name
+
+        labels = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/use" = "true"
+        } : {}
+
+        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/client-id" = module.identity_thanos.id
+        } : {}
       }
 
-      podLabels = {
+      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 
@@ -969,9 +1011,18 @@ locals {
     storeGateway = {
       serviceAccount = {
         create = true
+        name   = local.thanos_store_gateway_service_account_name
+
+        labels = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/use" = "true"
+        } : {}
+
+        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+          "azure.workload.identity/client-id" = module.identity_thanos.id
+        } : {}
       }
 
-      podLabels = {
+      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 
@@ -1251,6 +1302,12 @@ locals {
   thanos_query_frontend_downstream_tripper_config = <<-EOT
     max_idle_conns_per_host: 100
   EOT
+
+  prometheus_service_account_name           = "kube-prometheus-stack-prometheus"
+  thanos_compact_service_account_name       = "thanos-compact"
+  thanos_rule_service_account_name          = "thanos-rule"
+  thanos_store_gateway_service_account_name = "thanos-store-gateway"
+  grafana_service_account_name              = "kube-prometheus-stack-grafana"
 
   crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

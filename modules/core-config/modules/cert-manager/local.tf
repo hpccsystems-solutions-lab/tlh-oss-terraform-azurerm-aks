@@ -1,6 +1,8 @@
 locals {
   chart_version = "1.10.0"
 
+  use_aad_workload_identity = false
+
   chart_values = {
     installCRDs = false
 
@@ -8,7 +10,20 @@ locals {
       priorityClassName = "system-cluster-critical"
     }
 
-    podLabels = merge(var.labels, {
+    serviceAccount = {
+      create = true
+      name   = local.service_account_name
+
+      labels = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/use" = "true"
+      } : {}
+
+      annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        "azure.workload.identity/client-id" = module.identity.id
+      } : {}
+    }
+
+    podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
       aadpodidbinding = module.identity.name
     })
 
@@ -277,6 +292,8 @@ locals {
       }
     }
   })
+
+  service_account_name = "cert-manager"
 
   zerossl_eab_secret_key = "secret"
   zerossl_eabsecret      = "X3Nkc3MwNExIbUdlVXdsQmxBU1Brd0xESWFEZnIxUThxSXlubnppWFFaeFpRYWJGaDkyODZKbVZBQ1NjdHJUU2NFUm1IaC1pUjZXUkZ1cnQxcmRlanc="

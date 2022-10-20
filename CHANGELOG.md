@@ -36,6 +36,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Fixed bug where the `terraform-modules` `ConfigMap` was being overwritten. [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for [Azure AD Workload identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#718](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/718)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-rc.2] - 2022-11-14
 

@@ -68,6 +68,8 @@ module "cert_manager" {
   resource_group_name       = var.resource_group_name
   dns_resource_group_lookup = var.dns_resource_group_lookup
   cluster_name              = var.cluster_name
+  workload_identity         = var.workload_identity
+  cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["cert-manager"].metadata[0].name
   labels                    = var.labels
   acme_dns_zones            = distinct(concat([local.ingress_internal_core.domain], coalesce(var.core_services_config.cert_manager.acme_dns_zones, [])))
@@ -106,6 +108,8 @@ module "external_dns" {
   resource_group_name       = var.resource_group_name
   dns_resource_group_lookup = var.dns_resource_group_lookup
   cluster_name              = var.cluster_name
+  workload_identity         = var.workload_identity
+  cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["dns"].metadata[0].name
   labels                    = var.labels
   additional_sources        = var.core_services_config.external_dns.additional_sources
@@ -139,20 +143,22 @@ module "fluent_bit" {
 module "fluentd" {
   source = "./modules/fluentd"
 
-  subscription_id     = var.subscription_id
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  cluster_name        = var.cluster_name
-  namespace           = kubernetes_namespace.default["logging"].metadata[0].name
-  labels              = var.labels
-  zones               = local.az_count
-  image_repository    = var.core_services_config.fluentd.image_repository
-  image_tag           = var.core_services_config.fluentd.image_tag
-  additional_env      = var.core_services_config.fluentd.additional_env
-  debug               = var.core_services_config.fluentd.debug
-  filters             = var.core_services_config.fluentd.filters
-  route_config        = var.core_services_config.fluentd.route_config
-  tags                = var.tags
+  subscription_id         = var.subscription_id
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  cluster_name            = var.cluster_name
+  workload_identity       = var.workload_identity
+  cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
+  namespace               = kubernetes_namespace.default["logging"].metadata[0].name
+  labels                  = var.labels
+  zones                   = local.az_count
+  image_repository        = var.core_services_config.fluentd.image_repository
+  image_tag               = var.core_services_config.fluentd.image_tag
+  additional_env          = var.core_services_config.fluentd.additional_env
+  debug                   = var.core_services_config.fluentd.debug
+  filters                 = var.core_services_config.fluentd.filters
+  route_config            = var.core_services_config.fluentd.route_config
+  tags                    = var.tags
 
   experimental_memory_override = var.experimental.fluentd_memory_override
 
@@ -190,6 +196,8 @@ module "kube_prometheus_stack" {
   location                                                       = var.location
   resource_group_name                                            = var.resource_group_name
   cluster_name                                                   = var.cluster_name
+  workload_identity                                              = var.workload_identity
+  cluster_oidc_issuer_url                                        = var.cluster_oidc_issuer_url
   namespace                                                      = kubernetes_namespace.default["monitoring"].metadata[0].name
   labels                                                         = var.labels
   subnet_id                                                      = var.subnet_id

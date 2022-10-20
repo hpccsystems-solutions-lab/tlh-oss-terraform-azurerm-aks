@@ -18,7 +18,22 @@ resource "azurerm_role_assignment" "default" {
   scope                = var.roles[count.index].scope
 }
 
+resource "azurerm_federated_identity_credential" "default" {
+  for_each = var.workload_identity ? toset(local.subjects) : []
+
+  name = var.name
+
+  resource_group_name = var.resource_group_name
+  parent_id           = azurerm_user_assigned_identity.default.name
+
+  issuer   = var.oidc_issuer_url
+  audience = ["api://AzureADTokenExchange"]
+  subject  = each.value
+}
+
 resource "kubectl_manifest" "azure_identity" {
+  count = var.workload_identity ? 0 : 1
+
   yaml_body = yamlencode(local.azure_identity)
 
   server_side_apply = true
@@ -30,6 +45,8 @@ resource "kubectl_manifest" "azure_identity" {
 }
 
 resource "kubectl_manifest" "azure_identity_binding" {
+  count = var.workload_identity ? 0 : 1
+
   yaml_body = yamlencode(local.azure_identity_binding)
 
   server_side_apply = true

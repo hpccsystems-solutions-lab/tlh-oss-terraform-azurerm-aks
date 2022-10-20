@@ -8,9 +8,24 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "workload_identity" {
+  description = "If the cluster has workload identity enabled."
+  type        = bool
+}
+
+variable "oidc_issuer_url" {
+  description = "The OIDC issuer url."
+  type        = string
+}
+
 variable "name" {
   description = "Name for Azure identity to be used by AAD."
   type        = string
+}
+
+variable "subjects" {
+  description = "Subjects who can assume the identity."
+  type        = list(string)
 }
 
 variable "namespace" {
