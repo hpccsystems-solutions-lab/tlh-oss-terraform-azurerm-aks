@@ -31,7 +31,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0-beta.24] - UNRELEASED
+## [v1.0.0-beta.24] - 2022-10-24
 
 > **Warning**
 > A storage account is created with the Thanos deployment which has network rules set to deny by default. A [service endpoint](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) will need to be added to your subnet [resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet#service_endpoints).
@@ -48,6 +48,70 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 > ```
 
 ### Highlights
+
+The `v1.0.0-beta.24` release is an incremented beta release. This includes adding support for _Thanos_, improvements to the _Fluentd_ route configuration, updated AKS versions, core service chart updates, and support for several experimental features.
+
+Thanks to [@stevehipwell](https://github.com/stevehipwell) and the whole IOG Systems Engineering team for their hard work on this release.
+
+#### Thanos Support
+
+Thanos is now installed as a core service as the implementation for HA Prometheus. A service endpoint may need adding to the subnets, to enable connect to the storage account. The _Kube Prometheus Stack_ and its volumes will also need to be deleted, so a volume with a smaller size can be used for _Prometheus_ data.
+
+#### Structured Fluentd Route Configuration
+
+Configuring Fluentd with a structured route configuration makes it easier to route logs to the desired destination by removing the possibility of not having matching route and output configurations (it is also a prerequisite to updating to the latest Fluentd Aggregator Helm chart). Swapping to `route_config` from `routes` & `outputs` should be as simple as moving the configuration from the strings into a list of structured objects.
+
+<details><summary>Comparison of a Fluentd configuration using the old routes & outputs, and a configuration using the new route_config.</summary>
+
+```terraform
+# Using routes & outputs
+fluentd = {
+  routes  = <<-EOT
+    <route **>
+      copy
+      @label @example
+    </route>
+  EOT
+  outputs = <<-EOT
+    <label @example>
+      <match **>
+        @type null
+      </match>
+    </label>
+  EOT
+}
+```
+
+```terraform
+# Using route_config
+fluentd = {
+  route_config = [{
+    match = "**"
+    label = "@example"
+    copy = true
+    config = <<-EOT
+      <match **>
+        @type null
+      </match>
+    EOT
+  }]
+}
+```
+
+</details>
+
+#### Updated AKS versions
+
+The AKS versions have been patched; `v1.24.3` to `1.24.6`, `v1.23.8` to `v1.23.12` & `v1.22.11` to `v1.22.15`. These changes fix a number of CVEs & defects and keep the AKS version supported by Azure.
+
+#### Experimental ARM64 Support
+
+The experimental ARM64 node support allows end-users to test running their workloads on [Ampere Altra](https://azure.microsoft.com/en-us/blog/azure-virtual-machines-with-ampere-altra-arm-based-processors-generally-available/) based ARM64 nodes.
+
+#### Experimental Features
+
+- Experimental support for Fluentd memory buffers can be enabled by setting `experimental = { fluent_bit_use_memory_buffer = true }`.
+- Experimental support to increase resources for Fluentd and Prometheus can be through `experimental.fluentd_memory_override` and `experimental.prometheus_memory_override`.
 
 ### All Changes
 
