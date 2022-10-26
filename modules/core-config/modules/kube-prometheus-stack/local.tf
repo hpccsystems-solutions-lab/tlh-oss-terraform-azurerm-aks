@@ -1,7 +1,7 @@
 locals {
   chart_version = "39.11.0"
 
-  thanos_chart_version = "1.6.1"
+  thanos_chart_version = "1.6.2"
 
   # Thanos image version should match version in Thanos chart
   thanos_image_version = "0.28.1"
