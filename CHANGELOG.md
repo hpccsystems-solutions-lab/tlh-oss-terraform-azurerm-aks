@@ -38,6 +38,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Updated Thanos chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
+- Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/732)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-beta.24] - 2022-10-24
 
