@@ -41,6 +41,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/732)) [@peterabarr](https://github.com/peterabarr)
 - Fixed deprecation warning for `logs` attribute in `data.azurerm_monitor_diagnostic_categories.default.logs`. ([#649](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/649)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated minimum version of the Helm provider to [v2.6.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.6.0). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated minimum version of the Kubernetes provider to [v2.12.1](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.12.1). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.24] - 2022-10-24
 
