@@ -39,6 +39,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Updated Thanos chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/732)) [@peterabarr](https://github.com/peterabarr)
+- Fixed deprecation warning for `logs` attribute in `data.azurerm_monitor_diagnostic_categories.default.logs`. ([#649](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/649)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.24] - 2022-10-24
 

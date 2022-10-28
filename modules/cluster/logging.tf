@@ -32,7 +32,7 @@ resource "azurerm_monitor_diagnostic_setting" "default" {
   storage_account_id         = each.value.storage_account_id
 
   dynamic "log" {
-    for_each = data.azurerm_monitor_diagnostic_categories.default.logs
+    for_each = data.azurerm_monitor_diagnostic_categories.default.log_category_types
 
     content {
       category = log.value

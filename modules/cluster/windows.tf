@@ -3,7 +3,7 @@ resource "random_password" "windows_admin_username" {
 
   length  = 8
   special = false
-  number  = false
+  numeric = false
 }
 
 resource "random_password" "windows_admin_password" {
