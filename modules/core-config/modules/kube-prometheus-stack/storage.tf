@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "data" {
-  name                = "${replace(var.cluster_name, "-", "")}data"
+  name                = "${replace(regex("aks-\\d+", var.cluster_name), "-", "")}data"
   resource_group_name = var.resource_group_name
   location            = var.location
 

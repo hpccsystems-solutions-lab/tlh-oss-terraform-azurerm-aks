@@ -44,7 +44,20 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated minimum version of the Helm provider to [v2.6.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.6.0). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated minimum version of the Kubernetes provider to [v2.12.1](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.12.1). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
 
+## [v1.0.0-beta.25] - 2022-10-28
+
+### Highlights
+
+The `v1.0.0-beta.25` release is a patch fix for a bug where long cluster names can cause the storage account name to exceed its character limit of 25 characters. When upgrading from [v1.0.0-beta.24](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/releases/tag/v1.0.0-beta.24), the existing storage account will be deleted and replaced due to its name being shortened.
+
+### All Changes
+
+- Fixed bug with storage account names exceeding the character limit by shortening the storage account name. ([#735](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/735)) [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.0.0-beta.24] - 2022-10-24
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.0.0-beta.25` instead due to a bug with storage account name exceeding the character limit for long cluster names.
 
 > **Warning**
 > A storage account is created with the Thanos deployment which has network rules set to deny by default. A [service endpoint](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) will need to be added to your subnet [resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet#service_endpoints).
