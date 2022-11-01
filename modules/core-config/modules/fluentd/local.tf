@@ -168,9 +168,6 @@ EOT
     copy
     @label @PROMETHEUS
   </route>
-%{if var.routes != null~}
-  ${indent(2, trimspace(var.routes))}
-%{else~}
 %{for route in local.route_config~}
   <route ${route.match}>
     @label ${route.label}
@@ -179,20 +176,15 @@ EOT
 %{endif~}
   </route>
 %{endfor~}
-%{endif~}
 </match>
 EOT
 
   output_config_string = <<EOT
-%{if var.outputs != null~}
-${trimspace(var.outputs)}
-%{else~}
 %{for route in local.route_config~}
 <label ${route.label}>
   ${indent(2, trimspace(route.config))}
 </label>
 %{endfor~}
-%{endif~}
 EOT
 
   experimental_memory_override = lookup(var.experimental, "fluentd_memory_override", "")

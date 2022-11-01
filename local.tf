@@ -39,20 +39,12 @@ locals {
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
-  # # This can be used when azuread_clusterrole_map is removed
-  # rbac_bindings = merge({
-  #   cluster_admin_users  = {}
-  #   cluster_admin_groups = []
-  #   cluster_view_users   = {}
-  #   cluster_view_groups  = []
-  # }, var.rbac_bindings, {cluster_admin_groups = []})
-
-  rbac_bindings = {
-    cluster_admin_users  = merge(var.azuread_clusterrole_map.cluster_admin_users, try(var.rbac_bindings.cluster_admin_users, {}))
+  rbac_bindings = merge({
+    cluster_admin_users  = {}
     cluster_admin_groups = []
-    cluster_view_users   = merge(var.azuread_clusterrole_map.standard_view_users, var.azuread_clusterrole_map.cluster_view_users, try(var.rbac_bindings.cluster_view_users, {}))
-    cluster_view_groups  = distinct(concat(values(var.azuread_clusterrole_map.standard_view_groups), try(var.rbac_bindings.cluster_view_groups, [])))
-  }
+    cluster_view_users   = {}
+    cluster_view_groups  = []
+  }, var.rbac_bindings, { cluster_admin_groups = [] })
 
   node_group_defaults = {
     node_arch           = "amd64"
@@ -101,7 +93,7 @@ locals {
     system = merge(local.node_group_defaults, local.system_node_group, { system = true }, local.node_group_overrides)
   }
 
-  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.node_group_overrides) } : { for x in var.node_group_templates : x.name => x }
+  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.node_group_overrides) } : {}
 
   ingress_node_group = anytrue([for group in local.node_groups : try(group.labels["lnrs.io/tier"] == "ingress", false) && (length(group.taints) == 0 || (length(group.taints) == 1 && try(group.taints[0].key == "ingress", false)))])
 

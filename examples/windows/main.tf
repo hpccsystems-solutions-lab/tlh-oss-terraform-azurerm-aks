@@ -135,11 +135,10 @@ module "aks" {
 
   podnet_cidr_block = local.podnet_cidr_block
 
-  azuread_clusterrole_map = {
-    cluster_admin_users  = {}
-    cluster_view_users   = {}
-    standard_view_users  = {}
-    standard_view_groups = {}
+  rbac_bindings = {
+    cluster_admin_users = {}
+    cluster_view_users  = {}
+    cluster_view_groups = []
   }
 
   node_groups = {

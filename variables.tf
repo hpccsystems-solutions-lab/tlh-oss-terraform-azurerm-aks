@@ -166,22 +166,6 @@ variable "rbac_bindings" {
   }
 }
 
-variable "azuread_clusterrole_map" {
-  description = "DEPRECATED - Map of Azure AD user and group IDs to configure via Kubernetes ClusterRoleBindings."
-  type = object({
-    cluster_admin_users  = map(string)
-    cluster_view_users   = map(string)
-    standard_view_users  = map(string)
-    standard_view_groups = map(string)
-  })
-  default = {
-    cluster_admin_users  = {}
-    cluster_view_users   = {}
-    standard_view_users  = {}
-    standard_view_groups = {}
-  }
-}
-
 variable "node_groups" {
   description = "Node groups to configure."
   type        = any
@@ -215,49 +199,6 @@ variable "node_groups" {
   validation {
     condition     = alltrue([for k, v in var.node_groups : lookup(v, "max_pods", -1) == -1 || (lookup(v, "max_pods", -1) >= 20 && lookup(v, "max_pods", -1) <= 110)])
     error_message = "Node group max pads must either be -1 or between 20 & 110."
-  }
-}
-
-variable "node_group_templates" {
-  description = "DEPRECATED Templates describing the requires node groups."
-  type = list(object({
-    name                = string
-    node_os             = string
-    node_type           = string
-    node_type_version   = string
-    node_size           = string
-    single_group        = bool
-    min_capacity        = number
-    max_capacity        = number
-    placement_group_key = string
-    labels              = map(string)
-    taints = list(object({
-      key    = string
-      value  = string
-      effect = string
-    }))
-    tags = map(string)
-  }))
-  default = []
-
-  validation {
-    condition     = alltrue([for x in var.node_group_templates : x.name != null && length(x.name) <= 10])
-    error_message = "Node group template names must be 10 characters or less."
-  }
-
-  validation {
-    condition     = alltrue([for x in var.node_group_templates : contains(["ubuntu", "windows"], x.node_os)])
-    error_message = "Node group template OS must be either \"ubuntu\" or \"windows\"."
-  }
-
-  validation {
-    condition     = alltrue([for x in var.node_group_templates : contains(["gp", "gpd", "mem", "memd", "cpu", "stor"], x.node_type)])
-    error_message = "Node group template type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
-  }
-
-  validation {
-    condition     = alltrue([for x in var.node_group_templates : length(x.placement_group_key != null ? x.placement_group_key : "") <= 11])
-    error_message = "Node group template placement key must be 11 characters or less."
   }
 }
 

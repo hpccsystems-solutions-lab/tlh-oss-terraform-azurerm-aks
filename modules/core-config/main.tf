@@ -133,8 +133,6 @@ module "fluentd" {
   debug               = local.fluentd.debug
   filters             = local.fluentd.filters
   route_config        = local.fluentd.route_config
-  routes              = local.fluentd.routes
-  outputs             = local.fluentd.outputs
   tags                = var.tags
 
   experimental = var.experimental

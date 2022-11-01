@@ -68,16 +68,6 @@ variable "route_config" {
   }))
 }
 
-variable "routes" {
-  description = "DEPRECATED - Route configuration."
-  type        = string
-}
-
-variable "outputs" {
-  description = "DEPRECATED - Output configuration."
-  type        = string
-}
-
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)

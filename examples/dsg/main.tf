@@ -74,11 +74,10 @@ locals {
   public_access_cidrs  = ["0.0.0.0/0"]
   private_access_cidrs = []
 
-  azuread_clusterrole_map = {
-    cluster_admin_users  = local.cluster_admin_users
-    cluster_view_users   = {}
-    standard_view_users  = {}
-    standard_view_groups = {}
+  rbac_bindings = {
+    cluster_admin_users = local.cluster_admin_users
+    cluster_view_users  = {}
+    cluster_view_groups = []
   }
 
   node_groups = {
@@ -200,7 +199,7 @@ module "aks" {
 
   podnet_cidr_block = local.podnet_cidr_block
 
-  azuread_clusterrole_map = local.azuread_clusterrole_map
+  rbac_bindings = local.rbac_bindings
 
   node_groups = local.node_groups
 

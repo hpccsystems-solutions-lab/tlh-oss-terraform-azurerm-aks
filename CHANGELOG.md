@@ -15,9 +15,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- Module input variable `node_group_templates` is deprecated and will be removed in the `v1.0.0-rc.1` release.
-- Module input variable `azuread_clusterrole_map` is deprecated and will be removed in the `v1.0.0-rc.1` release.
-- Module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs` are deprecated and will be removed in the `v1.0.0-rc.1` release.
+n/a
 
 ---
 
@@ -43,6 +41,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated minimum version of the Helm provider to [v2.6.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.6.0). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated minimum version of the Kubernetes provider to [v2.12.1](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.12.1). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Removed module input variable `node_group_templates`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Removed module input variable `azuread_clusterrole_map`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Removed module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.25] - 2022-10-28
 

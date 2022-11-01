@@ -50,11 +50,10 @@ data "azuread_group" "subscription_owner" {
 locals {
   cluster_name_short = trimprefix(local.cluster_name, "${local.account_code}-")
 
-  azuread_clusterrole_map = {
-    cluster_admin_users  = local.cluster_admin_users
-    cluster_view_users   = {}
-    standard_view_users  = {}
-    standard_view_groups = {}
+  rbac_bindings = {
+    cluster_admin_users = local.cluster_admin_users
+    cluster_view_users  = {}
+    cluster_view_groups = []
   }
 
   node_groups = {
@@ -238,7 +237,7 @@ module "aks" {
 
   admin_group_object_ids = [data.azuread_group.subscription_owner.object_id]
 
-  azuread_clusterrole_map = local.azuread_clusterrole_map
+  rbac_bindings = local.rbac_bindings
 
   node_groups = local.node_groups
 
