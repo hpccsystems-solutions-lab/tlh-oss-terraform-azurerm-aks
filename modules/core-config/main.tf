@@ -25,6 +25,20 @@ resource "kubectl_manifest" "kube_prometheus_stack_crds" {
   wait              = true
 }
 
+module "pre_upgrade" {
+  source = "./modules/pre-upgrade"
+
+  cluster_name        = var.cluster_name
+  subscription_id     = var.subscription_id
+  resource_group_name = var.resource_group_name
+
+  depends_on = [
+    kubectl_manifest.kube_prometheus_stack_crds,
+    module.storage,
+    kubernetes_namespace.default
+  ]
+}
+
 module "aad_pod_identity" {
   source = "./modules/aad-pod-identity"
 
@@ -39,7 +53,8 @@ module "aad_pod_identity" {
   experimental = var.experimental
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds
+    kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade
   ]
 }
 
@@ -63,6 +78,7 @@ module "cert_manager" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.aad_pod_identity
   ]
 }
@@ -75,7 +91,8 @@ module "coredns" {
   forward_zones = local.coredns.forward_zones
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds
+    kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade
   ]
 }
 
@@ -98,6 +115,7 @@ module "external_dns" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.aad_pod_identity
   ]
 }
@@ -112,6 +130,7 @@ module "fluent_bit" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.storage,
     module.fluentd
   ]
@@ -139,6 +158,7 @@ module "fluentd" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.storage,
     module.aad_pod_identity
   ]
@@ -158,6 +178,7 @@ module "ingress_internal_core" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.cert_manager
   ]
 }
@@ -197,6 +218,7 @@ module "kube_prometheus_stack" {
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade,
     module.storage,
     module.aad_pod_identity,
     module.cert_manager,
@@ -211,7 +233,8 @@ module "local_volume_provisioner" {
   labels    = var.labels
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds
+    kubectl_manifest.kube_prometheus_stack_crds,
+    module.pre_upgrade
   ]
 }
 
