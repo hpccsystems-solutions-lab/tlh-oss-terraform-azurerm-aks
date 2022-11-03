@@ -31,6 +31,9 @@ n/a
 
 ## [v1.0.0-rc.1] - UNRELEASED
 
+> **Warning**
+> According to the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) for the OIDS Issuer some pods might become stuck in a failed state after it has been enabled; you will need to manually re-start these.
+
 ### Highlights
 
 ### All Changes
@@ -44,6 +47,7 @@ n/a
 - Removed module input variable `node_group_templates`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed module input variable `azuread_clusterrole_map`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Added the [AKS OIDC Issuer](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) in preparation for supporting [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#747](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/747)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.25] - 2022-10-28
 
