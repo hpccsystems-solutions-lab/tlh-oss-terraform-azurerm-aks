@@ -29,7 +29,7 @@ kubectl config set-credentials "azure-user" \
 
 kubectl config set-context "${CLUSTER_NAME}" --cluster="${CLUSTER_NAME}" --user=azure-user
 
-if [[ -z "$(kubectl --namespace monitoring get daemonset.apps -l app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=prometheus-node-exporter --output name)" ]]
+if [[ -z "$(kubectl --namespace monitoring get daemonset.apps -l app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=prometheus-node-exporter --output name)" ]] && [[ -n "$(kubectl --namespace monitoring get daemonset.apps -l release=kube-prometheus-stack,app=prometheus-node-exporter --output name)" ]]
 then
   json_value_0="$(kubectl --namespace monitoring get "$(kubectl --namespace monitoring get daemonset.apps -l app=prometheus-node-exporter --output name)" --output json)"
   json_value_1="$(echo "${json_value_0}" | jq -r '.spec.selector.matchLabels."app" |= "prometheus-node-exporter"' | jq -r '.spec.selector.matchLabels."app.kubernetes.io/name" = .spec.selector.matchLabels."app" | del(.spec.selector.matchLabels."app")')"
