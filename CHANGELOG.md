@@ -38,7 +38,7 @@ n/a
 
 ### All Changes
 
-- Updated Thanos chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
+- Updated _Thanos_ chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/732)) [@peterabarr](https://github.com/peterabarr)
 - Fixed deprecation warning for `logs` attribute in `data.azurerm_monitor_diagnostic_categories.default.logs`. ([#649](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/649)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
@@ -48,6 +48,7 @@ n/a
 - Removed module input variable `azuread_clusterrole_map`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added the [AKS OIDC Issuer](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) in preparation for supporting [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#747](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/747)) [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Fluent Bit_ chart to [v0.20.10](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.10). ([#744](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/744)) [@HadeedShaikh](https://github.com/hadeeds)
 
 ## [v1.0.0-beta.25] - 2022-10-28
 
