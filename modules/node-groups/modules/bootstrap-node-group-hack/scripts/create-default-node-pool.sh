@@ -12,7 +12,7 @@ then
 fi
 
 lookup="$(az aks nodepool list \
-  --subscription "${SUBSCRIPTION_ID}" \
+  --subscription "${AZURE_SUBSCRIPTION_ID}" \
   --resource-group "${RESOURCE_GROUP_NAME}" \
   --cluster-name "${CLUSTER_NAME}" \
   | jq -r --arg node_pool_name "${NODE_POOL_NAME}" '.[] | select(.name == $node_pool_name)')"
@@ -23,7 +23,7 @@ then
   then
     az aks nodepool add \
       --enable-encryption-at-host \
-      --subscription "${SUBSCRIPTION_ID}" \
+      --subscription "${AZURE_SUBSCRIPTION_ID}" \
       --resource-group "${RESOURCE_GROUP_NAME}" \
       --cluster-name "${CLUSTER_NAME}" \
       --vnet-subnet-id "${SUBNET_ID}" \
@@ -36,7 +36,7 @@ then
   else
     az aks nodepool add \
       --enable-encryption-at-host \
-      --subscription "${SUBSCRIPTION_ID}" \
+      --subscription "${AZURE_SUBSCRIPTION_ID}" \
       --resource-group "${RESOURCE_GROUP_NAME}" \
       --cluster-name "${CLUSTER_NAME}" \
       --vnet-subnet-id "${SUBNET_ID}" \

@@ -28,9 +28,9 @@ resource "kubectl_manifest" "kube_prometheus_stack_crds" {
 module "pre_upgrade" {
   source = "./modules/pre-upgrade"
 
-  cluster_name        = var.cluster_name
   subscription_id     = var.subscription_id
   resource_group_name = var.resource_group_name
+  cluster_name        = var.cluster_name
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
