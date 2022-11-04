@@ -15,7 +15,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-n/a
+- AKS cluster version `v1.22` is deprecated and will be removed in the `v1.1.0` release.
 
 ---
 
@@ -60,6 +60,7 @@ n/a
 - Changed `experimental` module variable to strongly typed. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Changed minimum value for `node_groups.max_pods` to `12`. [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed support for Terraform version [v1.3.4](https://github.com/hashicorp/terraform/releases/tag/v1.3.4) due to errors when working with complex optional object attributes. [@prikesh-patel](https://github.com/prikesh-patel)
+- Deprecated AKS cluster version `v1.22`. ([#757](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/757)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.26] - 2022-11-04
 
