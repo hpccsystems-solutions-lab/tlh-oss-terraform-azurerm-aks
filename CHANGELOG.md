@@ -51,7 +51,26 @@ n/a
 - Updated _Fluent Bit_ chart to [v0.20.10](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.10). ([#744](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/744)) [@HadeedShaikh](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v41.7.3](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-41.7.0)(contains _Kube State Metrics_ [v4.22.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.22.1), _Grafana_ [v6.43.3](https://github.com/grafana/helm-charts/releases/tag/grafana-6.43.3), _Prometheus Node Exporter_ [v4.4.2](https://github.com/prometheus-community/helm-charts/releases/tag/prometheus-node-exporter-4.4.2), _Prometheus Operator_ [v0.60.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.60.1), _Prometheus_ [v2.39.1](https://github.com/prometheus/prometheus/releases/tag/v2.39.1)). ([#658](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/658)) [@peterabarr](https://github.com/peterabarr)
 
+## [v1.0.0-beta.26] - 2022-11-04
+
+> **Warning**
+> Applying this module version may trigger a bug in the helm provider for the Kube Prometheus Stack helm release, due to its values being updated. To get around this, you can re-apply your terraform configuration.
+
+### Highlights
+
+The `v1.0.0-beta.26` release is a patch fix for a bug to make storage account names globally unique in Azure by adding a random string suffix to the storage account name.
+
+### All Changes
+
+- Fixed bug which caused potential duplicates of storage account names by adding a random string as a suffix to the storage account name. ([#749](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/749)) [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.0.0-beta.25] - 2022-10-28
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.0.0-beta.26` instead due to a bug with storage account name conflicting due to not being globally unique.
+
+> **Warning**
+> Applying this module version may trigger a bug in the helm provider for the Kube Prometheus Stack helm release, due to its values being updated. To get around this, you can re-apply your terraform configuration.
 
 ### Highlights
 
@@ -64,10 +83,13 @@ The `v1.0.0-beta.25` release is a patch fix for a bug where long cluster names c
 ## [v1.0.0-beta.24] - 2022-10-24
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.0.0-beta.25` instead due to a bug with storage account name exceeding the character limit for long cluster names.
+> **DO NOT USE THIS VERSION** - Please use `v1.0.0-beta.26` instead due to a bug with storage account name exceeding the character limit for long cluster names, and storage account name conflicting due to not being globally unique.
 
 > **Warning**
-> A storage account is created with the Thanos deployment which has network rules set to deny by default. A [service endpoint](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) will need to be added to your subnet [resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet#service_endpoints).
+> A storage account is created with the Thanos deployment which has network rules set to deny by default. A [service endpoint](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview) will need to be added to your subnet [resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet#service_endpoints).globally unique.
+
+> **Warning**
+> Applying this module version may trigger a bug in the helm provider for the Kube Prometheus Stack helm release, due to its values being updated. To get around this, you can re-apply your terraform configuration.
 
 > **Warning**
 > Introducing Thanos allows the Prometheus volume to largely reduce its size. However, this large volume will remain unless the Kube Prometheus Stack chart is removed and the volume is deleted, before applying this module upgrade. Check the Azure disk also gets deleted after removing the volume claims. Alternatively, you can upgrade and reinstall the helm chart and volume in a maintenance window. This would mean the existing metrics will be kept with just an outage period for the reinstallation.

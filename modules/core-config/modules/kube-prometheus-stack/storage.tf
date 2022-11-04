@@ -1,5 +1,12 @@
+resource "random_string" "storage_account_suffix" {
+  length  = 8
+  special = false
+  lower   = true
+  upper   = false
+}
+
 resource "azurerm_storage_account" "data" {
-  name                = "${replace(regex("aks-\\d+", var.cluster_name), "-", "")}data"
+  name                = "${replace(regex("aks-\\d+", var.cluster_name), "-", "")}data${random_string.storage_account_suffix.result}"
   resource_group_name = var.resource_group_name
   location            = var.location
 
