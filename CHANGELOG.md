@@ -32,7 +32,10 @@ n/a
 ## [v1.0.0-rc.1] - UNRELEASED
 
 > **Warning**
-> According to the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) for the OIDS Issuer some pods might become stuck in a failed state after it has been enabled; you will need to manually re-start these.
+> The minimum Terraform version has been increased to `v1.3.3` to provide support for [optional object type attributes](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes), please make sure that you update your Terraform versions to reflect this. Terraform `v1.3.4` is **NOT** supported due to a [bug](https://github.com/hashicorp/terraform/issues/32160) observed when working with complex optional object attributes.
+
+> **Warning**
+> According to the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) for the OIDC Issuer some pods might become stuck in a failed state after it has been enabled; you will need to manually re-start these.
 
 ### Highlights
 
@@ -50,6 +53,13 @@ n/a
 - Added the [AKS OIDC Issuer](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) in preparation for supporting [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#747](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/747)) [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Fluent Bit_ chart to [v0.20.10](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.10). ([#744](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/744)) [@HadeedShaikh](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v41.7.3](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-41.7.0)(contains _Kube State Metrics_ [v4.22.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.22.1), _Grafana_ [v6.43.3](https://github.com/grafana/helm-charts/releases/tag/grafana-6.43.3), _Prometheus Node Exporter_ [v4.4.2](https://github.com/prometheus-community/helm-charts/releases/tag/prometheus-node-exporter-4.4.2), _Prometheus Operator_ [v0.60.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.60.1), _Prometheus_ [v2.39.1](https://github.com/prometheus/prometheus/releases/tag/v2.39.1)). ([#658](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/658)) [@peterabarr](https://github.com/peterabarr)
+- Updated minimum Terraform version to [v1.3.3](https://github.com/hashicorp/terraform/releases/tag/v1.3.3) so we can support [optional object type attributes](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes). ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed module input variables to not be nullable unless they explicitly can be. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed `node_groups` module variable to strongly typed. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed `core_services_config` module variable to strongly typed. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed `experimental` module variable to strongly typed. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Changed minimum value for `node_groups.max_pods` to `12`. [@prikesh-patel](https://github.com/prikesh-patel)
+- Removed support for Terraform version [v1.3.4](https://github.com/hashicorp/terraform/releases/tag/v1.3.4) due to errors when working with complex optional object attributes. [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-beta.26] - 2022-11-04
 

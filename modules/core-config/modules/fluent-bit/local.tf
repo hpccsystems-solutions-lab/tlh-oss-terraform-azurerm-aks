@@ -155,7 +155,7 @@ locals {
       db.locking        true
       db.journal_mode   wal
       mem_buf_limit     16MB
-      storage.type      ${local.experimental_use_memory_buffer ? "memory" : "filesystem"}
+      storage.type      ${var.experimental_use_memory_buffer ? "memory" : "filesystem"}
 
     [INPUT]
       name              systemd
@@ -166,7 +166,7 @@ locals {
       strip_underscores true
       db                /var/fluent-bit/state/flb-storage/systemd.db
       db.sync           normal
-      storage.type      ${local.experimental_use_memory_buffer ? "memory" : "filesystem"}
+      storage.type      ${var.experimental_use_memory_buffer ? "memory" : "filesystem"}
   EOT
 
   filter_config = <<-EOT
@@ -189,8 +189,6 @@ locals {
       port                     24224
       storage.total_limit_size 16GB
   EOT
-
-  experimental_use_memory_buffer = lookup(var.experimental, "fluent_bit_use_memory_buffer", false)
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

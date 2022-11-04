@@ -41,18 +41,17 @@ module "cluster" {
   control_plane_logging_storage_account_categories        = var.control_plane_logging_storage_account_categories
   control_plane_logging_storage_account_retention_enabled = var.control_plane_logging_storage_account_retention_enabled
   control_plane_logging_storage_account_retention_days    = var.control_plane_logging_storage_account_retention_days
-  fips                                                    = local.experimental_fips
+  fips                                                    = var.experimental.fips
   maintenance_window_offset                               = var.maintenance_window_offset
   maintenance_window_allowed_days                         = var.maintenance_window_allowed_days
   maintenance_window_allowed_hours                        = var.maintenance_window_allowed_hours
   maintenance_window_not_allowed                          = var.maintenance_window_not_allowed
-  oms_agent                                               = local.experimental_oms_agent
-  oms_agent_log_analytics_workspace_id                    = local.experimental_oms_agent_log_analytics_workspace_id
-  windows_support                                         = local.experimental_windows_support
+  oms_agent                                               = var.experimental.oms_agent
+  oms_agent_log_analytics_workspace_id                    = var.experimental.oms_agent_log_analytics_workspace_id
+  windows_support                                         = var.experimental.windows_support
   cluster_tags                                            = local.cluster_tags
   tags                                                    = local.tags
   timeouts                                                = local.timeouts
-  experimental                                            = var.experimental
 }
 
 module "rbac" {
@@ -60,7 +59,7 @@ module "rbac" {
 
   azure_env     = var.azure_env
   cluster_id    = module.cluster.id
-  rbac_bindings = local.rbac_bindings
+  rbac_bindings = var.rbac_bindings
   labels        = local.labels
 
   depends_on = [
@@ -82,11 +81,12 @@ module "node_groups" {
   availability_zones   = local.availability_zones
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
-  node_groups          = merge(local.node_groups, local.system_node_groups)
-  fips                 = local.experimental_fips
+  node_groups          = var.node_groups
+  fips                 = var.experimental.fips
   labels               = local.labels
   tags                 = local.tags
-  experimental         = var.experimental
+
+  experimental = var.experimental
 
   depends_on = [
     module.cluster
@@ -106,7 +106,7 @@ module "core_config" {
   cluster_version = var.cluster_version
   network_plugin  = var.network_plugin
 
-  ingress_node_group = local.ingress_node_group
+  ingress_node_group = module.node_groups.ingress_node_group
 
   subnet_id          = local.subnet_id
   availability_zones = local.availability_zones
@@ -120,10 +120,10 @@ module "core_config" {
 
   control_plane_log_analytics_workspace_id                       = module.cluster.control_plane_log_analytics_workspace_id
   control_plane_log_analytics_workspace_different_resource_group = var.control_plane_logging_external_workspace_different_resource_group
-  oms_agent                                                      = local.experimental_oms_agent
-  oms_agent_log_analytics_workspace_id                           = local.experimental_oms_agent_log_analytics_workspace_id
-  oms_agent_log_analytics_workspace_different_resource_group     = local.experimental_oms_agent_log_analytics_workspace_different_resource_group
-  oms_agent_create_configmap                                     = local.experimental_oms_agent_create_configmap
+  oms_agent                                                      = var.experimental.oms_agent
+  oms_agent_log_analytics_workspace_id                           = var.experimental.oms_agent_log_analytics_workspace_id
+  oms_agent_log_analytics_workspace_different_resource_group     = var.experimental.oms_agent_log_analytics_workspace_different_resource_group
+  oms_agent_create_configmap                                     = var.experimental.oms_agent_create_configmap
 
   labels = local.labels
   tags   = local.tags

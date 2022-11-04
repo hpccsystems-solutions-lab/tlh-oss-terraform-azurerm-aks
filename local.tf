@@ -18,12 +18,11 @@ locals {
   cluster_full_versions = merge({
     "1.23" = "1.23.12"
     "1.22" = "1.22.15"
-    }, local.experimental_v1_24 ? {
+    }, var.experimental.v1_24 ? {
     "1.24" = "1.24.6"
   } : {})
 
   availability_zones = [1, 2, 3]
-  az_count           = length(local.availability_zones)
 
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
@@ -38,64 +37,6 @@ locals {
   virtual_network_id                = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}"
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
-
-  rbac_bindings = merge({
-    cluster_admin_users  = {}
-    cluster_admin_groups = []
-    cluster_view_users   = {}
-    cluster_view_groups  = []
-  }, var.rbac_bindings, { cluster_admin_groups = [] })
-
-  node_group_defaults = {
-    node_arch           = "amd64"
-    node_os             = "ubuntu"
-    node_type           = "gp"
-    node_type_version   = "v1"
-    single_group        = false
-    min_capacity        = 0
-    ultra_ssd           = false
-    os_config           = { sysctl = {} }
-    placement_group_key = null
-    max_pods            = -1
-    labels              = {}
-    taints              = []
-    tags                = {}
-  }
-
-  node_group_overrides = merge({
-    }, lookup(var.experimental, "arm64", false) ? {} : {
-    node_arch = "amd64"
-    }, lookup(var.experimental, "node_group_os_config", false) ? {} : {
-    os_config = { sysctl = {} }
-    }, lookup(var.experimental, "azure_cni_max_pods", false) ? {} : {
-    max_pods = -1
-  })
-
-  system_node_group = {
-    node_arch         = "amd64"
-    node_os           = "ubuntu"
-    node_type         = "gp"
-    node_type_version = "v1"
-    node_size         = "xlarge"
-    min_capacity      = local.az_count
-    max_capacity      = local.az_count * 4
-    labels = {
-      "lnrs.io/tier" = "system"
-    }
-    taints = [{
-      key    = "CriticalAddonsOnly"
-      value  = "true"
-      effect = "NO_SCHEDULE"
-    }]
-  }
-
-  system_node_groups = {
-    system = merge(local.node_group_defaults, local.system_node_group, { system = true }, local.node_group_overrides)
-  }
-
-  node_groups = length(var.node_groups) > 0 ? { for k, v in var.node_groups : k => merge(local.node_group_defaults, v, { system = false }, local.node_group_overrides) } : {}
-
-  ingress_node_group = anytrue([for group in local.node_groups : try(group.labels["lnrs.io/tier"] == "ingress", false) && (length(group.taints) == 0 || (length(group.taints) == 1 && try(group.taints[0].key == "ingress", false)))])
 
   labels = {
     "lnrs.io/k8s-platform" = "true"
@@ -115,12 +56,4 @@ locals {
     cluster_modify = 5400
     helm_modify    = 600
   }
-
-  experimental_fips                                                       = lookup(var.experimental, "fips", false)
-  experimental_oms_agent                                                  = lookup(var.experimental, "oms_agent", false)
-  experimental_oms_agent_log_analytics_workspace_different_resource_group = lookup(var.experimental, "oms_log_analytics_workspace_different_resource_group", false)
-  experimental_oms_agent_log_analytics_workspace_id                       = lookup(var.experimental, "oms_log_analytics_workspace_id", null)
-  experimental_oms_agent_create_configmap                                 = lookup(var.experimental, "oms_agent_create_configmap", true)
-  experimental_windows_support                                            = lookup(var.experimental, "windows_support", false)
-  experimental_v1_24                                                      = lookup(var.experimental, "v1_24", false)
 }

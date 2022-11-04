@@ -50,7 +50,7 @@ module "aad_pod_identity" {
   namespace                = "kube-system"
   labels                   = var.labels
 
-  experimental = var.experimental
+  experimental_finalizer_wait = var.experimental.aad_pod_identity_finalizer_wait
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -70,10 +70,10 @@ module "cert_manager" {
   cluster_name              = var.cluster_name
   namespace                 = kubernetes_namespace.default["cert-manager"].metadata[0].name
   labels                    = var.labels
-  acme_dns_zones            = distinct(concat([local.ingress_internal_core.domain], local.cert_manager.acme_dns_zones))
-  additional_issuers        = local.cert_manager.additional_issuers
-  default_issuer_kind       = local.cert_manager.default_issuer_kind
-  default_issuer_name       = local.cert_manager.default_issuer_name
+  acme_dns_zones            = distinct(concat([local.ingress_internal_core.domain], coalesce(var.core_services_config.cert_manager.acme_dns_zones, [])))
+  additional_issuers        = var.core_services_config.cert_manager.additional_issuers
+  default_issuer_kind       = var.core_services_config.cert_manager.default_issuer_kind
+  default_issuer_name       = var.core_services_config.cert_manager.default_issuer_name
   tags                      = var.tags
 
   depends_on = [
@@ -88,7 +88,7 @@ module "coredns" {
 
   namespace     = "kube-system"
   labels        = var.labels
-  forward_zones = local.coredns.forward_zones
+  forward_zones = var.core_services_config.coredns.forward_zones
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -108,9 +108,9 @@ module "external_dns" {
   cluster_name              = var.cluster_name
   namespace                 = kubernetes_namespace.default["dns"].metadata[0].name
   labels                    = var.labels
-  additional_sources        = local.external_dns.additional_sources
-  private_domain_filters    = local.ingress_internal_core.public_dns ? local.external_dns.private_domain_filters : distinct(concat([local.ingress_internal_core.domain], local.external_dns.private_domain_filters))
-  public_domain_filters     = local.ingress_internal_core.public_dns ? distinct(concat([local.ingress_internal_core.domain], local.external_dns.public_domain_filters)) : local.external_dns.public_domain_filters
+  additional_sources        = var.core_services_config.external_dns.additional_sources
+  private_domain_filters    = local.ingress_internal_core.public_dns ? var.core_services_config.external_dns.private_domain_filters : distinct(concat([local.ingress_internal_core.domain], coalesce(var.core_services_config.external_dns.private_domain_filters, [])))
+  public_domain_filters     = local.ingress_internal_core.public_dns ? distinct(concat([local.ingress_internal_core.domain], var.core_services_config.external_dns.public_domain_filters)) : coalesce(var.core_services_config.external_dns.public_domain_filters, [])
   tags                      = var.tags
 
   depends_on = [
@@ -126,7 +126,7 @@ module "fluent_bit" {
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
 
-  experimental = var.experimental
+  experimental_use_memory_buffer = var.experimental.fluent_bit_use_memory_buffer
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -146,15 +146,15 @@ module "fluentd" {
   namespace           = kubernetes_namespace.default["logging"].metadata[0].name
   labels              = var.labels
   zones               = local.az_count
-  image_repository    = local.fluentd.image_repository
-  image_tag           = local.fluentd.image_tag
-  additional_env      = local.fluentd.additional_env
-  debug               = local.fluentd.debug
-  filters             = local.fluentd.filters
-  route_config        = local.fluentd.route_config
+  image_repository    = var.core_services_config.fluentd.image_repository
+  image_tag           = var.core_services_config.fluentd.image_tag
+  additional_env      = var.core_services_config.fluentd.additional_env
+  debug               = var.core_services_config.fluentd.debug
+  filters             = var.core_services_config.fluentd.filters
+  route_config        = var.core_services_config.fluentd.route_config
   tags                = var.tags
 
-  experimental = var.experimental
+  experimental_memory_override = var.experimental.fluentd_memory_override
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -173,8 +173,8 @@ module "ingress_internal_core" {
   lb_source_cidrs         = local.ingress_internal_core.lb_source_cidrs
   lb_subnet_name          = local.ingress_internal_core.lb_subnet_name == null ? null : local.ingress_internal_core.lb_subnet_name
   domain                  = local.ingress_internal_core.domain
-  certificate_issuer_kind = local.cert_manager.default_issuer_kind
-  certificate_issuer_name = local.cert_manager.default_issuer_name
+  certificate_issuer_kind = module.cert_manager.default_issuer_kind
+  certificate_issuer_name = module.cert_manager.default_issuer_name
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -194,14 +194,14 @@ module "kube_prometheus_stack" {
   labels                                                         = var.labels
   subnet_id                                                      = var.subnet_id
   zones                                                          = local.az_count
-  prometheus_remote_write                                        = local.prometheus.remote_write
-  alertmanager_smtp_host                                         = local.alertmanager.smtp_host
-  alertmanager_smtp_from                                         = local.alertmanager.smtp_from
-  alertmanager_receivers                                         = local.alertmanager.receivers
-  alertmanager_routes                                            = local.alertmanager.routes
-  grafana_admin_password                                         = local.grafana.admin_password
-  grafana_additional_plugins                                     = local.grafana.additional_plugins
-  grafana_additional_data_sources                                = local.grafana.additional_data_sources
+  prometheus_remote_write                                        = var.core_services_config.prometheus.remote_write
+  alertmanager_smtp_host                                         = var.core_services_config.alertmanager.smtp_host
+  alertmanager_smtp_from                                         = var.core_services_config.alertmanager.smtp_from
+  alertmanager_receivers                                         = var.core_services_config.alertmanager.receivers
+  alertmanager_routes                                            = var.core_services_config.alertmanager.routes
+  grafana_admin_password                                         = var.core_services_config.grafana.admin_password
+  grafana_additional_plugins                                     = var.core_services_config.grafana.additional_plugins
+  grafana_additional_data_sources                                = var.core_services_config.grafana.additional_data_sources
   ingress_class_name                                             = module.ingress_internal_core.ingress_class_name
   ingress_domain                                                 = local.ingress_internal_core.domain
   ingress_subdomain_suffix                                       = local.ingress_internal_core.subdomain_suffix
@@ -214,7 +214,7 @@ module "kube_prometheus_stack" {
   skip_crds                                                      = true
   tags                                                           = var.tags
 
-  experimental = var.experimental
+  experimental_prometheus_memory_override = var.experimental.prometheus_memory_override
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,

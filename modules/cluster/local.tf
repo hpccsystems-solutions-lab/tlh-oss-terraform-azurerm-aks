@@ -67,7 +67,4 @@ locals {
       end   = timeadd(x.end, format("%vh", local.maintenance_window_offset))
     }]
   }
-
-  workspace_log_categories = lookup(var.experimental, "workspace_log_categories", "recommended")
-  storage_log_categories   = lookup(var.experimental, "storage_log_categories", "recommended")
 }

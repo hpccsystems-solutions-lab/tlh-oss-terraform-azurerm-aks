@@ -16,24 +16,29 @@ variable "ingress_node_group" {
 variable "lb_subnet_name" {
   description = "Name of the subnets to create the LB in."
   type        = string
+  nullable    = true
 }
 
 variable "lb_source_cidrs" {
   description = "CIDR range for LB traffic sources."
   type        = list(string)
+  nullable    = false
 }
 
 variable "domain" {
   description = "The domain to use for internal ingress resources."
   type        = string
+  nullable    = false
 }
 
 variable "certificate_issuer_kind" {
   description = "The certificate issuer kind."
   type        = string
+  nullable    = true
 }
 
 variable "certificate_issuer_name" {
   description = "The certificate issuer."
   type        = string
+  nullable    = false
 }

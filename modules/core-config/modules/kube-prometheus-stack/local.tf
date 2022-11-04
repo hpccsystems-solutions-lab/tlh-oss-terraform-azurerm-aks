@@ -185,12 +185,12 @@ locals {
         resources = {
           requests = {
             cpu    = "500m"
-            memory = coalesce(local.experimental_memory_override, "4096Mi")
+            memory = coalesce(var.experimental_prometheus_memory_override, "4096Mi")
           }
 
           limits = {
             cpu    = "2000m"
-            memory = coalesce(local.experimental_memory_override, "4096Mi")
+            memory = coalesce(var.experimental_prometheus_memory_override, "4096Mi")
           }
         }
 
@@ -310,7 +310,7 @@ locals {
           smtp_from        = var.alertmanager_smtp_from
         }
 
-        receivers = local.alertmanager_receivers
+        receivers = concat(local.alertmanager_base_receivers, local.alertmanager_default_receivers, var.alertmanager_receivers)
 
         route = {
           group_by = [
@@ -322,7 +322,7 @@ locals {
           repeat_interval = "12h"
           receiver        = "null"
 
-          routes = local.alertmanager_routes
+          routes = concat(local.alertmanager_base_routes, local.alertmanager_default_routes, var.alertmanager_routes)
         }
       }
 
@@ -1120,8 +1120,6 @@ locals {
     }
   }
 
-  scrapeInterval = "30s"
-
   alertmanager_base_receivers = [{
     name              = "null"
     email_configs     = []
@@ -1133,7 +1131,7 @@ locals {
     victorops_configs = []
     webhook_configs   = []
     wechat_configs    = []
-    # telegram_configs  = []
+    telegram_configs  = []
   }]
   alertmanager_default_receivers = length(var.alertmanager_receivers) > 0 ? [] : [{
     name              = "alerts"
@@ -1146,52 +1144,33 @@ locals {
     victorops_configs = []
     webhook_configs   = []
     wechat_configs    = []
-    # telegram_configs  = []
+    telegram_configs  = []
   }]
-  alertmanager_receivers = concat(local.alertmanager_base_receivers, local.alertmanager_default_receivers, [for receiver in var.alertmanager_receivers : {
-    name              = receiver.name
-    email_configs     = lookup(receiver, "email_configs", [])
-    opsgenie_configs  = lookup(receiver, "opsgenie_configs", [])
-    pagerduty_configs = lookup(receiver, "pagerduty_configs", [])
-    pushover_configs  = lookup(receiver, "pushover_configs", [])
-    slack_configs     = lookup(receiver, "slack_configs", [])
-    sns_configs       = lookup(receiver, "sns_configs", [])
-    victorops_configs = lookup(receiver, "victorops_configs", [])
-    webhook_configs   = lookup(receiver, "webhook_configs", [])
-    wechat_configs    = lookup(receiver, "wechat_configs", [])
-    # telegram_configs  = lookup(receiver, "telegram_configs", [])
-  }])
 
   alertmanager_base_routes = [{
-    receiver            = "null"
-    group_by            = []
-    continue            = false
-    matchers            = ["alertname=Watchdog"]
-    group_wait          = "30s"
-    group_interval      = "5m"
-    repeat_interval     = "12h"
-    mute_time_intervals = []
+    receiver              = "null"
+    group_by              = []
+    continue              = false
+    matchers              = ["alertname=Watchdog"]
+    group_wait            = "30s"
+    group_interval        = "5m"
+    repeat_interval       = "12h"
+    mute_time_intervals   = []
+    active_time_intervals = []
   }]
   alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{
-    receiver            = "alerts"
-    group_by            = []
-    continue            = false
-    matchers            = ["severity=~warning|critical"]
-    group_wait          = "30s"
-    group_interval      = "5m"
-    repeat_interval     = "12h"
-    mute_time_intervals = []
+    receiver              = "alerts"
+    group_by              = []
+    continue              = false
+    matchers              = ["severity=~warning|critical"]
+    group_wait            = "30s"
+    group_interval        = "5m"
+    repeat_interval       = "12h"
+    mute_time_intervals   = []
+    active_time_intervals = []
   }]
-  alertmanager_routes = concat(local.alertmanager_base_routes, local.alertmanager_default_routes, [for route in var.alertmanager_routes : {
-    receiver            = route.receiver
-    group_by            = lookup(route, "group_by", [])
-    continue            = lookup(route, "continue", false)
-    matchers            = route.matchers
-    group_wait          = lookup(route, "group_wait", "30s")
-    group_interval      = lookup(route, "group_interval", "5m")
-    repeat_interval     = lookup(route, "repeat_interval", "12h")
-    mute_time_intervals = lookup(route, "mute_time_intervals", [])
-  }])
+
+  scrapeInterval = "30s"
 
   grafana_data_sources = [
     {
@@ -1272,8 +1251,6 @@ locals {
   thanos_query_frontend_downstream_tripper_config = <<-EOT
     max_idle_conns_per_host: 100
   EOT
-
-  experimental_memory_override = lookup(var.experimental, "prometheus_memory_override", "")
 
   crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

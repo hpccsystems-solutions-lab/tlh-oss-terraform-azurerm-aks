@@ -53,7 +53,7 @@ resource "helm_release" "aad_pod_identity" {
 }
 
 resource "time_sleep" "finalizer_wait" {
-  destroy_duration = local.finalizer_wait
+  destroy_duration = coalesce(var.experimental_finalizer_wait, "120s")
 
   depends_on = [
     helm_release.aad_pod_identity

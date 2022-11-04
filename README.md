@@ -453,7 +453,7 @@ To enable the creation of ARM64 [Ampere Altra](https://azure.microsoft.com/en-us
 
 ### Azure CNI Max Pods
 
-To enable the customisation of the maximum number of pods per node when using the Azure CNI you can set the experimental flag `experimental = { azure_cni_max_pods = true }`. When this flag is set you can set `max_pods` to a value between `20` & `110`, if this flag isn't set attempting to set `max_pods` will be ignored.
+To enable the customisation of the maximum number of pods per node when using the Azure CNI you can set the experimental flag `experimental = { azure_cni_max_pods = true }`. When this flag is set you can set `max_pods` to a value between `12` & `110`, if this flag isn't set attempting to set `max_pods` will be ignored.
 
 ---
 
@@ -463,9 +463,9 @@ This module requires the following versions to be configured in the workspace `t
 
 ### Terraform
 
-| **Version** |
-| :---------- |
-| `>= 1.0.0`  |
+| **Version**           |
+| :-------------------- |
+| `>= 1.3.3, != 1.3.4`  |
 
 ### Providers
 
@@ -536,9 +536,9 @@ Specification for the `rbac_bindings` object.
 
 | **Variable**          | **Description**                                                                                      | **Type**       | **Default** |
 | :-------------------- | :--------------------------------------------------------------------------------------------------- | :------------- | :---------- |
-| `cluster_admin_users` | Users to bind to the `cluster-admin` `ClusterRole`, identifier as the key and group ID as the value. | `map(string)`  |             |
-| `cluster_view_users`  | Users to bind to the `view` `ClusterRole`, identifier as the key and group ID as the value.          | `map(string)`  |             |
-| `cluster_view_groups` | Groups to bind to the `view` `ClusterRole`, list of group IDs.                                       | `list(string)` |             |
+| `cluster_admin_users` | Users to bind to the `cluster-admin` `ClusterRole`, identifier as the key and group ID as the value. | `map(string)`  | `{}`        |
+| `cluster_view_users`  | Users to bind to the `view` `ClusterRole`, identifier as the key and group ID as the value.          | `map(string)`  | `{}`        |
+| `cluster_view_groups` | Groups to bind to the `view` `ClusterRole`, list of group IDs.                                       | `list(string)` | `[]`        |
 
 ### Appendix B
 
@@ -576,27 +576,27 @@ Specification for the `node_groups.taints` object.
 
 Specification for the `core_services_config` object.
 
-| **Variable**            | **Description**                      | **Type**                          | **Default** |
-| :---------------------- | :----------------------------------- | :-------------------------------- | :---------- |
-| `alertmanager`          | Alertmanager configuration.          | `any` ([Appendix E](#appendix-e)) | `{}`        |
-| `cert_manager`          | Cert Manager configuration.          | `any` ([Appendix F](#appendix-f)) | `{}`        |
-| `coredns`               | CoreDNS configuration.               | `any` ([Appendix G](#appendix-g)) | `{}`        |
-| `external_dns`          | ExternalDNS configuration.           | `any` ([Appendix H](#appendix-h)) | `{}`        |
-| `fluentd`               | Fluentd configuration.               | `any` ([Appendix I](#appendix-i)) | `{}`        |
-| `grafana`               | Grafana configuration.               | `any` ([Appendix J](#appendix-j)) | `{}`        |
-| `ingress_internal_core` | Ingress internal-core configuration. | `any` ([Appendix K](#appendix-k)) | `{}`        |
-| `prometheus`            | Prometheus configuration.            | `any` ([Appendix L](#appendix-l)) | `{}`        |
+| **Variable**            | **Description**                      | **Type**                             | **Default** |
+| :---------------------- | :----------------------------------- | :----------------------------------- | :---------- |
+| `alertmanager`          | Alertmanager configuration.          | `object` ([Appendix E](#appendix-e)) |             |
+| `cert_manager`          | Cert Manager configuration.          | `object` ([Appendix F](#appendix-f)) | `{}`        |
+| `coredns`               | CoreDNS configuration.               | `object` ([Appendix G](#appendix-g)) | `{}`        |
+| `external_dns`          | ExternalDNS configuration.           | `object` ([Appendix H](#appendix-h)) | `{}`        |
+| `fluentd`               | Fluentd configuration.               | `object` ([Appendix I](#appendix-i)) | `{}`        |
+| `grafana`               | Grafana configuration.               | `object` ([Appendix J](#appendix-j)) | `{}`        |
+| `ingress_internal_core` | Ingress internal-core configuration. | `object` ([Appendix K](#appendix-k)) |             |
+| `prometheus`            | Prometheus configuration.            | `object` ([Appendix L](#appendix-l)) | `{}`        |
 
 ### Appendix E
 
 Specification for the `core_services_config.alertmanager` object.
 
-| **Variable** | **Description**                                                                               | **Type** | **Default** |
-| :----------- | :-------------------------------------------------------------------------------------------- | :------- | :---------- |
-| `smtp_host`  | SMTP host to send alert emails.                                                               | `string` |             |
-| `smtp_from`  | SMTP from address for alert emails.                                                           | `string` |             |
-| `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `any`    | `[]`        |
-| `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `any`    | `[]`        |
+| **Variable** | **Description**                                                                               | **Type**       | **Default** |
+| :----------- | :-------------------------------------------------------------------------------------------- | :------------- | :---------- |
+| `smtp_host`  | SMTP host to send alert emails.                                                               | `string`       |             |
+| `smtp_from`  | SMTP from address for alert emails.                                                           | `string`       |             |
+| `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)` | `[]`        |
+| `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)` | `[]`        |
 
 ### Appendix F
 
@@ -605,7 +605,7 @@ Specification for the `core_services_config.cert_manager` object.
 | **Variable**          | **Description**                                                | **Type**       | **Default**             |
 | :-------------------- | :------------------------------------------------------------- | :------------- | :---------------------- |
 | `acme_dns_zones`      | DNS zones that _ACME_ issuers can manage certificates for.     | `list(string)` | `[]`                    |
-| `additional_issuers`  | Additional issuers to install into the cluster.                | `map(any)`     | `{}`                    |
+| `additional_issuers`  | Additional issuers to install into the cluster.                | `map(object)`  | `{}`                    |
 | `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | `"ClusterIssuer"`       |
 | `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | `"letsencrypt-staging"` |
 
@@ -648,7 +648,7 @@ Specification for the `core_services_config.fluentd.route_config` object.
 | :----------- | :---------------------------------------------------- | :------- | :---------- |
 | `match`      | The log tag match to use for this route.              | `string` |             |
 | `label`      | The label to use for this route.                      | `string` |             |
-| `copy`       | If the matched logs should be copied to later routes. | `bool`   |             |
+| `copy`       | If the matched logs should be copied to later routes. | `bool`   | `false`     |
 | `config`     | The output configuration to use for the route.        | `string` |             |
 
 ### Appendix J
@@ -658,7 +658,7 @@ Specification for the `core_services_config.grafana` object.
 | **Variable**              | **Description**                | **Type**       | **Default** |
 | :------------------------ | :----------------------------- | :------------- | :---------- |
 | `admin_password`          | Admin password.                | `string`       | `changeme`  |
-| `additional_data_sources` | Additional data sources.       | `list(any)`    | `[]`        |
+| `additional_data_sources` | Additional data sources.       | `list(object)` | `[]`        |
 | `additional_plugins`      | Additional plugins to install. | `list(string)` | `[]`        |
 
 ### Appendix K
@@ -671,7 +671,7 @@ Specification for the `core_services_config.ingress_internal_core` object.
 | `subdomain_suffix` | Suffix to add to internal ingress subdomains, if not set cluster name will be used.                                                                                    | `string`       | _{CLUSTER_NAME}_                  |
 | `lb_source_cidrs`  | CIDR blocks of the IPs allowed to connect to the internal ingress endpoints.                                                                                           | `list(string)` | `["10.0.0.0/8", "100.65.0.0/16"]` |
 | `lb_subnet_name`   | Name of the subnet to create the load balancer in, if not set subnet where node groups reside will be auto selected. _Should not be set unless specifically required._ | `string`       |                                   |
-| `public_dns`       | If the internal ingress DNS should be public or private.                                                                                                               | `bool`         | 'false'                           |
+| `public_dns`       | If the internal ingress DNS should be public or private.                                                                                                               | `bool`         | `false`                           |
 
 ### Appendix L
 
@@ -679,7 +679,7 @@ Specification for the `core_services_config.prometheus` object.
 
 | **Variable**   | **Description**                     | **Type**       | **Default** |
 | :------------- | :---------------------------------- | :------------- | :---------- |
-| `remote_write` | Remote write endpoints for metrics. | `list(string)` | `[]`        |
+| `remote_write` | Remote write endpoints for metrics. | `list(object)` | `[]`        |
 
 ### Appendix M
 
