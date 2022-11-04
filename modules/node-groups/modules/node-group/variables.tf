@@ -87,7 +87,7 @@ variable "proximity_placement_group_id" {
 
 variable "max_pods" {
   description = "Maximum number of pods per node, this only apples to clusters using the AzureCNI."
-  type        = string
+  type        = number
 }
 
 variable "fips" {

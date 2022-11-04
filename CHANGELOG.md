@@ -63,6 +63,7 @@ The `v1.0.0-beta.26` release is a patch fix for a bug to make storage account na
 ### All Changes
 
 - Fixed bug which caused potential duplicates of storage account names by adding a random string as a suffix to the storage account name. ([#749](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/749)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Fixed bug causing AzureCNI node groups to have an incorrect `max_pods` set unless actively using the `azure_cni_max_pods` experiment. ([#754](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/754)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.0.0-beta.25] - 2022-10-28
 
