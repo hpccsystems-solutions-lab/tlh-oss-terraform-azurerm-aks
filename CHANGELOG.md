@@ -29,7 +29,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0-rc.1] - UNRELEASED
+## [v1.0.0-rc.1] - 2022-11-07
 
 > **Warning**
 > The minimum Terraform version has been increased to `v1.3.3` to provide support for [optional object type attributes](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes), please make sure that you update your Terraform versions to reflect this. Terraform `v1.3.4` is **NOT** supported due to a [bug](https://github.com/hashicorp/terraform/issues/32160) observed when working with complex optional object attributes.
@@ -38,6 +38,28 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 > According to the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) for the OIDC Issuer some pods might become stuck in a failed state after it has been enabled; you will need to manually re-start these.
 
 ### Highlights
+
+#### AKS Module Release Candidate
+
+This release is the first (and hopefully final) v1 release candidate and is a significant milestone in the journey to the GA `v1.0.0` release, which with all things going to plan should be released in 2 weeks time. Please could as many people as possible give this version a test as when we go to GA we're far more limited in the scope of the changes we can make to the module.
+
+#### AKS Module Name Change
+
+The AKS terraform module will be renamed to `rsg-terraform-azurerm-aks` to follow the correct naming standards before going GA. Any references to the old repository name should [continue to work](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository) after this happens but end-users shouldn't rely on this assumption.
+
+#### Terraform Optional Object Type Attributes
+
+Terraform `v1.3` allows us to use [optional object type attributes](https://www.terraform.io/language/expressions/type-constraints#optional-object-type-attributes) for our complex input variables. This can simplify the code and allow end-users to pass in lists of maps of different types. The minimum terraform version has been set to `v1.3.3`. However, Terraform `v1.3.4` is **NOT** supported due to a [bug](https://github.com/hashicorp/terraform/issues/32160) observed when working with complex optional object attributes.
+
+#### Security Fixes
+
+The _Grafana_ `v9.2.0` image includes security fixes for [CVE-2022-39229](https://github.com/grafana/grafana/security/advisories/GHSA-gj7m-853r-289r), [CVE-2022-39201](https://github.com/grafana/grafana/security/advisories/GHSA-x744-mm8v-vpgr), [CVE-2022-31130](https://github.com/grafana/grafana/security/advisories/GHSA-jv32-5578-pxjc) & [CVE-2022-31123](https://github.com/grafana/grafana/security/advisories/GHSA-rhxj-gh46-jvw8).
+
+#### Deprecated Attributes Removed
+
+- Module input variable `node_group_templates`
+- Module input variable `azuread_clusterrole_map`
+- Module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs`
 
 ### All Changes
 
