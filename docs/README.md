@@ -443,7 +443,7 @@ To configure coredns to forward DNS requests for custom domains to external reso
 
 ```terraform
 module "aks" {
-  source = "github.com/LexisNexis-RBA/terraform-azurerm-aks.git"
+  source = "github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git"
   ...
   core_services_config = {
     coredns = {

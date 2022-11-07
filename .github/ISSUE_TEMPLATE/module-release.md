@@ -55,7 +55,7 @@ git push
 
 ### Open PR
 
-Open a [PR](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/pulls) to merge the release branch in the `main` branch and add it to the release milestone. Add any additional content for the release to the PR. Assign yourself and add a reviewer; if you don;t have the correct permissions to merge the changes and create the tag you will need to add another assignee after the PR has been approved.
+Open a [PR](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pulls) to merge the release branch in the `main` branch and add it to the release milestone. Add any additional content for the release to the PR. Assign yourself and add a reviewer; if you don;t have the correct permissions to merge the changes and create the tag you will need to add another assignee after the PR has been approved.
 
 ### Merge PR
 
@@ -74,7 +74,7 @@ git push origin v1.1.0
 
 ### Wait For Release
 
-The release automation will be created as a [GitHub Action](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/actions/workflows/publish-release.yaml) which when it succeeds will create the GitHub release for the tag.
+The release automation will be created as a [GitHub Action](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/actions/workflows/publish-release.yaml) which when it succeeds will create the GitHub release for the tag.
 
 ### Sync release to GitLab
 
@@ -94,8 +94,8 @@ The release automation will be created as a [GitHub Action](https://github.com/L
 > ```shell
 > gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (fetch)
 > gitlab  git@gitlab.b2b.regn.net:terraform/modules/Azure/terraform-azurerm-aks.git (push)
-> origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (fetch)
-> origin  git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git (push)
+> origin  git@github.com:LexisNexis-RBA/rsg-terraform-azurerm-aks.git (fetch)
+> origin  git@github.com:LexisNexis-RBA/rsg-terraform-azurerm-aks.git (push)
 > ```
 
 After pushing the release tag to GitHub, push the release tag to GitLab:

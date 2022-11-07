@@ -243,7 +243,7 @@ module "aks" {
     module.virtual_network
   ]
 
-  source = "git@github.com:LexisNexis-RBA/terraform-azurerm-aks.git"
+  source = "git@github.com:LexisNexis-RBA/rsg-terraform-azurerm-aks.git"
 
   location            = module.metadata.location
   resource_group_name = module.resource_group.name

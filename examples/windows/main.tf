@@ -113,7 +113,7 @@ provider "shell" {
 }
 
 module "aks" {
-  source = "git::https://github.com/LexisNexis-RBA/terraform-azurerm-aks.git?ref=v1"
+  source = "git::https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git?ref=v1"
 
   location            = local.location
   resource_group_name = data.azurerm_resource_group.default.name
