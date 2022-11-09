@@ -142,6 +142,24 @@ resource "kubernetes_config_map" "terraform_modules" {
     namespace = "default"
   }
 
+  lifecycle {
+    ignore_changes = [data]
+  }
+
+  depends_on = [
+    module.cluster,
+    module.rbac,
+    module.node_groups,
+    module.core_config
+  ]
+}
+
+resource "kubernetes_config_map_v1_data" "terraform_modules" {
+  metadata {
+    name      = "terraform-modules"
+    namespace = "default"
+  }
+
   data = {
     (local.module_name) = local.module_version
   }
@@ -150,7 +168,8 @@ resource "kubernetes_config_map" "terraform_modules" {
     module.cluster,
     module.rbac,
     module.node_groups,
-    module.core_config
+    module.core_config,
+    kubernetes_config_map.terraform_modules
   ]
 }
 
