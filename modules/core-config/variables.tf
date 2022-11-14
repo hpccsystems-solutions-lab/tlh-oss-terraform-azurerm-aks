@@ -102,15 +102,15 @@ variable "core_services_config" {
         telegram_configs  = optional(any, [])
       })))
       routes = optional(list(object({
-        receiver              = string
-        group_by              = optional(list(string))
-        continue              = optional(bool)
-        matchers              = list(string)
-        group_wait            = optional(string)
-        group_interval        = optional(string)
-        repeat_interval       = optional(string)
-        mute_time_intervals   = optional(list(string))
-        active_time_intervals = optional(list(string))
+        receiver            = string
+        group_by            = optional(list(string))
+        continue            = optional(bool)
+        matchers            = list(string)
+        group_wait          = optional(string)
+        group_interval      = optional(string)
+        repeat_interval     = optional(string)
+        mute_time_intervals = optional(list(string))
+        # active_time_intervals = optional(list(string))
       })))
     })
     cert_manager = optional(object({

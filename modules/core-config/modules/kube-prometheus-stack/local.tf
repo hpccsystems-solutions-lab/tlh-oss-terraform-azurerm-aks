@@ -1148,26 +1148,26 @@ locals {
   }]
 
   alertmanager_base_routes = [{
-    receiver              = "null"
-    group_by              = []
-    continue              = false
-    matchers              = ["alertname=Watchdog"]
-    group_wait            = "30s"
-    group_interval        = "5m"
-    repeat_interval       = "12h"
-    mute_time_intervals   = []
-    active_time_intervals = []
+    receiver            = "null"
+    group_by            = []
+    continue            = false
+    matchers            = ["alertname=Watchdog"]
+    group_wait          = "30s"
+    group_interval      = "5m"
+    repeat_interval     = "12h"
+    mute_time_intervals = []
+    # active_time_intervals = []
   }]
   alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{
-    receiver              = "alerts"
-    group_by              = []
-    continue              = false
-    matchers              = ["severity=~warning|critical"]
-    group_wait            = "30s"
-    group_interval        = "5m"
-    repeat_interval       = "12h"
-    mute_time_intervals   = []
-    active_time_intervals = []
+    receiver            = "alerts"
+    group_by            = []
+    continue            = false
+    matchers            = ["severity=~warning|critical"]
+    group_wait          = "30s"
+    group_interval      = "5m"
+    repeat_interval     = "12h"
+    mute_time_intervals = []
+    # active_time_intervals = []
   }]
 
   scrapeInterval = "30s"

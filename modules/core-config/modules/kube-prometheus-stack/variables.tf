@@ -86,15 +86,15 @@ variable "alertmanager_receivers" {
 variable "alertmanager_routes" {
   description = "Alertmanager routes, will always be a list."
   type = list(object({
-    receiver              = string
-    group_by              = optional(list(string), [])
-    continue              = optional(bool, false)
-    matchers              = list(string)
-    group_wait            = optional(string, "30s")
-    group_interval        = optional(string, "5m")
-    repeat_interval       = optional(string, "12h")
-    mute_time_intervals   = optional(list(string), [])
-    active_time_intervals = optional(list(string), [])
+    receiver            = string
+    group_by            = optional(list(string), [])
+    continue            = optional(bool, false)
+    matchers            = list(string)
+    group_wait          = optional(string, "30s")
+    group_interval      = optional(string, "5m")
+    repeat_interval     = optional(string, "12h")
+    mute_time_intervals = optional(list(string), [])
+    # active_time_intervals = optional(list(string), [])
   }))
   nullable = false
   default  = []

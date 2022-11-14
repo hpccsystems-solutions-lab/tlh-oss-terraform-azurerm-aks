@@ -37,7 +37,14 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Fixed bug where the `terraform-modules` `ConfigMap` was being overwritten. [@stevehipwell](https://github.com/stevehipwell)
 
+## [v1.0.0-rc.2] - 2022-11-14
+
+- Fix Alertmanager bug for routes config by removing `active_time_intervals`. ([#774](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/774)) [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.0.0-rc.1] - 2022-11-07
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.0.0-rc.2` instead due to a bug in Alertmanager where the configuration cannot get updated.
 
 > **Warning**
 > The minimum Terraform version has been increased to `v1.3.3` to provide support for [optional object type attributes](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes), please make sure that you update your Terraform versions to reflect this. Terraform `v1.3.4` is **NOT** supported due to a [bug](https://github.com/hashicorp/terraform/issues/32160) observed when working with complex optional object attributes.
