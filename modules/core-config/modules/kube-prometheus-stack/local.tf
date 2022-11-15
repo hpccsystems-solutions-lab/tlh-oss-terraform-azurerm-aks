@@ -1,10 +1,10 @@
 locals {
   chart_version = "41.7.4"
 
-  thanos_chart_version = "1.6.2"
+  thanos_chart_version = "1.7.0"
 
   # Thanos image version should match version in Thanos chart
-  thanos_image_version = "0.28.1"
+  thanos_image_version = "0.29.0"
 
   use_aad_workload_identity = false
 
