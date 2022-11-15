@@ -39,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added experimental support for [Azure AD Workload identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#718](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/718)) [@stevehipwell](https://github.com/stevehipwell)
 - Removed experimental support for AKS `v1.24`. ([#648](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/648)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added GA support for AKS `v1.24`. ([#648](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/648)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated _Kube Prometheus Stack_ chart to [v41.7.4](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-41.7.4)(contains _Kube State Metrics_ [v4.22.3](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.22.3), _Grafana_ [v6.43.5](https://github.com/grafana/helm-charts/releases/tag/grafana-6.43.3)). ([#772](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/772)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-rc.2] - 2022-11-14
 
