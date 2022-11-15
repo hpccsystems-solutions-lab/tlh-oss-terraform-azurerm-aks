@@ -16,11 +16,10 @@ locals {
   # az aks get-versions --location westeurope --output table
   # https://releases.aks.azure.com/webpage/index.html
   cluster_full_versions = merge({
+    "1.24" = "1.24.6"
     "1.23" = "1.23.12"
     "1.22" = "1.22.15"
-    }, var.experimental.v1_24 ? {
-    "1.24" = "1.24.6"
-  } : {})
+  })
 
   availability_zones = [1, 2, 3]
 
