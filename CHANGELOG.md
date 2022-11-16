@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Thanos_ chart to [v1.7.0](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.7.0) (contains _Thanos_ [v0.29.0](https://github.com/thanos-io/thanos/releases/tag/v0.29.0)). ([#755](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/755)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluent Bit_ chart to [v0.21.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.0) (contains _Fluent Bit_ [v2.0.4](https://github.com/fluent/fluent-bit/releases/tag/v2.0.4)). ([#771](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/771)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Ingress Nginx_ chart to [v4.4.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.0)(contains _Ingress Nginx Image_ [v1.21.6](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.21.6)). ([#770](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/770)) [@peterabarr](https://github.com/peterabarr)
+- Added a script that fixes the Field Manager conflict error seen when building a cluster. ([#780](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/780)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0-rc.2] - 2022-11-14
 
