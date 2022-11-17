@@ -44,6 +44,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluent Bit_ chart to [v0.21.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.0) (contains _Fluent Bit_ [v2.0.4](https://github.com/fluent/fluent-bit/releases/tag/v2.0.4)). ([#771](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/771)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Ingress Nginx_ chart to [v4.4.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.0)(contains _Ingress Nginx Image_ [v1.21.6](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.21.6)). ([#770](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/770)) [@peterabarr](https://github.com/peterabarr)
 - Added a script that fixes the Field Manager conflict error seen when building a cluster. ([#780](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/780)) [@peterabarr](https://github.com/peterabarr)
+- Fixed bug for configuring _Grafana_ to use _Thanos Query Frontend_ as a datasource, instead of _Prometheus_. ([#787](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/787)) [@prikesh-patel](https://github.com/prikesh-patel)
 
 ## [v1.0.0-rc.2] - 2022-11-14
 

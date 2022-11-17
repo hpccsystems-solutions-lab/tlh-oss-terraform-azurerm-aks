@@ -997,7 +997,7 @@ locals {
             - static_configs:
                 - kube-prometheus-stack-alertmanager.${var.namespace}.svc.cluster.local:9093
               scheme: http
-         EOT
+        EOT
       }
 
       rules = {
@@ -1184,6 +1184,7 @@ locals {
     wechat_configs    = []
     telegram_configs  = []
   }]
+
   alertmanager_default_receivers = length(var.alertmanager_receivers) > 0 ? [] : [{
     name              = "alerts"
     email_configs     = []
@@ -1209,6 +1210,7 @@ locals {
     mute_time_intervals = []
     # active_time_intervals = []
   }]
+
   alertmanager_default_routes = length(var.alertmanager_routes) > 0 ? [] : [{
     receiver            = "alerts"
     group_by            = []
@@ -1248,7 +1250,7 @@ locals {
       access          = "proxy"
       orgId           = "1"
       uid             = "prometheus"
-      url             = "http://kube-prometheus-stack-prometheus.${var.namespace}.svc.cluster.local:9090"
+      url             = "http://thanos-query-frontend.${var.namespace}.svc.cluster.local:10902"
       basicAuth       = null
       basicAuthUser   = null
       withCredentials = null
