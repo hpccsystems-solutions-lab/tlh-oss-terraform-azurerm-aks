@@ -29,9 +29,32 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.0.0] - UNRELEASED
+## [v1.0.0] - 2022-11-21
 
 ### Highlights
+
+#### AKS v1.0.0 Release
+
+The _AKS_ module has now transitioned from Beta to GA after a lot of hard work from the core team. More information can be found [here](https://start.emailopen.com/public1/viewlpauto.aspx?id1=cryptz2%3aEreYJizI7lk2IyXJspPRxA%3d%3d&id2=1048&id3=351289&id4=&id5=e3d4ff41ad3645c4874945f8ed844346ijsbGYJEujWKMNX.669160924%40emailopen.com).
+
+#### AKS v1.24
+
+Support for _AKS_ cluster version `v1.24` is now generally available.
+
+#### Security Fixes
+
+- The _Kube Prometheus Stack_ Helm chart update contains _Grafana_ [v9.2.4](https://github.com/grafana/grafana/releases/tag/v9.2.4) which fixes the following CVEs.
+  - [CVE-2022-39328](https://nvd.nist.gov/vuln/detail/CVE-2022-39328)
+  - [CVE-2022-39307](https://nvd.nist.gov/vuln/detail/CVE-2022-39307)
+  - [CVE-2022-39306](https://nvd.nist.gov/vuln/detail/CVE-2022-39306)
+- The _Ingress Nginx_ chart update contains the _Ingress Nginx Controller_ [v1.5.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.5.1) which fixes the following CVEs.
+  - [CVE-2022-32149](https://github.com/advisories/GHSA-69ch-w2m2-3vjp)
+  - [CVE-2022-27664](https://github.com/advisories/GHSA-69cg-p879-7622)
+  - [CVE-2022-1996](https://github.com/advisories/GHSA-r48q-9g5r-8q2h)
+
+#### Experimental Support
+
+- [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) has experimental support and can be enabled by setting the flag `experimental = { workload_identity = true }`, if you've opted in to the public preview.
 
 ### All Changes
 
@@ -88,7 +111,7 @@ The _Grafana_ `v9.2.0` image includes security fixes for [CVE-2022-39229](https:
 ### All Changes
 
 - Updated _Thanos_ chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
-- Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/732)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/732)) [@peterabarr](https://github.com/peterabarr)
 - Fixed deprecation warning for `logs` attribute in `data.azurerm_monitor_diagnostic_categories.default.logs`. ([#649](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/649)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated minimum version of the Helm provider to [v2.6.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.6.0). ([#730](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/730)) [@prikesh-patel](https://github.com/prikesh-patel)
@@ -361,7 +384,7 @@ experimental support for using a user-assigned NAT Gateway for cluster egress tr
 
 - Added `lnrs.io/k8s-platform = true` common label to most k8s resources that allow custom labels via the Helm chart. ([#302](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/302)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Fluent Bit_ chart to [v0.20.6](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.6) (contains _Fluent Bit_ [v1.9.7](https://github.com/fluent/fluent-bit/releases/tag/v1.9.7)). ([#607](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/607), [#625](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/625)) [@peterabarr](https://github.com/peterabarr) [@prikesh-patel](https://github.com/prikesh-patel)
-- Updated _External DNS_ chart to [v1.11.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.11.0) (contains _External DNS_ [v0.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.2)). ([#608](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/608)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated _External DNS_ chart to [v1.11.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.11.0) (contains _External DNS_ [v0.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.2)). ([#608](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/608)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated the _Ingress Nginx_ chart to [v4.2.3](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.2.3). ([#626](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/626)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Kube Prometheus Stack_ chart to [v39.9.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-39.9.0). ([#606](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/606)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated full AKS versions for `v1.23` to `v1.23.8` & `v1.22` to `v1.22.11`. ([#600](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/600)) [@stevehipwell](https://github.com/stevehipwell)
