@@ -12,4 +12,3 @@ jobs:
     secrets: inherit
     with:
       module_name: terraform-azurerm-aks
-      terraform_version: 1.3.3
