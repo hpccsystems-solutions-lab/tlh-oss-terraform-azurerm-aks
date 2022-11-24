@@ -41,7 +41,7 @@ _Module version_: <!-- v1.0.0 -->
 
 _Terraform version_: <!-- v1.0.0 -->
 
-_AKS version_: <!-- v1.22 -->
+_AKS version_: <!-- v1.24 -->
 
 _Create or update_: <!-- Create|Update -->
 

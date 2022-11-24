@@ -18,7 +18,6 @@ locals {
   cluster_full_versions = merge({
     "1.24" = "1.24.6"
     "1.23" = "1.23.12"
-    "1.22" = "1.22.15"
   })
 
   availability_zones = [1, 2, 3]
