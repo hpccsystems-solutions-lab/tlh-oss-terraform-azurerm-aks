@@ -38,6 +38,7 @@ n/a
 - Removed AKS cluster version `v1.22`. ([#773](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/773)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _Fluent Bit_ chart to [v0.21.3](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.3). ([#799](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/799)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Cert Manager_ chart to [1.10.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.1). ([#796](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/796)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Kube Prometheus Stack_ chart to [v41.7.4](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-41.7.4)(contains _Kube State Metrics_ [v2.7.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.7.0). ([#789](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/789)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.0.0] - 2022-11-21
 
