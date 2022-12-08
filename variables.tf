@@ -39,13 +39,13 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions \"1.24\" or \"1.23\" are supported."
+  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions \"1.25\" (EXPERIMENTAL), \"1.24\" or \"1.23\" are supported."
   type        = string
   nullable    = false
 
   validation {
-    condition     = contains(["1.24", "1.23"], var.cluster_version)
-    error_message = "Available versions are \"1.24\" or \"1.23\"."
+    condition     = contains(["1.25", "1.24", "1.23"], var.cluster_version)
+    error_message = "Available versions are \"1.25\" (EXPERIMENTAL), \"1.24\" or \"1.23\"."
   }
 }
 
@@ -417,7 +417,7 @@ variable "experimental" {
     oms_agent_log_analytics_workspace_id                       = optional(string, null)
     oms_agent_create_configmap                                 = optional(bool, true)
     windows_support                                            = optional(bool, false)
-    v1_24                                                      = optional(bool, false)
+    v1_25                                                      = optional(bool, false)
     arm64                                                      = optional(bool, false)
     node_group_os_config                                       = optional(bool, false)
     azure_cni_max_pods                                         = optional(bool, false)

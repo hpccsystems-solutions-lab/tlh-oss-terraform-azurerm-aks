@@ -90,7 +90,8 @@ module "node_groups" {
   experimental = var.experimental
 
   depends_on = [
-    module.cluster
+    module.cluster,
+    module.rbac
   ]
 }
 

@@ -18,7 +18,7 @@ locals {
   cluster_full_versions = merge({
     "1.24" = "1.24.6"
     "1.23" = "1.23.12"
-  })
+  }, var.experimental.v1_25 ? { "1.25" = "1.25.2" } : {})
 
   availability_zones = [1, 2, 3]
 
