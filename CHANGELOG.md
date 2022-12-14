@@ -37,6 +37,7 @@ n/a
 
 - Updated _Thanos_ chart to [v1.9.0](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.0). ([#811](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/811)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added experimental support for _AKS_ [v1.25](https://azure.microsoft.com/en-us/updates/public-preview-k8s-125-support/). ([#786](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/786)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated _External DNS_ chart to [v1.12.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.0) which contains image update to [v0.13.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.1). ([#819](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/819)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.1.0] - 2022-12-05
 
