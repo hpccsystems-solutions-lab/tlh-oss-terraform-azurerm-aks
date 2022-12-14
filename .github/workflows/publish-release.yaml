@@ -8,7 +8,7 @@ on:
 jobs:
   workflow:
     name: Reusable Workflow
-    uses: LexisNexis-RBA/rsg-terraform-workflows/.github/workflows/module-publish-release.yaml@main
+    uses: LexisNexis-RBA/rsg-gh-workflows-terraform/.github/workflows/module-publish-release.yaml@main
     secrets: inherit
     with:
       module_name: terraform-azurerm-aks
