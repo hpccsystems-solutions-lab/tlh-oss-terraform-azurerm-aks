@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## Support - Christmas & New Year 2022
+
+Over the Christmas and New Year period we will be providing expanded version support on this module. While some of the team is out on well-deserved breaks be assured assistance is available if required. Please ensure you are raising support requests in either the [rsg-kubernetes discussion](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions) project or the module directly. Expanded version support will be in operation until the beginning of February 2023.
+
+- Supported versions - `v1.0.0-rc.{1,2}.<latest_patch>`, `v1.{1,2,3}.<latest_patch>`
+
+Any escalations or emergencies contact [Aydogan Osman (London, UK, GMT)](https://teams.microsoft.com/l/chat/0/0?users=aydogan.osman@lexisnexisrisk.com)
+
 ## Upgrading From Pre v1.0.0-beta.10 Versions
 
 All clusters created with a module version older than `v1.0.0-beta.10` need to be destroyed and re-created with the latest version of the module.
