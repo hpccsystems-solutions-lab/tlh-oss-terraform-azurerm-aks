@@ -8,7 +8,7 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.6.0, != 2.7.0, != 2.7.1"
+      version = ">= 2.8.0"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
@@ -16,7 +16,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.12.1"
+      version = ">= 2.15.0"
     }
     random = {
       source  = "hashicorp/random"

@@ -479,9 +479,9 @@ This module requires the following versions to be configured in the workspace `t
 | **Name**                                                                                    | **Version**                    |
 | :------------------------------------------------------------------------------------------ | :----------------------------- |
 | [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.31.0`                    |
-| [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.6.0, != 2.7.0, != 2.7.1` |
+| [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.8.0`                     |
 | [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.14.0`                    |
-| [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.12.1`                    |
+| [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.15.0`                    |
 | [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.3.0`                     |
 | [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>= 1.7.10`                    |
 | [tiwood/static](https://registry.terraform.io/providers/tiwood/static/latest)               | `>= 0.1.0`                     |
