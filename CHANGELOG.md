@@ -37,9 +37,17 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.2.0] - UNRELEASED
+## [v1.2.0] - 2022-12-20
 
 ### Highlights
+
+#### Holiday Period
+
+We hope that all operators using the module are enjoying the holiday season. As we look ahead to the new year, we are excited to see what opportunities and challenges it brings for the module. In this release, we have primarily focused on maintaining and updating the core services. We hope that this focus on stability and reliability will continue to provide a strong foundation for the module in the coming year.
+
+#### Security Fixes
+
+- _Kube Prometheus Stack_ helm chart update contains _Prometheus Node Exporter_ `v1.5.0`, which fixes [CVE-2022-46146](https://nvd.nist.gov/vuln/detail/CVE-2022-46146) and _Prometheus_ `2.37.4`, which fixes [CVE-2022-46146](https://nvd.nist.gov/vuln/detail/CVE-2022-46146)
 
 ### All Changes
 
@@ -52,7 +60,9 @@ n/a
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
 - Updated _Thanos_ chart to [v1.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.1). ([#843](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/843)) [@hadeeds](https://github.com/hadeeds)
   
-## [v1.1.1] - 2022-12-16
+## [v1.1.1] - 2022-12-20
+
+### All Changes
 
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
 
@@ -74,7 +84,9 @@ AKS cluster version `v1.22` has been removed as Azure is retiring it on December
 - Updated _Cert Manager_ chart to [1.10.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.1). ([#796](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/796)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Kube Prometheus Stack_ chart to [v42.1.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-42.1.0) (contains _Kube State Metrics_ [v2.7.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.7.0). ([#789](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/789)) [@peterabarr](https://github.com/peterabarr)
 
-## [v1.0.1] - 2022-12-16
+## [v1.0.1] - 2022-12-20
+
+### All Changes
 
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
 
