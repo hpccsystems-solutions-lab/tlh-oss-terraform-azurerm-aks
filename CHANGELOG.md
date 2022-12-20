@@ -43,7 +43,6 @@ n/a
 
 ### All Changes
 
-- Updated _Thanos_ chart to [v1.9.0](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.0). ([#811](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/811)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added experimental support for _AKS_ [v1.25](https://azure.microsoft.com/en-us/updates/public-preview-k8s-125-support/). ([#786](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/786)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Updated _External DNS_ chart to [v1.12.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.0) which contains image update to [v0.13.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.1). ([#819](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/819)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v43.0.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-43.0.0) (contains _Kube State Metrics_ [v2.7.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.7.0), _Grafana_ [v9.3.1](https://github.com/grafana/grafana/releases/tag/v9.3.1), _Prometheus Operator_ [v0.61.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.61.1), _Prometheus_ [v2.37.5](https://github.com/prometheus/prometheus/releases/tag/v2.37.5), _Prometheus Node Exporter_ [v1.5.0](https://github.com/prometheus/node_exporter/releases/tag/v1.5.0)). ([#810](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/810)) [@peterabarr](https://github.com/peterabarr)
@@ -51,7 +50,8 @@ n/a
 - Updated minimum version of the Helm provider to [v2.8.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.8.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
 - Updated minimum version of the Kubernetes provider to [v2.15.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.15.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
-
+- Updated _Thanos_ chart to [v1.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.1). ([#843](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/843)) [@hadeeds](https://github.com/hadeeds)
+  
 ## [v1.1.1] - 2022-12-16
 
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
