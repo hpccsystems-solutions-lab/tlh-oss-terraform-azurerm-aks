@@ -16,7 +16,7 @@ locals {
     "monitoring"
   ]
 
-  ingress_internal_core = merge(var.core_services_config.ingress_internal_core, {
+  ingress_internal_core = merge(var.core_services_config.ingress_internal_core, var.core_services_config.ingress_internal_core.subdomain_suffix == null ? { subdomain_suffix = var.cluster_name } : {}, {
     annotations = {
       "lnrs.io/zone-type" = var.core_services_config.ingress_internal_core.public_dns ? "public" : "private"
     }

@@ -50,8 +50,16 @@ n/a
 - Updated _AAD Pod Identity_ chart to `4.1.15` (contains _AAD Pod Identity_ [v1.8.14](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#834](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/834)) [@hadeeds](https://github.com/hadeeds)
 - Updated minimum version of the Helm provider to [v2.8.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.8.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
 - Updated minimum version of the Kubernetes provider to [v2.15.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.15.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
+
+## [v1.1.1] - 2022-12-16
+
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
 
 ## [v1.1.0] - 2022-12-05
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.1.1` instead due to a bug in the subdomain where a default value wasn't set.
 
 ### Highlights
 
@@ -66,7 +74,14 @@ AKS cluster version `v1.22` has been removed as Azure is retiring it on December
 - Updated _Cert Manager_ chart to [1.10.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.1). ([#796](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/796)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Kube Prometheus Stack_ chart to [v42.1.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-42.1.0) (contains _Kube State Metrics_ [v2.7.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.7.0). ([#789](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/789)) [@peterabarr](https://github.com/peterabarr)
 
+## [v1.0.1] - 2022-12-16
+
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
+
 ## [v1.0.0] - 2022-11-21
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.0.1` instead due to a bug in the subdomain where a default value wasn't set.
 
 ### Highlights
 
