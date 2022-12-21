@@ -296,6 +296,12 @@ locals {
 
 By default the platform deploys an internal `IngressClass`, named `core-internal`, to expose services such as _Prometheus_ and _Grafana_ UIs. This ingress shouldn't be used for user services but can be used for other internal dashboards; for user services instead deploy a dedicated ingress controller with it's own `IngressClass`.
 
+### Calico and Network Policy
+
+The module installs the Calico network policy engine on a Kubernetes cluster. Calico is a widely used networking solution for Kubernetes that allows users to define and enforce network policies for their pods. However, at this time this module does not expose Calico's functionality to operators. Instead, consumers can use native Kubernetes network policies to manage networking within their clusters.
+
+Native Kubernetes network policies allow users to specify which pods can communicate with each other, as well as set up ingress and egress rules. This enables users to secure their clusters by controlling network traffic between pods and enforcing network segmentation. For more information on using network policies in Kubernetes, see the official documentation at: [kubernetes.io/docs/concepts/services-networking/network-policies/](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
 ### Upgrading
 
 Core service and node upgrades are automated as part of running this module and don't require any user interaction. Kubernetes minor version upgrades are supported by the module as long as the upgrade is only to the next minor version and the cluster has had the latest module version run against it.
