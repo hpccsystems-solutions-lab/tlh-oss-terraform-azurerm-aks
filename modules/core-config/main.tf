@@ -4,10 +4,21 @@ resource "kubernetes_namespace" "default" {
   metadata {
     name = each.key
 
-    labels = merge(var.labels, {
-      name = each.key
-    })
+    labels = merge(var.labels, local.namespace_pod_security_labels)
   }
+}
+
+resource "kubernetes_labels" "system_namespace" {
+  for_each = toset(local.system_namespaces)
+
+  api_version = "v1"
+  kind        = "Namespace"
+
+  metadata {
+    name = each.key
+  }
+
+  labels = local.namespace_pod_security_labels
 }
 
 module "storage" {
@@ -47,7 +58,7 @@ module "aad_pod_identity" {
   node_resource_group_name = var.node_resource_group_name
   network_plugin           = var.network_plugin
   kubelet_identity_id      = var.kubelet_identity_id
-  namespace                = "kube-system"
+  namespace                = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels                   = var.labels
 
   experimental_finalizer_wait = var.experimental.aad_pod_identity_finalizer_wait
@@ -88,7 +99,7 @@ module "cert_manager" {
 module "coredns" {
   source = "./modules/coredns"
 
-  namespace     = "kube-system"
+  namespace     = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels        = var.labels
   forward_zones = var.core_services_config.coredns.forward_zones
 
@@ -237,7 +248,7 @@ module "kube_prometheus_stack" {
 module "local_volume_provisioner" {
   source = "./modules/local-volume-provisioner"
 
-  namespace = "kube-system"
+  namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels    = var.labels
 
   depends_on = [
@@ -250,8 +261,8 @@ module "oms_agent" {
   source = "./modules/oms-agent"
   count  = var.oms_agent ? 1 : 0
 
-  namespace        = "kube-system"
+  namespace        = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels           = var.labels
-  core_namespaces  = concat(["kube-system"], local.namespaces)
+  core_namespaces  = concat([kubernetes_labels.system_namespace["kube-system"].metadata[0].name], local.namespaces)
   create_configmap = var.oms_agent_create_configmap
 }

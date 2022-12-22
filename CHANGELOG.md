@@ -43,6 +43,8 @@ n/a
 
 ### All Changes
 
+- Added [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) labels at `audit`/`warn` mode and `baseline` level for the core namespaces. ([#818](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/818)) [@prikesh-patel](https://github.com/prikesh-patel)
+
 ## [v1.2.0] - 2022-12-20
 
 ### Highlights
