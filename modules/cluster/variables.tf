@@ -222,12 +222,6 @@ variable "windows_support" {
   nullable    = false
 }
 
-variable "cluster_tags" {
-  description = "Tags to apply to the cluster."
-  type        = map(string)
-  nullable    = false
-}
-
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)

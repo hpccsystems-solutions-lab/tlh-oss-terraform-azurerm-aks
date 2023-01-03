@@ -50,7 +50,6 @@ module "cluster" {
   oms_agent                                               = var.experimental.oms_agent
   oms_agent_log_analytics_workspace_id                    = var.experimental.oms_agent_log_analytics_workspace_id
   windows_support                                         = var.experimental.windows_support
-  cluster_tags                                            = local.cluster_tags
   tags                                                    = local.tags
   timeouts                                                = local.timeouts
 }
@@ -140,6 +139,22 @@ module "core_config" {
   ]
 }
 
+module "cluster_tags" {
+  source = "./modules/cluster-tags"
+
+  subscription_id     = local.subscription_id
+  resource_group_name = var.resource_group_name
+  cluster_name        = var.cluster_name
+  cluster_tags        = local.cluster_tags
+
+  depends_on = [
+    module.cluster,
+    module.rbac,
+    module.node_groups,
+    module.core_config
+  ]
+}
+
 resource "kubernetes_config_map" "terraform_modules" {
   metadata {
     name      = "terraform-modules"
@@ -197,6 +212,9 @@ resource "kubernetes_config_map" "default" {
   }
 
   depends_on = [
+    module.cluster,
+    module.rbac,
+    module.node_groups,
     module.core_config
   ]
 }

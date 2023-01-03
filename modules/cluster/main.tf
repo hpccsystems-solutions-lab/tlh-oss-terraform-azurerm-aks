@@ -143,7 +143,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     tags = var.tags
   }
 
-  tags = merge(var.cluster_tags, var.tags)
+  tags = var.tags
 
   timeouts {
     create = format("%vm", var.timeouts.cluster_modify / 60)
@@ -153,7 +153,10 @@ resource "azurerm_kubernetes_cluster" "default" {
   }
 
   lifecycle {
-    ignore_changes = [default_node_pool]
+    ignore_changes = [
+      default_node_pool,
+      tags["lnrs.io_terraform-module-version"]
+    ]
   }
 
   depends_on = [

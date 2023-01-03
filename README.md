@@ -302,6 +302,10 @@ The module installs the Calico network policy engine on a Kubernetes cluster. Ca
 
 Native Kubernetes network policies allow users to specify which pods can communicate with each other, as well as set up ingress and egress rules. This enables users to secure their clusters by controlling network traffic between pods and enforcing network segmentation. For more information on using network policies in Kubernetes, see the official documentation at: [kubernetes.io/docs/concepts/services-networking/network-policies/](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
+### Tags
+
+When utilizing custom tags with the module, it is essential to be aware of the potential limitations that may impact the removal of tags. Some tags may not be removed when attempting to remove them through the module, which can result in unexpected behaviour or errors in your pipeline. To avoid these issues, it is recommended to thoroughly review and test the behaviour of custom tags before implementing them in any environment. If necessary, persistent tags can be manually removed through the Azure portal, CLI or API to ensure that they are properly removed from the resource. For more information on tag limitations, you can refer to the Microsoft documentation [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources?tabs=json#limitations)
+
 ### Upgrading
 
 Core service and node upgrades are automated as part of running this module and don't require any user interaction. Kubernetes minor version upgrades are supported by the module as long as the upgrade is only to the next minor version and the cluster has had the latest module version run against it.
