@@ -45,6 +45,7 @@ n/a
 
 - Added [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) labels at `audit`/`warn` mode and `baseline` level for the core namespaces. ([#818](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/818)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added shell script to apply module version tag to cluster. ([#682](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/682)) [@prikesh-patel](https://github.com/prikesh-patel)
+- Updated _Kube Prometheus Stack_ chart to [v43.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-43.2.1) (contains _Alertmanager_ [v0.25.0](https://github.com/prometheus/alertmanager/releases/tag/v0.25.0). ([#839](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/839)) [@HadeedS](https://github.com/HadeedS)
 
 ## [v1.2.0] - 2022-12-20
 
