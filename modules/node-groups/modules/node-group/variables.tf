@@ -109,7 +109,7 @@ variable "max_pods" {
 }
 
 variable "fips" {
-  description = "If the node groups should be FIPS 140-2 enabled."
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
   type        = bool
   nullable    = false
 }

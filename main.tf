@@ -42,7 +42,7 @@ module "cluster" {
   control_plane_logging_storage_account_categories        = var.control_plane_logging_storage_account_categories
   control_plane_logging_storage_account_retention_enabled = var.control_plane_logging_storage_account_retention_enabled
   control_plane_logging_storage_account_retention_days    = var.control_plane_logging_storage_account_retention_days
-  fips                                                    = var.experimental.fips
+  fips                                                    = var.fips
   maintenance_window_offset                               = var.maintenance_window_offset
   maintenance_window_allowed_days                         = var.maintenance_window_allowed_days
   maintenance_window_allowed_hours                        = var.maintenance_window_allowed_hours
@@ -82,7 +82,7 @@ module "node_groups" {
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
   node_groups          = var.node_groups
-  fips                 = var.experimental.fips
+  fips                 = var.fips
   labels               = local.labels
   tags                 = local.tags
 

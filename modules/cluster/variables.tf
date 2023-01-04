@@ -172,7 +172,7 @@ variable "control_plane_logging_storage_account_retention_days" {
 }
 
 variable "fips" {
-  description = "If the node groups should be FIPS 140-2 enabled."
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
   type        = bool
   nullable    = false
 }

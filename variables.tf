@@ -401,6 +401,13 @@ variable "maintenance_window_not_allowed" {
   default  = []
 }
 
+variable "fips" {
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)
@@ -411,7 +418,6 @@ variable "tags" {
 variable "experimental" {
   description = "Configure experimental features."
   type = object({
-    fips                                                       = optional(bool, false)
     oms_agent                                                  = optional(bool, false)
     oms_agent_log_analytics_workspace_different_resource_group = optional(bool, false)
     oms_agent_log_analytics_workspace_id                       = optional(string, null)
