@@ -37,9 +37,11 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.3.0] - UNRELEASED
+## [v1.3.0] - 2022-01-04
 
 ### Highlights
+
+During the holiday period, the development team made minimal changes to the module. Any necessary updates were applied to core services, and we revised the implementation of the module versioning mechanism by adding a shell script to apply the tag to the cluster. After positive feedback the FIPS experimental feature is now fully supported by the module. Additionally, we completed preparatory work on pod security admission for the core namespaces in anticipation of future projects.
 
 ### All Changes
 
