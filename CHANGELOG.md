@@ -37,7 +37,13 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.3.0] - 2022-01-04
+## [v1.4.0] - UNRELEASED
+
+### Highlights
+
+### All Changes
+
+## [v1.3.0] - 2023-01-04
 
 ### Highlights
 
