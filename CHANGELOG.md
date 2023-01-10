@@ -43,6 +43,8 @@ n/a
 
 ### All Changes
 
+- Updated _Thanos_ chart to [v1.10.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.1) (contains _Thanos_ [v0.30.1](https://github.com/thanos-io/thanos/releases/tag/v0.30.1)). ([#858](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/858)) [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.3.0] - 2023-01-04
 
 ### Highlights
