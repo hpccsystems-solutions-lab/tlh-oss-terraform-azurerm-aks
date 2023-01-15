@@ -403,10 +403,6 @@ If the log analytics workspace is created in a different resource group to the c
 
 By default the module will configure the OMS agent by creating the `container-azm-ms-agentconfig` ConfigMap; this specifically excludes core namespaces from log collection. You can append additional data keys to the `ConfigMap` via the [config_map_v1_data](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map_v1_data) Terraform resource. It is possible to disable this behaviour by setting the `experimental.oms_agent_create_configmap` input variable to `false`; by doing this you're taking full responsibility for managing your own OMS agent configuration and should make sure that the default configuration log exclusion is replicated.
 
-## Fluent Bit Memory Buffer
-
-Due to a [Fluent Bit issue](https://github.com/fluent/fluent-bit/issues/5214) clusters with high log throughputs have issues when using the filesystem log buffer in Fluent Bit, by setting `fluent_bit_use_memory_buffer = true` you can use memory to buffer the chunks and work around this issue; this option does mean that if the pod restarts logs may be lost.
-
 ### Manual Service Memory Override
 
 There are a number of services which can't be dynamically scaled horizontally but still need to be scaled as the cluster size and or load grows. in the future this will be handled by a combination of functionality, but until we have a working solution you can manually override the default memory given to them by setting one of the following variables  (e.g. `experimental = { fluentd_memory_override = "1024Mi" }`).
@@ -656,7 +652,7 @@ Specification for the `core_services_config.fluentd` object.
 | `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                | `null`      |
 | `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                | `null`      |
 | `additional_env`   | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
-| `debug`            | If `true` all logs are printed to stdout.                                                                                                                                          | `bool`                                       | `true`      |
+| `debug`            | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                       | `true`      |
 | `filters`          | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
 | `route_config`     | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix I1](#appendix-i1)) | `[]`        |
 

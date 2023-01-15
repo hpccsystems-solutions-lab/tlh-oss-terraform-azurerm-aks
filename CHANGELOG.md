@@ -45,6 +45,15 @@ n/a
 
 - Updated _Thanos_ chart to [v1.10.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.1) (contains _Thanos_ [v0.30.1](https://github.com/thanos-io/thanos/releases/tag/v0.30.1)). ([#858](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/858)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Cert Manager_ chart to [1.10.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.2). ([#863](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/863)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.21.7](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.7) (contains _Fluent Bit_ [v2.0.8](https://github.com/fluent/fluent-bit/releases/tag/v2.0.8)). ([#806](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/806)) [@OsmanA](https://github.com/OsmanA)
+- Changed _Fluent Bit_ configuration to improve performance. [@OsmanA](https://github.com/OsmanA)
+- Added _Fluent Bit_ forward output compatibility configuration for _Fluentd_. [@OsmanA](https://github.com/OsmanA)
+- Removed experimental flag `fluent_bit_use_memory_buffer` as it no longer offers an performance benefits. [@OsmanA](https://github.com/OsmanA)
+- Updated _Fluentd_ chart to [v3.6.0](https://github.com/OsmanA/helm-charts/releases/tag/fluentd-aggregator-3.6.0) (contains _Fluentd Aggregator_ [v2.6.0](https://github.com/OsmanA/fluentd-aggregator/releases/tag/v2.6.0)). [@Osmana](https://github.com/OsmanA)
+- Added topology aware routing for _Fluentd_ if using AKS `v1.24`. [@OsmanA](https://github.com/OsmanA)
+- Changed _Fluentd_ behaviour when `debug` is set to use an output plugin instead of a filter for performance reasons. [@OsmanA](https://github.com/OsmanA)
+- Deprecated _Fluentd_ `debug` defaulting to `true`. [@OsmanA](https://github.com/OsmanA)
+- Changed the log processing to run in _Fluent Bit_ instead of _Fluentd_. [@OsmanA](https://github.com/OsmanA)
 
 ## [v1.3.0] - 2023-01-04
 

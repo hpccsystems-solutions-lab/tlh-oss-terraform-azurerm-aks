@@ -138,10 +138,11 @@ module "external_dns" {
 module "fluent_bit" {
   source = "./modules/fluent-bit"
 
+  location     = var.location
+  cluster_name = var.cluster_name
+
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
-
-  experimental_use_memory_buffer = var.experimental.fluent_bit_use_memory_buffer
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,

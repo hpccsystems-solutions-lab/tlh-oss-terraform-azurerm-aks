@@ -70,7 +70,7 @@ variable "additional_env" {
 }
 
 variable "debug" {
-  description = "If Fluentd should write all processed log entries to stdout."
+  description = "If true all logs will be sent to stdout."
   type        = bool
   nullable    = false
   default     = true

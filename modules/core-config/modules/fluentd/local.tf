@@ -1,5 +1,5 @@
 locals {
-  chart_version = "2.7.1"
+  chart_version = "3.6.0"
 
   use_aad_workload_identity = false
 
@@ -34,13 +34,16 @@ locals {
       "fluentbit.io/exclude" = "true"
     }
 
-    metrics = {
+    service = {
+      annotations = {
+        "service.kubernetes.io/topology-aware-hints" = "auto"
+      }
+    }
+
+    serviceMonitor = {
       enabled = true
-      serviceMonitor = {
-        enabled = true
-        additionalLabels = {
-          "lnrs.io/monitoring-platform" = "true"
-        }
+      additionalLabels = {
+        "lnrs.io/monitoring-platform" = "true"
       }
     }
 
@@ -55,7 +58,7 @@ locals {
       maxUnavailable = 1
     }
 
-    priorityClassName = ""
+    priorityClassName = "system-cluster-critical"
 
     nodeSelector = {
       "kubernetes.io/os" = "linux"
@@ -101,6 +104,7 @@ locals {
 
     persistence = {
       enabled      = true
+      legacy       = true
       storageClass = "azure-disk-premium-ssd-delete"
       accessMode   = "ReadWriteOnce"
       size         = "64Gi"
@@ -108,14 +112,20 @@ locals {
 
     env = [for k, v in local.additional_env : { name = k, value = v }]
 
-    debug = var.debug
+    configuration = {
+      bindAddress = "0.0.0.0"
 
-    config = {
-      forward = local.forward_config_string
-      filter  = local.filter_config_string
-      route   = local.route_config_string
-      output  = local.output_config_string
+      system = {
+        rootDir = "/fluentd/state"
+      }
+
+      filters = local.filter_config_string
+
+      routes = local.route_config
+
+      debug = false
     }
+
   }
 
   additional_env = merge({
@@ -125,81 +135,21 @@ locals {
     "CLUSTER_NAME"                        = var.cluster_name
   }, var.additional_env)
 
-  route_config = length(var.route_config) > 0 ? var.route_config : [{
+  route_config = concat(length(var.route_config) == 0 || var.debug ? [{
     match  = "**"
-    label  = "@DEFAULT"
-    copy   = false
+    label  = length(var.route_config) > 0 ? "@DEBUG" : "@DEFAULT"
+    copy   = length(var.route_config) > 0
     config = <<-EOT
       <match **>
-        @type null
+        @type ${var.debug ? "stdout" : "null"}
       </match>
     EOT
-  }]
-
-  forward_config_string = <<-EOT
-    <source>
-      @type forward
-      @id input
-      port 24224
-      bind 0.0.0.0
-    </source>
-  EOT
+  }] : [], var.route_config)
 
   filter_config_string = <<EOT
-<filter **>
-  @type record_modifier
-  <record>
-    cloud azure
-    subscriptionId "#{ENV['SUBSCRIPTION_ID']}"
-    location "#{ENV['LOCATION']}"
-    cluster "#{ENV['CLUSTER_NAME']}"
-    node $${record.dig("kubernetes","host")}
-    namespace $${record.dig("kubernetes","namespace") || record.dig("kubernetes","namespace_name") }
-    pod $${record.dig("kubernetes","pod_name")}
-    container $${record.dig("kubernetes","container_name")}
-    containerHash $${record.dig("kubernetes","container_hash")}
-    containerImage $${record.dig("kubernetes","container_image")}
-    app $${record.dig("kubernetes","labels","app.kubernetes.io/name") || record.dig("kubernetes","labels","app") || record.dig("kubernetes","pod_name")}
-    instance $${record.dig("kubernetes","labels","app.kubernetes.io/instance") || record.dig("kubernetes","labels","app.kubernetes.io/namespace") || record.dig("kubernetes","namespace_name")}
-    componentTemp $${ c = record.dig("kubernetes","labels","app.kubernetes.io/component"); c.nil? ? c : record["component"] = c; }
-    partOfTemp $${ p = record.dig("kubernetes","labels","app.kubernetes.io/part-of"); p.nil? ? p : record["partOf"] = p; }
-    versionTemp $${ v = record.dig("kubernetes","labels","app.kubernetes.io/version"); v.nil? ? v : record["version"] = v; }
-    labels $${record.dig("kubernetes","labels")}
-    annotations $${record.dig("kubernetes","annotations")}
-    kubernetes
-    stream
-  </record>
-  remove_keys stream, versionTemp, partOfTemp, componentTemp, kubernetes
-</filter>
 %{if var.filters != null~}
 ${trimspace(var.filters)}
 %{endif~}
-EOT
-
-  route_config_string = <<EOT
-<match **>
-  @type route
-  <route **>
-    copy
-    @label @PROMETHEUS
-  </route>
-%{for route in local.route_config~}
-  <route ${route.match}>
-    @label ${route.label}
-%{if route.copy~}
-    copy
-%{endif~}
-  </route>
-%{endfor~}
-</match>
-EOT
-
-  output_config_string = <<EOT
-%{for route in local.route_config~}
-<label ${route.label}>
-  ${indent(2, trimspace(route.config))}
-</label>
-%{endfor~}
 EOT
 
   service_account_name = "fluentd"
