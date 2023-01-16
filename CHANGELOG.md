@@ -37,9 +37,21 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.4.0] - UNRELEASED
+## [v1.4.0] - 2023-01-16
+
+>**Warning**
+> If you are encountering delays when creating AKS clusters in your subscriptions and have multiple AKS clusters within the same VNET that share the same route table, please exercise caution and refer to [this](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/870) issue.
 
 ### Highlights
+
+In this update to the AKS module focused on enhancing logging capabilities. To achieve this, various configurations were modified to improve the performance of Fluent Bit and Fluentd, including updating to the latest version of their Helm Charts. Additionally, any core services that had available updates were also updated.
+
+#### Security Fixes
+
+- _Cert Manager_ Helm Chart `v1.10.2` update fixes the following CVEs.
+  - [CVE-2022-23525](https://nvd.nist.gov/vuln/detail/CVE-2022-23525)
+  - [CVE-2022-41717](https://nvd.nist.gov/vuln/detail/CVE-2022-41717)
+  - [CVE-2022-41717](https://nvd.nist.gov/vuln/detail/CVE-2022-41717)
 
 ### All Changes
 
