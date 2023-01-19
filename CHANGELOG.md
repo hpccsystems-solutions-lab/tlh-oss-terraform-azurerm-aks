@@ -43,6 +43,8 @@ n/a
 
 ### All Changes
 
+- Updated _Ingress Ngninx_ chart to [4.4.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.2). ([#874](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/874)) [@HadeedS](https://github.com/HadeedS)
+
 ## [v1.4.0] - 2023-01-16
 
 >**Warning**
