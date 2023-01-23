@@ -58,6 +58,10 @@ A VNet can contain multiple AKS clusters and be shared with non-AKS resources, h
 
 Subnet configuration, in particular sizing, will largely depend on the network plugin (CNI) used. See the [network model comparison](https://docs.microsoft.com/en-us/azure/aks/concepts-network#compare-network-models) for more information.
 
+### Service Endpoint
+
+`v1.0.0-beta.24` introduces Thanos as a core service for Prometheus, providing high availability and long-term metrics. The backend utilizes an Azure service endpoint for secure access, improving security and decreasing internet traffic for cluster access. To use versions beyond `v1.0.0-beta.24`, operators must configure the Azure service endpoint in their subscription before consuming the service. See [rsg-terraform-azurerm-aks/issues/861](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/861) for more details.
+
 ### DNS
 
 Configuration for the DNS can be configured via inputs in the `core_services_config` variable.
@@ -95,6 +99,13 @@ While _External DNS_ supports both public and private zones, in split-horizon se
 ### Node Groups
 
 The node group configuration provided by the `node_groups` input variable allows a cluster to be created with node groups that span multiple availability zones and can be configured with the specific required behaviour. The node group name prefix is the map key and at a minimum `node_size` & `max_capacity` must be provided with the other values having a default (see [Appendix B](#appendix-b)).
+
+### Single Node Group
+
+> **Warning**
+> Do not use this it is likely to be deprecated in future module versions.
+
+The single_group parameter controls whether a single node group is created that spans multiple zones, or if a separate node group is created for each zone in a cluster. When this parameter is set to `true`, a single node group is created that spans all zones, and the `min_capacity` and `max_capacity` settings apply to the total number of nodes across all zones. When set to false, separate node groups are created for each zone and the `min_capacity` and `max_capacity` settings apply to the number of nodes in each individual zone and must be scaled accordingly. It is advised to not use `single_group` unless you have a specific problem to solve and have spoken to the core engineering team.
 
 #### Node image upgrades
 
@@ -466,9 +477,6 @@ To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azu
 ### AKS v1.25
 
 To enable experimental support for _AKS_ `v1.25` you can set `experimental = { v1_25 = true }` and then set `cluster_version` to `1.25`.
-
-> **Warning**
-> There may be issues when upgrading a cluster to `v1.25` or destroying a cluster at `v1.25`. This can be caused by the node draining operation timing out due to PDBs owned by Azure (i.e. `calico-typha`, `coredns-pdb`, `konnectivity-agent` & `metrics-server-pdb`). To get around this, you can manually delete the PDBs or delete the nodes before running a cluster upgrade or destroy. To follow this issue, you can refer to [#785](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/785).
 
 ---
 
