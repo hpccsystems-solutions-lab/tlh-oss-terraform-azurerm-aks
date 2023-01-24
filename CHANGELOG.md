@@ -46,6 +46,7 @@ n/a
 - Updated _Ingress Ngninx_ chart to [4.4.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.2). ([#874](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/874)) [@HadeedS](https://github.com/HadeedS)
 - Updated _Cert Manager_ chart to [1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#867](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/867)) [@HadeedS](https://github.com/HadeedS)
 - Updated _Kube Prometheus Stack_ chart to [v44.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-44.2.1) (contains _Prometheus Operator_ [v0.62.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.62.0) and _Prometheus_ [v2.41.0](https://github.com/prometheus/prometheus/releases/tag/v2.41.0)). ([#866](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/866)) [@HadeedS](https://github.com/HadeedS)
+- Updated _Fluent Bit_ chart to [v0.22.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.22.0). ([#879](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/879)) [@HadeedS](https://github.com/HadeedS)
 
 ## [v1.4.0] - 2023-01-16
 
