@@ -37,9 +37,11 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.5.0] - UNRELEASED
+## [v1.5.0] - 2023-01-30
 
 ### Highlights
+
+In this revision to the AKS module, modifications were mostly focused on updating core services with Helm Chart upgrades. Additionally, the _Kube Prometheus Stack_ was updated to incorporate the latest CRDs. As a proactive measure, it has been determined that starting from version `v1.6.0`, core services will not be updated with every chart update unless it incorporates crucial modifications such as CVE patches or bug resolution. This decision has been made to minimize operational overhead and prioritize development efforts within the module.
 
 ### All Changes
 
