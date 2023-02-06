@@ -41,6 +41,10 @@ n/a
 
 ### Highlights
 
+#### Updated AKS versions
+
+The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.9` These changes fix a number of CVEs & defects and keep the AKS version supported by Azure.
+
 ### All Changes
 
 ## [v1.5.0] - 2023-01-30
