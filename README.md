@@ -323,6 +323,12 @@ Native Kubernetes network policies allow users to specify which pods can communi
 
 When utilizing custom tags with the module, it is essential to be aware of the potential limitations that may impact the removal of tags. Some tags may not be removed when attempting to remove them through the module, which can result in unexpected behaviour or errors in your pipeline. To avoid these issues, it is recommended to thoroughly review and test the behaviour of custom tags before implementing them in any environment. If necessary, persistent tags can be manually removed through the Azure portal, CLI or API to ensure that they are properly removed from the resource. For more information on tag limitations, you can refer to the Microsoft documentation [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources?tabs=json#limitations)
 
+### Storage
+
+The module includes support for the azure blob csi driver and file driver. This will require additional configuration to implement. It is necessary to install custom manifests for storage classes, persistent volumes and claims when working with the blob csi or file csi drivers.
+
+You can refer to the Microsoft documentation for [azure file csi](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) and [azure blob csi](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi?tabs=NFS).
+
 ### Upgrading
 
 Core service and node upgrades are automated as part of running this module and don't require any user interaction. Kubernetes minor version upgrades are supported by the module as long as the upgrade is only to the next minor version and the cluster has had the latest module version run against it.
@@ -610,6 +616,7 @@ Specification for the `core_services_config` object.
 | `grafana`               | Grafana configuration.               | `object` ([Appendix J](#appendix-j)) | `{}`        |
 | `ingress_internal_core` | Ingress internal-core configuration. | `object` ([Appendix K](#appendix-k)) |             |
 | `prometheus`            | Prometheus configuration.            | `object` ([Appendix L](#appendix-l)) | `{}`        |
+| `storage`               | Storage configuration.               | `object` ([Appendix N](#appendix-n)) | `{}`        |
 
 ### Appendix E
 
@@ -713,6 +720,15 @@ Specification for the `maintenance_window_not_allowed` object.
 | :----------- | :-------------------------------------------------------------------------- | :------- | :---------- |
 | `start`      | Start time for the not allowed maintenance window block in RFC 3339 format. | `string` | No          |
 | `end`        | End time for the not allowed maintenance window block in RFC 3339 format.   | `string` | No          |
+
+### Appendix N
+
+Specification for the `storage` object.
+
+| **Variable** | **Description**                                       | **Type** | **Default** |
+| :----------- | :---------------------------------------------------- | :------- | :---------- |
+| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `true`      |
+| `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
 
 ---
 

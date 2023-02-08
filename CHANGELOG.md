@@ -47,6 +47,8 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 
 ### All Changes
 
+- Added `storage` input under `core_services_config` for configuring blob csi support. ([#832](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/832)) [@appkins](https://github.com/appkins)
+
 ## [v1.5.0] - 2023-01-30
 
 ### Highlights

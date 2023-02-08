@@ -50,6 +50,7 @@ module "cluster" {
   oms_agent                                               = var.experimental.oms_agent
   oms_agent_log_analytics_workspace_id                    = var.experimental.oms_agent_log_analytics_workspace_id
   windows_support                                         = var.experimental.windows_support
+  storage                                                 = var.core_services_config.storage
   tags                                                    = local.tags
   timeouts                                                = local.timeouts
 }

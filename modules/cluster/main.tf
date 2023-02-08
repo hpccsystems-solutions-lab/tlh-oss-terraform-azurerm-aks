@@ -118,6 +118,15 @@ resource "azurerm_kubernetes_cluster" "default" {
     }
   }
 
+  storage_profile {
+    disk_driver_enabled = true
+    disk_driver_version = "v1" # TODO: explore experimental support of v2 driver version
+
+    file_driver_enabled         = var.storage.file
+    blob_driver_enabled         = var.storage.blob
+    snapshot_controller_enabled = true # Default is true - We may explore allowing operators to disable this feature in future updates.
+  }
+
   node_resource_group = "mc_${var.cluster_name}"
 
   default_node_pool {

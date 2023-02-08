@@ -289,6 +289,10 @@ variable "core_services_config" {
     prometheus = optional(object({
       remote_write = optional(any)
     }))
+    storage = optional(object({
+      file = optional(bool, true)
+      blob = optional(bool, false)
+    }), {})
   })
   nullable = false
 }

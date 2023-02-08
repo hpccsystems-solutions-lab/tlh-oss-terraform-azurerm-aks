@@ -222,6 +222,15 @@ variable "windows_support" {
   nullable    = false
 }
 
+variable "storage" {
+  description = "Azure storage CSI driver profile."
+  type = object({
+    file = bool
+    blob = bool
+  })
+  nullable = false
+}
+
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)
