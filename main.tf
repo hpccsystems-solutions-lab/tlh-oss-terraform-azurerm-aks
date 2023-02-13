@@ -21,7 +21,7 @@ module "cluster" {
   workload_identity                                       = var.experimental.workload_identity
   cluster_endpoint_public_access                          = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs                           = var.cluster_endpoint_access_cidrs
-  network_plugin                                          = var.network_plugin
+  network_plugin                                          = local.network_plugin
   subnet_id                                               = local.subnet_id
   route_table_id                                          = local.route_table_id
   podnet_cidr_block                                       = var.podnet_cidr_block
@@ -77,7 +77,7 @@ module "node_groups" {
   cluster_id           = module.cluster.id
   cluster_name         = var.cluster_name
   cluster_version_full = local.cluster_version_full
-  network_plugin       = var.network_plugin
+  network_plugin       = local.network_plugin
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
   bootstrap_name       = local.bootstrap_name
@@ -108,7 +108,7 @@ module "core_config" {
   cluster_version         = var.cluster_version
   workload_identity       = var.experimental.workload_identity
   cluster_oidc_issuer_url = module.cluster.oidc_issuer_url
-  network_plugin          = var.network_plugin
+  network_plugin          = local.network_plugin
 
   ingress_node_group = module.node_groups.ingress_node_group
 

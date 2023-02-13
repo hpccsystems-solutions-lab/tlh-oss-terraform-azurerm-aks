@@ -50,7 +50,7 @@ variable "cluster_version" {
 }
 
 variable "network_plugin" {
-  description = "Kubernetes network plugin, \"kubenet\" & \"azure\" are supported."
+  description = "DEPRECATED - Kubernetes network plugin, \"kubenet\" & \"azure\" are supported."
   type        = string
   nullable    = false
   default     = "kubenet"

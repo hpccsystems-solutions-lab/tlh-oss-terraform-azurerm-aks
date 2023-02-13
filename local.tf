@@ -54,4 +54,6 @@ locals {
     cluster_modify = 5400
     helm_modify    = 600
   }
+
+  network_plugin = var.experimental.windows_support ? "azure" : var.network_plugin
 }

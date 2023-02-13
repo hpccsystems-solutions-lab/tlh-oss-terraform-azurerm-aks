@@ -48,6 +48,8 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 ### All Changes
 
 - Added `storage` input under `core_services_config` for configuring blob csi support. ([#832](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/832)) [@appkins](https://github.com/appkins)
+- Changed network plugin logic to infer `network_plugin` variable from `experimental.windows_support`; clusters with Windows support can use the Azure CNI so this variable didn't serve any purpose. ([#895](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/895)) [@appkins](https://github.com/appkins)
+- Deprecated `network_plugin` input; all non-Windows clusters will use the Kubenet CNI which was the only supported CNI so shouldn't be a change in behaviour. ([#895](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/895)) [@appkins](https://github.com/appkins)
 
 ## [v1.5.0] - 2023-01-30
 
