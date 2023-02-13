@@ -6,7 +6,7 @@ data "azurerm_subscription" "current" {
 
 locals {
   module_name    = "terraform-azurerm-aks"
-  module_version = "v1.6.0-beta.1"
+  module_version = "v1.6.0"
 
   cluster_tags = {
     "lnrs.io_terraform-module-version" = local.module_version

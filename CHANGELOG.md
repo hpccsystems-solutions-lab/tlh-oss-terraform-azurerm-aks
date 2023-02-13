@@ -7,14 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## Support - Christmas & New Year 2022
-
-Over the Christmas and New Year period we will be providing expanded version support on this module. While some of the team is out on well-deserved breaks be assured assistance is available if required. Please ensure you are raising support requests in either the [rsg-kubernetes discussion](https://github.com/LexisNexis-RBA/rsg-kubernetes/discussions) project or the module directly. Expanded version support will be in operation until the beginning of February 2023.
-
-- Supported versions - `v1.0.0-rc.{1,2}.<latest_patch>`, `v1.{1,2,3}.<latest_patch>`
-
-Any escalations or emergencies contact [Aydogan Osman (London, UK, GMT)](https://teams.microsoft.com/l/chat/0/0?users=aydogan.osman@lexisnexisrisk.com)
-
 ## Upgrading From Pre v1.0.0-beta.10 Versions
 
 All clusters created with a module version older than `v1.0.0-beta.10` need to be destroyed and re-created with the latest version of the module.
@@ -23,7 +15,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-n/a
+Deprecates the `network_plugin variable`. Infers value from `var.experimental.windows_support` this will be removed in `v1.8.0`.
 
 ---
 
@@ -37,9 +29,24 @@ n/a
 - Deprecated
 - Removed -->
 
-## [v1.6.0] - UNRELEASED
+## [v1.6.0] - 2023-02-13
+
+> **Important**
+> Previous _AKS_ versions no longer work on kubernetes version `1.25`. If you wish to use `1.25`, please use _AKS_ version `v1.6.0`.
+
+> **Important** The extended Christmas support windows has come to an end which means that we are back to only supporting the 3 latest minor version patches and that versions a, b, c are no longer supported. If you haven't already please make sure you update to a supported version ASAP.
 
 ### Highlights
+
+In this revision to the _AKS_ module, we added support for use of the _Azure Blob CSI Driver_.
+
+#### Azure Blob CSI Driver
+
+Added configuration for `storage` under `core_services_config` which includes support for the built in _Azure Blob CSI Driver_.
+
+#### Deprecations
+
+Deprecates the `network_plugin variable`. Infers value from `var.experimental.windows_support`.
 
 #### Updated AKS versions
 
@@ -48,8 +55,6 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 ### All Changes
 
 - Added `storage` input under `core_services_config` for configuring blob csi support. ([#832](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/832)) [@appkins](https://github.com/appkins)
-- Changed network plugin logic to infer `network_plugin` variable from `experimental.windows_support`; clusters with Windows support can use the Azure CNI so this variable didn't serve any purpose. ([#895](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/895)) [@appkins](https://github.com/appkins)
-- Deprecated `network_plugin` input; all non-Windows clusters will use the Kubenet CNI which was the only supported CNI so shouldn't be a change in behaviour. ([#895](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/895)) [@appkins](https://github.com/appkins)
 
 ## [v1.5.0] - 2023-01-30
 
@@ -95,6 +100,9 @@ In this update to the AKS module focused on enhancing logging capabilities. To a
 - Changed the log processing to run in _Fluent Bit_ instead of _Fluentd_. [@OsmanA](https://github.com/OsmanA)
 
 ## [v1.3.0] - 2023-01-04
+
+> **Important**
+> As of 2023-02-13 version `1.3.0` is no longer supported. If you are still this version please update to the latest release.
 
 ### Highlights
 
