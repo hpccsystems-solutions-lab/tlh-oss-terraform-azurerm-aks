@@ -29,6 +29,12 @@ Deprecates the `network_plugin variable`. Infers value from `var.experimental.wi
 - Deprecated
 - Removed -->
 
+## [v1.7.0] - UNRELEASED
+
+### Highlights
+
+### All Changes
+
 ## [v1.6.0] - 2023-02-13
 
 > **Important**
