@@ -62,6 +62,12 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 
 - Added `storage` input under `core_services_config` for configuring blob csi support. ([#832](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/832)) [@appkins](https://github.com/appkins)
 
+## [v1.5.1] - 2023-02-14
+
+### All Changes
+
+- Updated full AKS versions which include patch versions for `1.23` to `1.23.15`, `v1.24` to `v1.24.9` & `v1.25` to `v1.25.5`. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.5.0] - 2023-01-30
 
 ### Highlights
@@ -74,6 +80,12 @@ In this revision to the AKS module, modifications were mostly focused on updatin
 - Updated _Cert Manager_ chart to [1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#867](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/867)) [@HadeedS](https://github.com/HadeedS)
 - Updated _Kube Prometheus Stack_ chart to [v44.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-44.2.1) (contains _Prometheus Operator_ [v0.62.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.62.0) and _Prometheus_ [v2.41.0](https://github.com/prometheus/prometheus/releases/tag/v2.41.0)). ([#866](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/866)) [@HadeedS](https://github.com/HadeedS)
 - Updated _Fluent Bit_ chart to [v0.22.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.22.0). ([#879](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/879)) [@HadeedS](https://github.com/HadeedS)
+
+## [v1.4.1] - 2023-02-14
+
+### All Changes
+
+- Updated full AKS versions which include patch versions for `1.23` to `1.23.15`, `v1.24` to `v1.24.9` & `v1.25` to `v1.25.5`. [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.4.0] - 2023-01-16
 
