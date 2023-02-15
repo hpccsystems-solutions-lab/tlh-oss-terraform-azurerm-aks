@@ -67,6 +67,7 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 ### All Changes
 
 - Updated full AKS versions which include patch versions for `1.23` to `1.23.15`, `v1.24` to `v1.24.9` & `v1.25` to `v1.25.5`. [@peterabarr](https://github.com/peterabarr)
+- Fixed Thanos endpoint for government cloud compatibility. ([#914](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/914)) [@appkins](https://github.com/appkins)
 
 ## [v1.5.0] - 2023-01-30
 

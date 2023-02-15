@@ -1292,12 +1292,14 @@ locals {
   thanos_objstore_secret_key      = "config"
   thanos_objstore_secret_checksum = sha256(local.thanos_objstore_config)
 
+  thanos_objstore_end_point = substr(replace(azurerm_storage_account.data.primary_blob_host, azurerm_storage_account.data.name, ""), 1, -1)
+
   thanos_objstore_config = <<-EOT
     type: AZURE
     config:
       storage_account: ${azurerm_storage_account.data.name}
       container: thanos
-      endpoint: blob.core.windows.net
+      endpoint: ${local.thanos_objstore_end_point}
       user_assigned_id: ${module.identity_thanos.client_id}
   EOT
 
