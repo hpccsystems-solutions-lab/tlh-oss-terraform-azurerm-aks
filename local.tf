@@ -15,17 +15,39 @@ locals {
   # az aks get-versions --location eastus --output table
   # az aks get-versions --location westeurope --output table
   # https://releases.aks.azure.com/webpage/index.html
-  cluster_full_versions = merge({
-    "1.24" = "1.24.9"
-    "1.23" = "1.23.15"
-  }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+  cluster_version_full_lookup = {
+    westeurope = merge({
+      "1.24" = "1.24.9"
+      "1.23" = "1.23.15"
+    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+
+    eastus = merge({
+      "1.24" = "1.24.9"
+      "1.23" = "1.23.15"
+    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+
+    centralus = merge({
+      "1.24" = "1.24.9"
+      "1.23" = "1.23.15"
+    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+
+    usgovvirginia = merge({
+      "1.24" = "1.24.9"
+      "1.23" = "1.23.15"
+    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+
+    usgovtexas = merge({
+      "1.24" = "1.24.9"
+      "1.23" = "1.23.15"
+    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+  }
 
   availability_zones = [1, 2, 3]
 
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
 
-  cluster_version_full = local.cluster_full_versions[var.cluster_version]
+  cluster_version_full = try(local.cluster_version_full_lookup[var.location][var.cluster_version], local.cluster_version_full_lookup["westeurope"][var.cluster_version])
 
   tenant_id       = data.azurerm_subscription.current.tenant_id
   subscription_id = data.azurerm_subscription.current.subscription_id
