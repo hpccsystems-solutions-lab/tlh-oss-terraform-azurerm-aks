@@ -35,6 +35,8 @@ Deprecates the `network_plugin variable`. Infers value from `var.experimental.wi
 
 ### All Changes
 
+- Updated _Fluentd_ chart to [v3.6.2](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.6.2) (contains _Fluentd Aggregator_ [v2.6.2](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.6.2). ([#918](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/918)) [@HadeedS](https://github.com/HadeedS)
+
 ## [v1.6.0] - 2023-02-13
 
 > **Important**

@@ -1,5 +1,5 @@
 locals {
-  chart_version = "3.6.0"
+  chart_version = "3.6.2"
 
   use_aad_workload_identity = false
 
