@@ -37,6 +37,7 @@ Deprecates the `network_plugin variable`. Infers value from `var.experimental.wi
 
 - Updated _Fluentd_ chart to [v3.6.2](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.6.2) (contains _Fluentd Aggregator_ [v2.6.2](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.6.2). ([#918](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/918)) [@HadeedS](https://github.com/HadeedS)
 - Added support to be able to select K8s patch versions by their region. ([#903](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/903)) [@peterabarr](https://github.com/peterabarr))
+- Added a patch release issue template to help with patch releases ([#921](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/921)) [@peterabarr](https://github.com/peterabarr))
 
 ## [v1.6.0] - 2023-02-13
 
