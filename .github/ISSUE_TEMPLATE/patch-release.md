@@ -30,7 +30,7 @@ The following tasks need to be completed to release the module.
 - [ ] Wait For Release
 - [ ] Merge CHANGELOG PR
 - [ ] Sync release to GitLab
-- [ ] Close Release Issue & Milestone
+- [ ] Cleanup
 
 ### Create Issues for Patch Release
 
@@ -57,6 +57,9 @@ git commit -m "chore: Patch release vx.x.x"
 ### Update CHANGELOG and push
 
 Update the `CHANGELOG` appropriately by filling in what changes have been made in the patch.
+
+> **Important**
+> Make sure to add a note to tell the operators that the version that is getting patched is no longer supported. E.g If patching `v1.3.0` to `v1.3.1`, put a note by `v1.3.0` in the `CHANGELOG`
 
 ```shell
 git add .
@@ -112,7 +115,7 @@ The release automation will be created as a [GitHub Action](https://github.com/L
 
 ### Merge CHANGELOG PR
 
-Merge the CHANGELOG PR into main so that it is up to date with the patch release.
+Merge the `CHANGELOG` PR into main so that it is up to date with the patch release.
 
 ### Sync release to GitLab
 
@@ -148,6 +151,10 @@ git pull
 
 On the [Azure AKS Gitlab project](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks) go to [tags](https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks/-/tags). Populate the release notes of the pushed release tag (`v1.1.0`), to align with the GitHub release. Create the minor version sliding tag (`v1.1`), and recreate the major version sliding tag (`v1`) that is currently there. Ensure these are created from `main`.
 
-### Close Release Issue & Milestone
+### Cleanup
 
-Once these steps have been completed this issue should be closed and the release milestone should be closed.
+Finally cleanup the repository:
+
+- Close this issue
+- Close the milestone for this release
+- Delete the patch branch from GitHub
