@@ -41,6 +41,7 @@ Deprecates the `network_plugin variable`. Infers value from `var.experimental.wi
 - Updated _Fluent Bit_ chart to [v0.24.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.24.0). ([#917](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/917)) [@HadeedS](https://github.com/HadeedS)
 - Updated _Kube Prometheus Stack_ chart to [v45.1.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.1.1) (contains _Prometheus Operator_ [v0.63.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.63.0) and _Prometheus_ [v2.42.0](https://github.com/prometheus/prometheus/releases/tag/v2.42.0)). ([#925](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/925)) [@appkins](https://github.com/appkins)
 - Added support for Premium SSD v2 disks via additional `StorageClass` resources. ([#929](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/929)) [@stevehipwell](https://github.com/stevehipwell)
+- Removed requirement to set an experimental flag to use an experimental cluster version, this added unnecessary additional complexity for a non-API change. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.6.1] - 2023-02-16
 

@@ -16,30 +16,35 @@ locals {
   # az aks get-versions --location westeurope --output table
   # https://releases.aks.azure.com/webpage/index.html
   cluster_version_full_lookup = {
-    westeurope = merge({
+    westeurope = {
+      "1.25" = "1.25.5"
       "1.24" = "1.24.9"
       "1.23" = "1.23.15"
-    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+    }
 
-    eastus = merge({
+    eastus = {
+      "1.25" = "1.25.5"
       "1.24" = "1.24.9"
       "1.23" = "1.23.15"
-    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+    }
 
-    centralus = merge({
+    centralus = {
+      "1.25" = "1.25.5"
       "1.24" = "1.24.9"
       "1.23" = "1.23.15"
-    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+    }
 
-    usgovvirginia = merge({
+    usgovvirginia = {
+      "1.25" = "1.25.5"
       "1.24" = "1.24.9"
       "1.23" = "1.23.15"
-    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+    }
 
-    usgovtexas = merge({
+    usgovtexas = {
+      "1.25" = "1.25.5"
       "1.24" = "1.24.9"
       "1.23" = "1.23.15"
-    }, var.experimental.v1_25 ? { "1.25" = "1.25.5" } : {})
+    }
   }
 
   availability_zones = [1, 2, 3]

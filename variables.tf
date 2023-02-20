@@ -427,7 +427,6 @@ variable "experimental" {
     oms_agent_log_analytics_workspace_id                       = optional(string, null)
     oms_agent_create_configmap                                 = optional(bool, true)
     windows_support                                            = optional(bool, false)
-    v1_25                                                      = optional(bool, false)
     arm64                                                      = optional(bool, false)
     node_group_os_config                                       = optional(bool, false)
     azure_cni_max_pods                                         = optional(bool, false)
