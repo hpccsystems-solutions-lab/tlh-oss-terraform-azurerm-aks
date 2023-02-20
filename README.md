@@ -325,9 +325,27 @@ When utilizing custom tags with the module, it is essential to be aware of the p
 
 ### Storage
 
-The module includes support for the azure blob csi driver and file driver. This will require additional configuration to implement. It is necessary to install custom manifests for storage classes, persistent volumes and claims when working with the blob csi or file csi drivers.
+The module includes support for the Azure Disks CSI driver (always on), Azure Files CSI driver (on by default) & Azure Blob CSI driver (off by default).
 
-You can refer to the Microsoft documentation for [azure file csi](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) and [azure blob csi](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi?tabs=NFS).
+The following Azure Disks CSI driver `StorageClass` resources are created by default to support standard [Azure managed disk types](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types). When using a default `StorageClass` you are recommended to use the Premium SSD v2 classes where possible due to the best price-performance characteristics. If you need support for specific characteristics (such as higher IOPS or throughput) you should create a custom `StorageClass`.
+
+- `azure-disk-standard-ssd-retain`
+- `azure-disk-premium-ssd-retain`
+- `azure-disk-premium-ssd-v2-retain`
+- `azure-disk-standard-ssd-delete`
+- `azure-disk-premium-ssd-delete`
+- `azure-disk-premium-ssd-v2-delete`
+- `azure-disk-standard-ssd-ephemeral`
+- `azure-disk-premium-ssd-ephemeral`
+- `azure-disk-premium-ssd-v2-ephemeral`
+
+If you wish to use the Azure Files CSI driver or the Azure Blob CSI driver you will need to add one or more custom `StorageClass`.
+
+The documentation for the CSI drivers can be found at the following locations.
+
+- [Azure Disk CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi)
+- [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi)
+- [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi)
 
 ### Upgrading
 
@@ -498,16 +516,16 @@ This module requires the following versions to be configured in the workspace `t
 
 ### Providers
 
-| **Name**                                                                                    | **Version**                    |
-| :------------------------------------------------------------------------------------------ | :----------------------------- |
-| [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.31.0`                    |
-| [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.8.0`                     |
-| [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.14.0`                    |
-| [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.15.0`                    |
-| [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.3.0`                     |
-| [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>= 1.7.10`                    |
-| [tiwood/static](https://registry.terraform.io/providers/tiwood/static/latest)               | `>= 0.1.0`                     |
-| [hashicorp/time](https://registry.terraform.io/providers/hashicorp/time/latest)             | `>= 0.7.2`                     |
+| **Name**                                                                                    | **Version** |
+| :------------------------------------------------------------------------------------------ | :---------- |
+| [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.31.0` |
+| [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.8.0`  |
+| [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.14.0` |
+| [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.15.0` |
+| [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.3.0`  |
+| [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>= 1.7.10` |
+| [tiwood/static](https://registry.terraform.io/providers/tiwood/static/latest)               | `>= 0.1.0`  |
+| [hashicorp/time](https://registry.terraform.io/providers/hashicorp/time/latest)             | `>= 0.7.2`  |
 
 ---
 
@@ -520,7 +538,7 @@ This module requires the following versions to be configured in the workspace `t
 | `resource_group_name`                                               | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                                                                                                                                                                                                                                                         | `string`                                   |                   |
 | `cluster_name`                                                      | Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}` (e.g. `app-aks-0` or `app-aks-1`).                                                                                                                                                                                                                | `string`                                   |                   |
 | `cluster_version`                                                   | Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions `1.25` ([EXPERIMENTAL](#aks-v125)), `1.24` or `1.23` are supported.                                                                                                                                                                                                                                                            | `string`                                   |                   |
-| `network_plugin`                                                    | **DEPRECATED** - Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                                                                                                                                                                                                                                                       | `string`                                   | `"kubenet"`       |
+| `network_plugin`                                                    | **DEPRECATED** - Kubernetes network plugin, `kubenet` & `azure` are supported.                                                                                                                                                                                                                                                                                                                                      | `string`                                   | `"kubenet"`       |
 | `sku_tier_paid`                                                     | If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA.                                                                                                                                                                                                                                                                                                    | `bool`                                     |                   |
 | `cluster_endpoint_public_access`                                    | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                                                                                                                                                                                                                                                        | `bool`                                     |                   |
 | `cluster_endpoint_access_cidrs`                                     | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster.                                                                                                                                                                                                                                    | `list(string)`                             |                   |
