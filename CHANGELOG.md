@@ -15,7 +15,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-Deprecates the `network_plugin variable`. Infers value from `var.experimental.windows_support` this will be removed in `v1.8.0`.
+- The `network_plugin` variable is deprecated in favour of inferring the value from `experimental.windows_support`, this will be removed in the `v1.8.0` release.
+- The `node_os` value of `windows` is deprecated in favour of `windows2019` to make the Windows version selection explicit, this will be removed in the `v1.9.0` release.
 
 ---
 
@@ -42,6 +43,9 @@ Deprecates the `network_plugin variable`. Infers value from `var.experimental.wi
 - Updated _Kube Prometheus Stack_ chart to [v45.1.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.1.1) (contains _Prometheus Operator_ [v0.63.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.63.0) and _Prometheus_ [v2.42.0](https://github.com/prometheus/prometheus/releases/tag/v2.42.0)). ([#925](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/925)) [@appkins](https://github.com/appkins)
 - Added support for Premium SSD v2 disks via additional `StorageClass` resources. ([#929](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/929)) [@stevehipwell](https://github.com/stevehipwell)
 - Removed requirement to set an experimental flag to use an experimental cluster version, this added unnecessary additional complexity for a non-API change. [@stevehipwell](https://github.com/stevehipwell)
+- Added support for explicitly specifying the Windows version in the node group `node_os` variable when using Windows nodes. [@stevehipwell](https://github.com/stevehipwell)
+- Added **UNTESTED** experimental support for using Windows Server 2022. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated the node group `node_os` value of `windows` in favour of `windows2019` as we want the explicit Windows version as a module input. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.6.1] - 2023-02-16
 

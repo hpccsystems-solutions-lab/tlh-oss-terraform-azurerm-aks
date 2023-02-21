@@ -152,7 +152,7 @@ module "aks" {
     }
 
     windows = {
-      node_os           = "windows"
+      node_os           = "windows2019"
       node_type_version = "v1"
       node_size         = "large"
       max_capacity      = 18

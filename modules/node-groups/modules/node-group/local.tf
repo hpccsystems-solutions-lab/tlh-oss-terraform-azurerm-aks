@@ -2,13 +2,17 @@ locals {
   node_arch = "amd64"
 
   os_types = {
-    "ubuntu"  = "Linux"
-    "windows" = "Windows"
+    "ubuntu"      = "Linux"
+    "windows"     = "Windows"
+    "windows2019" = "Windows"
+    "windows2022" = "Windows"
   }
 
   os_skus = {
-    "ubuntu"  = "Ubuntu"
-    "windows" = null
+    "ubuntu"      = "Ubuntu"
+    "windows"     = null
+    "windows2019" = "Windows2019"
+    "windows2022" = "Windows2022"
   }
 
   vm_sizes = {
