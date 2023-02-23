@@ -16,6 +16,7 @@ locals {
       node_arch           = "amd64"
       node_os             = "ubuntu"
       node_type           = "gp"
+      node_type_variant   = "default"
       node_type_version   = "v1"
       node_size           = "xlarge"
       single_group        = false

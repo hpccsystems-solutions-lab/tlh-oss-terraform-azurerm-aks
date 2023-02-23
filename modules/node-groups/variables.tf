@@ -70,6 +70,7 @@ variable "node_groups" {
     node_arch         = optional(string, "amd64")
     node_os           = optional(string, "ubuntu")
     node_type         = optional(string, "gp")
+    node_type_variant = optional(string, "default")
     node_type_version = optional(string, "v1")
     node_size         = string
     single_group      = optional(bool, false)

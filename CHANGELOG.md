@@ -46,6 +46,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added support for explicitly specifying the Windows version in the node group `node_os` variable when using Windows nodes. [@stevehipwell](https://github.com/stevehipwell)
 - Added **UNTESTED** experimental support for using Windows Server 2022. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the node group `node_os` value of `windows` in favour of `windows2019` as we want the explicit Windows version as a module input. [@stevehipwell](https://github.com/stevehipwell)
+- Added support for node type variants via the optional `node_type_variant` node group input to allow for additional node options such as processor vendor. [@stevehipwell](https://github.com/stevehipwell)
+- Added `amd` node type variants to the `v2` versions of the `amd64` arch `gp`, `gpd`, `mem`, `memd` & `stor` node types. ([#791](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/791)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.6.1] - 2023-02-16
 
@@ -56,7 +58,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.6.0] - 2023-02-13
 
 > **Important**
-> Previous _AKS_ versions no longer work on kubernetes version `1.25`. If you wish to use `1.25`, please use _AKS_ version `v1.6.0`.
+> Previous _AKS_ versions no longer work on Kubernetes version `1.25`. If you wish to use `1.25`, please use _AKS_ version `v1.6.0`.
 
 > **Important** The extended Christmas support windows has come to an end which means that we are back to only supporting the 3 latest minor version patches and that versions a, b, c are no longer supported. If you haven't already please make sure you update to a supported version ASAP.
 

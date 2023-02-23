@@ -156,44 +156,49 @@ All the nodes provisioned by the module support premium storage.
 
 [General purpose](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general) nodes, `gp` & `gpd`, offer a good balance of compute and memory. If you need a local NVMe drive `gpd` provides this.
 
-| **Arch** | **Type** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                               |
-| -------- | -------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `amd64`  | `gp`     | `v1`        | [Dsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/dv4-dsv4-series#dsv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
-| `amd64`  | `gp`     | `v2`        | [Dsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series#dsv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
-| `arm64`  | `gp`     | `v1`        | [Dpsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series#dpsv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
-| `amd64`  | `gpd`    | `v1`        | [Ddsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
-| `amd64`  | `gpd`    | `v2`        | [Ddsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv5-ddsv5-series#ddsv5-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
-| `arm64`  | `gpd`    | `v1`        | [Dpdsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series#dpdsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                               |
+| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| `amd64`  | `gp`     | `default`   | `v1`        | [Dsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/dv4-dsv4-series#dsv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
+| `amd64`  | `gp`     | `default`   | `v2`        | [Dsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series#dsv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `amd64`  | `gp`     | `amd`       | `v2`        | [Dasv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dasv5-dadsv5-series#dasv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `arm64`  | `gp`     | `default`   | `v1`        | [Dpsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series#dpsv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `amd64`  | `gpd`    | `default`   | `v1`        | [Ddsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
+| `amd64`  | `gpd`    | `default`   | `v2`        | [Ddsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv5-ddsv5-series#ddsv5-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `amd64`  | `gpd`    | `amd`       | `v2`        | [Dadsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dasv5-dadsv5-series#dadsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
+| `arm64`  | `gpd`    | `default`   | `v1`        | [Dpdsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series#dpdsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
 
 ##### Memory Optimised
 
 [Memory optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-memory) nodes, `mem` & `memd`, offer a higher memory to CPU ration than general purpose nodes. If you need a local NVMe drive `memd` provides this.
 
-| **Arch** | **Type** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                                           |
-| -------- | -------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `amd64`  | `mem`    | `v1`        | [Esv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ev4-esv4-series#esv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
-| `amd64`  | `mem`    | `v2`        | [Esv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ev5-esv5-series#esv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
-| `arm64`  | `mem`    | `v1`        | [Epsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/epsv5-epdsv5-series#epsv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge` & `8xlarge`                                                 |
-| `amd64`  | `memd`   | `v1`        | [Edsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/edv4-edsv4-series#edsv4-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
-| `amd64`  | `memd`   | `v2`        | [Edsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series#edsv5-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
-| `arm64`  | `memd`   | `v1`        | [Epdsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/epsv5-epdsv5-series#epdsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge` & `8xlarge`                                                 |
+| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                                           |
+| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| `amd64`  | `mem`    | `default`   | `v1`        | [Esv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ev4-esv4-series#esv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
+| `amd64`  | `mem`    | `default`   | `v2`        | [Esv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ev5-esv5-series#esv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+| `amd64`  | `mem`    | `amd`       | `v2`        | [Easv5](https://learn.microsoft.com/en-us/azure/virtual-machines/easv5-eadsv5-series#easv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+| `arm64`  | `mem`    | `default`   | `v1`        | [Epsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/epsv5-epdsv5-series#epsv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge` & `8xlarge`                                                 |
+| `amd64`  | `memd`   | `default`   | `v1`        | [Edsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/edv4-edsv4-series#edsv4-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
+| `amd64`  | `memd`   | `default`   | `v2`        | [Edsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series#edsv5-series)      | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+| `amd64`  | `memd`   | `amd`       | `v2`        | [Eadsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/easv5-eadsv5-series#eadsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
+| `arm64`  | `memd`   | `default`   | `v1`        | [Epdsv5](https://learn.microsoft.com/en-us/azure/virtual-machines/epsv5-epdsv5-series#epdsv5-series) | `large`, `xlarge`, `2xlarge`, `4xlarge` & `8xlarge`                                                 |
 
 ##### Compute Optimised
 
 [Compute optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-compute) nodes, `cpu`, offer a higher CPU to memory ratio than general purpose nodes.
 
-| **Arch** | **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
-| -------- | -------- | ----------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `amd64`  | `cpu`    | `v1`        | [Fsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/fsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `18xlarge` |
+| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
+| -------- | -------- | ----------- | ----------- | --------------------------------------------------------------------------- |
+| `amd64`  | `cpu`    | `default`   | `v1`        | [Fsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/fsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `18xlarge` |
 
 ##### Storage Optimised
 
 [Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
 
-| **Arch** | **Type** | **Version** | **VM Type**                                                                 | **Sizes**                                                            |
-| -------- | -------- | ----------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `amd64`  | `stor`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
-| `amd64`  | `stor`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                    | **Sizes**                                                            |
+| -------- | -------- | ----------- | ----------- | ------------------------------------------------------------------------------ |
+| `amd64`  | `stor`   | `default`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series)    | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| `amd64`  | `stor`   | `default`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series)    | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
+| `amd64`  | `stor`   | `amd`       | `v2`        | [Lasv3](https://learn.microsoft.com/en-us/azure/virtual-machines/lasv3-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 
 ### RBAC
 
@@ -595,6 +600,7 @@ Specification for the `node_groups` objects.
 | `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the node group(s), `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                | `string`                                   | `amd64`     |
 | `node_os`             | OS to use for the node group(s), `ubuntu`, `windows2019`, `windows2022` (**EXPERIMENTAL**) & `windows` (**DEPRECATED**) are supported, [Windows node support](#windows-node-support) is not guaranteed but best-effort and needs manually enabling.                                                                      | `string`                                   | `"ubuntu"`  |
 | `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                                   | `"gp"`      |
+| `node_type_variant`   | The variant of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                   | `"default"` |
 | `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                   | `"v1"`      |
 | `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                                   |             |
 | `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                                     | `false`     |

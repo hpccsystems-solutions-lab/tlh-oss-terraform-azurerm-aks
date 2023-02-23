@@ -193,6 +193,7 @@ variable "node_groups" {
     node_arch           = optional(string)
     node_os             = optional(string)
     node_type           = optional(string)
+    node_type_variant   = optional(string)
     node_type_version   = optional(string)
     node_size           = string
     single_group        = optional(bool)

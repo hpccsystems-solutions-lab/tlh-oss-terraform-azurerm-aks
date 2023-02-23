@@ -70,6 +70,12 @@ variable "node_type" {
   nullable    = false
 }
 
+variable "node_type_variant" {
+  description = "Variant of the node type."
+  type        = string
+  nullable    = false
+}
+
 variable "node_type_version" {
   description = "Version of the node type to use."
   type        = string

@@ -22,6 +22,7 @@ module "system_node_groups" {
   node_arch                    = each.value.node_arch
   node_os                      = each.value.node_os
   node_type                    = each.value.node_type
+  node_type_variant            = each.value.node_type_variant
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
   min_capacity                 = each.value.min_capacity
@@ -66,6 +67,7 @@ module "user_node_groups" {
   node_arch                    = each.value.node_arch
   node_os                      = each.value.node_os
   node_type                    = each.value.node_type
+  node_type_variant            = each.value.node_type_variant
   node_type_version            = each.value.node_type_version
   node_size                    = each.value.node_size
   min_capacity                 = each.value.min_capacity

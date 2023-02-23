@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   os_type = local.os_types[var.node_os]
   os_sku  = local.os_skus[var.node_os]
 
-  vm_size                = local.vm_sizes["${var.node_arch}_${var.node_type}_${var.node_type_version}"][var.node_size]
+  vm_size                = local.vm_size_lookup["${var.node_arch}_${var.node_type}_${var.node_type_variant}_${var.node_type_version}"][var.node_size]
   os_disk_size_gb        = 128
   os_disk_type           = "Managed"
   enable_host_encryption = true
