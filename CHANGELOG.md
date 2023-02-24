@@ -48,8 +48,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated the node group `node_os` value of `windows` in favour of `windows2019` as we want the explicit Windows version as a module input. [@stevehipwell](https://github.com/stevehipwell)
 - Added support for node type variants via the optional `node_type_variant` node group input to allow for additional node options such as processor vendor. [@stevehipwell](https://github.com/stevehipwell)
 - Added `amd` node type variants to the `v2` versions of the `amd64` arch `gp`, `gpd`, `mem`, `memd` & `stor` node types. ([#791](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/791)) [@stevehipwell](https://github.com/stevehipwell)
-- Updated the minimum version of the `azurerm` Terraform provider to [v3.39.0](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.39.0). [@stevehipwell](https://github.com/stevehipwell)
+- Updated the minimum version of the `azurerm` Terraform provider to [v3.39.1](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.39.1). [@stevehipwell](https://github.com/stevehipwell)
 - Fixed churn and warning for`azurerm_monitor_diagnostic_setting` resource. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.6.1] - 2023-02-16
 

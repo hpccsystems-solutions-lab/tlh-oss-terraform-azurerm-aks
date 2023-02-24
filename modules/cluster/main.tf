@@ -43,8 +43,11 @@ resource "azurerm_kubernetes_cluster" "default" {
     identity_ids = [azurerm_user_assigned_identity.default.id]
   }
 
-  public_network_access_enabled   = var.cluster_endpoint_public_access
-  api_server_authorized_ip_ranges = length(var.cluster_endpoint_access_cidrs) == 0 ? ["0.0.0.0/32"] : var.cluster_endpoint_access_cidrs
+  public_network_access_enabled = var.cluster_endpoint_public_access
+
+  api_server_access_profile {
+    authorized_ip_ranges = length(var.cluster_endpoint_access_cidrs) == 0 ? ["0.0.0.0/32"] : var.cluster_endpoint_access_cidrs
+  }
 
   network_profile {
     network_plugin     = var.network_plugin
