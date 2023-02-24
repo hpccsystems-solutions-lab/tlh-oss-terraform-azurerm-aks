@@ -521,7 +521,7 @@ This module requires the following versions to be configured in the workspace `t
 
 | **Name**                                                                                    | **Version** |
 | :------------------------------------------------------------------------------------------ | :---------- |
-| [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.31.0` |
+| [hashicorp/azurerm](https://registry.terraform.io/providers/hashicorp/azurerm/latest)       | `>= 3.39.0` |
 | [hashicorp/helm](https://registry.terraform.io/providers/hashicorp/helm/latest)             | `>= 2.8.0`  |
 | [gavinbunney/kubectl](https://registry.terraform.io/providers/gavinbunney/kubectl/latest)   | `>= 1.14.0` |
 | [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.15.0` |

@@ -31,15 +31,17 @@ resource "azurerm_monitor_diagnostic_setting" "default" {
   log_analytics_workspace_id = each.value.log_analytics_workspace_id
   storage_account_id         = each.value.storage_account_id
 
-  dynamic "log" {
-    for_each = data.azurerm_monitor_diagnostic_categories.default.log_category_types
+  log_analytics_destination_type = each.value.log_analytics_workspace_id != null ? "AzureDiagnostics" : null
+
+  dynamic "enabled_log" {
+    for_each = setintersection(data.azurerm_monitor_diagnostic_categories.default.log_category_types, each.value.logs)
 
     content {
-      category = log.value
-      enabled  = contains(each.value.logs, log.value)
+      category = enabled_log.value
+
       retention_policy {
-        enabled = contains(each.value.logs, log.value) && each.value.retention_enabled
-        days    = contains(each.value.logs, log.value) && each.value.retention_enabled ? each.value.retention_days : "0"
+        enabled = contains(each.value.logs, enabled_log.value) && each.value.retention_enabled
+        days    = contains(each.value.logs, enabled_log.value) && each.value.retention_enabled ? each.value.retention_days : "0"
       }
     }
   }
