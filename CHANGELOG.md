@@ -36,10 +36,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
-- Updated _Fluentd_ chart to [v3.6.2](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.6.2) (contains _Fluentd Aggregator_ [v2.6.2](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.6.2). ([#918](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/918)) [@HadeedS](https://github.com/HadeedS)
+- Updated _Fluentd_ chart to [v3.6.2](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.6.2) (contains _Fluentd Aggregator_ [v2.6.2](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.6.2). ([#918](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/issues/918)) [@hadeeds](https://github.com/hadeeds)
 - Added support to be able to select K8s patch versions by their region. ([#903](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/903)) [@peterabarr](https://github.com/peterabarr))
 - Added a patch release issue template to help with patch releases ([#921](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/921)) [@peterabarr](https://github.com/peterabarr))
-- Updated _Fluent Bit_ chart to [v0.24.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.24.0). ([#917](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/917)) [@HadeedS](https://github.com/HadeedS)
+- Updated _Fluent Bit_ chart to [v0.24.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.24.0). ([#917](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/917)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v45.1.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.1.1) (contains _Prometheus Operator_ [v0.63.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.63.0) and _Prometheus_ [v2.42.0](https://github.com/prometheus/prometheus/releases/tag/v2.42.0)). ([#925](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/925)) [@appkins](https://github.com/appkins)
 - Added support for Premium SSD v2 disks via additional `StorageClass` resources. ([#929](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/929)) [@stevehipwell](https://github.com/stevehipwell)
 - Removed requirement to set an experimental flag to use an experimental cluster version, this added unnecessary additional complexity for a non-API change. [@stevehipwell](https://github.com/stevehipwell)
@@ -52,10 +52,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed churn and warning for`azurerm_monitor_diagnostic_setting` resource. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed cluster tagging bug. [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.6.2] - 2023-02-27
 
-- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@OsmanA](https://github.com/OsmanA)
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.6.1] - 2023-02-16
 
@@ -95,7 +96,7 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 
 ## [v1.5.2] - 2023-02-27
 
-- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@OsmanA](https://github.com/OsmanA)
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.5.1] - 2023-02-14
 
@@ -114,10 +115,10 @@ In this revision to the AKS module, modifications were mostly focused on updatin
 
 ### All Changes
 
-- Updated _Ingress Ngninx_ chart to [4.4.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.2). ([#874](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/874)) [@HadeedS](https://github.com/HadeedS)
-- Updated _Cert Manager_ chart to [1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#867](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/867)) [@HadeedS](https://github.com/HadeedS)
-- Updated _Kube Prometheus Stack_ chart to [v44.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-44.2.1) (contains _Prometheus Operator_ [v0.62.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.62.0) and _Prometheus_ [v2.41.0](https://github.com/prometheus/prometheus/releases/tag/v2.41.0)). ([#866](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/866)) [@HadeedS](https://github.com/HadeedS)
-- Updated _Fluent Bit_ chart to [v0.22.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.22.0). ([#879](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/879)) [@HadeedS](https://github.com/HadeedS)
+- Updated _Ingress Ngninx_ chart to [4.4.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.4.2). ([#874](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/874)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Cert Manager_ chart to [1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#867](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/867)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Kube Prometheus Stack_ chart to [v44.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-44.2.1) (contains _Prometheus Operator_ [v0.62.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.62.0) and _Prometheus_ [v2.41.0](https://github.com/prometheus/prometheus/releases/tag/v2.41.0)). ([#866](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/866)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Fluent Bit_ chart to [v0.22.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.22.0). ([#879](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/879)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.4.1] - 2023-02-14
 
@@ -145,15 +146,15 @@ In this update to the AKS module focused on enhancing logging capabilities. To a
 
 - Updated _Thanos_ chart to [v1.10.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.1) (contains _Thanos_ [v0.30.1](https://github.com/thanos-io/thanos/releases/tag/v0.30.1)). ([#858](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/858)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Cert Manager_ chart to [1.10.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.2). ([#863](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/863)) [@peterabarr](https://github.com/peterabarr)
-- Updated _Fluent Bit_ chart to [v0.21.7](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.7) (contains _Fluent Bit_ [v2.0.8](https://github.com/fluent/fluent-bit/releases/tag/v2.0.8)). ([#806](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/806)) [@OsmanA](https://github.com/OsmanA)
-- Changed _Fluent Bit_ configuration to improve performance. [@OsmanA](https://github.com/OsmanA)
-- Added _Fluent Bit_ forward output compatibility configuration for _Fluentd_. [@OsmanA](https://github.com/OsmanA)
-- Removed experimental flag `fluent_bit_use_memory_buffer` as it no longer offers an performance benefits. [@OsmanA](https://github.com/OsmanA)
-- Updated _Fluentd_ chart to [v3.6.0](https://github.com/OsmanA/helm-charts/releases/tag/fluentd-aggregator-3.6.0) (contains _Fluentd Aggregator_ [v2.6.0](https://github.com/OsmanA/fluentd-aggregator/releases/tag/v2.6.0)). [@Osmana](https://github.com/OsmanA)
-- Added topology aware routing for _Fluentd_ if using AKS `v1.24`. [@OsmanA](https://github.com/OsmanA)
-- Changed _Fluentd_ behaviour when `debug` is set to use an output plugin instead of a filter for performance reasons. [@OsmanA](https://github.com/OsmanA)
-- Deprecated _Fluentd_ `debug` defaulting to `true`. [@OsmanA](https://github.com/OsmanA)
-- Changed the log processing to run in _Fluent Bit_ instead of _Fluentd_. [@OsmanA](https://github.com/OsmanA)
+- Updated _Fluent Bit_ chart to [v0.21.7](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.21.7) (contains _Fluent Bit_ [v2.0.8](https://github.com/fluent/fluent-bit/releases/tag/v2.0.8)). ([#806](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/806)) [@aydosman](https://github.com/aydosman)
+- Changed _Fluent Bit_ configuration to improve performance. [@aydosman](https://github.com/aydosman)
+- Added _Fluent Bit_ forward output compatibility configuration for _Fluentd_. [@aydosman](https://github.com/aydosman)
+- Removed experimental flag `fluent_bit_use_memory_buffer` as it no longer offers an performance benefits. [@aydosman](https://github.com/aydosman)
+- Updated _Fluentd_ chart to [v3.6.0](https://github.com/aydosman/helm-charts/releases/tag/fluentd-aggregator-3.6.0) (contains _Fluentd Aggregator_ [v2.6.0](https://github.com/aydosman/fluentd-aggregator/releases/tag/v2.6.0)). [@aydosman](https://github.com/aydosman)
+- Added topology aware routing for _Fluentd_ if using AKS `v1.24`. [@aydosman](https://github.com/aydosman)
+- Changed _Fluentd_ behaviour when `debug` is set to use an output plugin instead of a filter for performance reasons. [@aydosman](https://github.com/aydosman)
+- Deprecated _Fluentd_ `debug` defaulting to `true`. [@aydosman](https://github.com/aydosman)
+- Changed the log processing to run in _Fluent Bit_ instead of _Fluentd_. [@aydosman](https://github.com/aydosman)
 
 ## [v1.3.0] - 2023-01-04
 
@@ -168,8 +169,8 @@ During the holiday period, the development team made minimal changes to the modu
 
 - Added [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) labels at `audit`/`warn` mode and `baseline` level for the core namespaces. ([#818](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/818)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added shell script to apply module version tag to cluster. ([#682](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/682)) [@prikesh-patel](https://github.com/prikesh-patel)
-- Updated _Kube Prometheus Stack_ chart to [v43.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-43.2.1) (contains _Alertmanager_ [v0.25.0](https://github.com/prometheus/alertmanager/releases/tag/v0.25.0). ([#839](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/839)) [@HadeedS](https://github.com/HadeedS)
-- Added GA support for creating FIPS 140-2 clusters by setting `fips` to `true` when creating the cluster. ([#593](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/381)) [@OsmanA](https://github.com/OsmanA)
+- Updated _Kube Prometheus Stack_ chart to [v43.2.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-43.2.1) (contains _Alertmanager_ [v0.25.0](https://github.com/prometheus/alertmanager/releases/tag/v0.25.0). ([#839](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/839)) [@hadeeds](https://github.com/hadeeds)
+- Added GA support for creating FIPS 140-2 clusters by setting `fips` to `true` when creating the cluster. ([#593](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/381)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.2.0] - 2022-12-20
 
@@ -189,16 +190,16 @@ We hope that all operators using the module are enjoying the holiday season. As 
 - Updated _External DNS_ chart to [v1.12.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.0) which contains image update to [v0.13.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.1). ([#819](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/819)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v43.0.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-43.0.0) (contains _Kube State Metrics_ [v2.7.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.7.0), _Grafana_ [v9.3.1](https://github.com/grafana/grafana/releases/tag/v9.3.1), _Prometheus Operator_ [v0.61.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.61.1), _Prometheus_ [v2.37.5](https://github.com/prometheus/prometheus/releases/tag/v2.37.5), _Prometheus Node Exporter_ [v1.5.0](https://github.com/prometheus/node_exporter/releases/tag/v1.5.0)). ([#810](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/810)) [@peterabarr](https://github.com/peterabarr)
 - Updated _AAD Pod Identity_ chart to `4.1.15` (contains _AAD Pod Identity_ [v1.8.14](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.12)). ([#834](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/834)) [@hadeeds](https://github.com/hadeeds)
-- Updated minimum version of the Helm provider to [v2.8.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.8.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
-- Updated minimum version of the Kubernetes provider to [v2.15.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.15.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@OsmanA](https://github.com/OsmanA)
-- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
+- Updated minimum version of the Helm provider to [v2.8.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.8.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@aydosman](https://github.com/aydosman)
+- Updated minimum version of the Kubernetes provider to [v2.15.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.15.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@aydosman](https://github.com/aydosman)
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@aydosman](https://github.com/aydosman)
 - Updated _Thanos_ chart to [v1.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.1). ([#843](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/843)) [@hadeeds](https://github.com/hadeeds)
   
 ## [v1.1.1] - 2022-12-20
 
 ### All Changes
 
-- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.1.0] - 2022-12-05
 
@@ -222,7 +223,7 @@ AKS cluster version `v1.22` has been removed as Azure is retiring it on December
 
 ### All Changes
 
-- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@OsmanA](https://github.com/OsmanA)
+- Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.0.0] - 2022-11-21
 
@@ -308,7 +309,7 @@ The _Grafana_ `v9.2.0` image includes security fixes for [CVE-2022-39229](https:
 
 ### All Changes
 
-- Updated _Thanos_ chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@HadeedShaikh](https://github.com/hadeeds)
+- Updated _Thanos_ chart to [v1.6.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.6.2). ([#728](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/728)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [1.10.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.0). ([#732](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/732)) [@peterabarr](https://github.com/peterabarr)
 - Fixed deprecation warning for `logs` attribute in `data.azurerm_monitor_diagnostic_categories.default.logs`. ([#649](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/649)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Fixed deprecation warning for `number` attribute in `random_password`. ([#646](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/646)) [@prikesh-patel](https://github.com/prikesh-patel)
@@ -318,7 +319,7 @@ The _Grafana_ `v9.2.0` image includes security fixes for [CVE-2022-39229](https:
 - Removed module input variable `azuread_clusterrole_map`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Removed module inputs `core_config.fluentd.routes` & `core_config.fluentd.outputs`. ([#741](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/741)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Added the [AKS OIDC Issuer](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#oidc-issuer) in preparation for supporting [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview). ([#747](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/747)) [@stevehipwell](https://github.com/stevehipwell)
-- Updated _Fluent Bit_ chart to [v0.20.10](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.10). ([#744](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/744)) [@HadeedShaikh](https://github.com/hadeeds)
+- Updated _Fluent Bit_ chart to [v0.20.10](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.20.10). ([#744](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/744)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v41.7.3](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-41.7.0)(contains _Kube State Metrics_ [v4.22.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-state-metrics-4.22.1), _Grafana_ [v6.43.3](https://github.com/grafana/helm-charts/releases/tag/grafana-6.43.3), _Prometheus Node Exporter_ [v4.4.2](https://github.com/prometheus-community/helm-charts/releases/tag/prometheus-node-exporter-4.4.2), _Prometheus Operator_ [v0.60.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.60.1), _Prometheus_ [v2.39.1](https://github.com/prometheus/prometheus/releases/tag/v2.39.1)). ([#658](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/658)) [@peterabarr](https://github.com/peterabarr)
 - Updated minimum Terraform version to [v1.3.3](https://github.com/hashicorp/terraform/releases/tag/v1.3.3) so we can support [optional object type attributes](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes). ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
 - Changed module input variables to not be nullable unless they explicitly can be. ([#673](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/673)) [@prikesh-patel](https://github.com/prikesh-patel)
