@@ -86,7 +86,14 @@ The AKS version has been patched; `v1.25.2` to `1.25.5` and  `v1.24.6` to `1.24.
 
 - Added `storage` input under `core_services_config` for configuring blob csi support. ([#832](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/832)) [@appkins](https://github.com/appkins)
 
+## [v1.5.2] - 2023-02-27
+
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@OsmanA](https://github.com/OsmanA)
+
 ## [v1.5.1] - 2023-02-14
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.5.2` instead due to missing updated CRDs in the  _Cert Manager_ helm chart update.
 
 ### All Changes
 
