@@ -53,7 +53,14 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed cluster tagging bug. [@stevehipwell](https://github.com/stevehipwell)
 
+## [v1.6.2] - 2023-02-27
+
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@OsmanA](https://github.com/OsmanA)
+
 ## [v1.6.1] - 2023-02-16
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.6.2` instead due to missing updated CRDs in the  _Cert Manager_ helm chart update.
 
 ### All Changes
 
