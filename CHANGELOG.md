@@ -51,6 +51,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated the minimum version of the `azurerm` Terraform provider to [v3.39.1](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.39.1). [@stevehipwell](https://github.com/stevehipwell)
 - Fixed churn and warning for`azurerm_monitor_diagnostic_setting` resource. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed cluster tagging bug. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.6.1] - 2023-02-16
 

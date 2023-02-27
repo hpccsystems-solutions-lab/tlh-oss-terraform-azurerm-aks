@@ -1,4 +1,7 @@
 locals {
+  tenant_id       = ""
+  subscription_id = ""
+
   account_code = ""
   # example: "ioa"
 
@@ -33,14 +36,13 @@ locals {
   # example: "ioa.azure.lnrsg.io"
 
   k8s_exec_auth_env = {
-    AAD_SERVICE_PRINCIPAL_CLIENT_ID     = ""
-    AAD_SERVICE_PRINCIPAL_CLIENT_SECRET = ""
+    AAD_SERVICE_PRINCIPAL_CLIENT_ID     = var.azure_client_id
+    AAD_SERVICE_PRINCIPAL_CLIENT_SECRET = var.azure_client_secret
   }
 
   azure_auth_env = {
-    AZURE_TENANT_ID       = ""
-    AZURE_SUBSCRIPTION_ID = ""
-    AZURE_CLIENT_ID       = ""
-    AZURE_CLIENT_SECRET   = ""
+    AZURE_TENANT_ID     = local.tenant_id
+    AZURE_CLIENT_ID     = var.azure_client_id
+    AZURE_CLIENT_SECRET = var.azure_client_secret
   }
 }

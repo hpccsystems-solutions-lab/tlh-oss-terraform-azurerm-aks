@@ -16,7 +16,7 @@ then
   az login --service-principal --user "${AZURE_CLIENT_ID}"  --password "${AZURE_CLIENT_SECRET}" --tenant "${AZURE_TENANT_ID}"
 fi
 
-az aks get-credentials --subscription "${AZURE_SUBSCRIPTION_ID}" --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
+az aks get-credentials --subscription "${SUBSCRIPTION_ID}" --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
 
 kubectl config set-credentials "azure-user" \
   --exec-api-version=client.authentication.k8s.io/v1beta1 \

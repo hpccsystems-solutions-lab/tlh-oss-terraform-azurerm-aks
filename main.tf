@@ -140,13 +140,13 @@ module "core_config" {
   ]
 }
 
-module "cluster_tags" {
-  source = "./modules/cluster-tags"
+module "cluster_module_version_tag" {
+  source = "./modules/resource-tags"
 
   subscription_id     = local.subscription_id
   resource_group_name = var.resource_group_name
-  cluster_name        = var.cluster_name
-  cluster_tags        = local.cluster_tags
+  resource_id         = module.cluster.id
+  resource_tags       = { "lnrs.io_terraform-module-version" = local.module_version }
 
   depends_on = [
     module.cluster,

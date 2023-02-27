@@ -12,7 +12,7 @@ then
 fi
 
 lookup="$(az aks nodepool list \
-  --subscription "${AZURE_SUBSCRIPTION_ID}" \
+  --subscription "${SUBSCRIPTION_ID}" \
   --resource-group "${RESOURCE_GROUP_NAME}" \
   --cluster-name "${CLUSTER_NAME}" \
   | jq -r --arg node_pool_name "${NODE_POOL_NAME}" '.[] | select(.name == $node_pool_name)')"
@@ -20,7 +20,7 @@ lookup="$(az aks nodepool list \
 if [[ -n "${lookup}" ]]
 then
   az aks nodepool delete \
-    --subscription "${AZURE_SUBSCRIPTION_ID}" \
+    --subscription "${SUBSCRIPTION_ID}" \
     --resource-group "${RESOURCE_GROUP_NAME}" \
     --cluster-name "${CLUSTER_NAME}" \
     --name "${NODE_POOL_NAME}"

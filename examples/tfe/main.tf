@@ -70,10 +70,9 @@ locals {
   }
 
   azure_auth_env = {
-    AZURE_TENANT_ID       = module.default_azure_credentials.tenant_id
-    AZURE_SUBSCRIPTION_ID = module.default_azure_credentials.subscription_id
-    AZURE_CLIENT_ID       = module.default_azure_credentials.client_id
-    AZURE_CLIENT_SECRET   = module.default_azure_credentials.client_secret
+    AZURE_TENANT_ID     = module.default_azure_credentials.tenant_id
+    AZURE_CLIENT_ID     = module.default_azure_credentials.client_id
+    AZURE_CLIENT_SECRET = module.default_azure_credentials.client_secret
   }
 
   admin_group_object_ids = [var.aad_group_id]
@@ -87,9 +86,9 @@ provider "vault" {
 
 provider "azurerm" {
   tenant_id       = module.default_azure_credentials.tenant_id
-  subscription_id = module.default_azure_credentials.subscription_id
   client_id       = module.default_azure_credentials.client_id
   client_secret   = module.default_azure_credentials.client_secret
+  subscription_id = module.default_azure_credentials.subscription_id
 
   features {}
 }
@@ -107,7 +106,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", module.default_azure_credentials.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -121,7 +120,7 @@ provider "kubectl" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", module.default_azure_credentials.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -134,7 +133,7 @@ provider "helm" {
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "kubelogin"
-      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env.AZURE_TENANT_ID]
+      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", module.default_azure_credentials.tenant_id]
       env         = local.k8s_exec_auth_env
     }
   }
@@ -243,7 +242,7 @@ module "aks" {
     module.virtual_network
   ]
 
-  source = "git@github.com:LexisNexis-RBA/rsg-terraform-azurerm-aks.git"
+  source = "git::https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git?ref=v1.6.0"
 
   location            = module.metadata.location
   resource_group_name = module.resource_group.name
@@ -289,14 +288,4 @@ module "aks" {
   }
 
   tags = module.metadata.tags
-}
-
-variable "default_connection_info" {
-  description = "Vault AzureAD engine info."
-  # This variable is populated by the Terraform Enterprise workspace"
-}
-
-variable "aad_group_id" {
-  description = "Group id of the Vault Service Principal."
-  # This variable is populate by the Terraform Enterprise workspace"
 }

@@ -3,8 +3,8 @@ resource "shell_script" "default" {
 
   environment = merge({
     "RESOURCE_GROUP_NAME" = var.resource_group_name
-    "CLUSTER_NAME"        = var.cluster_name
     "SUBSCRIPTION_ID"     = var.subscription_id
+    "CLUSTER_NAME"        = var.cluster_name
     "SUBNET_ID"           = var.subnet_id
     "NODE_POOL_NAME"      = var.bootstrap_name
     "VM_SIZE"             = var.bootstrap_vm_size

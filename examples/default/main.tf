@@ -59,10 +59,10 @@ locals {
 }
 
 provider "azurerm" {
-  tenant_id       = local.azure_auth_env["AZURE_TENANT_ID"]
-  subscription_id = local.azure_auth_env["AZURE_SUBSCRIPTION_ID"]
-  client_id       = local.azure_auth_env["AZURE_CLIENT_ID"]
-  client_secret   = local.azure_auth_env["AZURE_CLIENT_SECRET"]
+  tenant_id       = local.tenant_id
+  client_id       = var.azure_client_id
+  client_secret   = var.azure_client_secret
+  subscription_id = local.subscription_id
 
   features {
   }
@@ -75,7 +75,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env["AZURE_TENANT_ID"]]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -89,7 +89,7 @@ provider "kubectl" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env["AZURE_TENANT_ID"]]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -102,7 +102,7 @@ provider "helm" {
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "kubelogin"
-      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.azure_auth_env["AZURE_TENANT_ID"]]
+      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
       env         = local.k8s_exec_auth_env
     }
   }
@@ -113,7 +113,7 @@ provider "shell" {
 }
 
 module "aks" {
-  source = "git::https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git?ref=v1"
+  source = "git::https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git?ref=v1.6.0"
 
   location            = local.location
   resource_group_name = data.azurerm_resource_group.default.name

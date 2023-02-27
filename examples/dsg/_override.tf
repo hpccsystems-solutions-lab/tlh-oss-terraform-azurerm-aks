@@ -1,4 +1,7 @@
 locals {
+  tenant_id       = ""
+  subscription_id = ""
+
   account_code = ""
   # example: "ioa"
 

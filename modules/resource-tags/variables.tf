@@ -10,14 +10,14 @@ variable "resource_group_name" {
   nullable    = false
 }
 
-variable "cluster_name" {
-  description = "Name of the Azure Kubernetes managed cluster."
+variable "resource_id" {
+  description = "ID of the resource to tag."
   type        = string
   nullable    = false
 }
 
-variable "cluster_tags" {
-  description = "Tags to apply to the Azure Kubernetes managed cluster."
+variable "resource_tags" {
+  description = "Tags to apply to the resource."
   type        = map(string)
   nullable    = false
 }

@@ -105,10 +105,9 @@ locals {
   }
 
   azure_auth_env = {
-    AZURE_TENANT_ID       = data.vault_generic_secret.azure_creds.data["tenant_id"]
-    AZURE_SUBSCRIPTION_ID = data.vault_generic_secret.azure_creds.data["subscription_id"]
-    AZURE_CLIENT_ID       = data.vault_generic_secret.azure_creds.data["client_id"]
-    AZURE_CLIENT_SECRET   = data.vault_generic_secret.azure_creds.data["client_secret"]
+    AZURE_TENANT_ID     = local.tenant_id
+    AZURE_CLIENT_ID     = data.vault_generic_secret.azure_creds.data["client_id"]
+    AZURE_CLIENT_SECRET = data.vault_generic_secret.azure_creds.data["client_secret"]
   }
 
   tags = { for k, v in merge(var.pipeline_tags, var.market_tags, var.account_tags, var.project_tags) : replace(k, "/", "_") => v }
@@ -119,10 +118,10 @@ provider "vault" {
 }
 
 provider "azurerm" {
-  tenant_id       = data.vault_generic_secret.azure_creds.data["tenant_id"]
-  subscription_id = data.vault_generic_secret.azure_creds.data["subscription_id"]
+  tenant_id       = local.tenant_id
   client_id       = data.vault_generic_secret.azure_creds.data["client_id"]
   client_secret   = data.vault_generic_secret.azure_creds.data["client_secret"]
+  subscription_id = data.vault_generic_secret.azure_creds.data["subscription_id"]
 
   features {
   }
@@ -135,7 +134,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", data.vault_generic_secret.azure_creds.data["tenant_id"]]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -149,7 +148,7 @@ provider "kubectl" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
-    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", data.vault_generic_secret.azure_creds.data["tenant_id"]]
+    args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
     env         = local.k8s_exec_auth_env
   }
 }
@@ -162,7 +161,7 @@ provider "helm" {
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "kubelogin"
-      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", data.vault_generic_secret.azure_creds.data["tenant_id"]]
+      args        = ["get-token", "--login", "spn", "--server-id", "6dae42f8-4368-4678-94ff-3960e28e3630", "--environment", "AzurePublicCloud", "--tenant-id", local.tenant_id]
       env         = local.k8s_exec_auth_env
     }
   }
@@ -177,7 +176,7 @@ provider "random" {}
 provider "time" {}
 
 module "aks" {
-  source = "git::https://gitlab.b2b.regn.net/terraform/modules/Azure/terraform-azurerm-aks.git?ref=v1"
+  source = "git::https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks.git?ref=v1.6.0"
 
   location            = local.location
   resource_group_name = data.azurerm_resource_group.default.name
@@ -222,34 +221,4 @@ module "aks" {
   }
 
   tags = local.tags
-}
-
-variable "pipeline_tags" {
-  description = "Tags for the market."
-  type        = map(string)
-  default     = {}
-}
-
-variable "market_tags" {
-  description = "Tags for the market."
-  type        = map(string)
-  default     = {}
-}
-
-variable "account_tags" {
-  description = "Tags for the account."
-  type        = map(string)
-  default     = {}
-}
-
-variable "project_tags" {
-  description = "Tags for the project."
-  type        = map(string)
-  default     = {}
-}
-# tflint-ignore: terraform_unused_declarations
-variable "protected" {
-  description = "If the pipeline should be protected."
-  type        = bool
-  default     = false
 }

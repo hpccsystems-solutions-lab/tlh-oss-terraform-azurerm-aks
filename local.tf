@@ -8,10 +8,6 @@ locals {
   module_name    = "terraform-azurerm-aks"
   module_version = "v1.7.0-beta.1"
 
-  cluster_tags = {
-    "lnrs.io_terraform-module-version" = local.module_version
-  }
-
   # az aks get-versions --location eastus --output table
   # az aks get-versions --location westeurope --output table
   # https://releases.aks.azure.com/webpage/index.html

@@ -11,4 +11,6 @@ then
   az login --service-principal --user "${AZURE_CLIENT_ID}"  --password "${AZURE_CLIENT_SECRET}" --tenant "${AZURE_TENANT_ID}"
 fi
 
-az tag list --resource-id "${CLUSTER_ID}"
+az tag list \
+  --subscription "${SUBSCRIPTION_ID}" \
+  --resource-id "${RESOURCE_ID}"
