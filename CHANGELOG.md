@@ -30,9 +30,29 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.7.0] - UNRELEASED
+## [v1.7.0] - 2023-02-27
 
 ### Highlights
+
+#### Kubernetes 1.25 Support
+
+We're looking to move 1.25 out of experimental in the near future. Any feedback around usage or issues with version 1.25 is greatly appreciated as we move towards this goal.
+
+#### Node Type Variant
+
+The `node_group` input now supports the optional `node_type_variant` parameter. This supports the option of `amd` as a value, but is only advised for power users at this time. Additional info available [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#node-types).
+
+#### Windows OS Node Group Type
+
+Deprecated the node group `node_os` value of `windows` in favour of `windows2019` as we want the explicit Windows version as a module input.
+
+#### Premium SSD v2 Storage Classes
+
+Added support for Premium SSD v2 disks via additional `StorageClass` resources. The following storage classes are now available:
+
+- `azure-disk-premium-ssd-v2-retain`
+- `azure-disk-premium-ssd-v2-delete`
+- `azure-disk-premium-ssd-v2-ephemeral`
 
 ### All Changes
 
