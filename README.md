@@ -157,7 +157,7 @@ All the nodes provisioned by the module support premium storage.
 [General purpose](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general) nodes, `gp` & `gpd`, offer a good balance of compute and memory. If you need a local NVMe drive `gpd` provides this.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                               |
-| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `amd64`  | `gp`     | `default`   | `v1`        | [Dsv4](https://docs.microsoft.com/en-us/azure/virtual-machines/dv4-dsv4-series#dsv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`             |
 | `amd64`  | `gp`     | `default`   | `v2`        | [Dsv5](https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series#dsv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
 | `amd64`  | `gp`     | `amd`       | `v2`        | [Dasv5](https://learn.microsoft.com/en-us/azure/virtual-machines/dasv5-dadsv5-series#dasv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `24xlarge` |
@@ -171,8 +171,8 @@ All the nodes provisioned by the module support premium storage.
 
 [Memory optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-memory) nodes, `mem` & `memd`, offer a higher memory to CPU ration than general purpose nodes. If you need a local NVMe drive `memd` provides this.
 
-| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                                           |
-| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          |**Sizes**                                                                                            |
+| -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `amd64`  | `mem`    | `default`   | `v1`        | [Esv4](https://docs.microsoft.com/en-us/azure/virtual-machines/ev4-esv4-series#esv4-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge` & `16xlarge`                         |
 | `amd64`  | `mem`    | `default`   | `v2`        | [Esv5](https://docs.microsoft.com/en-us/azure/virtual-machines/ev5-esv5-series#esv5-series)          | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
 | `amd64`  | `mem`    | `amd`       | `v2`        | [Easv5](https://learn.microsoft.com/en-us/azure/virtual-machines/easv5-eadsv5-series#easv5-series)   | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge`, `24xlarge` & `26xlarge` |
@@ -187,7 +187,7 @@ All the nodes provisioned by the module support premium storage.
 [Compute optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-compute) nodes, `cpu`, offer a higher CPU to memory ratio than general purpose nodes.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                 | **Sizes**                                                                               |
-| -------- | -------- | ----------- | ----------- | --------------------------------------------------------------------------- |
+| -------- | -------- | ----------- | ----------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `amd64`  | `cpu`    | `default`   | `v1`        | [Fsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/fsv2-series) | `large`, `xlarge`, `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `18xlarge` |
 
 ##### Storage Optimised
@@ -195,7 +195,7 @@ All the nodes provisioned by the module support premium storage.
 [Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                    | **Sizes**                                                            |
-| -------- | -------- | ----------- | ----------- | ------------------------------------------------------------------------------ |
+| -------- | -------- | ----------- | ----------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | `amd64`  | `stor`   | `default`   | `v1`        | [Lsv2](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series)    | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 | `amd64`  | `stor`   | `default`   | `v2`        | [Lsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv3-series)    | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
 | `amd64`  | `stor`   | `amd`       | `v2`        | [Lasv3](https://learn.microsoft.com/en-us/azure/virtual-machines/lasv3-series) | `2xlarge`, `4xlarge`, `8xlarge`, `12xlarge`, `16xlarge` & `20xlarge` |
