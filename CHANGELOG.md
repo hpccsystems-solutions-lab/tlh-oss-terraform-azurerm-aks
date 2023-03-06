@@ -41,6 +41,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added `sku_tier` input variable to support the new [AKS pricing tiers](https://learn.microsoft.com/en-us/azure/aks/free-standard-pricing-tiers). Cluster operators should read the docs to see if they need to pay for `standard` (currently set via `paid`). [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `sku_tier_paid` in favour of `sku_tier`. [@stevehipwell](https://github.com/stevehipwell)
 - Removed legacy module `ConfigMap`. [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Thanos_ chart to [v1.10.2](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.30.2](https://github.com/thanos-io/thanos/releases/tag/v0.30.2)). ([#954](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/954)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.7.0] - 2023-02-27
 
@@ -85,7 +86,6 @@ Added support for Premium SSD v2 disks via additional `StorageClass` resources. 
 - Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed cluster tagging bug. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
-
 ## [v1.6.2] - 2023-02-27
 
 - Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
