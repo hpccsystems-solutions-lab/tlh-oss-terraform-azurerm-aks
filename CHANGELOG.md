@@ -17,6 +17,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `network_plugin` variable is deprecated in favour of inferring the value from `experimental.windows_support`, this will be removed in the `v1.8.0` release.
 - The `node_os` value of `windows` is deprecated in favour of `windows2019` to make the Windows version selection explicit, this will be removed in the `v1.9.0` release.
+- The `sku_tier_paid` variable is deprecated in favour of `sku_tier`, this will be removed in the `v1.10.0` release.
 
 ---
 
@@ -35,6 +36,11 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Highlights
 
 ### All Changes
+
+- Updated the minimum version of the `azurerm` Terraform provider to [v3.46.0](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.46.0). [@stevehipwell](https://github.com/stevehipwell)
+- Added `sku_tier` input variable to support the new [AKS pricing tiers](https://learn.microsoft.com/en-us/azure/aks/free-standard-pricing-tiers). Cluster operators should read the docs to see if they need to pay for `standard` (currently set via `paid`). [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `sku_tier_paid` in favour of `sku_tier`. [@stevehipwell](https://github.com/stevehipwell)
+- Removed legacy module `ConfigMap`. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.7.0] - 2023-02-27
 

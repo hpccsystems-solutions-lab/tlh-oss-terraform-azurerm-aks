@@ -61,10 +61,23 @@ variable "network_plugin" {
   }
 }
 
+variable "sku_tier" {
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"paid\" are supported. For production clusters or clusters with more than 10 nodes this should be set to \"paid\"."
+  type        = string
+  nullable    = false
+  default     = "free"
+
+  validation {
+    condition     = contains(["free", "paid"], var.sku_tier)
+    error_message = "Available SKU tiers are \"free\" or \"paid\"."
+  }
+}
+
 variable "sku_tier_paid" {
-  description = "If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA."
+  description = "DEPRECATED - If the cluster control plane SKU tier should be paid or free; the paid tier has a financially-backed uptime SLA. This has been replaced by sku_tier."
   type        = bool
   nullable    = false
+  default     = false
 }
 
 variable "cluster_endpoint_public_access" {

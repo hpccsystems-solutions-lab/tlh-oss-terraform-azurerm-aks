@@ -24,7 +24,7 @@ resource "helm_release" "default" {
   skip_crds  = true
 
   max_history = 10
-  timeout     = 1800
+  timeout     = ceil(var.timeouts.helm_modify * 3)
 
   values = [
     yamlencode(local.chart_values)

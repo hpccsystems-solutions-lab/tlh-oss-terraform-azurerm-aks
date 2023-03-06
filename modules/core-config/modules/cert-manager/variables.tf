@@ -95,3 +95,11 @@ variable "tags" {
   type        = map(string)
   nullable    = false
 }
+
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    helm_modify = number
+  })
+  nullable = false
+}

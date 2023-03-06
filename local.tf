@@ -73,9 +73,15 @@ locals {
   # Timeouts are in seconds for compatibility with all use cases and must be converted to string format to support Terraform resource timeout blocks
   # https://www.terraform.io/language/resources/syntax#operation-timeouts
   timeouts = {
-    cluster_read   = 300
-    cluster_modify = 5400
-    helm_modify    = 600
+    cluster_create    = 5400
+    cluster_update    = 5400
+    cluster_read      = 300
+    cluster_delete    = 5400
+    node_group_create = 3600
+    node_group_update = 3600
+    node_group_read   = 300
+    node_group_delete = 3600
+    helm_modify       = 600
   }
 
   network_plugin = var.experimental.windows_support ? "azure" : var.network_plugin

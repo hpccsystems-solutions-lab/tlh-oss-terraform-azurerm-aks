@@ -25,12 +25,13 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
   scope                = var.nat_gateway_id
 }
 
+#tfsec:ignore:azure-container-limit-authorized-ips
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
   name                      = var.cluster_name
   kubernetes_version        = var.cluster_version_full
   automatic_channel_upgrade = "node-image"
-  sku_tier                  = var.sku_tier_paid ? "Paid" : "Free"
+  sku_tier                  = local.sku_tier_lookup[var.sku_tier]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -158,10 +159,10 @@ resource "azurerm_kubernetes_cluster" "default" {
   tags = var.tags
 
   timeouts {
-    create = format("%vm", var.timeouts.cluster_modify / 60)
+    create = format("%vm", var.timeouts.cluster_create / 60)
     read   = format("%vm", var.timeouts.cluster_read / 60)
-    update = format("%vm", var.timeouts.cluster_modify / 60)
-    delete = format("%vm", var.timeouts.cluster_modify / 60)
+    update = format("%vm", var.timeouts.cluster_update / 60)
+    delete = format("%vm", var.timeouts.cluster_delete / 60)
   }
 
   lifecycle {

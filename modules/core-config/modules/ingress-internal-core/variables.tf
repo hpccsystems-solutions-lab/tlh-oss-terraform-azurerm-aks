@@ -42,3 +42,11 @@ variable "certificate_issuer_name" {
   type        = string
   nullable    = false
 }
+
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    helm_modify = number
+  })
+  nullable = false
+}

@@ -141,3 +141,14 @@ variable "tags" {
   type        = map(string)
   nullable    = false
 }
+
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    node_group_create = number
+    node_group_update = number
+    node_group_read   = number
+    node_group_delete = number
+  })
+  nullable = false
+}

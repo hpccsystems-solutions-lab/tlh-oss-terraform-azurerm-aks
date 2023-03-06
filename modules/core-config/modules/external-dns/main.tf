@@ -56,7 +56,7 @@ resource "helm_release" "private" {
   skip_crds  = true
 
   max_history = 10
-  timeout     = 600
+  timeout     = var.timeouts.helm_modify
 
   values = [
     yamlencode(local.chart_values_private)
@@ -103,7 +103,7 @@ resource "helm_release" "public" {
   skip_crds  = true
 
   max_history = 10
-  timeout     = 600
+  timeout     = var.timeouts.helm_modify
 
   values = [
     yamlencode(local.chart_values_public)

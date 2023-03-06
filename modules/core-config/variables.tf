@@ -219,6 +219,14 @@ variable "tags" {
   nullable    = false
 }
 
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    helm_modify = number
+  })
+  nullable = false
+}
+
 variable "experimental" {
   description = "Provide experimental feature flag configuration."
   type = object({

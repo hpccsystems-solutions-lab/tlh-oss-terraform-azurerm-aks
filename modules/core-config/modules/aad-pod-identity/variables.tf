@@ -40,6 +40,14 @@ variable "labels" {
   nullable    = false
 }
 
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    helm_modify = number
+  })
+  nullable = false
+}
+
 variable "experimental_finalizer_wait" {
   description = "Provide experimental feature flag configuration."
   type        = string

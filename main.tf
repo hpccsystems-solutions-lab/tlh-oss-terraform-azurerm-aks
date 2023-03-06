@@ -17,7 +17,7 @@ module "cluster" {
   resource_group_name                                     = var.resource_group_name
   cluster_name                                            = var.cluster_name
   cluster_version_full                                    = local.cluster_version_full
-  sku_tier_paid                                           = var.sku_tier_paid
+  sku_tier                                                = var.sku_tier_paid ? "paid" : var.sku_tier
   workload_identity                                       = var.experimental.workload_identity
   cluster_endpoint_public_access                          = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs                           = var.cluster_endpoint_access_cidrs
@@ -87,6 +87,8 @@ module "node_groups" {
   labels               = local.labels
   tags                 = local.tags
 
+  timeouts = local.timeouts
+
   experimental = var.experimental
 
   depends_on = [
@@ -131,6 +133,8 @@ module "core_config" {
 
   labels = local.labels
   tags   = local.tags
+
+  timeouts = local.timeouts
 
   experimental = var.experimental
 
@@ -190,32 +194,5 @@ resource "kubernetes_config_map_v1_data" "terraform_modules" {
     module.node_groups,
     module.core_config,
     kubernetes_config_map.terraform_modules
-  ]
-}
-
-resource "kubernetes_config_map" "default" {
-  metadata {
-    name      = "tfmodule-${local.module_name}"
-    namespace = "kube-system"
-
-    labels = local.labels
-  }
-
-  data = {
-    version = local.module_version
-
-    config = jsonencode({
-      cluster = {
-        name    = var.cluster_name
-        version = local.cluster_version_full
-      }
-    })
-  }
-
-  depends_on = [
-    module.cluster,
-    module.rbac,
-    module.node_groups,
-    module.core_config
   ]
 }

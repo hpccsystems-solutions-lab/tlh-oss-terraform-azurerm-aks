@@ -121,7 +121,7 @@ module "aks" {
   cluster_name    = local.cluster_name
   cluster_version = local.cluster_version
   network_plugin  = "azure"
-  sku_tier_paid   = false
+  sku_tier        = "free"
 
   cluster_endpoint_public_access = true
   cluster_endpoint_access_cidrs  = ["0.0.0.0/0"]

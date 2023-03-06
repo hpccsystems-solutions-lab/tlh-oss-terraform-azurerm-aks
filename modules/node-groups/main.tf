@@ -35,6 +35,7 @@ module "system_node_groups" {
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)
+  timeouts                     = var.timeouts
 }
 
 module "bootstrap_node_group_hack" {
@@ -80,6 +81,7 @@ module "user_node_groups" {
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)
+  timeouts                     = var.timeouts
 
   depends_on = [
     module.bootstrap_node_group_hack

@@ -9,6 +9,12 @@ data "azurerm_public_ip" "outbound" {
 }
 
 locals {
+  sku_tier_lookup = {
+    free     = "Free"
+    paid     = "Paid"
+    standard = "Standard"
+  }
+
   log_categories = {
     all = ["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
 

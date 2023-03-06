@@ -28,9 +28,9 @@ variable "network_plugin" {
   nullable    = false
 }
 
-variable "sku_tier_paid" {
-  description = "If the cluster control plane SKU tier should be paid or free. The paid tier has a financially-backed uptime SLA."
-  type        = bool
+variable "sku_tier" {
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"paid\" are supported."
+  type        = string
   nullable    = false
 }
 
@@ -240,8 +240,10 @@ variable "tags" {
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({
+    cluster_create = number
+    cluster_update = number
     cluster_read   = number
-    cluster_modify = number
+    cluster_delete = number
   })
   nullable = false
 }

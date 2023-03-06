@@ -197,6 +197,14 @@ variable "tags" {
   nullable    = false
 }
 
+variable "timeouts" {
+  description = "Timeout configuration."
+  type = object({
+    helm_modify = number
+  })
+  nullable = false
+}
+
 variable "experimental_prometheus_memory_override" {
   description = "Provide experimental feature flag configuration."
   type        = string

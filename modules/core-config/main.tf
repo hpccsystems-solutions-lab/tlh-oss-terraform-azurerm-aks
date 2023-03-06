@@ -61,6 +61,8 @@ module "aad_pod_identity" {
   namespace                = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels                   = var.labels
 
+  timeouts = var.timeouts
+
   experimental_finalizer_wait = var.experimental.aad_pod_identity_finalizer_wait
 
   depends_on = [
@@ -88,6 +90,8 @@ module "cert_manager" {
   default_issuer_kind       = var.core_services_config.cert_manager.default_issuer_kind
   default_issuer_name       = var.core_services_config.cert_manager.default_issuer_name
   tags                      = var.tags
+
+  timeouts = var.timeouts
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -128,6 +132,8 @@ module "external_dns" {
   public_domain_filters     = local.ingress_internal_core.public_dns ? distinct(concat([local.ingress_internal_core.domain], var.core_services_config.external_dns.public_domain_filters)) : coalesce(var.core_services_config.external_dns.public_domain_filters, [])
   tags                      = var.tags
 
+  timeouts = var.timeouts
+
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
     module.pre_upgrade,
@@ -143,6 +149,8 @@ module "fluent_bit" {
 
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
+
+  timeouts = var.timeouts
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -172,6 +180,8 @@ module "fluentd" {
   route_config            = var.core_services_config.fluentd.route_config
   tags                    = var.tags
 
+  timeouts = var.timeouts
+
   experimental_memory_override = var.experimental.fluentd_memory_override
 
   depends_on = [
@@ -193,6 +203,8 @@ module "ingress_internal_core" {
   domain                  = local.ingress_internal_core.domain
   certificate_issuer_kind = module.cert_manager.default_issuer_kind
   certificate_issuer_name = module.cert_manager.default_issuer_name
+
+  timeouts = var.timeouts
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
@@ -234,6 +246,8 @@ module "kube_prometheus_stack" {
   skip_crds                                                      = true
   tags                                                           = var.tags
 
+  timeouts = var.timeouts
+
   experimental_prometheus_memory_override = var.experimental.prometheus_memory_override
 
   depends_on = [
@@ -251,6 +265,8 @@ module "local_volume_provisioner" {
 
   namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels    = var.labels
+
+  timeouts = var.timeouts
 
   depends_on = [
     kubectl_manifest.kube_prometheus_stack_crds,
