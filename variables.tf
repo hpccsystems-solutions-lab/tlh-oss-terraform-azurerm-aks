@@ -449,6 +449,7 @@ variable "experimental" {
     fluentd_memory_override                                    = optional(string, null)
     prometheus_memory_override                                 = optional(string, null)
     workload_identity                                          = optional(bool, false)
+    control_plane_logging_log_analytics_disabled               = optional(bool, false)
   })
   nullable = false
   default  = {}

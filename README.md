@@ -505,6 +505,10 @@ To enable the customisation of the maximum number of pods per node when using th
 
 To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) experiment you can set the experimental flag `experimental = { workload_identity = true }` if you've opted in to the public preview. This experiment doesn't change the core service identity implementation which is still Azure AD Pod Identity as the support for Azure AD Workload Identity is limited. It is possible to use a [sidecar](https://learn.microsoft.com/en-us/azure/aks/workload-identity-migrate-from-pod-identity) to migrate legacy workloads which haven't been updated to directly support Azure AD Workload Identity.
 
+### Disable Log Analytics For Control Plane Logs
+
+To disable the required sending of control plane logs to log analytics you can set the experimental flag `experimental = { control_plane_logging_log_analytics_disabled = true }` when `control_plane_logging_storage_account_enabled` is `true`.
+
 ---
 
 ## Requirements

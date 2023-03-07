@@ -42,6 +42,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated `sku_tier_paid` in favour of `sku_tier`. [@stevehipwell](https://github.com/stevehipwell)
 - Removed legacy module `ConfigMap`. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Thanos_ chart to [v1.10.2](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.30.2](https://github.com/thanos-io/thanos/releases/tag/v0.30.2)). ([#954](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/954)) [@hadeeds](https://github.com/hadeeds)
+- Added experimental support for disabling sending control plane logs to log analytics. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Ingress Ngninx_ chart to [4.5.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.5.2) (contains _Nginx Controller_ [v1.6.4](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.6.4)). ([#956](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/956)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.7.0] - 2023-02-27

@@ -34,6 +34,12 @@ variable "sku_tier" {
   nullable    = false
 }
 
+variable "fips" {
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
+  type        = bool
+  nullable    = false
+}
+
 variable "workload_identity" {
   description = "If the cluster has workload identity enabled."
   type        = bool
@@ -111,70 +117,28 @@ variable "bootstrap_vm_size" {
   nullable    = false
 }
 
-variable "control_plane_logging_external_workspace" {
-  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs."
-  type        = bool
-  nullable    = false
-}
-
-variable "control_plane_logging_external_workspace_id" {
-  description = "ID of the log analytics workspace to send control plane logs to if control_plane_logging_external_workspace is true."
-  type        = string
-  nullable    = true
-}
-
-variable "control_plane_logging_workspace_categories" {
-  description = "The control plane log categories to send to the log analytics workspace."
-  type        = string
-  nullable    = false
-}
-
-variable "control_plane_logging_workspace_retention_enabled" {
-  description = "If the control plane logs being sent to log analytics should have a retention specified, if not set the log analytics workspace default retention will be used."
-  type        = bool
-  nullable    = false
-}
-
-variable "control_plane_logging_workspace_retention_days" {
-  description = "How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
-  type        = number
-  nullable    = false
-}
-
-variable "control_plane_logging_storage_account_enabled" {
-  description = "If true, cluster control plane logs will be sent to the storage account referenced in control_plane_logging_storage_account_id as well as the default log analytics workspace."
-  type        = bool
-  nullable    = false
-}
-
-variable "control_plane_logging_storage_account_id" {
-  description = "ID of the storage account to add cluster control plane logs to if control_plane_logging_storage_account_id is true. "
-  type        = string
-  nullable    = true
-}
-
-variable "control_plane_logging_storage_account_categories" {
-  description = "The control plane log categories to send to the storage account."
-  type        = string
-  nullable    = false
-}
-
-variable "control_plane_logging_storage_account_retention_enabled" {
-  description = "If true, the control plane logs being sent to log analytics will use the retention specified in control_plane_logging_workspace_retention_days otherwise the log analytics workspace default retention will be used."
-  type        = bool
-  nullable    = false
-}
-
-variable "control_plane_logging_storage_account_retention_days" {
-  description = "How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
-  type        = number
-  nullable    = false
-}
-
-variable "fips" {
-  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
-  type        = bool
-  nullable    = false
+variable "control_plane_logging" {
+  description = "Control plane logging configuration."
+  type = object({
+    log_analytics = object({
+      enabled                       = bool
+      external_workspace            = bool
+      external_workspace_id         = string
+      profile                       = string
+      additional_log_category_types = list(string)
+      retention_enabled             = bool
+      retention_days                = number
+    })
+    storage_account = object({
+      enabled                       = bool
+      storage_account_id            = string
+      profile                       = string
+      additional_log_category_types = list(string)
+      retention_enabled             = bool
+      retention_days                = number
+    })
+  })
+  nullable = false
 }
 
 variable "maintenance_window_offset" {

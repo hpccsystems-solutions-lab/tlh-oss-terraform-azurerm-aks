@@ -1,5 +1,5 @@
 resource "random_string" "workspace_suffix" {
-  count = var.control_plane_logging_external_workspace ? 0 : 1
+  count = (var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled) && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
 
   length  = 5
   special = false
@@ -8,7 +8,7 @@ resource "random_string" "workspace_suffix" {
 }
 
 resource "azurerm_log_analytics_workspace" "default" {
-  count = var.control_plane_logging_external_workspace ? 0 : 1
+  count = (var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled) && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
 
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -18,48 +18,52 @@ resource "azurerm_log_analytics_workspace" "default" {
   tags              = merge(var.tags, { description = "control-plane-logs" })
 }
 
-data "azurerm_monitor_diagnostic_categories" "default" {
-  resource_id = azurerm_kubernetes_cluster.default.id
-}
+resource "azurerm_monitor_diagnostic_setting" "workspace" {
+  count = var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled ? 1 : 0
 
-resource "azurerm_monitor_diagnostic_setting" "default" {
-  for_each = local.logging_config
-
-  name               = each.value.name
+  name               = "control-plane-log-analytics"
   target_resource_id = azurerm_kubernetes_cluster.default.id
 
-  log_analytics_workspace_id = each.value.log_analytics_workspace_id
-  storage_account_id         = each.value.storage_account_id
+  log_analytics_workspace_id = var.control_plane_logging.log_analytics.external_workspace ? var.control_plane_logging.log_analytics.external_workspace_id : azurerm_log_analytics_workspace.default[0].id
 
-  log_analytics_destination_type = each.value.log_analytics_workspace_id != null ? "AzureDiagnostics" : null
+  log_analytics_destination_type = "AzureDiagnostics"
 
   dynamic "enabled_log" {
-    for_each = setintersection(data.azurerm_monitor_diagnostic_categories.default.log_category_types, each.value.logs)
+    for_each = local.log_analytics_log_category_types
 
     content {
       category = enabled_log.value
 
       retention_policy {
-        enabled = contains(each.value.logs, enabled_log.value) && each.value.retention_enabled
-        days    = contains(each.value.logs, enabled_log.value) && each.value.retention_enabled ? each.value.retention_days : "0"
-      }
-    }
-  }
-
-  dynamic "metric" {
-    for_each = data.azurerm_monitor_diagnostic_categories.default.metrics
-
-    content {
-      category = metric.value
-      enabled  = contains(each.value.metrics, metric.value)
-      retention_policy {
-        enabled = contains(each.value.metrics, metric.value) && each.value.retention_enabled
-        days    = contains(each.value.metrics, metric.value) && each.value.retention_enabled ? each.value.retention_days : "0"
+        enabled = var.control_plane_logging.log_analytics.retention_enabled
+        days    = var.control_plane_logging.log_analytics.retention_enabled ? var.control_plane_logging.log_analytics.retention_days : 0
       }
     }
   }
 
   lifecycle {
     ignore_changes = [log_analytics_destination_type]
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account" {
+  count = var.control_plane_logging.storage_account.enabled ? 1 : 0
+
+  name               = "control-plane-storage-account"
+  target_resource_id = azurerm_kubernetes_cluster.default.id
+
+  storage_account_id = var.control_plane_logging.storage_account.storage_account_id
+
+  dynamic "enabled_log" {
+    for_each = local.storage_account_log_category_types
+
+    content {
+      category = enabled_log.value
+
+      retention_policy {
+        enabled = var.control_plane_logging.storage_account.retention_enabled
+        days    = var.control_plane_logging.storage_account.retention_enabled ? var.control_plane_logging.storage_account.retention_days : 0
+      }
+    }
   }
 }

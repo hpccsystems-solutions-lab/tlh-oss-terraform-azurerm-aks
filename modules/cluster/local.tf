@@ -8,6 +8,10 @@ data "azurerm_public_ip" "outbound" {
   resource_group_name = azurerm_kubernetes_cluster.default.node_resource_group
 }
 
+data "azurerm_monitor_diagnostic_categories" "default" {
+  resource_id = azurerm_kubernetes_cluster.default.id
+}
+
 locals {
   sku_tier_lookup = {
     free     = "Free"
@@ -15,35 +19,24 @@ locals {
     standard = "Standard"
   }
 
-  log_categories = {
-    all = ["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
+  log_category_types_audit     = ["kube-audit", "kube-audit-admin"]
+  log_category_types_audit_fix = ["kube-audit-admin"]
 
-    recommended = ["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]
+  available_log_category_types = tolist(data.azurerm_monitor_diagnostic_categories.default.log_category_types)
 
-    limited = ["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"]
+  log_category_types_lookup = {
+    all = tolist(setintersection(["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
+
+    recommended = tolist(setintersection(["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
+
+    limited = tolist(setintersection(["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"], local.available_log_category_types))
   }
 
-  logging_config = merge({
-    workspace = {
-      name                       = "control-plane-workspace"
-      log_analytics_workspace_id = var.control_plane_logging_external_workspace ? var.control_plane_logging_external_workspace_id : azurerm_log_analytics_workspace.default[0].id
-      storage_account_id         = null
-      logs                       = local.log_categories[var.control_plane_logging_workspace_categories]
-      metrics                    = []
-      retention_enabled          = var.control_plane_logging_workspace_retention_enabled
-      retention_days             = var.control_plane_logging_workspace_retention_days
-    }
-    }, var.control_plane_logging_storage_account_enabled ? {
-    storage_account = {
-      name                       = "control-plane-storage-account"
-      log_analytics_workspace_id = null
-      storage_account_id         = var.control_plane_logging_storage_account_id
-      logs                       = local.log_categories[var.control_plane_logging_storage_account_categories]
-      metrics                    = []
-      retention_enabled          = var.control_plane_logging_storage_account_retention_enabled
-      retention_days             = var.control_plane_logging_storage_account_retention_days
-    }
-  } : {})
+  log_analytics_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.control_plane_logging.log_analytics.profile], var.control_plane_logging.log_analytics.additional_log_category_types))
+  log_analytics_log_category_types       = length(setintersection(local.log_analytics_log_category_types_input, local.log_category_types_audit)) > 1 ? setsubtract(local.log_analytics_log_category_types_input, local.log_category_types_audit_fix) : local.log_analytics_log_category_types_input
+
+  storage_account_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.control_plane_logging.storage_account.profile], var.control_plane_logging.storage_account.additional_log_category_types))
+  storage_account_log_category_types       = length(setintersection(local.storage_account_log_category_types_input, local.log_category_types_audit)) > 1 ? setsubtract(local.storage_account_log_category_types_input, local.log_category_types_audit_fix) : local.storage_account_log_category_types_input
 
   maintenance_window_location_offsets = {
     westeurope = 0
@@ -52,7 +45,6 @@ locals {
     eastus2    = 5
     centralus  = 6
     westus     = 8
-
   }
 
   maintenance_window_offset = var.maintenance_window_offset != null ? var.maintenance_window_offset : lookup(local.maintenance_window_location_offsets, var.location, 0)

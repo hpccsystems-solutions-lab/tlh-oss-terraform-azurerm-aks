@@ -45,12 +45,12 @@ output "node_resource_group_name" {
 
 output "control_plane_log_analytics_workspace_id" {
   description = "ID of the default log analytics workspace created for control plane logs."
-  value       = var.control_plane_logging_external_workspace ? var.control_plane_logging_external_workspace_id : azurerm_log_analytics_workspace.default[0].id
+  value       = var.control_plane_logging.log_analytics.enabled && !var.control_plane_logging.log_analytics.external_workspace ? azurerm_log_analytics_workspace.default[0].id : var.control_plane_logging.log_analytics.external_workspace.id
 }
 
 output "control_plane_log_analytics_workspace_name" {
   description = "Name of the default log analytics workspace created for control plane logs."
-  value       = var.control_plane_logging_external_workspace ? "" : azurerm_log_analytics_workspace.default[0].name
+  value       = var.control_plane_logging.log_analytics.enabled && !var.control_plane_logging.log_analytics.external_workspace ? azurerm_log_analytics_workspace.default[0].name : null
 }
 
 output "oms_agent_identity" {
