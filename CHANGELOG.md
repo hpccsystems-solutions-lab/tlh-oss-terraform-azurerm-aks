@@ -32,9 +32,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.8.0] - UNRELEASED
+## [v1.8.0] - 2023-03-13
 
 ### Highlights
+
+- The AzureRM Terraform Provider has been updated to `v3.47.0`.
+- Multiple core service Helm charts have been updated.
+- Added experimental support for disabling sending control plane logs to log analytics. [See how to set it here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/tree/main#disable-log-analytics-for-control-plane-logs)
+
+#### Deprecations
+
+Please note that the `sku_tier_paid` input has been deprecated and has been replaced with `sku_tier`. This version will be removed in AKS module version `v1.10.0`.
 
 ### All Changes
 
