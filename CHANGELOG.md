@@ -18,6 +18,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The `network_plugin` variable is deprecated in favour of inferring the value from `experimental.windows_support`, this will be removed in the `v1.8.0` release.
 - The `node_os` value of `windows` is deprecated in favour of `windows2019` to make the Windows version selection explicit, this will be removed in the `v1.9.0` release.
 - The `sku_tier_paid` variable is deprecated in favour of `sku_tier`, this will be removed in the `v1.10.0` release.
+- Legacy module `ConfigMap` is deprecated and will be removed in the `v1.11.0` release.
 
 ---
 
@@ -40,10 +41,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated the minimum version of the `azurerm` Terraform provider to [v3.47.0](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.47.0). [@stevehipwell](https://github.com/stevehipwell)
 - Added `sku_tier` input variable to support the new [AKS pricing tiers](https://learn.microsoft.com/en-us/azure/aks/free-standard-pricing-tiers). Cluster operators should read the docs to see if they need to pay for `standard` (currently set via `paid`). [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `sku_tier_paid` in favour of `sku_tier`. [@stevehipwell](https://github.com/stevehipwell)
-- Removed legacy module `ConfigMap`. [@stevehipwell](https://github.com/stevehipwell)
+- Changed legacy module `ConfigMap` values to be empty and removed dependencies. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Thanos_ chart to [v1.10.2](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.30.2](https://github.com/thanos-io/thanos/releases/tag/v0.30.2)). ([#954](https://github.com/LexisNexis-RBA/terraform-azurerm-aks/issues/954)) [@hadeeds](https://github.com/hadeeds)
 - Added experimental support for disabling sending control plane logs to log analytics. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Ingress Ngninx_ chart to [4.5.2](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.5.2) (contains _Nginx Controller_ [v1.6.4](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.6.4)). ([#956](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/956)) [@hadeeds](https://github.com/hadeeds)
+- Fixed explicit orchestrator version for bootstrap node pool causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed _Cert Manager_ resource ordering. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.7.0] - 2023-02-27
 

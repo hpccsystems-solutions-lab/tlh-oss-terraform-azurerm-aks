@@ -7,17 +7,17 @@ resource "kubectl_manifest" "crds" {
   wait              = true
 }
 
-resource "kubectl_manifest" "resource_files" {
-  for_each = local.resource_files
+resource "kubernetes_secret" "zerossl_eabsecret" {
+  metadata {
+    name      = "zerossl-eabsecret"
+    namespace = var.namespace
+  }
 
-  yaml_body = file(each.value)
+  type = "Opaque"
 
-  server_side_apply = true
-  wait              = true
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
+  binary_data = {
+    "${local.zerossl_eab_secret_key}" = "${local.zerossl_eabsecret}"
+  }
 }
 
 resource "helm_release" "default" {
@@ -37,7 +37,21 @@ resource "helm_release" "default" {
   ]
 
   depends_on = [
-    kubectl_manifest.crds
+    kubectl_manifest.crds,
+    module.identity
+  ]
+}
+
+resource "kubectl_manifest" "resource_files" {
+  for_each = local.resource_files
+
+  yaml_body = file(each.value)
+
+  server_side_apply = true
+  wait              = true
+
+  depends_on = [
+    helm_release.default
   ]
 }
 
@@ -50,19 +64,8 @@ resource "kubectl_manifest" "issuers" {
   wait              = true
 
   depends_on = [
+    kubectl_manifest.crds,
+    kubernetes_secret.zerossl_eabsecret,
     helm_release.default
   ]
-}
-
-resource "kubernetes_secret" "zerossl_eabsecret" {
-  metadata {
-    name      = "zerossl-eabsecret"
-    namespace = var.namespace
-  }
-
-  type = "Opaque"
-
-  binary_data = {
-    "${local.zerossl_eab_secret_key}" = "${local.zerossl_eabsecret}"
-  }
 }
