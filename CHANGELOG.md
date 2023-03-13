@@ -48,7 +48,14 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed explicit orchestrator version for bootstrap node pool causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed _Cert Manager_ resource ordering. [@stevehipwell](https://github.com/stevehipwell)
 
+## [v1.7.1] - 2023-03-13
+
+- Fixed explicit orchestrator version for bootstrap node pool causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.7.0] - 2023-02-27
+
+> **Warning**
+**DO NOT USE THIS VERSION** - Please use `v1.7.1` instead.
 
 ### Highlights
 
@@ -91,15 +98,22 @@ Added support for Premium SSD v2 disks via additional `StorageClass` resources. 
 - Fixed warning about `api_server_authorized_ip_ranges`. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed cluster tagging bug. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
+
+## [v1.6.3] - 2023-03-13
+
+- Fixed explicit orchestrator version for bootstrap node pool causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.6.2] - 2023-02-27
 
-- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@aydosman](https://github.com/aydosman)
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.6.3` instead.
+
+- Updated _Cert Manager_ CRDs for release [v1.11.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.0). ([#941](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/941)) [@OsmanA](https://github.com/OsmanA)
 
 ## [v1.6.1] - 2023-02-16
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.6.2` instead due to missing updated CRDs in the  _Cert Manager_ helm chart update.
-
+> **DO NOT USE THIS VERSION** - Please use `v1.6.3` instead.
 ### All Changes
 
 - Fixed Thanos endpoint for government cloud compatibility. ([#914](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/914)) [@appkins](https://github.com/appkins) & [@bachni01](https://github.com/bachni01)
