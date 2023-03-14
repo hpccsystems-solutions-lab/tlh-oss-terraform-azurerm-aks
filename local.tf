@@ -6,7 +6,7 @@ data "azurerm_subscription" "current" {
 
 locals {
   module_name    = "terraform-azurerm-aks"
-  module_version = "v1.8.0"
+  module_version = "v1.9.0-beta.1"
 
   # az aks get-versions --location eastus --output table
   # az aks get-versions --location westeurope --output table
