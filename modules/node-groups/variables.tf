@@ -82,6 +82,7 @@ variable "node_groups" {
     }), { sysctl = {} })
     placement_group_key = optional(string, null)
     max_pods            = optional(number, -1)
+    max_surge           = optional(string, "10%")
     labels              = optional(map(string), {})
     taints = optional(list(object({
       key    = string
@@ -120,6 +121,11 @@ variable "node_groups" {
   validation {
     condition     = alltrue([for k, v in var.node_groups : v.max_pods == -1 || (v.max_pods >= 12 && v.max_pods <= 110)])
     error_message = "Node group max pads must either be -1 or between 12 & 110."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : can(tonumber(replace(v.max_surge, "%", "")))])
+    error_message = "Node group max surge must either be a number or a percent; e.g. 1 or 10%."
   }
 }
 

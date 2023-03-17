@@ -114,6 +114,12 @@ variable "max_pods" {
   nullable    = false
 }
 
+variable "max_surge" {
+  description = "Maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade."
+  type        = string
+  nullable    = false
+}
+
 variable "fips" {
   description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
   type        = bool

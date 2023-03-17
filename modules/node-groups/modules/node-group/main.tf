@@ -17,7 +17,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   max_count           = local.enable_auto_scaling ? var.max_capacity : null
 
   upgrade_settings {
-    max_surge = 1
+    max_surge = var.max_surge
   }
 
   os_type = local.os_types[var.node_os]

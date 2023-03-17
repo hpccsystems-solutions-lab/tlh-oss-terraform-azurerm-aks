@@ -47,6 +47,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed `experimental.control_plane_logging_log_analytics_disabled` error in core config. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `control_plane_logging_external_workspace_different_resource_group` as it's no longer used. [@stevehipwell](https://github.com/stevehipwell)
 - Added support for ContainerLogV2 in the OMS experimental implementation. [@stevehipwell](https://github.com/stevehipwell)
+- Added `max_surge` input to `node_groups` variable. Allows specifying the maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade. ([958](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/958)) [@appkins](https://github.com/appkins)
 
 ## [v1.8.0] - 2023-03-13
 

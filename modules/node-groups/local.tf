@@ -26,6 +26,7 @@ locals {
       ultra_ssd           = false
       placement_group_key = null
       max_pods            = -1
+      max_surge           = "10%"
       labels = {
         "lnrs.io/tier" = "system"
       }

@@ -216,6 +216,7 @@ variable "node_groups" {
     ultra_ssd           = optional(bool)
     placement_group_key = optional(string)
     max_pods            = optional(number)
+    max_surge           = optional(string)
     labels              = optional(map(string))
     taints = optional(list(object({
       key    = string
