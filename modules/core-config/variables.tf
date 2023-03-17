@@ -164,47 +164,22 @@ variable "core_services_config" {
       lb_subnet_name   = optional(string)
       public_dns       = optional(bool, false)
     })
+    logging = object({
+      control_plane = object({
+        log_analytics_wokspace_id = string
+      })
+    })
+    oms_agent = object({
+      enabled                     = bool
+      log_analytics_wokspace_id   = string
+      manage_config               = bool
+      containerlog_schema_version = string
+    })
     prometheus = optional(object({
       remote_write = optional(any)
     }), {})
   })
   nullable = false
-}
-
-variable "control_plane_log_analytics_workspace_id" {
-  description = "ID of the log analytics workspace for the AKS cluster control plane."
-  type        = string
-  nullable    = false
-}
-
-variable "control_plane_log_analytics_workspace_different_resource_group" {
-  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
-  type        = bool
-  nullable    = false
-}
-
-variable "oms_agent" {
-  description = "If the OMS agent addon should be installed."
-  type        = bool
-  nullable    = false
-}
-
-variable "oms_agent_log_analytics_workspace_id" {
-  description = "ID of the log analytics workspace for the OMS agent."
-  type        = string
-  nullable    = true
-}
-
-variable "oms_agent_log_analytics_workspace_different_resource_group" {
-  description = "If the OMS agent log analytics workspace is in a different resource group to the cluster."
-  type        = bool
-  nullable    = false
-}
-
-variable "oms_agent_create_configmap" {
-  description = "If the OMS agent ConfigMap should be created with default settings."
-  type        = bool
-  nullable    = false
 }
 
 variable "labels" {

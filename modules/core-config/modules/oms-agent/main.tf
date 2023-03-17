@@ -1,5 +1,5 @@
 resource "kubernetes_config_map" "default" {
-  count = var.create_configmap ? 1 : 0
+  count = var.manage_config ? 1 : 0
 
   metadata {
     name      = "container-azm-ms-agentconfig"

@@ -1284,10 +1284,6 @@ locals {
     }
   ]
 
-  resource_group_id                                                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
-  control_plane_log_analytics_workspace_external_resource_group_id = var.control_plane_log_analytics_workspace_different_resource_group ? regex("([[:ascii:]]*)(/providers/)", var.control_plane_log_analytics_workspace_id)[0] : ""
-  oms_agent_log_analytics_workspace_resource_group_id              = var.oms_agent && var.oms_agent_log_analytics_workspace_id != null ? regex("([[:ascii:]]*)(/providers/)", var.oms_agent_log_analytics_workspace_id)[0] : ""
-
   thanos_objstore_secret_name     = "thanos-object-storage"
   thanos_objstore_secret_key      = "config"
   thanos_objstore_secret_checksum = sha256(local.thanos_objstore_config)
@@ -1316,5 +1312,5 @@ locals {
   crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_objects    = { thanos_ruler = local.thanos_ruler }
-  dashboard_templates = { for x in fileset(path.module, "resources/configmap-dashboard-*.yaml.tpl") : basename(x) => { path = "${path.module}/${x}", vars = { resource_id = var.control_plane_log_analytics_workspace_id, subscription_id = var.subscription_id } } }
+  dashboard_templates = var.control_plane_log_analytics_workspace_id != null ? { for x in fileset(path.module, "resources/configmap-dashboard-*.yaml.tpl") : basename(x) => { path = "${path.module}/${x}", vars = { resource_id = var.control_plane_log_analytics_workspace_id, subscription_id = var.subscription_id } } } : {}
 }

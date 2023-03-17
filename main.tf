@@ -113,15 +113,7 @@ module "core_config" {
 
   dns_resource_group_lookup = var.dns_resource_group_lookup
 
-  core_services_config = var.core_services_config
-
-  control_plane_log_analytics_workspace_id                       = module.cluster.control_plane_log_analytics_workspace_id
-  control_plane_log_analytics_workspace_different_resource_group = var.control_plane_logging_external_workspace_different_resource_group
-
-  oms_agent                                                  = var.experimental.oms_agent
-  oms_agent_log_analytics_workspace_id                       = var.experimental.oms_agent_log_analytics_workspace_id
-  oms_agent_log_analytics_workspace_different_resource_group = var.experimental.oms_agent_log_analytics_workspace_different_resource_group
-  oms_agent_create_configmap                                 = var.experimental.oms_agent_create_configmap
+  core_services_config = local.core_services_config
 
   labels = local.labels
   tags   = local.tags

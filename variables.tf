@@ -325,8 +325,9 @@ variable "control_plane_logging_external_workspace_id" {
   default     = null
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "control_plane_logging_external_workspace_different_resource_group" {
-  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
+  description = "DEPRECATED - If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
   type        = bool
   nullable    = false
   default     = false
@@ -436,20 +437,20 @@ variable "tags" {
 variable "experimental" {
   description = "Configure experimental features."
   type = object({
-    oms_agent                                                  = optional(bool, false)
-    oms_agent_log_analytics_workspace_different_resource_group = optional(bool, false)
-    oms_agent_log_analytics_workspace_id                       = optional(string, null)
-    oms_agent_create_configmap                                 = optional(bool, true)
-    windows_support                                            = optional(bool, false)
-    arm64                                                      = optional(bool, false)
-    node_group_os_config                                       = optional(bool, false)
-    azure_cni_max_pods                                         = optional(bool, false)
-    aad_pod_identity_finalizer_wait                            = optional(string, null)
-    fluent_bit_use_memory_buffer                               = optional(bool, false)
-    fluentd_memory_override                                    = optional(string, null)
-    prometheus_memory_override                                 = optional(string, null)
-    workload_identity                                          = optional(bool, false)
-    control_plane_logging_log_analytics_disabled               = optional(bool, false)
+    oms_agent                                    = optional(bool, false)
+    oms_agent_log_analytics_workspace_id         = optional(string, null)
+    oms_agent_create_configmap                   = optional(bool, true)
+    oms_agent_containerlog_schema_version        = optional(string, "v1")
+    windows_support                              = optional(bool, false)
+    arm64                                        = optional(bool, false)
+    node_group_os_config                         = optional(bool, false)
+    azure_cni_max_pods                           = optional(bool, false)
+    aad_pod_identity_finalizer_wait              = optional(string, null)
+    fluent_bit_use_memory_buffer                 = optional(bool, false)
+    fluentd_memory_override                      = optional(string, null)
+    prometheus_memory_override                   = optional(string, null)
+    workload_identity                            = optional(bool, false)
+    control_plane_logging_log_analytics_disabled = optional(bool, false)
   })
   nullable = false
   default  = {}

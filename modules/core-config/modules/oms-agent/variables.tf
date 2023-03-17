@@ -10,14 +10,20 @@ variable "labels" {
   nullable    = false
 }
 
+variable "manage_config" {
+  description = "If the OMS agent ConfigMap should be created with default settings."
+  type        = bool
+  nullable    = false
+}
+
 variable "core_namespaces" {
   description = "Namespaces belonging to the core cluster implementation."
   type        = list(string)
   nullable    = false
 }
 
-variable "create_configmap" {
-  description = "If the OMS agent ConfigMap should be created with default settings."
-  type        = bool
+variable "containerlog_schema_version" {
+  description = "Containerlog schema version."
+  type        = string
   nullable    = false
 }

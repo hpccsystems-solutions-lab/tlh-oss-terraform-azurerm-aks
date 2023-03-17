@@ -80,6 +80,21 @@ locals {
     }
   }
 
+  core_services_config = merge(var.core_services_config, {
+    logging = {
+      control_plane = {
+        log_analytics_wokspace_id = var.experimental.control_plane_logging_log_analytics_disabled ? null : module.cluster.control_plane_log_analytics_workspace_id
+      }
+    }
+
+    oms_agent = {
+      enabled                     = var.experimental.oms_agent
+      log_analytics_wokspace_id   = var.experimental.oms_agent ? var.experimental.oms_agent_log_analytics_workspace_id : null
+      manage_config               = var.experimental.oms_agent_create_configmap
+      containerlog_schema_version = var.experimental.oms_agent_containerlog_schema_version
+    }
+  })
+
   labels = {
     "lnrs.io/k8s-platform" = "true"
   }

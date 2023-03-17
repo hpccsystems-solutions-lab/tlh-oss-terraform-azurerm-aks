@@ -131,6 +131,18 @@ variable "grafana_additional_data_sources" {
   default     = []
 }
 
+variable "grafana_log_analytics_workspace_ids" {
+  description = "IDs of the log analytics workspaces which Grafana should have access to."
+  type        = list(string)
+  nullable    = false
+}
+
+variable "control_plane_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the AKS cluster control plane."
+  type        = string
+  nullable    = true
+}
+
 variable "ingress_class_name" {
   description = "The ingress class for ingress resources."
   type        = string
@@ -152,36 +164,6 @@ variable "ingress_subdomain_suffix" {
 variable "ingress_annotations" {
   description = "The annotations for ingress resources."
   type        = map(string)
-  nullable    = false
-}
-
-variable "control_plane_log_analytics_workspace_id" {
-  description = "ID of the log analytics workspace for the AKS cluster control plane."
-  type        = string
-  nullable    = false
-}
-
-variable "control_plane_log_analytics_workspace_different_resource_group" {
-  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id is created in a different resource group to the cluster."
-  type        = bool
-  nullable    = false
-}
-
-variable "oms_agent" {
-  description = "If the OMS agent addon should be installed."
-  type        = bool
-  nullable    = false
-}
-
-variable "oms_agent_log_analytics_workspace_id" {
-  description = "ID of the log analytics workspace for the OMS agent."
-  type        = string
-  nullable    = true
-}
-
-variable "oms_agent_log_analytics_workspace_different_resource_group" {
-  description = "If the oms agent log analytics workspace is in a different resource group to the cluster."
-  type        = bool
   nullable    = false
 }
 
