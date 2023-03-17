@@ -1,5 +1,5 @@
 variable "azure_env" {
-  description = "Azure cloud environment type, \"public\" & \"usgovernment\" are supported."
+  description = "DEPRECATED - Azure cloud environment type, \"public\" & \"usgovernment\" are supported."
   type        = string
   nullable    = false
   default     = "public"

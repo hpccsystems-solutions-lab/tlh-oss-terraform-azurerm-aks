@@ -49,7 +49,7 @@ module "cluster" {
 module "rbac" {
   source = "./modules/rbac"
 
-  azure_env     = var.azure_env
+  azure_env     = local.azure_env
   cluster_id    = module.cluster.id
   rbac_bindings = var.rbac_bindings
   labels        = local.labels
@@ -91,7 +91,7 @@ module "node_groups" {
 module "core_config" {
   source = "./modules/core-config"
 
-  azure_env           = var.azure_env
+  azure_env           = local.azure_env
   tenant_id           = local.tenant_id
   subscription_id     = local.subscription_id
   location            = var.location

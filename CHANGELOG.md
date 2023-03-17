@@ -15,6 +15,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
+- The `azure_env` variable is deprecated in favour of inferring the value from `location`, this will be removed in the `v1.12.0` release.
 - The `network_plugin` variable is deprecated in favour of inferring the value from `experimental.windows_support`, this will be removed in the `v1.8.0` release.
 - The `node_os` value of `windows` is deprecated in favour of `windows2019` to make the Windows version selection explicit, this will be removed in the `v1.9.0` release.
 - The `sku_tier_paid` variable is deprecated in favour of `sku_tier`, this will be removed in the `v1.10.0` release.
@@ -38,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Deprecated `azure_env` variable is deprecated in favour of inferring the value from `location`. ([937](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/937)) [@appkins](https://github.com/appkins)
 - Updated _Fluentd_ chart to [v3.7.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.7.0) (contains _Fluentd Aggregator_ [v2.7.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.7.0)) ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds).
 - Changed _Fluentd_ image to use `glibc` variant to improve performance on ARM64 nodes. ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds)
 
