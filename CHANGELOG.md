@@ -38,6 +38,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated _Fluentd_ chart to [v3.7.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.7.0) (contains _Fluentd Aggregator_ [v2.7.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.7.0)) ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds).
+- Changed _Fluentd_ image to use `glibc` variant to improve performance on ARM64 nodes. ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.8.0] - 2023-03-13
 
 ### Highlights

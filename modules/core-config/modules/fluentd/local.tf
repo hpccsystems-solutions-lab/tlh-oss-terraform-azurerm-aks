@@ -1,5 +1,5 @@
 locals {
-  chart_version = "3.6.2"
+  chart_version = "3.7.0"
 
   use_aad_workload_identity = false
 
@@ -9,7 +9,9 @@ locals {
     image = var.image_repository != null && var.image_tag != null ? {
       repository = var.image_repository
       tag        = var.image_tag
-    } : {}
+      } : {
+      tagPrefix = "glibc"
+    }
 
     commonLabels = var.labels
 
