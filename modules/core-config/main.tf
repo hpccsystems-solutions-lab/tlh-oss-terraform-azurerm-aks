@@ -21,12 +21,6 @@ resource "kubernetes_labels" "system_namespace" {
   labels = local.namespace_pod_security_labels
 }
 
-module "storage" {
-  source = "./modules/storage"
-
-  labels = var.labels
-}
-
 resource "kubectl_manifest" "kube_prometheus_stack_crds" {
   for_each = { for x in fileset(path.module, "modules/kube-prometheus-stack/crds/*.yaml") : basename(x) => "${path.module}/${x}" }
 
@@ -34,6 +28,22 @@ resource "kubectl_manifest" "kube_prometheus_stack_crds" {
 
   server_side_apply = true
   wait              = true
+
+  depends_on = [
+    kubernetes_namespace.default,
+    kubernetes_labels.system_namespace
+  ]
+}
+
+module "storage" {
+  source = "./modules/storage"
+
+  labels = var.labels
+
+  depends_on = [
+    kubernetes_namespace.default,
+    kubernetes_labels.system_namespace
+  ]
 }
 
 module "pre_upgrade" {
@@ -44,9 +54,10 @@ module "pre_upgrade" {
   cluster_name        = var.cluster_name
 
   depends_on = [
+    kubernetes_namespace.default,
+    kubernetes_labels.system_namespace,
     kubectl_manifest.kube_prometheus_stack_crds,
-    module.storage,
-    kubernetes_namespace.default
+    module.storage
   ]
 }
 
