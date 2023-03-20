@@ -21,6 +21,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The `sku_tier_paid` variable is deprecated in favour of `sku_tier`, this will be removed in the `v1.10.0` release.
 - Legacy module `ConfigMap` is deprecated and will be removed in the `v1.11.0` release.
 - The `control_plane_logging_external_workspace_different_resource_group` variable is deprecated as it's unused and will be removed in the `v1.12.0` release.
+- AKS cluster version `v1.23` is deprecated and will be removed in the `v1.12.0` release.
 
 ---
 
@@ -41,13 +42,14 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Deprecated `azure_env` variable is deprecated in favour of inferring the value from `location`. ([937](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/937)) [@appkins](https://github.com/appkins)
-- Updated _Fluentd_ chart to [v3.7.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.7.0) (contains _Fluentd Aggregator_ [v2.7.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.7.0)) ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds).
+- Updated _Fluentd_ chart to [v3.7.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.7.0) (contains _Fluentd Aggregator_ [v2.7.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.7.0)). ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds)
 - Changed _Fluentd_ image to use `glibc` variant to improve performance on ARM64 nodes. ([985](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/985)) [@hadeeds](https://github.com/hadeeds)
 - Fixed Grafana Azure Monitor data source identity roles. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed `experimental.control_plane_logging_log_analytics_disabled` error in core config. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `control_plane_logging_external_workspace_different_resource_group` as it's no longer used. [@stevehipwell](https://github.com/stevehipwell)
 - Added support for ContainerLogV2 in the OMS experimental implementation. [@stevehipwell](https://github.com/stevehipwell)
 - Added `max_surge` input to `node_groups` variable. Allows specifying the maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade. ([958](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/958)) [@appkins](https://github.com/appkins)
+- Deprecated AKS cluster version `v1.23`. ([990](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/990)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.8.0] - 2023-03-13
 
