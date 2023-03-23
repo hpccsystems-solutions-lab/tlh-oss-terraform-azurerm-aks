@@ -51,6 +51,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added `max_surge` input to `node_groups` variable. Allows specifying the maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade. ([958](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/958)) [@appkins](https://github.com/appkins)
 - Deprecated AKS cluster version `v1.23`. ([990](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/990)) [@peterabarr](https://github.com/peterabarr)
 - Updated _External DNS_ chart to [v1.12.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.1) which contains image update to [v0.13.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.2). ([#993](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/993)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Fluent Bit_ chart to [v0.25.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.25.0) (contains _Fluent Bit_ [v2.0.10](https://github.com/fluent/fluent-bit/releases/tag/v2.0.10)). ([1001](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1001)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.8.0] - 2023-03-13
 
