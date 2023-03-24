@@ -28,6 +28,11 @@ output "cluster_identity" {
   value       = azurerm_user_assigned_identity.default
 }
 
+output "cluster_name" {
+  description = "Name of cluster"
+  value       = azurerm_kubernetes_cluster.default.name
+}
+
 output "kubelet_identity" {
   description = "User assigned identity used by the Kubelet."
   value       = azurerm_kubernetes_cluster.default.kubelet_identity[0]

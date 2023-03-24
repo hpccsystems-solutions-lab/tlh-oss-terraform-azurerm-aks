@@ -18,6 +18,11 @@ output "cluster_certificate_authority_data" {
   value       = module.cluster.certificate_authority_data
 }
 
+output "cluster_name" {
+  description = "Name of cluster"
+  value       = module.cluster.cluster_name
+}
+
 output "control_plane_log_analytics_workspace_id" {
   description = "ID of the default log analytics workspace created for control plane logs."
   value       = module.cluster.control_plane_log_analytics_workspace_id
