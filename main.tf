@@ -62,21 +62,21 @@ module "rbac" {
 module "node_groups" {
   source = "./modules/node-groups"
 
-  subscription_id      = local.subscription_id
-  location             = var.location
-  resource_group_name  = var.resource_group_name
-  cluster_id           = module.cluster.id
-  cluster_name         = var.cluster_name
-  cluster_version_full = local.cluster_version_full
-  network_plugin       = local.network_plugin
-  subnet_id            = local.subnet_id
-  availability_zones   = local.availability_zones
-  bootstrap_name       = local.bootstrap_name
-  bootstrap_vm_size    = local.bootstrap_vm_size
-  node_groups          = var.node_groups
-  fips                 = var.fips
-  labels               = local.labels
-  tags                 = local.tags
+  subscription_id     = local.subscription_id
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  cluster_id          = module.cluster.id
+  cluster_name        = var.cluster_name
+  cluster_version     = var.cluster_version
+  network_plugin      = local.network_plugin
+  subnet_id           = local.subnet_id
+  availability_zones  = local.availability_zones
+  bootstrap_name      = local.bootstrap_name
+  bootstrap_vm_size   = local.bootstrap_vm_size
+  node_groups         = var.node_groups
+  fips                = var.fips
+  labels              = local.labels
+  tags                = local.tags
 
   timeouts = local.timeouts
 

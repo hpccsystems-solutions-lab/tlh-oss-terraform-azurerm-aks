@@ -28,8 +28,8 @@ variable "cluster_name" {
   nullable    = false
 }
 
-variable "cluster_version_full" {
-  description = "The full Kubernetes version of the Azure Kubernetes managed cluster."
+variable "cluster_version" {
+  description = "The AKS Kubernetes version."
   type        = string
   nullable    = false
 }
