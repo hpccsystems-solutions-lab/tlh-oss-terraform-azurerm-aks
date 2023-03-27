@@ -35,9 +35,18 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.9.0] - UNRELEASED
+## [v1.9.0] - 2023-03-27
 
 ### Highlights
+
+- **Deprecated Kubernetes v1.23**: We no longer support this version of Kubernetes.
+- **`max_surge` input added to `node_groups` variable**: This allows you to specify the maximum number or percentage of nodes that will be added to the Node Pool size during an upgrade. [Learn how to set it here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#appendix-b).
+- **Core service Helm chart updates**: We've updated multiple core service Helm charts.
+- **ContainerLogV2 support for OMS experimental implementation**: This feature is now available. [Learn how to set it up here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#oms-agent-support).
+
+### Deprecations
+
+Please note that the `azure_env` input has been deprecated in favour of inferring the value from `location`.
 
 ### All Changes
 
