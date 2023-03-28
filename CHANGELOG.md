@@ -35,6 +35,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
+## [v1.10.0] - UNRELEASED
+
+### Highlights
+
+### All Changes
+
 ## [v1.9.0] - 2023-03-27
 
 ### Highlights
