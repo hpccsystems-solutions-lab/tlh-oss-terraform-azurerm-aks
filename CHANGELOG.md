@@ -42,6 +42,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
+- Update support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.9.0] - 2023-03-27
 
