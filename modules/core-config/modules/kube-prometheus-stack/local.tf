@@ -411,6 +411,7 @@ locals {
         basicAuth       = lookup(datasource, "basicAuth", null)
         basicAuthUser   = lookup(datasource, "basicAuthUser", null)
         withCredentials = lookup(datasource, "withCredentials", null)
+        user            = lookup(datasource, "user", null)
         isDefault       = lookup(datasource, "isDefault", null)
         jsonData        = lookup(datasource, "jsonData", null)
         secureJsonData  = lookup(datasource, "secureJsonData", null)
