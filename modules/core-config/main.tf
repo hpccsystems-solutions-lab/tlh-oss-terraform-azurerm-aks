@@ -245,8 +245,10 @@ module "kube_prometheus_stack" {
   grafana_admin_password                   = var.core_services_config.grafana.admin_password
   grafana_additional_plugins               = var.core_services_config.grafana.additional_plugins
   grafana_additional_data_sources          = var.core_services_config.grafana.additional_data_sources
-  grafana_log_analytics_workspace_ids      = compact([var.core_services_config.logging.control_plane.log_analytics_wokspace_id, var.core_services_config.oms_agent.log_analytics_wokspace_id])
+  control_plane_log_analytics_enabled      = var.core_services_config.logging.control_plane.log_analytics_enabled
   control_plane_log_analytics_workspace_id = var.core_services_config.logging.control_plane.log_analytics_wokspace_id
+  oms_agent_enabled                        = var.core_services_config.oms_agent.enabled
+  oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_wokspace_id
   ingress_class_name                       = module.ingress_internal_core.ingress_class_name
   ingress_domain                           = local.ingress_internal_core.domain
   ingress_subdomain_suffix                 = local.ingress_internal_core.subdomain_suffix

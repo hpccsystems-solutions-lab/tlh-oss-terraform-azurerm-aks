@@ -166,6 +166,7 @@ variable "core_services_config" {
     })
     logging = object({
       control_plane = object({
+        log_analytics_enabled     = bool
         log_analytics_wokspace_id = string
       })
     })

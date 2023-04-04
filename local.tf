@@ -83,6 +83,7 @@ locals {
   core_services_config = merge(var.core_services_config, {
     logging = {
       control_plane = {
+        log_analytics_enabled     = !var.experimental.control_plane_logging_log_analytics_disabled
         log_analytics_wokspace_id = var.experimental.control_plane_logging_log_analytics_disabled ? null : module.cluster.control_plane_log_analytics_workspace_id
       }
     }

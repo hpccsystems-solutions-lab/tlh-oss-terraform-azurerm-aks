@@ -14,7 +14,8 @@ module "identity_grafana" {
 
   roles = concat(
     [{ id = "Reader", scope = "/subscriptions/${var.subscription_id}" }],
-    [for x in var.grafana_log_analytics_workspace_ids : { id = "Monitoring Reader", scope = x }]
+    var.control_plane_log_analytics_enabled ? [{ id = "Monitoring Reader", scope = var.control_plane_log_analytics_workspace_id }] : [],
+    var.oms_agent_enabled ? [{ id = "Monitoring Reader", scope = var.oms_agent_log_analytics_workspace_id }] : []
   )
 
   tags = var.tags

@@ -131,14 +131,26 @@ variable "grafana_additional_data_sources" {
   default     = []
 }
 
-variable "grafana_log_analytics_workspace_ids" {
-  description = "IDs of the log analytics workspaces which Grafana should have access to."
-  type        = list(string)
+variable "control_plane_log_analytics_enabled" {
+  description = "If log analytics should be enabled for the AKS cluster control plane."
+  type        = bool
   nullable    = false
 }
 
 variable "control_plane_log_analytics_workspace_id" {
   description = "ID of the log analytics workspace for the AKS cluster control plane."
+  type        = string
+  nullable    = true
+}
+
+variable "oms_agent_enabled" {
+  description = "If the OMS Agent is enabled."
+  type        = bool
+  nullable    = false
+}
+
+variable "oms_agent_log_analytics_workspace_id" {
+  description = "ID of the log analytics workspace for the OMS Agent."
   type        = string
   nullable    = true
 }
