@@ -44,7 +44,16 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
 - Update support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
 
+## [v1.9.1] - 2023-04-04
+
+### All Changes
+
+- Fixed logging dashboard plan error. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.9.0] - 2023-03-27
+
+> **Warning**
+> As of 2023-04-04 module version `v1.9.0` is no longer supported and you should upgrade to `v1.9.1` or higher.
 
 ### Highlights
 
