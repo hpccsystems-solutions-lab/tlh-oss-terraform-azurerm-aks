@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
 - Update support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
+- Updated _External DNS_ chart to [v1.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.2) (contains _External DNS_ image update to [v0.13.4](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.4)). ([#1028](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1028)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.9.1] - 2023-04-04
 
