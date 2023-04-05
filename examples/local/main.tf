@@ -223,7 +223,6 @@ module "aks" {
 
   cluster_name    = local.cluster_name
   cluster_version = local.cluster_version
-  network_plugin  = "kubenet"
   sku_tier        = "free"
 
   cluster_endpoint_public_access = true

@@ -49,18 +49,6 @@ variable "cluster_version" {
   }
 }
 
-variable "network_plugin" {
-  description = "DEPRECATED - Kubernetes network plugin, \"kubenet\" & \"azure\" are supported."
-  type        = string
-  nullable    = false
-  default     = "kubenet"
-
-  validation {
-    condition     = contains(["kubenet", "azure"], var.network_plugin)
-    error_message = "Available network plugin are \"kubenet\" or \"azure\"."
-  }
-}
-
 variable "sku_tier" {
   description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"paid\" are supported. For production clusters or clusters with more than 10 nodes this should be set to \"paid\"."
   type        = string

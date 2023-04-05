@@ -121,6 +121,6 @@ locals {
     helm_modify       = 600
   }
 
-  network_plugin = var.experimental.windows_support ? "azure" : var.network_plugin
+  network_plugin = var.experimental.windows_support ? "azure" : "kubenet"
   azure_env      = startswith(var.location, "usgov") ? "usgovernment" : var.azure_env
 }
