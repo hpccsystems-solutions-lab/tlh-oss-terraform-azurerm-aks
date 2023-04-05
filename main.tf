@@ -17,7 +17,7 @@ module "cluster" {
   resource_group_name                  = var.resource_group_name
   cluster_name                         = var.cluster_name
   cluster_version_full                 = local.cluster_version_full
-  sku_tier                             = var.sku_tier_paid ? "paid" : var.sku_tier
+  sku_tier                             = var.sku_tier
   fips                                 = var.fips
   workload_identity                    = var.experimental.workload_identity
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access

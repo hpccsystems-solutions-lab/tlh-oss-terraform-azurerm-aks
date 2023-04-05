@@ -61,13 +61,6 @@ variable "sku_tier" {
   }
 }
 
-variable "sku_tier_paid" {
-  description = "DEPRECATED - If the cluster control plane SKU tier should be paid or free; the paid tier has a financially-backed uptime SLA. This has been replaced by sku_tier."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled."
   type        = bool
