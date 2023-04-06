@@ -15,9 +15,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `network_plugin` variable is deprecated in favour of inferring the value from `experimental.windows_support`, this will be removed in the `v1.10.0` release.
-- The `node_os` value of `windows` is deprecated in favour of `windows2019` to make the Windows version selection explicit, this will be removed in the `v1.10.0` release.
-- The `sku_tier_paid` variable is deprecated in favour of `sku_tier`, this will be removed in the `v1.10.0` release.
 - Legacy module `ConfigMap` is deprecated and will be removed in the `v1.11.0` release.
 - The `control_plane_logging_external_workspace_different_resource_group` variable is deprecated as it's unused and will be removed in the `v1.12.0` release.
 - AKS cluster version `v1.23` is deprecated and will be removed in the `v1.12.0` release.
@@ -46,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed the `sku_tier_paid` variable in favour of `sku_tier`. ([#1027](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1027)) [@peterabarr](https://github.com/peterabarr)
 - Updated _External DNS_ chart to [v1.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.2) (contains _External DNS_ image update to [v0.13.4](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.4)). ([#1028](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1028)) [@hadeeds](https://github.com/hadeeds)
 - Removed the `network_plugin` variable because it was deprecated in favour of inferring the value from `experimental.windows_support`. ([1002](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1002)) [@peterabarr](https://github.com/peterabarr)
+- Removed deprecated `node_os` value `windows` in favour for `windows2019`. ([#999](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/999)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.9.1] - 2023-04-04
 

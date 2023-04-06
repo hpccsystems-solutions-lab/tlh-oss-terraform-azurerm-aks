@@ -59,7 +59,7 @@ variable "max_capacity" {
 }
 
 variable "node_os" {
-  description = "The OS to use for the nodes, \"ubuntu\", \"windows2019\", \"windows2022\" or \"windows\" are supported."
+  description = "The OS to use for the nodes, \"ubuntu\", \"windows2019\" or \"windows2022\" are supported."
   type        = string
   nullable    = false
 }

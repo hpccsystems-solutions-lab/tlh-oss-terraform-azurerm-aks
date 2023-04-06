@@ -104,8 +104,8 @@ variable "node_groups" {
   }
 
   validation {
-    condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows2019", "windows2022", "windows"], v.node_os)])
-    error_message = "Node group OS must be one of \"ubuntu\", \"windows2019\", \"windows2022\" (EXPERIMENTAL) or \"windows\" (DEPRECATED)."
+    condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows2019", "windows2022"], v.node_os)])
+    error_message = "Node group OS must be one of \"ubuntu\", \"windows2019\" or \"windows2022\" (EXPERIMENTAL)."
   }
 
   validation {
