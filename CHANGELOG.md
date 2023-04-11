@@ -44,6 +44,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _External DNS_ chart to [v1.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.2) (contains _External DNS_ image update to [v0.13.4](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.4)). ([#1028](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1028)) [@hadeeds](https://github.com/hadeeds)
 - Removed the `network_plugin` variable because it was deprecated in favour of inferring the value from `experimental.windows_support`. ([1002](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1002)) [@peterabarr](https://github.com/peterabarr)
 - Removed deprecated `node_os` value `windows` in favour for `windows2019`. ([#999](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/999)) [@peterabarr](https://github.com/peterabarr)
+- Fixed Logging Dashboard Plan Error. ([#1017](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1017)) [@appkins](https://github.com/appkins)
+- Removed the deprecated `docker_bridge_cidr`. This argument is no longer needed or supported. ([#1023](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1023)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.9.1] - 2023-04-04
 
