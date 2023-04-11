@@ -38,6 +38,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated the minimum version of the `azurerm` Terraform provider to [v3.51.0](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.51.0). ([#1032](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1032)) [@appkins](https://github.com/appkins)
+- Remapped `sku_tier = "paid"` to `Standard` in the `sku_tier_lookup` local to fix a bug introduced in the 2023-02-01 version of the AKS API. ([#1032](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1032)) [@appkins](https://github.com/appkins)
 - Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
 - Update support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
 - Removed the `sku_tier_paid` variable in favour of `sku_tier`. ([#1027](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1027)) [@peterabarr](https://github.com/peterabarr)
