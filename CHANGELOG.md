@@ -19,6 +19,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The `control_plane_logging_external_workspace_different_resource_group` variable is deprecated as it's unused and will be removed in the `v1.12.0` release.
 - AKS cluster version `v1.23` is deprecated and will be removed in the `v1.12.0` release.
 - The `azure_env` variable is deprecated in favour of inferring the value from `location`, this will be removed in the `v1.12.0` release.
+- The `paid` option for `sku_tier` is deprecated and will be removed in the `v1.13.0` release.
 
 ---
 
@@ -48,6 +49,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed deprecated `node_os` value `windows` in favour for `windows2019`. ([#999](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/999)) [@peterabarr](https://github.com/peterabarr)
 - Fixed Logging Dashboard Plan Error. ([#1017](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1017)) [@appkins](https://github.com/appkins)
 - Removed the deprecated `docker_bridge_cidr`. This argument is no longer needed or supported. ([#1023](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1023)) [@aydosman](https://github.com/aydosman)
+- Fixed orchestrator version for node groups causing Azure API errors. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
+- Added `standard` option to `sku_tier` to replace `paid`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `paid` option for `sku_tier`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.9.1] - 2023-04-04
 

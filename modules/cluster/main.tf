@@ -139,7 +139,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     vnet_subnet_id = var.subnet_id
     zones          = [1, 2, 3]
 
-    orchestrator_version = null
+    orchestrator_version = var.cluster_version_full
 
     node_count                   = 1
     enable_auto_scaling          = false

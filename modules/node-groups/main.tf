@@ -14,7 +14,7 @@ module "system_node_groups" {
 
   name                         = each.key
   cluster_id                   = var.cluster_id
-  cluster_version              = var.cluster_version
+  cluster_version_full         = var.cluster_version_full
   network_plugin               = var.network_plugin
   subnet_id                    = var.subnet_id
   availability_zones           = each.value.availability_zones
@@ -61,7 +61,7 @@ module "user_node_groups" {
 
   name                         = each.key
   cluster_id                   = var.cluster_id
-  cluster_version              = var.cluster_version
+  cluster_version_full         = var.cluster_version_full
   network_plugin               = var.network_plugin
   subnet_id                    = var.subnet_id
   availability_zones           = each.value.availability_zones

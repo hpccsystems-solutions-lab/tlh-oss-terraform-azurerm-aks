@@ -29,7 +29,7 @@ variable "network_plugin" {
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"paid\" are supported."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\", \"standard\" & \"paid\" (deprecated) are supported."
   type        = string
   nullable    = false
 }
