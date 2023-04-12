@@ -37,21 +37,32 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Highlights
 
+#### Kubernetes v1.25 is now Generally Available
+
+Great news! The _AKS_ module now supports the latest version of Kubernetes `v1.25`, which has just been released as GA. This update brings a range of new features and improvements to the Kubernetes platform, including enhanced security capabilities, improved scalability and stability, and better support for modern application architectures. By upgrading to Kubernetes `v1.25`, you can take advantage of these benefits.
+
+#### Removals
+
+- We removed the deprecated `docker_bridge_cidr` argument from the `azurerm_kubernetes_cluster` resource in `module.aks.module.cluster`. The argument is no longer supported by the API and will be removed in version 4.0 of the provider.
+- The `sku_tier_paid` variable was also removed in favour of `sku_tier`.
+- Removed the `network_plugin` variable because it was deprecated in favour of inferring the value from `experimental.windows_support`.
+- Removed deprecated `node_os` value `windows` in favour for `windows2019`.
+
 ### All Changes
 
+- Added `standard` option to `sku_tier` to replace `paid`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
 - Updated the minimum version of the `azurerm` Terraform provider to [v3.51.0](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.51.0). ([#1032](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1032)) [@appkins](https://github.com/appkins)
-- Remapped `sku_tier = "paid"` to `Standard` in the `sku_tier_lookup` local to fix a bug introduced in the 2023-02-01 version of the AKS API. ([#1032](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1032)) [@appkins](https://github.com/appkins)
-- Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
-- Update support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
-- Removed the `sku_tier_paid` variable in favour of `sku_tier`. ([#1027](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1027)) [@peterabarr](https://github.com/peterabarr)
+- Updated support of Kubernetes v1.25 to GA. ([#1015](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1015)) [@aydosman](https://github.com/aydosman)
 - Updated _External DNS_ chart to [v1.12.2](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.2) (contains _External DNS_ image update to [v0.13.4](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.4)). ([#1028](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1028)) [@hadeeds](https://github.com/hadeeds)
+- Updated the Grafana additionalDataSources object properties. ([#1014](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1014)) [@aydosman](https://github.com/aydosman)
+- Remapped `sku_tier = "paid"` to `Standard` in the `sku_tier_lookup` local to fix a bug introduced in the 2023-02-01 version of the AKS API. ([#1032](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1032)) [@appkins](https://github.com/appkins)
+- Fixed Logging Dashboard Plan Error. ([#1017](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1017)) [@appkins](https://github.com/appkins)
+- Fixed orchestrator version for node groups causing Azure API errors. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `paid` option for `sku_tier`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
+- Removed the `sku_tier_paid` variable in favour of `sku_tier`. ([#1027](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1027)) [@peterabarr](https://github.com/peterabarr)
 - Removed the `network_plugin` variable because it was deprecated in favour of inferring the value from `experimental.windows_support`. ([1002](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1002)) [@peterabarr](https://github.com/peterabarr)
 - Removed deprecated `node_os` value `windows` in favour for `windows2019`. ([#999](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/999)) [@peterabarr](https://github.com/peterabarr)
-- Fixed Logging Dashboard Plan Error. ([#1017](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1017)) [@appkins](https://github.com/appkins)
 - Removed the deprecated `docker_bridge_cidr`. This argument is no longer needed or supported. ([#1023](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1023)) [@aydosman](https://github.com/aydosman)
-- Fixed orchestrator version for node groups causing Azure API errors. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
-- Added `standard` option to `sku_tier` to replace `paid`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
-- Deprecated `paid` option for `sku_tier`. ([#1034](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1034)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.9.1] - 2023-04-04
 
@@ -116,6 +127,9 @@ Please note that the `sku_tier_paid` input has been deprecated and has been repl
 - Fixed _Cert Manager_ resource ordering. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.7.1] - 2023-03-13
+
+> **Important**
+> As of 2023-04-12 version `1.7.1` and below is no longer supported. If you are still this version please update to the latest release.
 
 - Fixed explicit orchestrator version for bootstrap node pool causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
 
