@@ -180,18 +180,3 @@ resource "kubernetes_config_map_v1_data" "terraform_modules" {
     kubernetes_config_map.terraform_modules
   ]
 }
-
-resource "kubernetes_config_map" "default" {
-  metadata {
-    name      = "tfmodule-${local.module_name}"
-    namespace = "kube-system"
-
-    labels = local.labels
-  }
-
-  data = {}
-
-  depends_on = [
-    module.cluster
-  ]
-}

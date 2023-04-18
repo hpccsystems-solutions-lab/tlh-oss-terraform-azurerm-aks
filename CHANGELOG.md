@@ -15,7 +15,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- Legacy module `ConfigMap` is deprecated and will be removed in the `v1.11.0` release.
 - The `control_plane_logging_external_workspace_different_resource_group` variable is deprecated as it's unused and will be removed in the `v1.12.0` release.
 - AKS cluster version `v1.23` is deprecated and will be removed in the `v1.12.0` release.
 - The `azure_env` variable is deprecated in favour of inferring the value from `location`, this will be removed in the `v1.12.0` release.
@@ -40,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Updated full AKS versions which include patch versions for `v1.24` to `v1.24.10` & `v1.25` to `v1.25.6`. [@peterabarr](https://github.com/peterabarr)
+- Removed legacy module `ConfigMap` as it had been deprecated and due to be removed. [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.10.0] - 2023-04-12
 
