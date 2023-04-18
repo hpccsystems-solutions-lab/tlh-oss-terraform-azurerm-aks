@@ -39,6 +39,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated full AKS versions which include patch versions for `v1.24` to `v1.24.10` & `v1.25` to `v1.25.6`. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.10.0] - 2023-04-12
 
 ### Highlights
