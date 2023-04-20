@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Updated full AKS versions which include patch versions for `v1.24` to `v1.24.10` & `v1.25` to `v1.25.6`. [@peterabarr](https://github.com/peterabarr)
 - Removed legacy module `ConfigMap` as it had been deprecated and due to be removed. [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.27.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.27.0) (contains _Fluent Bit_ [v2.0.11](https://github.com/fluent/fluent-bit/releases/tag/v2.0.10)). ([#1049](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1049)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.10.0] - 2023-04-12
 
