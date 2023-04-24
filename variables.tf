@@ -44,8 +44,8 @@ variable "cluster_version" {
   nullable    = false
 
   validation {
-    condition     = contains(["1.25", "1.24", "1.23"], var.cluster_version)
-    error_message = "Available versions are \"1.25\", \"1.24\" or \"1.23\" (DEPRECATED)."
+    condition     = contains(["1.26", "1.25", "1.24", "1.23"], var.cluster_version)
+    error_message = "Available versions are \"1.26\", \"1.25\", \"1.24\" or \"1.23\" (DEPRECATED)."
   }
 }
 

@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluent Bit_ chart to [v0.27.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.27.0) (contains _Fluent Bit_ [v2.0.11](https://github.com/fluent/fluent-bit/releases/tag/v2.0.10)). ([#1049](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1049)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v45.15.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.15.0) (contains _Grafana_ [v9.3.8](https://github.com/grafana/grafana/releases/tag/v9.3.8) and _Kube State Metrics_ [v2.8.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.8.0)). ([#1050](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1050)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluentd_ chart to [v3.8.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.8.0) (contains _Fluentd Aggregator_ [v2.9.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.9.0)). ([#1050](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1050)) [@peterabarr](https://github.com/peterabarr)
+- Added experimental support for _Kubernetes_ [v1.26](https://github.com/Azure/AKS/releases/tag/2023-04-09). ([#1052](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1052)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.10.0] - 2023-04-12
 
