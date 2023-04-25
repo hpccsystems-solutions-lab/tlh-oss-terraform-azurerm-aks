@@ -271,15 +271,35 @@ Additional Kubernetes resource types to be observed for new DNS entries can be s
 
 ### Ingress
 
-All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LodBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
+All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LoadBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
 
 Out of the box the cluster supports automatically generating certificates with the _Cert Manager_ default issuer, this can be overridden by the following `Ingress` annotations `cert-manager.io/cluster-issuer` or `cert-manager.io/issuer`. DNS records will be created by _External DNS_ from `Ingress` resources when the `lnrs.io/zone-type` is set, see the [DNS](#dns-1) config for how this works.
 
 #### Ingress Controllers
 
-The following official Terraform modules for ingress controllers are supported by the core engineering team and have been tested on AKS (please note that these are currently hosted on Github so should be copied into the `./modules` folder in your workspace and checked in).
-
+- The following [official Terraform modules](https://github.com/search?q=topic%3Arsg-terraform-module+org%3ALexisNexis-RBA&type=Repositories) for ingress controllers are supported by the core engineering team and have been tested on AKS. These controller require you to have [ingress nodes](#ingress-nodes) registered in your cluster to work correctly.
 - [K8s Ingress NGINX Terraform Module](https://github.com/LexisNexis-RBA/rsg-terraform-kubernetes-ingress-nginx)
+
+#### Ingress Internal Core
+
+> **Warning**
+> With the release of Kubernetes `v1.25`, the behavior of ingress communication has changed compared to `v1.24`. If you are using pod-to-ingress communication when updating from Kubernetes `v1.24` to `v1.25`, you will encounter an SSL error when connecting cluster-hosted applications to the ingress due to a bug in how iptables rules were applied in the previous version.
+>
+> To pre-emptively address the issue of blocking node-to-pod traffic during a Kubernetes `v1.25` upgrade, you have two options depending on your requirements:
+>
+> Option 1: Specify the cluster pod CIDR in `core_services_config.ingress_internal_core.lb_source_cidrs`.
+>
+> Option 2: If you're using the [rsg-terraform-kubernetes-ingress-nginx](https://github.com/LexisNexis-RBA/rsg-terraform-kubernetes-ingress-nginx) module, add the pod CIDR to the `lb_source_cidrs` variable.
+>
+>This action will ensure that the correct iptables rules are applied, allowing traffic from the node to the pod via the ingress. The Kubernetes `v1.25` upgrade includes changes to the code that implements iptables rules, fixing an issue [kubernetes/kubernetes#109826](https://github.com/kubernetes/kubernetes/pull/109826) and enforcing the correct behavior of blocking node-to-pod traffic due to a lack of CIDRs in the service specification.
+>
+> Remember to perform the necessary steps before upgrading to Kubernetes `v1.25` to avoid any issues with node-to-pod traffic.
+
+By default the platform deploys an internal `IngressClass`, named `core-internal`, to expose services such as _Prometheus_ and _Grafana_ UIs. This ingress shouldn't be used for user services but can be used for other internal dashboards; for user services instead deploy a dedicated ingress controller with it's own `IngressClass`.
+
+By default this ingress doesn't support pod-to-ingress network traffic but you can override it by specifying `core_services_config.ingress_internal_core.lb_source_cidrs` (you will need to specify all the values). For better performance and network efficiency we recommend using internal communication for pod-to-pod interactions, rather than going outside and re-entering through an ingress; this utilizes the cluster's internal DNS service to access services inside the cluster using a `<service>.<namespace>.svc.cluster.local` domain name. However, if your use case requires pod-to-ingress communication, such as when ingress features like SSL termination, load balancing, or traffic routing rules are necessary, you will need to make sure you've configured the ingress correctly.
+
+This is the only ingress controller in the cluster which doesn't require ingress nodes as it's required by all clusters and is not expected to carry a significant volume of traffic. If you do not configure ingress nodes this ingress controller will run on the system nodes.
 
 #### Ingress Nodes
 
@@ -313,10 +333,6 @@ locals {
   }
 }
 ```
-
-#### Ingress Internal Core
-
-By default the platform deploys an internal `IngressClass`, named `core-internal`, to expose services such as _Prometheus_ and _Grafana_ UIs. This ingress shouldn't be used for user services but can be used for other internal dashboards; for user services instead deploy a dedicated ingress controller with it's own `IngressClass`.
 
 ### Calico and Network Policy
 

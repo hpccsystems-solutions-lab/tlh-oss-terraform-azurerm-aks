@@ -35,6 +35,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Highlights
 
+> **Warning**
+> If you are considering updating to Kubernetes `v1.25`, please note that the behavior is different from `v1.24` due to a bug fix upstream. This fix ensures the correct implementation of iptables rules. For more information, please refer to the [README section on ingress](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#ingress-internal-core).
+
 ### All Changes
 
 - Updated full AKS versions which include patch versions for `v1.24` to `v1.24.10` & `v1.25` to `v1.25.6`. [@peterabarr](https://github.com/peterabarr)
@@ -48,6 +51,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.10.0] - 2023-04-12
 
 ### Highlights
+
+> **Warning**
+> If you are considering updating to Kubernetes `v1.25`, please note that the behavior is different from `v1.24` due to a bug fix upstream. This fix ensures the correct implementation of iptables rules. For more information, please refer to the [README section on ingress](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#ingress-internal-core).
 
 #### Kubernetes v1.25 is now Generally Available
 
