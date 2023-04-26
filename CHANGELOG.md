@@ -31,22 +31,38 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.11.0] - UNRELEASED
+## [v1.11.0] - 2023-04-26
 
 ### Highlights
 
 > **Warning**
 > If you are considering updating to Kubernetes `v1.25`, please note that the behavior is different from `v1.24` due to a bug fix upstream. This fix ensures the correct implementation of iptables rules. For more information, please refer to the [README section on ingress](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#ingress-internal-core).
 
+#### AKS v1.26 Experimental Support
+
+_AKS_ cluster version `v1.26` has experimental support, and can be enabled by setting `cluster_version` to `1.26`. Support for _AKS_ `v1.26` is expected to be GA in the module release `v1.14.0` assuming there are no issues reported.
+
+We would really appreciate your feedback if you upgrade to `v1.26` while it is still experimental.
+
+#### Removals
+
+##### Removed AKS v1.23 Support
+
+We have removed support for _AKS_ `v1.23` from our module. We recommend that operators who are still running _AKS_ `v1.23` upgrade to a supported version as soon as possible to maintain the security and stability of their clusters.
+
+##### ConfigMap Module
+
+After being deprecated a number of releases ago we removed the legacy module `ConfigMap` from our AKS module.
+
 ### All Changes
 
+- Added experimental support for _Kubernetes_ [v1.26](https://github.com/Azure/AKS/releases/tag/2023-04-09). ([#1052](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1052)) [@aydosman](https://github.com/aydosman)
 - Updated full AKS versions which include patch versions for `v1.24` to `v1.24.10` & `v1.25` to `v1.25.6`. [@peterabarr](https://github.com/peterabarr)
-- Removed legacy module `ConfigMap` as it had been deprecated and due to be removed. [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluent Bit_ chart to [v0.27.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.27.0) (contains _Fluent Bit_ [v2.0.11](https://github.com/fluent/fluent-bit/releases/tag/v2.0.10)). ([#1049](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1049)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v45.15.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.15.0) (contains _Grafana_ [v9.3.8](https://github.com/grafana/grafana/releases/tag/v9.3.8) and _Kube State Metrics_ [v2.8.0](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.8.0)). ([#1050](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1050)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluentd_ chart to [v3.8.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.8.0) (contains _Fluentd Aggregator_ [v2.9.0](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.9.0)). ([#1050](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1050)) [@peterabarr](https://github.com/peterabarr)
-- Added experimental support for _Kubernetes_ [v1.26](https://github.com/Azure/AKS/releases/tag/2023-04-09). ([#1052](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1052)) [@aydosman](https://github.com/aydosman)
 - Removed support for _Kubernetes_ `v1.23`. ([#1059](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1059)) [@aydosman](https://github.com/aydosman)
+- Removed legacy module `ConfigMap` as it had been deprecated and due to be removed. [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.10.0] - 2023-04-12
 
@@ -121,6 +137,9 @@ Please note that the `azure_env` input has been deprecated in favour of inferrin
 - Fixed orchestrator version for node groups causing Azure API errors. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.8.0] - 2023-03-13
+
+> **Warning**
+> As of 2023-04-26 module version `v1.8.0` is no longer supported and you should upgrade to `v1.9.1` or higher.
 
 ### Highlights
 
