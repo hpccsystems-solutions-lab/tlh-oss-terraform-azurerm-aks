@@ -37,6 +37,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Removed the `control_plane_logging_external_workspace_different_resource_group` variable as it is unused. ([#1069](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1069)) [@peterabarr](https://github.com/peterabarr)
+- Fixed Horizontal Pod AutoScaler Grafana dashboard to properly display metrics. ([#1067](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1067)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.11.0] - 2023-04-26
 
