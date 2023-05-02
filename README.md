@@ -768,7 +768,7 @@ Specification for the `storage` object.
 
 | **Variable** | **Description**                                       | **Type** | **Default** |
 | :----------- | :---------------------------------------------------- | :------- | :---------- |
-| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `true`      |
+| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`      |
 | `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
 
 ---

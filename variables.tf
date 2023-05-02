@@ -286,7 +286,7 @@ variable "core_services_config" {
       remote_write = optional(any)
     }))
     storage = optional(object({
-      file = optional(bool, true)
+      file = optional(bool, false)
       blob = optional(bool, false)
     }), {})
   })
