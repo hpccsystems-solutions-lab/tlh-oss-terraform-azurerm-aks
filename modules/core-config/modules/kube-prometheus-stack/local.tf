@@ -1,10 +1,10 @@
 locals {
   chart_version = "45.15.0"
 
-  thanos_chart_version = "1.10.2"
+  thanos_chart_version = "1.12.4"
 
   # Thanos image version should match version in Thanos chart
-  thanos_image_version = "0.30.2"
+  thanos_image_version = "0.31.0"
 
   use_aad_workload_identity = false
 
@@ -782,13 +782,6 @@ locals {
           preferredDuringSchedulingIgnoredDuringExecution = [
             {
               podAffinityTerm = {
-                labelSelector = {
-                  matchLabels = {
-                    "app.kubernetes.io/name"      = "thanos"
-                    "app.kubernetes.io/instance"  = "thanos"
-                    "app.kubernetes.io/component" = "query"
-                  }
-                }
 
                 topologyKey = "topology.kubernetes.io/zone"
               }
@@ -876,13 +869,6 @@ locals {
           preferredDuringSchedulingIgnoredDuringExecution = [
             {
               podAffinityTerm = {
-                labelSelector = {
-                  matchLabels = {
-                    "app.kubernetes.io/name"      = "thanos"
-                    "app.kubernetes.io/instance"  = "thanos"
-                    "app.kubernetes.io/component" = "query-frontend"
-                  }
-                }
 
                 topologyKey = "topology.kubernetes.io/zone"
               }
@@ -1078,13 +1064,7 @@ locals {
       affinity = {
         podAntiAffinity = {
           requiredDuringSchedulingIgnoredDuringExecution = [{
-            labelSelector = {
-              matchLabels = {
-                "app.kubernetes.io/name"      = "thanos"
-                "app.kubernetes.io/instance"  = "thanos"
-                "app.kubernetes.io/component" = "store-gateway"
-              }
-            }
+
             topologyKey = "topology.kubernetes.io/zone"
           }]
         }

@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed Horizontal Pod AutoScaler Grafana dashboard to properly display metrics. ([#1067](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1067)) [@hadeeds](https://github.com/hadeeds)
 - Changed the behaviour or the Azure file CSI driver to be disabled by default. ([#1070](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1070)) [@hadeeds](https://github.com/hadeeds)
 - Added normalization to Azure cluster location in _Fluent Bit_ and _Fluentd_. ([#1048](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1048)) [@appkins](https://github.com/appkins)
+- Updated _Thanos_ chart to [v1.12.4](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.31.0](https://github.com/thanos-io/thanos/releases/tag/v0.31.0)). ([#1074](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1074)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.11.0] - 2023-04-26
 
