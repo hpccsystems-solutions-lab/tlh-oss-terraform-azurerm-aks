@@ -59,24 +59,26 @@ locals {
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
-  control_plane_logging = {
-    log_analytics = {
-      enabled                       = !var.experimental.control_plane_logging_log_analytics_disabled
-      external_workspace            = var.control_plane_logging_external_workspace
-      external_workspace_id         = var.control_plane_logging_external_workspace_id
-      profile                       = var.control_plane_logging_workspace_categories
-      additional_log_category_types = []
-      retention_enabled             = var.control_plane_logging_workspace_retention_enabled
-      retention_days                = var.control_plane_logging_workspace_retention_days
-    }
+  logging = {
+    control_plane = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled ? var.logging.control_plane : {
+      log_analytics = {
+        enabled                       = !var.experimental.control_plane_logging_log_analytics_disabled || !var.control_plane_logging_storage_account_enabled
+        external_workspace            = var.control_plane_logging_external_workspace
+        workspace_id                  = var.control_plane_logging_external_workspace_id
+        profile                       = var.control_plane_logging_workspace_categories
+        additional_log_category_types = compact(tolist([""]))
+        retention_enabled             = var.control_plane_logging_workspace_retention_enabled
+        retention_days                = var.control_plane_logging_workspace_retention_days
+      }
 
-    storage_account = {
-      enabled                       = var.control_plane_logging_storage_account_enabled
-      storage_account_id            = var.control_plane_logging_storage_account_id
-      profile                       = var.control_plane_logging_storage_account_categories
-      additional_log_category_types = []
-      retention_enabled             = var.control_plane_logging_storage_account_retention_enabled
-      retention_days                = var.control_plane_logging_storage_account_retention_days
+      storage_account = {
+        enabled                       = var.control_plane_logging_storage_account_enabled
+        id                            = var.control_plane_logging_storage_account_id
+        profile                       = var.control_plane_logging_storage_account_categories
+        additional_log_category_types = compact(tolist([""]))
+        retention_enabled             = var.control_plane_logging_storage_account_retention_enabled
+        retention_days                = var.control_plane_logging_storage_account_retention_days
+      }
     }
   }
 

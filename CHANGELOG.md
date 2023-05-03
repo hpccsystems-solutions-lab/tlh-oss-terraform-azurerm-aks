@@ -17,6 +17,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `azure_env` variable is deprecated in favour of inferring the value from `location`, this will be removed in the `v1.12.0` release.
 - The `paid` option for `sku_tier` is deprecated and will be removed in the `v1.13.0` release.
+- The `recommended` & `limited` control plane logging profiles are deprecated and will be removed in the `v1.15.0` release.
+- The `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables are deprecated and will be removed in the `v1.15.0` release.
 
 ---
 
@@ -41,6 +43,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Changed the behaviour or the Azure file CSI driver to be disabled by default. ([#1070](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1070)) [@hadeeds](https://github.com/hadeeds)
 - Added normalization to Azure cluster location in _Fluent Bit_ and _Fluentd_. ([#1048](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1048)) [@appkins](https://github.com/appkins)
 - Updated _Thanos_ chart to [v1.12.4](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.31.0](https://github.com/thanos-io/thanos/releases/tag/v0.31.0)). ([#1074](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1074)) [@peterabarr](https://github.com/peterabarr)
+- Added the `logging` variable to replace the individual existing variables for configuring control plane logging; if this is used the existing variables will be ignored. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated the `recommended` & `limited` control plane logging profiles in favour of `audit-write-only` & `minimal` respectively. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables as these can be replaced with the new `logging.control_plane` variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.11.0] - 2023-04-26
 

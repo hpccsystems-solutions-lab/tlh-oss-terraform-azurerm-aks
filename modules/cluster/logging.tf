@@ -1,5 +1,5 @@
 resource "random_string" "workspace_suffix" {
-  count = (var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled) && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
+  count = var.control_plane_logging.log_analytics.enabled && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
 
   length  = 5
   special = false
@@ -8,7 +8,7 @@ resource "random_string" "workspace_suffix" {
 }
 
 resource "azurerm_log_analytics_workspace" "default" {
-  count = (var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled) && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
+  count = var.control_plane_logging.log_analytics.enabled && !var.control_plane_logging.log_analytics.external_workspace ? 1 : 0
 
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -19,12 +19,12 @@ resource "azurerm_log_analytics_workspace" "default" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "workspace" {
-  count = var.control_plane_logging.log_analytics.enabled || !var.control_plane_logging.storage_account.enabled ? 1 : 0
+  count = var.control_plane_logging.log_analytics.enabled ? 1 : 0
 
   name               = "control-plane-log-analytics"
   target_resource_id = azurerm_kubernetes_cluster.default.id
 
-  log_analytics_workspace_id = var.control_plane_logging.log_analytics.external_workspace ? var.control_plane_logging.log_analytics.external_workspace_id : azurerm_log_analytics_workspace.default[0].id
+  log_analytics_workspace_id = var.control_plane_logging.log_analytics.external_workspace ? var.control_plane_logging.log_analytics.workspace_id : azurerm_log_analytics_workspace.default[0].id
 
   log_analytics_destination_type = "AzureDiagnostics"
 
@@ -52,7 +52,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account" {
   name               = "control-plane-storage-account"
   target_resource_id = azurerm_kubernetes_cluster.default.id
 
-  storage_account_id = var.control_plane_logging.storage_account.storage_account_id
+  storage_account_id = var.control_plane_logging.storage_account.id
 
   dynamic "enabled_log" {
     for_each = local.storage_account_log_category_types

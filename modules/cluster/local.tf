@@ -25,11 +25,17 @@ locals {
   available_log_category_types = tolist(data.azurerm_monitor_diagnostic_categories.default.log_category_types)
 
   log_category_types_lookup = {
-    all = tolist(setintersection(["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
+    "all" = tolist(setintersection(["kube-apiserver", "kube-audit", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
 
-    recommended = tolist(setintersection(["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
+    "audit-write-only" = tolist(setintersection(["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
 
-    limited = tolist(setintersection(["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"], local.available_log_category_types))
+    "minimal" = tolist(setintersection(["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "cloud-controller-manager", "guard"], local.available_log_category_types))
+
+    "empty" = []
+
+    "recommended" = tolist(setintersection(["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"], local.available_log_category_types))
+
+    "limited" = tolist(setintersection(["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"], local.available_log_category_types))
   }
 
   log_analytics_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.control_plane_logging.log_analytics.profile], var.control_plane_logging.log_analytics.additional_log_category_types))

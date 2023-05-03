@@ -210,6 +210,33 @@ variable "node_groups" {
   default  = {}
 }
 
+variable "logging" {
+  description = "Logging configuration."
+  type = object({
+    control_plane = optional(object({
+      log_analytics = optional(object({
+        enabled                       = optional(bool, false)
+        external_workspace            = optional(bool, false)
+        workspace_id                  = optional(string, null)
+        profile                       = optional(string, null)
+        additional_log_category_types = optional(list(string), [])
+        retention_enabled             = optional(bool, false)
+        retention_days                = optional(number, 30)
+      }), {})
+      storage_account = optional(object({
+        enabled                       = optional(bool, false)
+        id                            = optional(string, null)
+        profile                       = optional(string, null)
+        additional_log_category_types = optional(list(string), [])
+        retention_enabled             = optional(bool, false)
+        retention_days                = optional(number, 30)
+      }), {})
+    }), {})
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "core_services_config" {
   description = "Core service configuration."
   type = object({
@@ -294,70 +321,70 @@ variable "core_services_config" {
 }
 
 variable "control_plane_logging_external_workspace" {
-  description = "If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs."
+  description = "DEPRECATED - If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs."
   type        = bool
   nullable    = false
   default     = false
 }
 
 variable "control_plane_logging_external_workspace_id" {
-  description = "ID of the log analytics workspace to send control plane logs to if control_plane_logging_external_workspace is true."
+  description = "DEPRECATED - ID of the log analytics workspace to send control plane logs to if control_plane_logging_external_workspace is true."
   type        = string
   nullable    = true
   default     = null
 }
 
 variable "control_plane_logging_workspace_categories" {
-  description = "The control plane log categories to send to the log analytics workspace."
+  description = "DEPRECATED - The control plane log categories to send to the log analytics workspace."
   type        = string
   nullable    = false
   default     = "recommended"
 }
 
 variable "control_plane_logging_workspace_retention_enabled" {
-  description = "If true, the control plane logs being sent to log analytics will use the retention specified in control_plane_logging_workspace_retention_days otherwise the log analytics workspace default retention will be used."
+  description = "DEPRECATED - If true, the control plane logs being sent to log analytics will use the retention specified in control_plane_logging_workspace_retention_days otherwise the log analytics workspace default retention will be used."
   type        = bool
   nullable    = false
   default     = false
 }
 
 variable "control_plane_logging_workspace_retention_days" {
-  description = "How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
+  description = "DEPRECATED - How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
   type        = number
   nullable    = false
   default     = 0
 }
 
 variable "control_plane_logging_storage_account_enabled" {
-  description = "If true, cluster control plane logs will be sent to the storage account referenced in control_plane_logging_storage_account_id as well as the default log analytics workspace."
+  description = "DEPRECATED - If true, cluster control plane logs will be sent to the storage account referenced in control_plane_logging_storage_account_id as well as the default log analytics workspace."
   type        = bool
   nullable    = false
   default     = false
 }
 
 variable "control_plane_logging_storage_account_id" {
-  description = "ID of the storage account to add cluster control plane logs to if control_plane_logging_storage_account_enabled is true. "
+  description = "DEPRECATED - ID of the storage account to add cluster control plane logs to if control_plane_logging_storage_account_enabled is true. "
   type        = string
   nullable    = true
   default     = null
 }
 
 variable "control_plane_logging_storage_account_categories" {
-  description = "The control plane log categories to send to the storage account."
+  description = "DEPRECATED - The control plane log categories to send to the storage account."
   type        = string
   nullable    = false
   default     = "all"
 }
 
 variable "control_plane_logging_storage_account_retention_enabled" {
-  description = "If true, the control plane logs being sent to the storage account will use the retention specified in control_plane_logging_storage_account_retention_days otherwise no retention will be set."
+  description = "DEPRECATED - If true, the control plane logs being sent to the storage account will use the retention specified in control_plane_logging_storage_account_retention_days otherwise no retention will be set."
   type        = bool
   nullable    = false
   default     = true
 }
 
 variable "control_plane_logging_storage_account_retention_days" {
-  description = "How long the logs should be retained by the storage account if control_plane_logging_storage_account_retention_enabled is true, in days."
+  description = "DEPRECATED - How long the logs should be retained by the storage account if control_plane_logging_storage_account_retention_enabled is true, in days."
   type        = number
   nullable    = false
   default     = 30

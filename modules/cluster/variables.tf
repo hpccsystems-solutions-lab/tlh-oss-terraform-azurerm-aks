@@ -123,7 +123,7 @@ variable "control_plane_logging" {
     log_analytics = object({
       enabled                       = bool
       external_workspace            = bool
-      external_workspace_id         = string
+      workspace_id                  = string
       profile                       = string
       additional_log_category_types = list(string)
       retention_enabled             = bool
@@ -131,7 +131,7 @@ variable "control_plane_logging" {
     })
     storage_account = object({
       enabled                       = bool
-      storage_account_id            = string
+      id                            = string
       profile                       = string
       additional_log_category_types = list(string)
       retention_enabled             = bool
@@ -139,6 +139,31 @@ variable "control_plane_logging" {
     })
   })
   nullable = false
+
+  validation {
+    condition     = var.control_plane_logging.log_analytics.enabled || var.control_plane_logging.storage_account.enabled
+    error_message = "Control plane logging must be enabled."
+  }
+
+  validation {
+    condition     = !var.control_plane_logging.log_analytics.enabled || (!var.control_plane_logging.log_analytics.external_workspace || var.control_plane_logging.log_analytics.workspace_id != null)
+    error_message = "Control plane logging to a log analytics external workspace requires a workspace ID."
+  }
+
+  validation {
+    condition     = !var.control_plane_logging.log_analytics.enabled || (var.control_plane_logging.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty", "recommended", "limited"], coalesce(var.control_plane_logging.log_analytics.profile, "empty")))
+    error_message = "Control plane logging to a log analytics external workspace requires a profile."
+  }
+
+  validation {
+    condition     = !var.control_plane_logging.storage_account.enabled || var.control_plane_logging.storage_account.id != null
+    error_message = "Control plane logging to a storage account requires an ID."
+  }
+
+  validation {
+    condition     = !var.control_plane_logging.storage_account.enabled || (var.control_plane_logging.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty", "recommended", "limited"], coalesce(var.control_plane_logging.storage_account.profile, "empty")))
+    error_message = "Control plane logging to a storage account requires profile."
+  }
 }
 
 variable "maintenance_window_offset" {
