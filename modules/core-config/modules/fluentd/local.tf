@@ -1,6 +1,8 @@
 locals {
   chart_version = "3.8.0"
 
+  location_sanitized = lower(replace(var.location, " ", ""))
+
   use_aad_workload_identity = false
 
   chart_values = {
@@ -133,7 +135,7 @@ locals {
   additional_env = merge({
     "RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR" = "0.9"
     "SUBSCRIPTION_ID"                     = var.subscription_id
-    "LOCATION"                            = var.location
+    "LOCATION"                            = local.location_sanitized
     "CLUSTER_NAME"                        = var.cluster_name
   }, var.additional_env)
 

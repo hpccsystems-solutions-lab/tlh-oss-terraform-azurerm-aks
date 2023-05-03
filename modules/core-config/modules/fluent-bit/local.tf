@@ -1,6 +1,8 @@
 locals {
   chart_version = "0.27.0"
 
+  location_sanitized = lower(replace(var.location, " ", ""))
+
   chart_values = {
     serviceMonitor = {
       enabled = true
@@ -179,7 +181,7 @@ locals {
       name   record_modifier
       match  *
       record cloud azure
-      record location ${var.location}
+      record location ${local.location_sanitized}
       record cluster ${var.cluster_name}
 
     [FILTER]
