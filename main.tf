@@ -16,10 +16,10 @@ module "cluster" {
   location                             = var.location
   resource_group_name                  = var.resource_group_name
   cluster_name                         = var.cluster_name
+  cluster_version                      = var.cluster_version
   cluster_version_full                 = local.cluster_version_full
   sku_tier                             = var.sku_tier
   fips                                 = var.fips
-  workload_identity                    = var.experimental.workload_identity
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
   network_plugin                       = local.network_plugin
@@ -99,7 +99,6 @@ module "core_config" {
 
   cluster_name            = var.cluster_name
   cluster_version         = var.cluster_version
-  workload_identity       = var.experimental.workload_identity
   cluster_oidc_issuer_url = module.cluster.oidc_issuer_url
   network_plugin          = local.network_plugin
 

@@ -16,6 +16,12 @@ variable "cluster_name" {
   nullable    = false
 }
 
+variable "cluster_version" {
+  description = "The Kubernetes version of the Azure Kubernetes managed cluster."
+  type        = string
+  nullable    = false
+}
+
 variable "cluster_version_full" {
   description = "The full Kubernetes version of the Azure Kubernetes managed cluster."
   type        = string
@@ -38,11 +44,6 @@ variable "fips" {
   description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
   type        = bool
   nullable    = false
-}
-
-variable "workload_identity" {
-  description = "If the cluster has workload identity enabled."
-  type        = bool
 }
 
 variable "cluster_endpoint_public_access" {

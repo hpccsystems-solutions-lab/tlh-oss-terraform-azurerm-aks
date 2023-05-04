@@ -14,16 +14,16 @@ locals {
       create = true
       name   = local.service_account_name
 
-      labels = var.workload_identity && local.use_aad_workload_identity ? {
+      labels = local.use_aad_workload_identity ? {
         "azure.workload.identity/use" = "true"
       } : {}
 
-      annotations = var.workload_identity && local.use_aad_workload_identity ? {
+      annotations = local.use_aad_workload_identity ? {
         "azure.workload.identity/client-id" = module.identity.id
       } : {}
     }
 
-    podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
       aadpodidbinding = module.identity.name
     })
 
@@ -76,10 +76,12 @@ locals {
       }
     }
 
-    extraArgs = [
+    extraArgs = concat([
       "--dns01-recursive-nameservers-only",
       "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53"
-    ]
+      ], local.use_aad_workload_identity ? [
+      "--issuer-ambient-credentials"
+    ] : [])
 
     cainjector = {
       nodeSelector = {

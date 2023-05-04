@@ -130,7 +130,7 @@ locals {
         }
 
         podMetadata = {
-          labels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
+          labels = merge(var.labels, local.use_aad_workload_identity ? {} : {
             aadpodidbinding = module.identity_thanos.name
           })
           annotations = {
@@ -222,11 +222,11 @@ locals {
         create = true
         name   = local.prometheus_service_account_name
 
-        labels = var.workload_identity && local.use_aad_workload_identity ? {
+        labels = local.use_aad_workload_identity ? {
           "azure.workload.identity/use" = "true"
         } : {}
 
-        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        annotations = local.use_aad_workload_identity ? {
           "azure.workload.identity/client-id" = module.identity_thanos.id
         } : {}
       }
@@ -361,16 +361,16 @@ locals {
         create = true
         name   = local.grafana_service_account_name
 
-        labels = var.workload_identity && local.use_aad_workload_identity ? {
+        labels = local.use_aad_workload_identity ? {
           "azure.workload.identity/use" = "true"
         } : {}
 
-        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        annotations = local.use_aad_workload_identity ? {
           "azure.workload.identity/client-id" = module.identity_grafana.id
         } : {}
       }
 
-      podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
+      podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_grafana.name
       })
 
@@ -654,16 +654,16 @@ locals {
         create = true
         name   = local.thanos_compact_service_account_name
 
-        labels = var.workload_identity && local.use_aad_workload_identity ? {
+        labels = local.use_aad_workload_identity ? {
           "azure.workload.identity/use" = "true"
         } : {}
 
-        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        annotations = local.use_aad_workload_identity ? {
           "azure.workload.identity/client-id" = module.identity_thanos.id
         } : {}
       }
 
-      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
+      podLabels = local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 
@@ -898,16 +898,16 @@ locals {
         create = true
         name   = local.thanos_rule_service_account_name
 
-        labels = var.workload_identity && local.use_aad_workload_identity ? {
+        labels = local.use_aad_workload_identity ? {
           "azure.workload.identity/use" = "true"
         } : {}
 
-        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        annotations = local.use_aad_workload_identity ? {
           "azure.workload.identity/client-id" = module.identity_thanos.id
         } : {}
       }
 
-      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
+      podLabels = local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 
@@ -1000,16 +1000,16 @@ locals {
         create = true
         name   = local.thanos_store_gateway_service_account_name
 
-        labels = var.workload_identity && local.use_aad_workload_identity ? {
+        labels = local.use_aad_workload_identity ? {
           "azure.workload.identity/use" = "true"
         } : {}
 
-        annotations = var.workload_identity && local.use_aad_workload_identity ? {
+        annotations = local.use_aad_workload_identity ? {
           "azure.workload.identity/client-id" = module.identity_thanos.id
         } : {}
       }
 
-      podLabels = var.workload_identity && local.use_aad_workload_identity ? {} : {
+      podLabels = local.use_aad_workload_identity ? {} : {
         aadpodidbinding = module.identity_thanos.name
       }
 

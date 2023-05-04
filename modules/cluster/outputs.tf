@@ -1,6 +1,7 @@
 output "id" {
   description = "Kubernetes managed cluster ID."
   value       = azurerm_kubernetes_cluster.default.id
+  depends_on  = [time_sleep.modify]
 }
 
 output "fqdn" {
@@ -20,7 +21,7 @@ output "certificate_authority_data" {
 
 output "oidc_issuer_url" {
   description = "URL for the cluster OpenID Connect identity provider."
-  value       = var.workload_identity ? azurerm_kubernetes_cluster.default.oidc_issuer_url : null
+  value       = azurerm_kubernetes_cluster.default.oidc_issuer_url
 }
 
 output "cluster_identity" {

@@ -37,7 +37,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   location            = var.location
 
   oidc_issuer_enabled       = true
-  workload_identity_enabled = var.workload_identity
+  workload_identity_enabled = true
 
   identity {
     type         = "UserAssigned"
@@ -174,5 +174,17 @@ resource "azurerm_kubernetes_cluster" "default" {
   depends_on = [
     azurerm_role_assignment.network_contributor_network,
     azurerm_role_assignment.network_contributor_route_table
+  ]
+}
+
+resource "time_sleep" "modify" {
+  create_duration = "30s"
+
+  triggers = {
+    cluster_version = var.cluster_version
+  }
+
+  depends_on = [
+    azurerm_kubernetes_cluster.default
   ]
 }

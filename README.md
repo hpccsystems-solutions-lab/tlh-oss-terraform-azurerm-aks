@@ -435,6 +435,7 @@ az aks install-cli
 ```
 
 ```shell
+az account set --subscription "${SUBSCRIPTION}"
 az aks get-credentials --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
 kubelogin convert-kubeconfig -l azurecli
 ```
@@ -525,10 +526,6 @@ To enable the creation of ARM64 [Ampere Altra](https://azure.microsoft.com/en-us
 ### Azure CNI Max Pods
 
 To enable the customisation of the maximum number of pods per node when using the Azure CNI you can set the experimental flag `experimental = { azure_cni_max_pods = true }`. When this flag is set you can set `max_pods` to a value between `12` & `110`, if this flag isn't set attempting to set `max_pods` will be ignored.
-
-### Azure AD Workload Identity
-
-To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) experiment you can set the experimental flag `experimental = { workload_identity = true }` if you've opted in to the public preview. This experiment doesn't change the core service identity implementation which is still Azure AD Pod Identity as the support for Azure AD Workload Identity is limited. It is possible to use a [sidecar](https://learn.microsoft.com/en-us/azure/aks/workload-identity-migrate-from-pod-identity) to migrate legacy workloads which haven't been updated to directly support Azure AD Workload Identity.
 
 ### Disable Log Analytics For Control Plane Logs (**DEPRECATED**)
 
@@ -816,7 +813,7 @@ Specification for the `storage` object.
 
 | **Variable** | **Description**                                       | **Type** | **Default** |
 | :----------- | :---------------------------------------------------- | :------- | :---------- |
-| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`      |
+| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`     |
 | `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
 
 ### Appendix E

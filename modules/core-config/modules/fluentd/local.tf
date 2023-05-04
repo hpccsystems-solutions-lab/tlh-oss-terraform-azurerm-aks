@@ -21,16 +21,16 @@ locals {
       create = true
       name   = local.service_account_name
 
-      labels = var.workload_identity && local.use_aad_workload_identity ? {
+      labels = local.use_aad_workload_identity ? {
         "azure.workload.identity/use" = "true"
       } : {}
 
-      annotations = var.workload_identity && local.use_aad_workload_identity ? {
+      annotations = local.use_aad_workload_identity ? {
         "azure.workload.identity/client-id" = module.identity.id
       } : {}
     }
 
-    podLabels = merge(var.labels, var.workload_identity && local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
       aadpodidbinding = module.identity.name
     })
 

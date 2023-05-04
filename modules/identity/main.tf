@@ -24,7 +24,7 @@ resource "azurerm_federated_identity_credential" "default" {
   name = var.name
 
   resource_group_name = var.resource_group_name
-  parent_id           = azurerm_user_assigned_identity.default.name
+  parent_id           = azurerm_user_assigned_identity.default.id
 
   issuer   = var.oidc_issuer_url
   audience = ["api://AzureADTokenExchange"]

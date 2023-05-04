@@ -92,7 +92,6 @@ module "cert_manager" {
   resource_group_name       = var.resource_group_name
   dns_resource_group_lookup = var.dns_resource_group_lookup
   cluster_name              = var.cluster_name
-  workload_identity         = var.workload_identity
   cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["cert-manager"].metadata[0].name
   labels                    = var.labels
@@ -134,7 +133,6 @@ module "external_dns" {
   resource_group_name       = var.resource_group_name
   dns_resource_group_lookup = var.dns_resource_group_lookup
   cluster_name              = var.cluster_name
-  workload_identity         = var.workload_identity
   cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["dns"].metadata[0].name
   labels                    = var.labels
@@ -178,7 +176,6 @@ module "fluentd" {
   location                = var.location
   resource_group_name     = var.resource_group_name
   cluster_name            = var.cluster_name
-  workload_identity       = var.workload_identity
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["logging"].metadata[0].name
   labels                  = var.labels
@@ -231,7 +228,6 @@ module "kube_prometheus_stack" {
   location                                 = var.location
   resource_group_name                      = var.resource_group_name
   cluster_name                             = var.cluster_name
-  workload_identity                        = var.workload_identity
   cluster_oidc_issuer_url                  = var.cluster_oidc_issuer_url
   namespace                                = kubernetes_namespace.default["monitoring"].metadata[0].name
   labels                                   = var.labels

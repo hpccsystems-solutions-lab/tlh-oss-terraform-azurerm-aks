@@ -46,6 +46,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added the `logging` variable to replace the individual existing variables for configuring control plane logging; if this is used the existing variables will be ignored. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `recommended` & `limited` control plane logging profiles in favour of `audit-write-only` & `minimal` respectively. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables as these can be replaced with the new `logging.control_plane` variable. [@stevehipwell](https://github.com/stevehipwell)
+- Added support for Azure AD Workload identity to all AKS clusters. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.11.0] - 2023-04-26
 
