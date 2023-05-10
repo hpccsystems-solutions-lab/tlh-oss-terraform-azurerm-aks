@@ -32,21 +32,32 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.12.0] - UNRELEASED
+## [v1.12.0] - 2023-05-10
 
 ### Highlights
 
+> **Warning**
+> If you are considering updating to Kubernetes `v1.25`, please note that the behavior is different from `v1.24` due to a bug fix upstream. This fix ensures the correct implementation of iptables rules. For more information, please refer to the [README section on ingress](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#ingress-internal-core).
+
+#### CSI Driver
+
+In this release, we have modified the behaviour of the Azure File CSI driver to be disabled by default. If you are using Azure Files, please make sure to use the module input documented [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#appendix-d10) to prevent data management issues.
+
+### New experimental feature: Azure AD Workload Identity
+
+To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) experiment, you can set the experimental flag `experimental = { workload_identity = true }` if you've opted in to the public preview. This experiment doesn't alter the core service identity implementation, which continues to use Azure AD Pod Identity, as the support for Azure AD Workload Identity is limited. For migrating legacy workloads that haven't been updated to directly support Azure AD Workload Identity, you can use a [sidecar](https://learn.microsoft.com/en-us/azure/aks/workload-identity-migrate-from-pod-identity).
+
 ### All Changes
 
-- Removed the `control_plane_logging_external_workspace_different_resource_group` variable as it is unused. ([#1069](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1069)) [@peterabarr](https://github.com/peterabarr)
-- Fixed Horizontal Pod AutoScaler Grafana dashboard to properly display metrics. ([#1067](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1067)) [@hadeeds](https://github.com/hadeeds)
-- Changed the behaviour or the Azure file CSI driver to be disabled by default. ([#1070](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1070)) [@hadeeds](https://github.com/hadeeds)
-- Added normalization to Azure cluster location in _Fluent Bit_ and _Fluentd_. ([#1048](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1048)) [@appkins](https://github.com/appkins)
-- Updated _Thanos_ chart to [v1.12.4](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.31.0](https://github.com/thanos-io/thanos/releases/tag/v0.31.0)). ([#1074](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1074)) [@peterabarr](https://github.com/peterabarr)
 - Added the `logging` variable to replace the individual existing variables for configuring control plane logging; if this is used the existing variables will be ignored. [@stevehipwell](https://github.com/stevehipwell)
+- Added normalization to Azure cluster location in _Fluent Bit_ and _Fluentd_. ([#1048](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1048)) [@appkins](https://github.com/appkins)
+- Added support for Azure AD Workload identity to all AKS clusters. [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Thanos_ chart to [v1.12.4](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.10.2) (contains _Thanos_ [v0.31.0](https://github.com/thanos-io/thanos/releases/tag/v0.31.0)). ([#1074](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1074)) [@peterabarr](https://github.com/peterabarr)
+- Changed the behaviour or the Azure file CSI driver to be disabled by default. ([#1070](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1070)) [@hadeeds](https://github.com/hadeeds)
+- Fixed Horizontal Pod AutoScaler Grafana dashboard to properly display metrics. ([#1067](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1067)) [@hadeeds](https://github.com/hadeeds)
 - Deprecated the `recommended` & `limited` control plane logging profiles in favour of `audit-write-only` & `minimal` respectively. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables as these can be replaced with the new `logging.control_plane` variable. [@stevehipwell](https://github.com/stevehipwell)
-- Added support for Azure AD Workload identity to all AKS clusters. [@stevehipwell](https://github.com/stevehipwell)
+- Removed the `control_plane_logging_external_workspace_different_resource_group` variable as it is unused. ([#1069](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1069)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.11.0] - 2023-04-26
 
