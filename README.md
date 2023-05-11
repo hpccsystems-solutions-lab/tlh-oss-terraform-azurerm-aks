@@ -811,10 +811,11 @@ Specification for the `core_services_config.prometheus` object.
 
 Specification for the `storage` object.
 
-| **Variable** | **Description**                                       | **Type** | **Default** |
-| :----------- | :---------------------------------------------------- | :------- | :---------- |
-| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`     |
-| `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
+| **Variable** | **Description**                                                | **Type** | **Default** |
+| :----------- | :------------------------------------------------------------- | :------- | :---------- |
+| `file`       | If support for the file CSI driver should be enabled.          | `bool`   | `false`     |
+| `blob`       | If support for the blob CSI driver should be enabled.          | `bool`   | `false`     |
+| `local`      | If support for the local static provisioner should be enabled. | `bool`   | `false`     |
 
 ### Appendix E
 

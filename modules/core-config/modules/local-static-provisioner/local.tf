@@ -1,5 +1,5 @@
 locals {
-  chart_version = "2.5.0"
+  chart_version = "1.0.0"
 
   chart_values = {
     common = {
@@ -58,20 +58,11 @@ locals {
         hostDir     = "/dev"
         mountDir    = "/mnt/nvme"
         name        = "local-nvme-delete"
-        namePattern = "nvme*"
+        namePattern = "nvme*n*"
         volumeMode  = "Filesystem"
-      },
-      {
-        blockCleanerCommand = [
-          "/scripts/shred.sh",
-          "2",
-        ]
-        fsType      = "ext4"
-        hostDir     = "/dev"
-        mountDir    = "/mnt/ssd"
-        name        = "local-ssd-delete"
-        namePattern = "sdb1*"
-        volumeMode  = "Filesystem"
+        storageClass = {
+          reclaimPolicy = "Delete"
+        }
       }
     ]
   }

@@ -32,6 +32,13 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
+## [v1.13.0] - UNRELEASED
+
+### Highlights
+### All Changes
+
+- Added `local` input to `core_services_config.storage` object. Allows opt-in for the local-static-provisioner feature. This feature provides two storage classes, one for ssd and one for nvme. ([#1044](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1044)) [@appkins](https://github.com/appkins)
+
 ## [v1.12.0] - 2023-05-10
 
 ### Highlights

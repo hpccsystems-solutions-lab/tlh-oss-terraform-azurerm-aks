@@ -266,8 +266,10 @@ module "kube_prometheus_stack" {
   ]
 }
 
-module "local_volume_provisioner" {
-  source = "./modules/local-volume-provisioner"
+module "local_static_provisioner" {
+  count = var.core_services_config.storage.local ? 1 : 0
+
+  source = "./modules/local-static-provisioner"
 
   namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels    = var.labels

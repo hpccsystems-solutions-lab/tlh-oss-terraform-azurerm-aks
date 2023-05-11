@@ -1,9 +1,9 @@
 resource "helm_release" "default" {
-  name      = "local-volume-provisioner"
+  name      = "local-static-provisioner"
   namespace = var.namespace
 
-  repository = "https://flachesis.github.io/sig-storage-local-static-provisioner/"
-  chart      = "provisioner"
+  repository = "https://kubernetes-sigs.github.io/sig-storage-local-static-provisioner/"
+  chart      = "local-static-provisioner"
   version    = local.chart_version
   skip_crds  = true
 

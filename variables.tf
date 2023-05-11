@@ -313,8 +313,9 @@ variable "core_services_config" {
       remote_write = optional(any)
     }))
     storage = optional(object({
-      file = optional(bool, false)
-      blob = optional(bool, false)
+      file  = optional(bool, false)
+      blob  = optional(bool, false)
+      local = optional(bool, false)
     }), {})
   })
   nullable = false
