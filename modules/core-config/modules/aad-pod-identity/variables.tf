@@ -16,8 +16,8 @@ variable "node_resource_group_name" {
   nullable    = false
 }
 
-variable "network_plugin" {
-  description = "Kubernetes network plugin."
+variable "cni" {
+  description = "Kubernetes CNI."
   type        = string
   nullable    = false
 }

@@ -542,9 +542,9 @@ This module requires the following versions to be configured in the workspace `t
 
 ### Terraform
 
-| **Version**          |
-| :------------------- |
-| `>= 1.3.3, != 1.3.4` |
+| **Version** |
+| :---------- |
+| `>= 1.4.6`  |
 
 ### Providers
 
@@ -556,7 +556,6 @@ This module requires the following versions to be configured in the workspace `t
 | [hashicorp/kubernetes](https://registry.terraform.io/providers/hashicorp/kubernetes/latest) | `>= 2.15.0` |
 | [hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/latest)         | `>= 3.3.0`  |
 | [scottwinkler/shell](https://registry.terraform.io/providers/scottwinkler/shell/latest)     | `>= 1.7.10` |
-| [tiwood/static](https://registry.terraform.io/providers/tiwood/static/latest)               | `>= 0.1.0`  |
 | [hashicorp/time](https://registry.terraform.io/providers/hashicorp/time/latest)             | `>= 0.7.2`  |
 
 ---

@@ -52,7 +52,7 @@ locals {
     nmi = {
       priorityClassName = "system-node-critical"
 
-      allowNetworkPluginKubenet = (var.network_plugin == "kubenet" ? true : false)
+      allowNetworkPluginKubenet = (var.cni == "kubenet" ? true : false)
 
       tolerations = [{
         operator = "Exists"

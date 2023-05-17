@@ -28,8 +28,8 @@ variable "cluster_version_full" {
   nullable    = false
 }
 
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin, \"kubenet\" & \"azure\" are supported."
+variable "cni" {
+  description = "Kubernetes CNI, \"kubenet\" & \"azure\" are supported."
   type        = string
   nullable    = false
 }

@@ -33,7 +33,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
 
   proximity_placement_group_id = var.proximity_placement_group_id
 
-  max_pods = var.network_plugin == "azure" && var.max_pods != -1 ? var.max_pods : local.max_pods[var.network_plugin]
+  max_pods = var.cni == "azure" && var.max_pods != -1 ? var.max_pods : local.max_pods[var.cni]
 
   fips_enabled = var.fips
 

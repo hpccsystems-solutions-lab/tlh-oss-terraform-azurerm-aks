@@ -67,7 +67,7 @@ module "aad_pod_identity" {
   subscription_id          = var.subscription_id
   resource_group_name      = var.resource_group_name
   node_resource_group_name = var.node_resource_group_name
-  network_plugin           = var.network_plugin
+  cni                      = var.cni
   kubelet_identity_id      = var.kubelet_identity_id
   namespace                = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels                   = var.labels

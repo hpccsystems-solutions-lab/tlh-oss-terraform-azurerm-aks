@@ -35,9 +35,14 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.13.0] - UNRELEASED
 
 ### Highlights
+
 ### All Changes
 
 - Added `local` input to `core_services_config.storage` object. Allows opt-in for the local-static-provisioner feature. This feature provides two storage classes, one for ssd and one for nvme. ([#1044](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1044)) [@appkins](https://github.com/appkins)
+- Updated the minimum Terraform version to [v1.4.6](https://github.com/hashicorp/terraform/releases/tag/v1.4.6) so we can use the new `terraform_data` resource. [@stevehipwell](https://github.com/stevehipwell)
+- Removed dependency on the `tiwood/static` Terraform provider. [@stevehipwell](https://github.com/stevehipwell)
+- Added support to block attempts to change immutable input variables. [@stevehipwell](https://github.com/stevehipwell)
+- Removed pod security version labels as they're unnecessary. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.12.0] - 2023-05-10
 

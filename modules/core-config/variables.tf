@@ -45,8 +45,8 @@ variable "cluster_oidc_issuer_url" {
   type        = string
 }
 
-variable "network_plugin" {
-  description = "Kubernetes Network Plugin."
+variable "cni" {
+  description = "Kubernetes CNI."
   type        = string
   nullable    = false
 }

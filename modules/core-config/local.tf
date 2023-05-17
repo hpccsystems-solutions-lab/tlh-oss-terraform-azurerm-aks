@@ -22,10 +22,8 @@ locals {
   ]
 
   namespace_pod_security_labels = {
-    "pod-security.kubernetes.io/audit-version" = "v${var.cluster_version}"
-    "pod-security.kubernetes.io/warn-version"  = "v${var.cluster_version}"
-    "pod-security.kubernetes.io/audit"         = "baseline"
-    "pod-security.kubernetes.io/warn"          = "baseline"
+    "pod-security.kubernetes.io/audit" = "baseline"
+    "pod-security.kubernetes.io/warn"  = "baseline"
   }
 
   ingress_internal_core = merge(var.core_services_config.ingress_internal_core, var.core_services_config.ingress_internal_core.subdomain_suffix == null ? { subdomain_suffix = var.cluster_name } : {}, {

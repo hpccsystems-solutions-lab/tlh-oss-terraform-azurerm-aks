@@ -1,12 +1,39 @@
-# This version will never be less than 1.0.0-beta.21 as that's when it was added
-resource "static_data" "creation_metadata" {
-  data = {
-    creation_date    = timestamp()
-    creation_version = local.module_version
+resource "time_static" "timestamp" {}
+
+resource "terraform_data" "immutable_inputs" {
+  input = {
+    cluster_name = var.cluster_name
+    ipv6         = false
+    cni          = local.cni
+    windows      = var.experimental.windows_support
+    system_nodes = {
+      arch         = "amd64"
+      os           = "ubuntu"
+      type         = "gp"
+      type_variant = "default"
+      type_version = "v1"
+      size         = "xlarge"
+    }
   }
 
   lifecycle {
-    ignore_changes = [data]
+    ignore_changes = [
+      input.cluster_name,
+      input.ipv6,
+      input.cni,
+      input.windows,
+      input.system_nodes
+    ]
+
+    postcondition {
+      condition     = var.cluster_name == self.output.cluster_name
+      error_message = "Cluster name is immutable."
+    }
+
+    postcondition {
+      condition     = var.experimental.windows_support == self.output.windows
+      error_message = "You can't enable/disable Windows support for an existing cluster."
+    }
   }
 }
 
@@ -22,7 +49,7 @@ module "cluster" {
   fips                                 = var.fips
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
-  network_plugin                       = local.network_plugin
+  cni                                  = local.cni
   subnet_id                            = local.subnet_id
   route_table_id                       = local.route_table_id
   podnet_cidr_block                    = var.podnet_cidr_block
@@ -44,6 +71,10 @@ module "cluster" {
   storage                              = var.core_services_config.storage
   tags                                 = local.tags
   timeouts                             = local.timeouts
+
+  depends_on = [
+    terraform_data.immutable_inputs
+  ]
 }
 
 module "rbac" {
@@ -68,7 +99,7 @@ module "node_groups" {
   cluster_id           = module.cluster.id
   cluster_name         = var.cluster_name
   cluster_version_full = local.cluster_version_full
-  network_plugin       = local.network_plugin
+  cni                  = local.cni
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
   bootstrap_name       = local.bootstrap_name
@@ -100,7 +131,7 @@ module "core_config" {
   cluster_name            = var.cluster_name
   cluster_version         = var.cluster_version
   cluster_oidc_issuer_url = module.cluster.oidc_issuer_url
-  network_plugin          = local.network_plugin
+  cni                     = local.cni
 
   ingress_node_group = module.node_groups.ingress_node_group
 
@@ -177,5 +208,25 @@ resource "kubernetes_config_map_v1_data" "terraform_modules" {
     module.node_groups,
     module.core_config,
     kubernetes_config_map.terraform_modules
+  ]
+}
+
+# This data will be from the first time a module version of v1.13.0 or greater is applied as AKS doesn't capture it's creation date
+resource "terraform_data" "creation_metadata" {
+  input = {
+    timestamp       = time_static.timestamp.rfc3339
+    module_version  = local.module_version
+    cluster_version = var.cluster_version
+  }
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+
+  depends_on = [
+    module.cluster,
+    module.rbac,
+    module.node_groups,
+    module.core_config
   ]
 }
