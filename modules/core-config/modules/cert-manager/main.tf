@@ -1,12 +1,3 @@
-resource "kubectl_manifest" "crds" {
-  for_each = local.crd_files
-
-  yaml_body = file(each.value)
-
-  server_side_apply = true
-  wait              = true
-}
-
 resource "kubernetes_secret" "zerossl_eabsecret" {
   metadata {
     name      = "zerossl-eabsecret"
@@ -37,7 +28,6 @@ resource "helm_release" "default" {
   ]
 
   depends_on = [
-    kubectl_manifest.crds,
     module.identity
   ]
 }
@@ -64,7 +54,6 @@ resource "kubectl_manifest" "issuers" {
   wait              = true
 
   depends_on = [
-    kubectl_manifest.crds,
     kubernetes_secret.zerossl_eabsecret,
     helm_release.default
   ]

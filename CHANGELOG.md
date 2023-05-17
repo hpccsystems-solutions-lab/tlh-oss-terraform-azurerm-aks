@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed dependency on the `tiwood/static` Terraform provider. [@stevehipwell](https://github.com/stevehipwell)
 - Added support to block attempts to change immutable input variables. [@stevehipwell](https://github.com/stevehipwell)
 - Removed pod security version labels as they're unnecessary. [@stevehipwell](https://github.com/stevehipwell)
+- Refactored CRD logic. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.12.0] - 2023-05-10
 

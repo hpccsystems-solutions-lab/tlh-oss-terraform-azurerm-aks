@@ -21,17 +21,14 @@ resource "kubernetes_labels" "system_namespace" {
   labels = local.namespace_pod_security_labels
 }
 
-resource "kubectl_manifest" "kube_prometheus_stack_crds" {
-  for_each = { for x in fileset(path.module, "modules/kube-prometheus-stack/crds/*.yaml") : basename(x) => "${path.module}/${x}" }
+module "crds" {
+  source = "./modules/crds"
 
-  yaml_body = file(each.value)
-
-  server_side_apply = true
-  wait              = true
-
-  depends_on = [
-    kubernetes_namespace.default,
-    kubernetes_labels.system_namespace
+  modules = [
+    "aad-pod-identity",
+    "cert-manager",
+    "external-dns",
+    "kube-prometheus-stack"
   ]
 }
 
@@ -39,11 +36,6 @@ module "storage" {
   source = "./modules/storage"
 
   labels = var.labels
-
-  depends_on = [
-    kubernetes_namespace.default,
-    kubernetes_labels.system_namespace
-  ]
 }
 
 module "pre_upgrade" {
@@ -56,7 +48,7 @@ module "pre_upgrade" {
   depends_on = [
     kubernetes_namespace.default,
     kubernetes_labels.system_namespace,
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.storage
   ]
 }
@@ -77,7 +69,7 @@ module "aad_pod_identity" {
   experimental_finalizer_wait = var.experimental.aad_pod_identity_finalizer_wait
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade
   ]
 }
@@ -104,7 +96,7 @@ module "cert_manager" {
   timeouts = var.timeouts
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.aad_pod_identity
   ]
@@ -118,7 +110,7 @@ module "coredns" {
   forward_zones = var.core_services_config.coredns.forward_zones
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade
   ]
 }
@@ -144,7 +136,7 @@ module "external_dns" {
   timeouts = var.timeouts
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.aad_pod_identity
   ]
@@ -162,7 +154,7 @@ module "fluent_bit" {
   timeouts = var.timeouts
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.storage,
     module.fluentd
@@ -193,7 +185,7 @@ module "fluentd" {
   experimental_memory_override = var.experimental.fluentd_memory_override
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.storage,
     module.aad_pod_identity
@@ -215,7 +207,7 @@ module "ingress_internal_core" {
   timeouts = var.timeouts
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.cert_manager
   ]
@@ -249,7 +241,6 @@ module "kube_prometheus_stack" {
   ingress_domain                           = local.ingress_internal_core.domain
   ingress_subdomain_suffix                 = local.ingress_internal_core.subdomain_suffix
   ingress_annotations                      = local.ingress_internal_core.annotations
-  skip_crds                                = true
   tags                                     = var.tags
 
   timeouts = var.timeouts
@@ -257,7 +248,7 @@ module "kube_prometheus_stack" {
   experimental_prometheus_memory_override = var.experimental.prometheus_memory_override
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade,
     module.storage,
     module.aad_pod_identity,
@@ -277,7 +268,7 @@ module "local_static_provisioner" {
   timeouts = var.timeouts
 
   depends_on = [
-    kubectl_manifest.kube_prometheus_stack_crds,
+    module.crds,
     module.pre_upgrade
   ]
 }

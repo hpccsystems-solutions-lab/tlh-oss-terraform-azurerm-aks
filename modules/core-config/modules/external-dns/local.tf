@@ -159,6 +159,5 @@ locals {
   enable_private = length(var.private_domain_filters) > 0 && local.private_dns_zone_resource_group_name != null
   enable_public  = length(var.public_domain_filters) > 0 && local.public_dns_zone_resource_group_name != null
 
-  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

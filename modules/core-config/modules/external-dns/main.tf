@@ -1,12 +1,3 @@
-resource "kubectl_manifest" "crds" {
-  for_each = local.crd_files
-
-  yaml_body = file(each.value)
-
-  server_side_apply = true
-  wait              = true
-}
-
 resource "kubectl_manifest" "resource_files" {
   for_each = local.resource_files
 
@@ -14,10 +5,6 @@ resource "kubectl_manifest" "resource_files" {
 
   server_side_apply = true
   wait              = true
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
 }
 
 resource "kubernetes_secret" "private_config" {
@@ -61,10 +48,6 @@ resource "helm_release" "private" {
   values = [
     yamlencode(local.chart_values_private)
   ]
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
 }
 
 resource "kubernetes_secret" "public_config" {
@@ -107,9 +90,5 @@ resource "helm_release" "public" {
 
   values = [
     yamlencode(local.chart_values_public)
-  ]
-
-  depends_on = [
-    kubectl_manifest.crds
   ]
 }

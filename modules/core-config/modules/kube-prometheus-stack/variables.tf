@@ -174,12 +174,6 @@ variable "ingress_annotations" {
   nullable    = false
 }
 
-variable "skip_crds" {
-  description = "Skip installing the CRDs as part of the module."
-  type        = bool
-  nullable    = false
-}
-
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)

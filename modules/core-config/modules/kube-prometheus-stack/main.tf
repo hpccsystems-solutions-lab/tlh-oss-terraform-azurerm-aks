@@ -1,14 +1,3 @@
-## The CRDs are required by a number of other services so are installed separately (core-config/main.tf)
-## Provided for future compatibility - not used within this submodule
-resource "kubectl_manifest" "crds" {
-  for_each = var.skip_crds ? {} : local.crd_files
-
-  yaml_body = file(each.value)
-
-  server_side_apply = true
-  wait              = true
-}
-
 resource "kubernetes_secret" "thanos_objstore_config" {
   metadata {
     name      = local.thanos_objstore_secret_name
@@ -44,10 +33,6 @@ resource "kubectl_manifest" "resource_files" {
 
   server_side_apply = true
   wait              = true
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
 }
 
 resource "kubectl_manifest" "resource_objects" {
@@ -57,10 +42,6 @@ resource "kubectl_manifest" "resource_objects" {
 
   server_side_apply = true
   wait              = true
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
 }
 
 resource "kubectl_manifest" "resource_template_objects" {
@@ -70,10 +51,6 @@ resource "kubectl_manifest" "resource_template_objects" {
 
   server_side_apply = true
   wait              = true
-
-  depends_on = [
-    kubectl_manifest.crds
-  ]
 }
 
 resource "helm_release" "default" {
@@ -93,7 +70,6 @@ resource "helm_release" "default" {
   ]
 
   depends_on = [
-    kubectl_manifest.crds,
     module.identity_thanos,
     kubernetes_secret.thanos_objstore_config,
     kubernetes_secret.grafana_auth
@@ -117,7 +93,6 @@ resource "helm_release" "thanos" {
   ]
 
   depends_on = [
-    kubectl_manifest.crds,
     helm_release.default,
     module.identity_thanos,
     kubernetes_secret.thanos_objstore_config

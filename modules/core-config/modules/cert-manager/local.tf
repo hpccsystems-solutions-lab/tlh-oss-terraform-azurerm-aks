@@ -300,6 +300,5 @@ locals {
   zerossl_eab_secret_key = "secret"
   zerossl_eabsecret      = "X3Nkc3MwNExIbUdlVXdsQmxBU1Brd0xESWFEZnIxUThxSXlubnppWFFaeFpRYWJGaDkyODZKbVZBQ1NjdHJUU2NFUm1IaC1pUjZXUkZ1cnQxcmRlanc="
 
-  crd_files      = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

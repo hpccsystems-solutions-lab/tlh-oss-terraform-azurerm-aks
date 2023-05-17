@@ -1,12 +1,3 @@
-resource "kubectl_manifest" "crds" {
-  for_each = local.crd_files
-
-  yaml_body = file(each.value)
-
-  server_side_apply = true
-  wait              = true
-}
-
 resource "azurerm_role_assignment" "k8s_managed_identity_operator_cluster" {
   principal_id = var.kubelet_identity_id
 
@@ -45,7 +36,6 @@ resource "helm_release" "aad_pod_identity" {
   ]
 
   depends_on = [
-    kubectl_manifest.crds,
     azurerm_role_assignment.k8s_managed_identity_operator_cluster,
     azurerm_role_assignment.k8s_managed_identity_operator_node,
     azurerm_role_assignment.k8s_virtual_machine_contributor_node

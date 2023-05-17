@@ -1290,7 +1290,6 @@ locals {
   thanos_store_gateway_service_account_name = "thanos-store-gateway"
   grafana_service_account_name              = "kube-prometheus-stack-grafana"
 
-  crd_files           = { for x in fileset(path.module, "crds/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_objects    = { thanos_ruler = local.thanos_ruler }
   dashboard_templates = var.control_plane_log_analytics_enabled ? { for x in fileset(path.module, "resources/configmap-dashboard-*.yaml.tpl") : basename(x) => { path = "${path.module}/${x}", vars = { resource_id = var.control_plane_log_analytics_workspace_id, subscription_id = var.subscription_id } } } : {}
