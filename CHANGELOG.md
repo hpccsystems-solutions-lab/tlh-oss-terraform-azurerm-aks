@@ -46,6 +46,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Refactored CRD logic. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _Kube Prometheus Stack_ chart to [v45.28.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-45.28.1) (contains _Grafana_ [v9.5.1](https://github.com/grafana/grafana/releases/tag/v9.5.1), _Prometheus_ [v2.43.1](https://github.com/prometheus/prometheus/releases/tag/v2.43.1) & _Prometheus Operator_ [v0.65.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.65.1)). ([#1088](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1088)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [v1.11.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.2) and updated CRDs. ([#1092](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1092)) [@peterabarr](https://github.com/peterabarr)
+- Removed `core_config.fluentd.routes` & `core_config.fluentd.outputs` which were documented as already removed in [v1.0.0-rc.1](#v100-rc1---2022-11-07) (deprecated in [v1.0.0-beta.24](#v100-beta24---2022-10-24)) and didn't do anything. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.12.0] - 2023-05-10
 

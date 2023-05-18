@@ -294,8 +294,6 @@ variable "core_services_config" {
         copy   = optional(bool)
         config = string
       })))
-      routes  = optional(string)
-      outputs = optional(string)
     }))
     grafana = optional(object({
       admin_password          = optional(string)
