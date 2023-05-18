@@ -1,5 +1,5 @@
 locals {
-  chart_version = "45.15.0"
+  chart_version = "45.28.1"
 
   thanos_chart_version = "1.12.4"
 
