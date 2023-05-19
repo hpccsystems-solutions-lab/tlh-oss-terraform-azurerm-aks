@@ -355,7 +355,7 @@ When utilizing custom tags with the module, it is essential to be aware of the p
 
 ### Storage
 
-The module includes support for the Azure Disks CSI driver (always on), Azure Files CSI driver (on by default) & Azure Blob CSI driver (off by default).
+The module includes support for the Azure Disks CSI driver (always on), Azure Files CSI driver (off by default) & Azure Blob CSI driver (off by default).
 
 The following Azure Disks CSI driver `StorageClass` resources are created by default to support standard [Azure managed disk types](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types). When using a default `StorageClass` you are recommended to use the Premium SSD v2 classes where possible due to the best price-performance characteristics. If you need support for specific characteristics (such as higher IOPS or throughput) you should create a custom `StorageClass`.
 

@@ -48,6 +48,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Cert Manager_ chart to [v1.11.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.11.2) and updated CRDs. ([#1092](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1092)) [@peterabarr](https://github.com/peterabarr)
 - Removed `core_config.fluentd.routes` & `core_config.fluentd.outputs` which were documented as already removed in [v1.0.0-rc.1](#v100-rc1---2022-11-07) (deprecated in [v1.0.0-beta.24](#v100-beta24---2022-10-24)) and didn't do anything. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _AAD Pod Identity_ chart to `v4.1.17` (contains _AAD Pod Identity_ [v1.8.16](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.16)). ([#1093](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1093)) [@peterabarr](https://github.com/peterabarr)
+- Updated cachingmode from ReadOnly to None in azure-disk-premium-ssd-v2-retain, azure-disk-premium-ssd-v2-delete, and azure-disk-premium-ssd-v2-ephemeral storageclasses. ([#1097](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1097)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit_ chart to [v0.29.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.29.0) (contains _Fluent Bit_ [v2.1.3](https://github.com/fluent/fluent-bit/releases/tag/v2.1.3)). ([#1098](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1098)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.12.0] - 2023-05-10

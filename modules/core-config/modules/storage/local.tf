@@ -26,7 +26,7 @@ locals {
 
     azure-disk-premium-ssd-v2-retain = {
       parameters = {
-        cachingmode        = "ReadOnly"
+        cachingmode        = "None"
         kind               = "Managed"
         storageaccounttype = "PremiumV2_LRS"
       }
@@ -62,7 +62,7 @@ locals {
 
     azure-disk-premium-ssd-v2-delete = {
       parameters = {
-        cachingmode        = "ReadOnly"
+        cachingmode        = "None"
         kind               = "Managed"
         storageaccounttype = "PremiumV2_LRS"
       }
@@ -98,7 +98,7 @@ locals {
 
     azure-disk-premium-ssd-v2-ephemeral = {
       parameters = {
-        cachingmode        = "ReadOnly"
+        cachingmode        = "None"
         kind               = "Managed"
         storageaccounttype = "PremiumV2_LRS"
       }
