@@ -89,6 +89,18 @@ variable "route_config" {
   default  = []
 }
 
+variable "loki" {
+  description = "If true Loki is enabled."
+  type        = bool
+  nullable    = false
+}
+
+variable "systemd_logs_loki" {
+  type        = bool
+  default     = false
+  description = "Enable systemd log collection."
+}
+
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)

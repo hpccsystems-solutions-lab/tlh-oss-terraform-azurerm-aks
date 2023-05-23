@@ -178,6 +178,8 @@ module "fluentd" {
   debug                   = var.core_services_config.fluentd.debug
   filters                 = var.core_services_config.fluentd.filters
   route_config            = var.core_services_config.fluentd.route_config
+  loki                    = var.experimental.loki
+  systemd_logs_loki       = var.experimental.systemd_logs_loki
   tags                    = var.tags
 
   timeouts = var.timeouts
@@ -188,7 +190,8 @@ module "fluentd" {
     module.crds,
     module.pre_upgrade,
     module.storage,
-    module.aad_pod_identity
+    module.aad_pod_identity,
+    module.loki
   ]
 }
 
@@ -254,6 +257,33 @@ module "kube_prometheus_stack" {
     module.aad_pod_identity,
     module.cert_manager,
     module.ingress_internal_core
+  ]
+}
+
+module "loki" {
+  source = "./modules/loki"
+  count  = var.experimental.loki ? 1 : 0
+
+  subscription_id         = var.subscription_id
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  cluster_name            = var.cluster_name
+  cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
+  namespace               = kubernetes_namespace.default["logging"].metadata[0].name
+  labels                  = var.labels
+  subnet_id               = var.subnet_id
+  zones                   = local.az_count
+  tags                    = var.tags
+  timeouts                = var.timeouts
+
+  depends_on = [
+    module.crds,
+    module.pre_upgrade,
+    module.storage,
+    module.aad_pod_identity,
+    module.cert_manager,
+    module.ingress_internal_core,
+    module.kube_prometheus_stack
   ]
 }
 

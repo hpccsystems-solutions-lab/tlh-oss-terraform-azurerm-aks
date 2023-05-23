@@ -225,6 +225,8 @@ Cluster node groups will be auto scaled by using the [AKS Cluster Autoscaler](ht
 
 ### Logging
 
+AKS cluster logging is currently split up into two parts; the control plane logs are handled as part of the AKS service and are sent to Log Analytics, while the node and pod logs are handled by a core service reading the logs directly from the node and then sending them to a cluster aggregation service which can export the logs. The log export interface is specifically linked to the aggregator implementation, however there are plans to abstract this by supporting generic OpenTelemetry in addition to specific targets configured through the module. Additionally there are plans to enhance the system by supporting the aggregation of control plane logs into the cluster, allowing all logs to be managed as a unified set.
+
 #### Control Plane Logs
 
 An AKS cluster generates a number of different [control plane logs](https://learn.microsoft.com/en-us/azure/aks/monitor-aks-reference#resource-logs) which need to be collected. The module supports either sending these logs to a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) and/or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview). Both destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
@@ -235,7 +237,7 @@ The current, but **DEPRECATED**, behaviour for the cluster control plane logs is
 
 ##### Control Plane Logging Profiles
 
-The following control plane log profiles with their default log category types are supported (note that not all log category types are available in all Azure locations). You can augment  a profile by adding additional log category types to the defaults via the `additional_log_category_types` input.
+The following control plane log profiles with their default log category types are supported (note that not all log category types are available in all Azure locations). You can augment a profile by adding additional log category types to the defaults via the `additional_log_category_types` input.
 
 You are strongly advised to use the `all` profile wherever possible and the `empty` profile is unsupported for any workload cluster and is only made available for testing purposes.
 
@@ -259,6 +261,8 @@ Pods annotated with the `fluentbit.io/exclude: "true"` annotation wont have thei
 Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation wont have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate cluster services with _Loki_.
 
 As well as custom _Fluentd_ configuration it is also possible to provide a custom _Fluentd_ image if you need additional capabilities as long as the image has the required default plugins.
+
+Loki support is currently experimental and can be enabled by setting the `experimental.loki` to `true`. This currently defaults to `true` while testing moves forward for operators opting into Loki. Loki will default to an enabled state in the future.
 
 ### Metrics
 

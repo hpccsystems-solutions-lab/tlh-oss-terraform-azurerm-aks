@@ -450,6 +450,8 @@ variable "experimental" {
     fluentd_memory_override                      = optional(string, null)
     prometheus_memory_override                   = optional(string, null)
     control_plane_logging_log_analytics_disabled = optional(bool, false)
+    loki                                         = optional(bool, false)
+    systemd_logs_loki                            = optional(bool, false)
   })
   nullable = false
   default  = {}

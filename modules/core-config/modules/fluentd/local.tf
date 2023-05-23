@@ -139,7 +139,44 @@ locals {
     "CLUSTER_NAME"                        = var.cluster_name
   }, var.additional_env)
 
-  route_config = concat(length(var.route_config) == 0 || var.debug ? [{
+  loki_route_config = {
+    match  = var.systemd_logs_loki ? "**" : "kube.**"
+    label  = "@LOKI"
+    copy   = true
+    config = <<-EOT
+      <filter kube.**>
+        @type grep
+        <exclude>
+          key $['annotations']['lnrs.io/loki-ignore']
+          pattern /^true$/
+        </exclude>
+      </filter>
+      <match **>
+        @type loki
+        url "http://loki-gateway.logging.svc.cluster.local"
+        line_format "json"
+        extract_kubernetes_labels false
+        <label>
+          cluster
+          namespace
+          app
+        </label>
+        <buffer>
+          @type file
+          path /fluentd/state/loki
+          flush_mode interval
+          flush_interval 10s
+          chunk_limit_size 2MB
+          total_limit_size 8GB
+          overflow_action drop_oldest_chunk
+          retry_type exponential_backoff
+          retry_timeout 168h
+        </buffer>
+      </match>
+    EOT
+  }
+
+  route_config = concat(var.loki ? [local.loki_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
     match  = "**"
     label  = length(var.route_config) > 0 ? "@DEBUG" : "@DEFAULT"
     copy   = length(var.route_config) > 0

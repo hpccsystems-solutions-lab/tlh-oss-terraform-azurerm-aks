@@ -206,5 +206,7 @@ variable "experimental" {
     fluent_bit_use_memory_buffer    = bool
     fluentd_memory_override         = string
     prometheus_memory_override      = string
+    loki                            = bool
+    systemd_logs_loki               = bool
   })
 }

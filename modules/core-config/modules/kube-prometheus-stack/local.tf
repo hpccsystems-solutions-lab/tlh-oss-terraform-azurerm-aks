@@ -1102,7 +1102,7 @@ locals {
       storage = {
         volumeClaimTemplate = {
           spec = {
-            storageClassName = "ebs-gp3-retain"
+            storageClassName = "azure-disk-premium-ssd-delete"
 
             accessModes : [
               "ReadWriteOnce"

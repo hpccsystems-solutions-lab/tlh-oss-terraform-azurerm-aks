@@ -77,6 +77,7 @@ To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azu
 - Deprecated the `recommended` & `limited` control plane logging profiles in favour of `audit-write-only` & `minimal` respectively. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables as these can be replaced with the new `logging.control_plane` variable. [@stevehipwell](https://github.com/stevehipwell)
 - Removed the `control_plane_logging_external_workspace_different_resource_group` variable as it is unused. ([#1069](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1069)) [@peterabarr](https://github.com/peterabarr)
+- Added experimental Loki support. This can be enabled by setting the `experimental.loki` to `true`. Loki will default to an enabled state in the future. ([#1080](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1080)) [@appkins](https://github.com/appkins)
 
 ## [v1.11.0] - 2023-04-26
 
