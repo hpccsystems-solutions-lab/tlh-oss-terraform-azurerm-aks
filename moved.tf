@@ -4,7 +4,7 @@ moved {
 }
 
 moved {
-  from = module.core_config.module.aad-pod-identity.kubectl_manifest.crds
+  from = module.core_config.module.aad_pod_identity.kubectl_manifest.crds
   to   = module.core_config.module.crds.module.crds["aad-pod-identity"].kubectl_manifest.crds
 }
 

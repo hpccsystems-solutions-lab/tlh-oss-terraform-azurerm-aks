@@ -40,6 +40,12 @@ variable "cni" {
   nullable    = false
 }
 
+variable "fips" {
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
+  type        = bool
+  nullable    = false
+}
+
 variable "subnet_id" {
   description = "ID of the subnet to use for the node groups."
   type        = string
@@ -73,14 +79,17 @@ variable "node_groups" {
     node_type_variant = optional(string, "default")
     node_type_version = optional(string, "v1")
     node_size         = string
-    single_group      = optional(bool, false)
-    min_capacity      = optional(number, 0)
-    max_capacity      = number
     ultra_ssd         = optional(bool, false)
+    os_disk_size      = optional(number, 128)
+    temp_disk_mode    = optional(string, "NONE")
+    nvme_mode         = optional(string, "NONE")
     os_config = optional(object({
       sysctl = map(any)
     }), { sysctl = {} })
     placement_group_key = optional(string, null)
+    single_group        = optional(bool, false)
+    min_capacity        = optional(number, 0)
+    max_capacity        = number
     max_pods            = optional(number, -1)
     max_surge           = optional(string, "10%")
     labels              = optional(map(string), {})
@@ -114,6 +123,16 @@ variable "node_groups" {
   }
 
   validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["NONE", "KUBELET", "HOST_PATH"], v.temp_disk_mode)])
+    error_message = "Temp disk mode must be one of \"NONE\", \"KUBELET\", \"HOST_PATH\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["NONE", "PV", "HOST_PATH"], v.nvme_mode)])
+    error_message = "NVMe mode must be one of \"NONE\", \"PV\", \"HOST_PATH\"."
+  }
+
+  validation {
     condition     = alltrue([for k, v in var.node_groups : length(coalesce(v.placement_group_key, "_")) <= 11])
     error_message = "Node group placement key must be 11 characters or less."
   }
@@ -127,12 +146,6 @@ variable "node_groups" {
     condition     = alltrue([for k, v in var.node_groups : can(tonumber(replace(v.max_surge, "%", "")))])
     error_message = "Node group max surge must either be a number or a percent; e.g. 1 or 10%."
   }
-}
-
-variable "fips" {
-  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
-  type        = bool
-  nullable    = false
 }
 
 variable "labels" {

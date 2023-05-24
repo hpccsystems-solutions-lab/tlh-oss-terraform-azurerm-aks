@@ -25,8 +25,12 @@ locals {
     daemonset = {
       podLabels = var.labels
 
+      priorityClassName = "system-node-critical"
+
       nodeSelector = {
-        "lnrs.io/local-storage" = "true"
+        "kubernetes.io/os"  = "linux"
+        "lnrs.io/nvme"      = "true"
+        "lnrs.io/nvme-mode" = "PV"
       }
 
       tolerations = [

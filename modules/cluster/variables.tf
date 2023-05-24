@@ -167,6 +167,19 @@ variable "control_plane_logging" {
   }
 }
 
+variable "storage" {
+  description = "Storage configuration."
+  type = object({
+    file = object({
+      enabled = optional(bool, false)
+    })
+    blob = object({
+      enabled = optional(bool, false)
+    })
+  })
+  nullable = false
+}
+
 variable "maintenance_window_offset" {
   description = "Maintenance window offset to utc."
   type        = number
@@ -210,15 +223,6 @@ variable "windows_support" {
   description = "If the Kubernetes cluster should support Windows nodes."
   type        = bool
   nullable    = false
-}
-
-variable "storage" {
-  description = "Azure storage CSI driver profile."
-  type = object({
-    file = bool
-    blob = bool
-  })
-  nullable = false
 }
 
 variable "tags" {

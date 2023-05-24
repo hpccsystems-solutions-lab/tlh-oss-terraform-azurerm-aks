@@ -128,7 +128,7 @@ AKS always created a system node pool upon creation and modifying the system nod
 
 Node sizes are based on the number of CPUs, with the other resources being dependent on the node type; not all node types support all sizes.
 
-When creating persistent volumes in Azure, make sure you use a size supported by azure disk. This applies to [standard](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#standard-ssd-size) and [premium](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#premium-ssd-size) SSD sizes.
+When creating persistent volumes in Azure, make sure you use a size supported by azure disk. This applies to [Standard](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#standard-ssd-size) and [Premium](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#premium-ssd-size) disks; this doesn't apply to [Premium v2](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types#premium-ssd-v2) disks.
 
 |   **Name** | **CPU Count** |
 | ---------: | ------------: |
@@ -146,7 +146,7 @@ When creating persistent volumes in Azure, make sure you use a size supported by
 
 #### Node Types
 
-Node types describe the purpose of the node and maps down to the underlaying [Azure virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes). Select your node type for the kind of workloads you expect to be running, as a rule of thumb use `gp` unless you have additional requirements.
+Node types describe the purpose of the node and maps down to the underlying [Azure virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes). Select your node type for the kind of workloads you expect to be running, as a rule of thumb use `gp` unless you have additional requirements.
 
 Due to the availability issues with specific Azure VMs when choosing a node type you also need to select the version; newer versions may well be less available in popular regions.
 
@@ -154,7 +154,7 @@ All the nodes provisioned by the module support premium storage.
 
 ##### General Purpose
 
-[General purpose](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general) nodes, `gp` & `gpd`, offer a good balance of compute and memory. If you need a local NVMe drive `gpd` provides this.
+[General purpose](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general) nodes, `gp` & `gpd`, offer a good balance of compute and memory. If you need a local temp disk `gpd` provides this.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                               |
 | -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -169,7 +169,7 @@ All the nodes provisioned by the module support premium storage.
 
 ##### Memory Optimised
 
-[Memory optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-memory) nodes, `mem` & `memd`, offer a higher memory to CPU ration than general purpose nodes. If you need a local NVMe drive `memd` provides this.
+[Memory optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-memory) nodes, `mem` & `memd`, offer a higher memory to CPU ration than general purpose nodes. If you need a local temp disk `memd` provides this.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                                          | **Sizes**                                                                                           |
 | -------- | -------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -192,7 +192,7 @@ All the nodes provisioned by the module support premium storage.
 
 ##### Storage Optimised
 
-[Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes.
+[Storage optimised](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-storage) nodes, `stor`, offer higher disk throughput and IO than general purpose nodes and come both with a local temp disk and one or more NVMe drives.
 
 | **Arch** | **Type** | **Variant** | **Version** | **VM Type**                                                                    | **Sizes**                                                            |
 | -------- | -------- | ----------- | ----------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
@@ -282,6 +282,42 @@ DNS is only generated when using an `Ingress` resource with the `lnrs.io/zone-ty
 
 Additional Kubernetes resource types to be observed for new DNS entries can be supplied through `core_services_config.external_dns.additional_sources`. By default, this is set to `service` and `ingress`.
 
+### Storage
+
+The module includes support for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) (always on), [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) (off by default), [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) (off by default) and [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) (off by default). There is also support creating a host path volume on the node from local disks (NVMe or the temp disk). The module storage configuration can be customised using the the [storage](#appendix-d) module input variable.
+
+#### Azure Disks CSI Driver
+
+The following `StorageClass` resources are created for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) by default to support common [Azure disk types](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types) with default characteristics. When using a default `StorageClass` you are recommended to use the Premium SSD v2 classes where possible due to the best price-performance characteristics. If you need support for specific characteristics (such as higher IOPS or throughput) you should create a custom `StorageClass`.
+
+- `azure-disk-standard-ssd-retain`
+- `azure-disk-premium-ssd-retain`
+- `azure-disk-premium-ssd-v2-retain`
+- `azure-disk-standard-ssd-delete`
+- `azure-disk-premium-ssd-delete`
+- `azure-disk-premium-ssd-v2-delete`
+- `azure-disk-standard-ssd-ephemeral`
+- `azure-disk-premium-ssd-ephemeral`
+- `azure-disk-premium-ssd-v2-ephemeral`
+
+#### Azure Files CSI Driver
+
+If you wish to use the [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) you will need to enable it by setting `storage.file` to `true` and add one or more custom `StorageClass` resource.
+
+#### Azure Blob CSI Driver
+
+If you wish to use the [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) you will need to enable it by setting `storage.blob` to `true` and add one or more custom `StorageClass` resource.
+
+#### Local Volume Static Provisioner
+
+If you wish to use the [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) you will need to enable it by setting `storage.nvme_pv` to `true` and provision node groups with `nvme_mode` set to `PV`.
+
+The current behaviour is to mount each NVMe drive on the node as a separate `PersistentVolume` but is should be possible to combine all of the drives into a single RAID-0 volume and either expose it as a single `PersistentVolume` or partition to support more `PersistentVolume` per node than there are NVMe drives.
+
+#### Host Path Volume
+
+If you wish to support creating a host path volume on nodes with local disks you will need to enable it by setting `storage.host_path` to `true` and provision node groups with either `temp_disk_mode` or `nvme_mode` set to `HOST_PATH`. This will create a host volume at `/mnt/scratch` backed by either the NVMe drives (RAID-0 if there are moe than one) or the temp disk. If a node has both NVMe drives and a temp disk and both are set to host path only the NVMe drives will be used.
+
 ### Ingress
 
 All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LoadBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
@@ -356,30 +392,6 @@ Native Kubernetes network policies allow users to specify which pods can communi
 ### Tags
 
 When utilizing custom tags with the module, it is essential to be aware of the potential limitations that may impact the removal of tags. Some tags may not be removed when attempting to remove them through the module, which can result in unexpected behaviour or errors in your pipeline. To avoid these issues, it is recommended to thoroughly review and test the behaviour of custom tags before implementing them in any environment. If necessary, persistent tags can be manually removed through the Azure portal, CLI or API to ensure that they are properly removed from the resource. For more information on tag limitations, you can refer to the Microsoft documentation [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources?tabs=json#limitations)
-
-### Storage
-
-The module includes support for the Azure Disks CSI driver (always on), Azure Files CSI driver (off by default) & Azure Blob CSI driver (off by default).
-
-The following Azure Disks CSI driver `StorageClass` resources are created by default to support standard [Azure managed disk types](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types). When using a default `StorageClass` you are recommended to use the Premium SSD v2 classes where possible due to the best price-performance characteristics. If you need support for specific characteristics (such as higher IOPS or throughput) you should create a custom `StorageClass`.
-
-- `azure-disk-standard-ssd-retain`
-- `azure-disk-premium-ssd-retain`
-- `azure-disk-premium-ssd-v2-retain`
-- `azure-disk-standard-ssd-delete`
-- `azure-disk-premium-ssd-delete`
-- `azure-disk-premium-ssd-v2-delete`
-- `azure-disk-standard-ssd-ephemeral`
-- `azure-disk-premium-ssd-ephemeral`
-- `azure-disk-premium-ssd-v2-ephemeral`
-
-If you wish to use the Azure Files CSI driver or the Azure Blob CSI driver you will need to add one or more custom `StorageClass`.
-
-The documentation for the CSI drivers can be found at the following locations.
-
-- [Azure Disk CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi)
-- [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi)
-- [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi)
 
 ### Upgrading
 
@@ -590,7 +602,8 @@ This module requires the following versions to be configured in the workspace `t
 | `rbac_bindings`                                           | User and groups to configure in Kubernetes `ClusterRoleBindings`; for Azure AD these are the IDs.                                                                                                                                                                                                                                                                                                                   | `object` ([Appendix A](#appendix-a))       | `{}`              |
 | `node_groups`                                             | Node groups to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix B](#appendix-b))  | `{}`              |
 | `logging`                                                 | Logging configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix C](#appendix-c))  | `{}`              |
-| `core_services_config`                                    | Core service configuration.                                                                                                                                                                                                                                                                                                                                                                                         | `any` ([Appendix D](#appendix-d))          |                   |
+| `storage`                                                 | Storage configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix D](#appendix-d))  | `{}`              |
+| `core_services_config`                                    | Core service configuration.                                                                                                                                                                                                                                                                                                                                                                                         | `any` ([Appendix E](#appendix-e))          |                   |
 | `control_plane_logging_external_workspace`                | **DEPRECATED** - If `true`, the log analytics workspace referenced in `control_plane_logging_external_workspace_id` will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs.                                                                                                                                                                                          | `bool`                                     | `false`           |
 | `control_plane_logging_external_workspace_id`             | **DEPRECATED** - ID of the log analytics workspace to send control plane logs to if `control_plane_logging_external_workspace` is `true`.                                                                                                                                                                                                                                                                           | `string`                                   | `null`            |  | `bool` | `false` |
 | `control_plane_logging_workspace_categories`              | **DEPRECATED** - The control plane log categories to send to the log analytics workspace.                                                                                                                                                                                                                                                                                                                           | `string`                                   | `recommended`     |
@@ -604,7 +617,7 @@ This module requires the following versions to be configured in the workspace `t
 | `maintenance_window_offset`                               | Maintenance window offset to UTC.                                                                                                                                                                                                                                                                                                                                                                                   | `number`                                   | `null`            |
 | `maintenance_window_allowed_days`                         | List of allowed days covering the maintenance window.                                                                                                                                                                                                                                                                                                                                                               | `list(string)`                             | `[]`              |
 | `maintenance_window_allowed_hours`                        | List of allowed hours covering the maintenance window.                                                                                                                                                                                                                                                                                                                                                              | `list(number)`                             | `[]`              |
-| `maintenance_window_not_allowed`                          | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.                                                                                                                                                                                                                                 | `list(object)` ([Appendix E](#appendix-e)) | `[]`              |
+| `maintenance_window_not_allowed`                          | List of not allowed block objects consisting of start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window.                                                                                                                                                                                                                                 | `list(object)` ([Appendix F](#appendix-f)) | `[]`              |
 | `tags`                                                    | Tags to apply to all resources.                                                                                                                                                                                                                                                                                                                                                                                     | `map(string)`                              | `{}`              |
 | `fips`                                                    | If `true`, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created.                                                                                                                                                                                                                                                                                       | `bool`                                     | `false`           |
 | `experimental`                                            | Configure experimental features.                                                                                                                                                                                                                                                                                                                                                                                    | `any`                                      | `{}`              |
@@ -626,25 +639,28 @@ Specification for the `rbac_bindings` object.
 
 Specification for the `node_groups` objects.
 
-| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                          | **Type**                                     | **Default** |
-| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
-| `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the node group(s), `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                | `string`                                     | `amd64`     |
-| `node_os`             | OS to use for the node group(s), `ubuntu`, `windows2019` & `windows2022` (**EXPERIMENTAL**) are supported, [Windows node support](#windows-node-support) is not guaranteed but best-effort and needs manually enabling.                                                                                                  | `string`                                     | `"ubuntu"`  |
-| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                | `string`                                     | `"gp"`      |
-| `node_type_variant`   | The variant of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                     | `"default"` |
-| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                 | `string`                                     | `"v1"`      |
-| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                 | `string`                                     |             |
-| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                | `bool`                                       | `false`     |
-| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                     | `0`         |
-| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                | `number`                                     |             |
-| `os_config`           | **EXPERIMENTAL** - Custom OS configuration. See [docs](#custom-os-configuration).                                                                                                                                                                                                                                        | `object`                                     |             |
-| `ultra_ssd`           | If the node group can use Azure ultra disks.                                                                                                                                                                                                                                                                             | `bool`                                       | `false`     |
-| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations. | `string`                                     | `null`      |
-| `max_pods`            | **EXPERIMENTAL** - Custom maximum number of pods when using the Azure CNI; by default this is `30` but can be set to `-1` to use the default or explicitly between `20` & `110`. For Kubenet there is always a maximum of `110` pods. See [docs](#azure-cni-max-pods).                                                   | `number`                                     | `-1`        |
-| `max_surge`           | **EXPERIMENTAL** - Custom maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade.                                                                                                                                                                                             | `string`                                     | `10%`       |
-| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                | `map(string)`                                | `{}`        |
-| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                | `list(object)` ([Appendix B1](#appendix-b1)) | `[]`        |
-| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                           | `map(string)`                                | `{}`        |
+| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                                                                         | **Type**                                     | **Default** |
+| :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
+| `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the node group(s), `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                                                               | `string`                                     | `amd64`     |
+| `node_os`             | OS to use for the node group(s), `ubuntu`, `windows2019` & `windows2022` (**EXPERIMENTAL**) are supported, [Windows node support](#windows-node-support) is not guaranteed but best-effort and needs manually enabling.                                                                                                                                                 | `string`                                     | `"ubuntu"`  |
+| `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                                                               | `string`                                     | `"gp"`      |
+| `node_type_variant`   | The variant of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                                     | `"default"` |
+| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                                     | `"v1"`      |
+| `node_size`           | Size of the instance to create in the node group(s). See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                                                                | `string`                                     |             |
+| `ultra_ssd`           | If the node group can use Azure ultra disks.                                                                                                                                                                                                                                                                                                                            | `bool`                                       | `false`     |
+| `os_disk_size`        | Size of the OS disk to create, this will be ignored if `temp_disk_mode` is `KUBELET`.                                                                                                                                                                                                                                                                                   | `number`                                     | `128`       |
+| `temp_disk_mode`      | The temp disk mode for the node group, this is only valid for node types with a temp disk. The available values are `NONE` to do nothing, `KUBELET` (**EXPERIMENTAL**) to store the kubelet data (images, logs and empty dir volumes), & `HOST_PATH` (**EXPERIMENTAL**) to create a single volume at `/mnt/scratch` which can be used by a host mount volume.           | `string`                                     | `NONE`      |
+| `nvme_mode`           | The NVMe mode for node group, this is only valid for `stor` node types. The available values are `NONE` to do nothing, `PV` to use the Local Volume Static Provisioner to create PersistentVolumes, & `HOST_PATH` (**EXPERIMENTAL**) to create a single volume (RAID-0 if more than 1 NVMe disk is present) at `/mnt/scratch` which can be used by a host mount volume. | `string`                                     | `NONE`      |
+| `os_config`           | **EXPERIMENTAL** - Custom OS configuration. See [docs](#custom-os-configuration).                                                                                                                                                                                                                                                                                       | `object`                                     |             |
+| `placement_group_key` | If specified the node group will be added to a proximity placement group created for the key in a zone, `single_group` must be `false`. The key must be lowercase, alphanumeric, maximum 11 characters, please refer to the [documentation](/docs/README.md#proximity-placement-groups) for warnings and considerations.                                                | `string`                                     | `null`      |
+| `single_group`        | If this template represents a single node group spanning multiple zones or a node group per cluster zone.                                                                                                                                                                                                                                                               | `bool`                                       | `false`     |
+| `min_capacity`        | Minimum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                                                               | `number`                                     | `0`         |
+| `max_capacity`        | Maximum number of nodes in the node group(s), this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                                                               | `number`                                     |             |
+| `max_pods`            | **EXPERIMENTAL** - Custom maximum number of pods when using the Azure CNI; by default this is `30` but can be set to `-1` to use the default or explicitly between `20` & `110`. For Kubenet there is always a maximum of `110` pods. See [docs](#azure-cni-max-pods).                                                                                                  | `number`                                     | `-1`        |
+| `max_surge`           | **EXPERIMENTAL** - Custom maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade.                                                                                                                                                                                                                                            | `string`                                     | `10%`       |
+| `labels`              | Additional labels for the node group(s). It is suggested to set the `lnrs.io/tier` label.                                                                                                                                                                                                                                                                               | `map(string)`                                | `{}`        |
+| `taints`              | Taints for the node group(s). For ingress node groups the `ingress` taint should be set to `NO_SCHEDULE`.                                                                                                                                                                                                                                                               | `list(object)` ([Appendix B1](#appendix-b1)) | `[]`        |
+| `tags`                | User defined component of the node group name.                                                                                                                                                                                                                                                                                                                          | `map(string)`                                | `{}`        |
 
 ### Appendix B1
 
@@ -702,21 +718,64 @@ Specification for the `logging.control_plane.storage_account` object.
 
 ### Appendix D
 
-Specification for the `core_services_config` object.
+Specification for the `storage` object.
 
-| **Variable**            | **Description**                      | **Type**                                 | **Default** |
-| :---------------------- | :----------------------------------- | :--------------------------------------- | :---------- |
-| `alertmanager`          | Alertmanager configuration.          | `object` ([Appendix D1](#appendix-d1))   |             |
-| `cert_manager`          | Cert Manager configuration.          | `object` ([Appendix D2](#appendix-d2))   | `{}`        |
-| `coredns`               | CoreDNS configuration.               | `object` ([Appendix D3](#appendix-d3))   | `{}`        |
-| `external_dns`          | ExternalDNS configuration.           | `object` ([Appendix D4](#appendix-d4))   | `{}`        |
-| `fluentd`               | Fluentd configuration.               | `object` ([Appendix D5](#appendix-d5))   | `{}`        |
-| `grafana`               | Grafana configuration.               | `object` ([Appendix D7](#appendix-d7))   | `{}`        |
-| `ingress_internal_core` | Ingress internal-core configuration. | `object` ([Appendix D8](#appendix-d8))   |             |
-| `prometheus`            | Prometheus configuration.            | `object` ([Appendix D9](#appendix-d9))   | `{}`        |
-| `storage`               | Storage configuration.               | `object` ([Appendix D10](#appendix-d10)) | `{}`        |
+| **Variable** | **Description**                                              | **Type**                               | **Default** |
+| :----------- | :----------------------------------------------------------- | :------------------------------------- | :---------- |
+| `file`       | Azure File CSI configuration.                                | `object` ([Appendix D1](#appendix-d1)) | `{}`        |
+| `blob`       | Azure Blob CSI configuration.                                | `object` ([Appendix D2](#appendix-d2)) | `{}`        |
+| `nvme_pv`    | NVMe Local Volume Static Provisioner configuration.          | `object` ([Appendix D3](#appendix-d3)) | `{}`        |
+| `host_path`  | NVMe & temp disk host path configuration (**EXPERIMENTAL**). | `object` ([Appendix D4](#appendix-d4)) | `{}`        |
 
 ### Appendix D1
+
+Specification for the `storage.file` object.
+
+| **Variable** | **Description**                          | **Type** | **Default** |
+| :----------- | :--------------------------------------- | :------- | :---------- |
+| `enabled`    | If the Azure File CSI should be enabled. | `bool`   | `false`     |
+
+### Appendix D2
+
+Specification for the `storage.blob` object.
+
+| **Variable** | **Description**                          | **Type** | **Default** |
+| :----------- | :--------------------------------------- | :------- | :---------- |
+| `enabled`    | If the Azure Blob CSI should be enabled. | `bool`   | `false`     |
+
+### Appendix D3
+
+Specification for the `storage.nvme_pv` object.
+
+| **Variable** | **Description**                                                                       | **Type** | **Default** |
+| :----------- | :------------------------------------------------------------------------------------ | :------- | :---------- |
+| `enabled`    | If the Local Volume Static Provisioner should be enabled to mount NVMe drives as PVs. | `bool`   | `false`     |
+
+### Appendix D4
+
+Specification for the `storage.host_path` object.
+
+| **Variable** | **Description**                                               | **Type** | **Default** |
+| :----------- | :------------------------------------------------------------ | :------- | :---------- |
+| `enabled`    | If the NVMe or temp disk host path support should be enabled. | `bool`   | `false`     |
+
+### Appendix E
+
+Specification for the `core_services_config` object.
+
+| **Variable**            | **Description**                         | **Type**                                 | **Default** |
+| :---------------------- | :-------------------------------------- | :--------------------------------------- | :---------- |
+| `alertmanager`          | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   |             |
+| `cert_manager`          | Cert Manager configuration.             | `object` ([Appendix E2](#appendix-e2))   | `{}`        |
+| `coredns`               | CoreDNS configuration.                  | `object` ([Appendix E3](#appendix-e3))   | `{}`        |
+| `external_dns`          | ExternalDNS configuration.              | `object` ([Appendix E4](#appendix-e4))   | `{}`        |
+| `fluentd`               | Fluentd configuration.                  | `object` ([Appendix E5](#appendix-e5))   | `{}`        |
+| `grafana`               | Grafana configuration.                  | `object` ([Appendix E7](#appendix-e7))   | `{}`        |
+| `ingress_internal_core` | Ingress internal-core configuration.    | `object` ([Appendix E8](#appendix-e8))   |             |
+| `prometheus`            | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
+| `storage`               | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
+
+### Appendix E1
 
 Specification for the `core_services_config.alertmanager` object.
 
@@ -727,7 +786,7 @@ Specification for the `core_services_config.alertmanager` object.
 | `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)` | `[]`        |
 | `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)` | `[]`        |
 
-### Appendix D2
+### Appendix E2
 
 Specification for the `core_services_config.cert_manager` object.
 
@@ -738,7 +797,7 @@ Specification for the `core_services_config.cert_manager` object.
 | `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | `"ClusterIssuer"`       |
 | `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | `"letsencrypt-staging"` |
 
-### Appendix D3
+### Appendix E3
 
 Specification for the `core_services_config.coredns` object.
 
@@ -746,7 +805,7 @@ Specification for the `core_services_config.coredns` object.
 | :-------------- | :----------------------------------------------------------------------- | :------------ | :---------- |
 | `forward_zones` | Map of DNS zones and DNS server IP addresses to forward DNS requests to. | `map(string)` | `{}`        |
 
-### Appendix D4
+### Appendix E4
 
 Specification for the `core_services_config.external_dns` object.
 
@@ -756,7 +815,7 @@ Specification for the `core_services_config.external_dns` object.
 | `private_domain_filters` | Domains that can have DNS records created for them, these must be set up in the VPC as private hosted zones.    | `list(string)` | `[]`        |
 | `public_domain_filters`  | Domains that can have DNS records created for them, these must be set up in the account as public hosted zones. | `list(string)` | `[]`        |
 
-### Appendix D5
+### Appendix E5
 
 Specification for the `core_services_config.fluentd` object.
 
@@ -767,9 +826,9 @@ Specification for the `core_services_config.fluentd` object.
 | `additional_env`   | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
 | `debug`            | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                       | `true`      |
 | `filters`          | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
-| `route_config`     | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix D6](#appendix-d6)) | `[]`        |
+| `route_config`     | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6)) | `[]`        |
 
-### Appendix D6
+### Appendix E6
 
 Specification for the `core_services_config.fluentd.route_config` object.
 
@@ -780,7 +839,7 @@ Specification for the `core_services_config.fluentd.route_config` object.
 | `copy`       | If the matched logs should be copied to later routes. | `bool`   | `false`     |
 | `config`     | The output configuration to use for the route.        | `string` |             |
 
-### Appendix D7
+### Appendix E7
 
 Specification for the `core_services_config.grafana` object.
 
@@ -790,7 +849,7 @@ Specification for the `core_services_config.grafana` object.
 | `additional_data_sources` | Additional data sources.       | `list(object)` | `[]`        |
 | `additional_plugins`      | Additional plugins to install. | `list(string)` | `[]`        |
 
-### Appendix D8
+### Appendix E8
 
 Specification for the `core_services_config.ingress_internal_core` object.
 
@@ -802,7 +861,7 @@ Specification for the `core_services_config.ingress_internal_core` object.
 | `lb_subnet_name`   | Name of the subnet to create the load balancer in, if not set subnet where node groups reside will be auto selected. _Should not be set unless specifically required._ | `string`       |                                   |
 | `public_dns`       | If the internal ingress DNS should be public or private.                                                                                                               | `bool`         | `false`                           |
 
-### Appendix D9
+### Appendix E9
 
 Specification for the `core_services_config.prometheus` object.
 
@@ -810,17 +869,16 @@ Specification for the `core_services_config.prometheus` object.
 | :------------- | :---------------------------------- | :------------- | :---------- |
 | `remote_write` | Remote write endpoints for metrics. | `list(object)` | `[]`        |
 
-### Appendix D10
+### Appendix E10
 
-Specification for the `storage` object.
+Specification for the **DEPRECATED** `core_services_config.storage` object.
 
-| **Variable** | **Description**                                                | **Type** | **Default** |
-| :----------- | :------------------------------------------------------------- | :------- | :---------- |
-| `file`       | If support for the file CSI driver should be enabled.          | `bool`   | `false`     |
-| `blob`       | If support for the blob CSI driver should be enabled.          | `bool`   | `false`     |
-| `local`      | If support for the local static provisioner should be enabled. | `bool`   | `false`     |
+| **Variable** | **Description**                                       | **Type** | **Default** |
+| :----------- | :---------------------------------------------------- | :------- | :---------- |
+| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`     |
+| `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
 
-### Appendix E
+### Appendix F
 
 Specification for the `maintenance_window_not_allowed` object.
 

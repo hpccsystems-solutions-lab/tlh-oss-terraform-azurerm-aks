@@ -24,12 +24,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   os_sku  = local.os_skus[var.node_os]
 
   vm_size                = local.vm_size_lookup["${var.node_arch}_${var.node_type}_${var.node_type_variant}_${var.node_type_version}"][var.node_size]
-  os_disk_type           = "Managed"
-  os_disk_size_gb        = 128
   enable_host_encryption = true
   enable_node_public_ip  = false
-
-  ultra_ssd_enabled = var.ultra_ssd
+  ultra_ssd_enabled      = var.ultra_ssd
+  os_disk_type           = "Managed"
+  os_disk_size_gb        = var.temp_disk_mode == "KUBELET" ? 30 : var.os_disk_size
+  kubelet_disk_type      = var.temp_disk_mode == "KUBELET" ? "Temporary" : "OS"
 
   proximity_placement_group_id = var.proximity_placement_group_id
 
@@ -37,7 +37,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
 
   fips_enabled = var.fips
 
-  node_labels = merge(local.vm_labels[var.node_type], { "lnrs.io/lifecycle" = "ondemand", "lnrs.io/size" = var.node_size }, var.labels)
+  node_labels = merge(var.labels, local.vm_labels[var.node_type], { "lnrs.io/lifecycle" = "ondemand", "lnrs.io/size" = var.node_size })
   node_taints = [for taint in concat(local.vm_taints[var.node_type], var.taints) : "${taint.key}=${taint.value}:${local.taint_effects[taint.effect]}"]
 
   dynamic "linux_os_config" {
@@ -60,5 +60,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
     read   = format("%vm", var.timeouts.node_group_read / 60)
     update = format("%vm", var.timeouts.node_group_update / 60)
     delete = format("%vm", var.timeouts.node_group_delete / 60)
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.temp_disk_mode != "KUBELET" || contains(["gpd", "memd", "stor"], var.node_type)
+      error_message = "Only nodes with temp disks can use them for kubelet data."
+    }
   }
 }

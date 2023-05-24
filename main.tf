@@ -61,6 +61,7 @@ module "cluster" {
   bootstrap_name                       = local.bootstrap_name
   bootstrap_vm_size                    = local.bootstrap_vm_size
   control_plane_logging                = local.logging.control_plane
+  storage                              = local.storage
   maintenance_window_offset            = var.maintenance_window_offset
   maintenance_window_allowed_days      = var.maintenance_window_allowed_days
   maintenance_window_allowed_hours     = var.maintenance_window_allowed_hours
@@ -68,7 +69,6 @@ module "cluster" {
   oms_agent                            = var.experimental.oms_agent
   oms_agent_log_analytics_workspace_id = var.experimental.oms_agent_log_analytics_workspace_id
   windows_support                      = var.experimental.windows_support
-  storage                              = var.core_services_config.storage
   tags                                 = local.tags
   timeouts                             = local.timeouts
 
@@ -100,12 +100,12 @@ module "node_groups" {
   cluster_name         = var.cluster_name
   cluster_version_full = local.cluster_version_full
   cni                  = local.cni
+  fips                 = var.fips
   subnet_id            = local.subnet_id
   availability_zones   = local.availability_zones
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
   node_groups          = var.node_groups
-  fips                 = var.fips
   labels               = local.labels
   tags                 = local.tags
 
@@ -142,6 +142,9 @@ module "core_config" {
   node_resource_group_name = module.cluster.node_resource_group_name
 
   dns_resource_group_lookup = var.dns_resource_group_lookup
+
+  logging = { control_plane = { log_analytics = merge(local.logging.control_plane.log_analytics, { workspace_id = module.cluster.control_plane_log_analytics_workspace_id }), storage_account = local.logging.control_plane.storage_account } }
+  storage = local.storage
 
   core_services_config = local.core_services_config
 

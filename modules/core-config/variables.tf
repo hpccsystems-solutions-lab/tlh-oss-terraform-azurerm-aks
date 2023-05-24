@@ -87,6 +87,51 @@ variable "dns_resource_group_lookup" {
   nullable    = false
 }
 
+variable "logging" {
+  description = "Logging configuration."
+  type = object({
+    control_plane = object({
+      log_analytics = object({
+        enabled                       = bool
+        external_workspace            = bool
+        workspace_id                  = string
+        profile                       = string
+        additional_log_category_types = list(string)
+        retention_enabled             = bool
+        retention_days                = number
+      })
+      storage_account = object({
+        enabled                       = bool
+        id                            = string
+        profile                       = string
+        additional_log_category_types = list(string)
+        retention_enabled             = bool
+        retention_days                = number
+      })
+    })
+  })
+  nullable = false
+}
+
+variable "storage" {
+  description = "Storage configuration."
+  type = object({
+    file = object({
+      enabled = bool
+    })
+    blob = object({
+      enabled = bool
+    })
+    nvme_pv = object({
+      enabled = bool
+    })
+    host_path = object({
+      enabled = bool
+    })
+  })
+  nullable = false
+}
+
 variable "core_services_config" {
   description = "Core service configuration."
   type = object({
@@ -157,23 +202,14 @@ variable "core_services_config" {
       lb_subnet_name   = optional(string)
       public_dns       = optional(bool, false)
     })
-    logging = object({
-      control_plane = object({
-        log_analytics_enabled     = bool
-        log_analytics_wokspace_id = string
-      })
-    })
     oms_agent = object({
       enabled                     = bool
-      log_analytics_wokspace_id   = string
+      log_analytics_workspace_id  = string
       manage_config               = bool
       containerlog_schema_version = string
     })
     prometheus = optional(object({
       remote_write = optional(any)
-    }), {})
-    storage = optional(object({
-      local = optional(bool, false)
     }), {})
   })
   nullable = false

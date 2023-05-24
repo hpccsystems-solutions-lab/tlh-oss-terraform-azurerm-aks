@@ -190,12 +190,15 @@ variable "node_groups" {
     node_type_variant   = optional(string)
     node_type_version   = optional(string)
     node_size           = string
+    ultra_ssd           = optional(bool)
+    os_disk_size        = optional(number)
+    temp_disk_mode      = optional(string)
+    nvme_mode           = optional(string)
+    os_config           = optional(map(any))
+    placement_group_key = optional(string)
     single_group        = optional(bool)
     min_capacity        = optional(number)
     max_capacity        = number
-    os_config           = optional(map(any))
-    ultra_ssd           = optional(bool)
-    placement_group_key = optional(string)
     max_pods            = optional(number)
     max_surge           = optional(string)
     labels              = optional(map(string))
@@ -231,6 +234,26 @@ variable "logging" {
         retention_enabled             = optional(bool, false)
         retention_days                = optional(number, 30)
       }), {})
+    }), {})
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "storage" {
+  description = "Storage configuration."
+  type = object({
+    file = optional(object({
+      enabled = optional(bool, false)
+    }), {})
+    blob = optional(object({
+      enabled = optional(bool, false)
+    }), {})
+    nvme_pv = optional(object({
+      enabled = optional(bool, false)
+    }), {})
+    host_path = optional(object({
+      enabled = optional(bool, false)
     }), {})
   })
   nullable = false
@@ -311,9 +334,8 @@ variable "core_services_config" {
       remote_write = optional(any)
     }))
     storage = optional(object({
-      file  = optional(bool, false)
-      blob  = optional(bool, false)
-      local = optional(bool, false)
+      file = optional(bool, false)
+      blob = optional(bool, false)
     }), {})
   })
   nullable = false

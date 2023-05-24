@@ -16,6 +16,7 @@ module "system_node_groups" {
   cluster_id                   = var.cluster_id
   cluster_version_full         = var.cluster_version_full
   cni                          = var.cni
+  fips                         = var.fips
   subnet_id                    = var.subnet_id
   availability_zones           = each.value.availability_zones
   system                       = true
@@ -29,10 +30,12 @@ module "system_node_groups" {
   max_capacity                 = each.value.max_capacity
   os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
+  os_disk_size                 = each.value.os_disk_size
+  temp_disk_mode               = each.value.temp_disk_mode
+  nvme_mode                    = each.value.nvme_mode
   proximity_placement_group_id = each.value.proximity_placement_group_id
   max_pods                     = each.value.max_pods
   max_surge                    = each.value.max_surge
-  fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)
@@ -45,10 +48,10 @@ module "bootstrap_node_group_hack" {
   subscription_id     = var.subscription_id
   resource_group_name = var.resource_group_name
   cluster_name        = var.cluster_name
+  fips                = var.fips
   subnet_id           = var.subnet_id
   bootstrap_name      = var.bootstrap_name
   bootstrap_vm_size   = var.bootstrap_vm_size
-  fips                = var.fips
 
   depends_on = [
     module.system_node_groups
@@ -63,6 +66,7 @@ module "user_node_groups" {
   cluster_id                   = var.cluster_id
   cluster_version_full         = var.cluster_version_full
   cni                          = var.cni
+  fips                         = var.fips
   subnet_id                    = var.subnet_id
   availability_zones           = each.value.availability_zones
   system                       = false
@@ -76,10 +80,12 @@ module "user_node_groups" {
   max_capacity                 = each.value.max_capacity
   os_config                    = each.value.os_config
   ultra_ssd                    = each.value.ultra_ssd
+  os_disk_size                 = each.value.os_disk_size
+  temp_disk_mode               = each.value.temp_disk_mode
+  nvme_mode                    = each.value.nvme_mode
   proximity_placement_group_id = each.value.proximity_placement_group_id
   max_pods                     = each.value.max_pods
   max_surge                    = each.value.max_surge
-  fips                         = var.fips
   labels                       = merge(var.labels, each.value.labels)
   taints                       = each.value.taints
   tags                         = merge(var.tags, each.value.tags)

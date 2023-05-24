@@ -236,10 +236,10 @@ module "kube_prometheus_stack" {
   grafana_admin_password                   = var.core_services_config.grafana.admin_password
   grafana_additional_plugins               = var.core_services_config.grafana.additional_plugins
   grafana_additional_data_sources          = var.core_services_config.grafana.additional_data_sources
-  control_plane_log_analytics_enabled      = var.core_services_config.logging.control_plane.log_analytics_enabled
-  control_plane_log_analytics_workspace_id = var.core_services_config.logging.control_plane.log_analytics_wokspace_id
+  control_plane_log_analytics_enabled      = var.logging.control_plane.log_analytics.enabled
+  control_plane_log_analytics_workspace_id = var.logging.control_plane.log_analytics.workspace_id
   oms_agent_enabled                        = var.core_services_config.oms_agent.enabled
-  oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_wokspace_id
+  oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_workspace_id
   ingress_class_name                       = module.ingress_internal_core.ingress_class_name
   ingress_domain                           = local.ingress_internal_core.domain
   ingress_subdomain_suffix                 = local.ingress_internal_core.subdomain_suffix
@@ -288,9 +288,23 @@ module "loki" {
 }
 
 module "local_static_provisioner" {
-  count = var.core_services_config.storage.local ? 1 : 0
-
   source = "./modules/local-static-provisioner"
+  count  = var.storage.nvme_pv.enabled ? 1 : 0
+
+  namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
+  labels    = var.labels
+
+  timeouts = var.timeouts
+
+  depends_on = [
+    module.crds,
+    module.pre_upgrade
+  ]
+}
+
+module "node_config" {
+  source = "./modules/node-config"
+  count  = var.storage.host_path.enabled ? 1 : 0
 
   namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels    = var.labels

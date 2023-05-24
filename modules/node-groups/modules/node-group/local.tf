@@ -225,11 +225,11 @@ locals {
 
   vm_labels = {
     "gp"   = {}
-    "gpd"  = { "lnrs.io/local-storage" = "true" }
+    "gpd"  = { "lnrs.io/local-storage" = "true", "node.lnrs.io/temp-disk" = "true", "node.lnrs.io/temp-disk-mode" = var.temp_disk_mode }
     "mem"  = {}
-    "memd" = { "lnrs.io/local-storage" = "true" }
+    "memd" = { "lnrs.io/local-storage" = "true", "node.lnrs.io/temp-disk" = "true", "node.lnrs.io/temp-disk-mode" = var.temp_disk_mode }
     "cpu"  = {}
-    "stor" = { "lnrs.io/local-storage" = "true" }
+    "stor" = { "lnrs.io/local-storage" = "true", "node.lnrs.io/temp-disk" = "true", "node.lnrs.io/temp-disk-mode" = var.temp_disk_mode, "node.lnrs.io/nvme" = "true", "node.lnrs.io/nvme-mode" = var.nvme_mode }
   }
 
   vm_taints = {

@@ -125,8 +125,8 @@ resource "azurerm_kubernetes_cluster" "default" {
     disk_driver_enabled = true
     disk_driver_version = "v1" # TODO: explore experimental support of v2 driver version
 
-    file_driver_enabled         = var.storage.file
-    blob_driver_enabled         = var.storage.blob
+    file_driver_enabled         = var.storage.file.enabled
+    blob_driver_enabled         = var.storage.blob.enabled
     snapshot_controller_enabled = true # Default is true - We may explore allowing operators to disable this feature in future updates.
   }
 

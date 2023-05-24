@@ -24,6 +24,9 @@ locals {
       max_capacity        = local.az_count * 4
       os_config           = { sysctl = {} }
       ultra_ssd           = false
+      os_disk_size        = 128
+      temp_disk_mode      = "NONE"
+      nvme_mode           = "NONE"
       placement_group_key = null
       max_pods            = -1
       max_surge           = "10%"

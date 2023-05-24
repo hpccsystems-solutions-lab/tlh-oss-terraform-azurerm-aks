@@ -22,6 +22,12 @@ variable "cni" {
   nullable    = false
 }
 
+variable "fips" {
+  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
+  type        = bool
+  nullable    = false
+}
+
 variable "subnet_id" {
   description = "ID of the subnet to use for the node group."
   type        = string
@@ -94,6 +100,24 @@ variable "ultra_ssd" {
   nullable    = false
 }
 
+variable "os_disk_size" {
+  description = "Size of the OS disk to create, this will be ignored if temp_disk_mode is KUBELET."
+  type        = number
+  nullable    = false
+}
+
+variable "temp_disk_mode" {
+  description = "Temp disk mode, this is only valid for node types with a temp disk."
+  type        = string
+  nullable    = false
+}
+
+variable "nvme_mode" {
+  description = "The NVMe mode for node group, this is only valid for stor node types."
+  type        = string
+  nullable    = false
+}
+
 variable "os_config" {
   description = "Operating system configuration."
   type = object({
@@ -117,12 +141,6 @@ variable "max_pods" {
 variable "max_surge" {
   description = "Maximum number or percentage of nodes which will be added to the Node Pool size during an upgrade."
   type        = string
-  nullable    = false
-}
-
-variable "fips" {
-  description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
-  type        = bool
   nullable    = false
 }
 

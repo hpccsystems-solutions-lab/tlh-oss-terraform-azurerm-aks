@@ -19,6 +19,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The `paid` option for `sku_tier` is deprecated and will be removed in the `v1.14.0` release.
 - The `recommended` & `limited` control plane logging profiles are deprecated and will be removed in the `v1.15.0` release.
 - The `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables are deprecated and will be removed in the `v1.15.0` release.
+- The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
+- The `lnrs.io/local-storage` node label is deprecated, this will be removed in the `v1.16.0` release.
 
 ---
 
@@ -38,7 +40,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
-- Added `local` input to `core_services_config.storage` object. Allows opt-in for the local-static-provisioner feature. This feature provides two storage classes, one for ssd and one for nvme. ([#1044](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1044)) [@appkins](https://github.com/appkins)
 - Updated the minimum Terraform version to [v1.4.6](https://github.com/hashicorp/terraform/releases/tag/v1.4.6) so we can use the new `terraform_data` resource. [@stevehipwell](https://github.com/stevehipwell)
 - Removed dependency on the `tiwood/static` Terraform provider. [@stevehipwell](https://github.com/stevehipwell)
 - Added support to block attempts to change immutable input variables. [@stevehipwell](https://github.com/stevehipwell)
@@ -50,6 +51,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _AAD Pod Identity_ chart to `v4.1.17` (contains _AAD Pod Identity_ [v1.8.16](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.16)). ([#1093](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1093)) [@peterabarr](https://github.com/peterabarr)
 - Updated cachingmode from ReadOnly to None in azure-disk-premium-ssd-v2-retain, azure-disk-premium-ssd-v2-delete, and azure-disk-premium-ssd-v2-ephemeral storageclasses. ([#1097](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1097)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit_ chart to [v0.29.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.29.0) (contains _Fluent Bit_ [v2.1.3](https://github.com/fluent/fluent-bit/releases/tag/v2.1.3)). ([#1098](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1098)) [@peterabarr](https://github.com/peterabarr)
+- Updated the Local Volume Static Provisioner implementation to use the official Helm chart, be optional and to only support NVMe drives. ([#1044](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1044)) [@appkins](https://github.com/appkins)
+- Fixed the Local Volume Static Provisioner implementation to correctly create StorageClasses. ([#1044](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1044)) [@appkins](https://github.com/appkins)
+- Added support to specify the OS disk size for a node group by setting `os_disk_size`. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added a new `storage` input variable to replace `core_services_config.storage` to configure which CSI drivers and storage options are enabled for the cluster. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added new `node.lnrs.io/temp-disk` & `node.lnrs.io/temp-disk-mode` labels to nodes with a temp disk (`gpd`, `mmd` & `stor`). ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added new `node.lnrs.io/nvme` & `node.lnrs.io/nvme-mode` labels to `stor` nodes. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for enabling creating host path local volumes by setting `storage.host_path` to true; this requires node groups to opt in to the behaviour. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for configuring the use of the node temp disk where present (`gpd`, `mmd` & `stor` node types) via the `temp_disk_mode` node group variable; this could be either using it as the kubelet data store or as a host path volume. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support for configuring the use of NVMe disks where present (`stor` type nodes) via the `nvme_mode` node group variable; this could be either using it as PVs or as a host path volume. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `core_services_config.storage`. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated node label `lnrs.io/local-storage`. ([#1084](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1084)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.12.0] - 2023-05-10
 

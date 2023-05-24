@@ -82,17 +82,12 @@ locals {
     }
   }
 
-  core_services_config = merge(var.core_services_config, {
-    logging = {
-      control_plane = {
-        log_analytics_enabled     = !var.experimental.control_plane_logging_log_analytics_disabled
-        log_analytics_wokspace_id = var.experimental.control_plane_logging_log_analytics_disabled ? null : module.cluster.control_plane_log_analytics_workspace_id
-      }
-    }
+  storage = merge(var.storage, var.storage.file.enabled ? {} : { file = { enabled = var.core_services_config.storage.file } }, var.storage.blob.enabled ? {} : { blob = { enabled = var.core_services_config.storage.file } })
 
+  core_services_config = merge(var.core_services_config, {
     oms_agent = {
       enabled                     = var.experimental.oms_agent
-      log_analytics_wokspace_id   = var.experimental.oms_agent ? var.experimental.oms_agent_log_analytics_workspace_id : null
+      log_analytics_workspace_id  = var.experimental.oms_agent ? var.experimental.oms_agent_log_analytics_workspace_id : null
       manage_config               = var.experimental.oms_agent_create_configmap
       containerlog_schema_version = var.experimental.oms_agent_containerlog_schema_version
     }
