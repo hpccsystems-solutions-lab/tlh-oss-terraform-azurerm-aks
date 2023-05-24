@@ -217,29 +217,29 @@ This module is expected to be referenced by it's major version (e.g. `v1`) and r
 
 ### Core Service Configuration
 
-The core service configuration (`core_services_config`) allows the customisation of the core cluster services. All core services run on a dedicated system node group reserved only for these services, although DaemonSets will be scheduled on all cluster nodes.
+The core service configuration, input variable [core_services_config](#appendix-e), allows the customisation of the core cluster services. All core services run on a dedicated system node group reserved only for these services, although `DaemonSets` will be scheduled on all cluster nodes.
 
-### Auto-scaling
+#### Node Auto-scaling
 
-Cluster node groups will be auto scaled by using the [AKS Cluster Autoscaler](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler).
+By default cluster nodes will be auto-scaled by the [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/README.md) based on the node group configuration (resources, labels and taints).
 
-### Logging
+#### Logging
 
 AKS cluster logging is currently split up into two parts; the control plane logs are handled as part of the AKS service and are sent to Log Analytics, while the node and pod logs are handled by a core service reading the logs directly from the node and then sending them to a cluster aggregation service which can export the logs. The log export interface is specifically linked to the aggregator implementation, however there are plans to abstract this by supporting generic OpenTelemetry in addition to specific targets configured through the module. Additionally there are plans to enhance the system by supporting the aggregation of control plane logs into the cluster, allowing all logs to be managed as a unified set.
 
-#### Control Plane Logs
+##### Control Plane Logs
 
-An AKS cluster generates a number of different [control plane logs](https://learn.microsoft.com/en-us/azure/aks/monitor-aks-reference#resource-logs) which need to be collected. The module supports either sending these logs to a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) and/or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview). Both destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
+Control plane logs are exported to one (or both) of a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview), these logs are retained for `30` days by default. Both of these destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
 
-The recommended way to configure control plane logs is via the `logging.control_plane` input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as retention. Although the module can create a Log Analytics Workspace for control plane logs is is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
+The control plane logs can be configured via the [logging.control_plane](#appendix-c1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as retention. Although the module can create a Log Analytics Workspace for control plane logs is is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
 
-The current, but **DEPRECATED**, behaviour for the cluster control plane logs is that the `recommended` profile is used to send logs to an Azure log analytics workspace created by this module with a 30 day retention.
+The current, but **DEPRECATED**, behaviour for the cluster control plane logs is that the `recommended` profile is used to send logs to an Azure log analytics workspace created by this module.
 
-##### Control Plane Logging Profiles
+###### Control Plane Logging Profiles
 
-The following control plane log profiles with their default log category types are supported (note that not all log category types are available in all Azure locations). You can augment a profile by adding additional log category types to the defaults via the `additional_log_category_types` input.
+An AKS cluster generates a number of different [control plane logs](https://learn.microsoft.com/en-us/azure/aks/monitor-aks-reference#resource-logs) which need to be collected. To configure which log category types are collected you should specify a log profile, which can optionally be augmented with additional log category types.
 
-You are strongly advised to use the `all` profile wherever possible and the `empty` profile is unsupported for any workload cluster and is only made available for testing purposes.
+The following control plane log profiles with their default log category types are supported (note that not all log category types are available in all Azure locations). You are strongly advised to use the `all` profile wherever possible and the `empty` profile is unsupported for any workload cluster and is only made available for testing purposes.
 
 | **Profile**                    | **Log Category Types**                                                                                                                                                                                                              |
 | :----------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -250,43 +250,63 @@ You are strongly advised to use the `all` profile wherever possible and the `emp
 | `recommended` (**DEPRECATED**) | `["kube-apiserver", "kube-audit-admin", "kube-controller-manager", "kube-scheduler", "cluster-autoscaler", "cloud-controller-manager", "guard", "csi-azuredisk-controller", "csi-azurefile-controller", "csi-snapshot-controller"]` |
 | `limited` (**DEPRECATED**)     | `["kube-apiserver", "kube-controller-manager", "cloud-controller-manager", "guard"]`                                                                                                                                                |
 
-#### Node & Pod Logs
+##### Node & Pod Logs
 
-Cluster node & pod logs are collected on the nodes using _Fluent Bit_ and are then aggregated into the stateful _Fluentd_ service running in-cluster. These logs can be manipulated and shipped anywhere based on custom _Fluentd_ configuration. If your application creates JSON log lines the fields of this object are extracted, otherwise there is a `log` field with the application log data as a string; for JSON logging we suggest using `msg` for the log text field.
+Both node (systemd) and pod/container logs are collected from the node by the _Fluent Bit_ collector `DaemonSet`, _Fluent Bit_ adds additional metadata to the collected logs before sending them off the ephemeral node to the persistent aggregation service. The persistent aggregation service is currently provided by _Fluentd_ running as a `StatefulSet` with a single pod in each cluster availability zone, _Fluentd_ makes sure that the logs can't be lost once they've been received by backing them on persistent storage. _Fluentd_ is then responsible for sending the logs to one or more destination. This architecture provides high throughput of logs, over 15k logs a second, and resilience to both node and network outages.
 
-All logs collected from running pods have a `kube` tag and additional fields extracted from the Kubernetes metadata, please note that using [Kubernetes common labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/) makes the log fields more meaningful.
+Logging outputs can be configured directly against _Fluentd_ via the module input variable `core_services_config.fluentd` (see [Appendix E5](#appendix-e5)); it is also possible to modify the logs as part of the route configuration but modifying logs in any way more advanced than adding fields for cluster context can significantly impact the _Fluentd_ throughput and so is strongly advised against.
 
-Pods annotated with the `fluentbit.io/exclude: "true"` annotation wont have their logs collected as part of the cluster logging system, this shouldn't be used unless you have an alternative way of ensuring that you're in compliance.
+In cluster _Loki_ support is currently experimental and can be enabled by setting the `experimental.loki` to `true`; this enables powerful log querying through the in cluster _Grafana_.
 
-Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation wont have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate cluster services with _Loki_.
+###### Workload Logging
 
-As well as custom _Fluentd_ configuration it is also possible to provide a custom _Fluentd_ image if you need additional capabilities as long as the image has the required default plugins.
+The workload logging interface is to write logs to stdout/stderr, these logs will be collected and aggregated centrally in the cluster from where they can be exported to one or more destination. If your application creates JSON log lines the fields of this object are extracted, otherwise there is a `log` field with the application log data as a string; for JSON logging we suggest using `msg` for the log text field.
 
-Loki support is currently experimental and can be enabled by setting the `experimental.loki` to `true`. This currently defaults to `true` while testing moves forward for operators opting into Loki. Loki will default to an enabled state in the future.
+All pod logs have a `kube` tag and additional fields extracted from the Kubernetes metadata, please note that using [Kubernetes common labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/) makes the log fields more meaningful.
 
-### Metrics
+Pods annotated with the `fluentbit.io/exclude: "true"` annotation won't have their logs collected as part of the cluster logging system, this shouldn't be used unless you have an alternative way of ensuring that you're in compliance.
 
-Cluster metrics are collected by Prometheus and visualised in Grafana. These metrics can be remotely written out to an external system.
+Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation won't have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate workloads with _Loki_.
 
-### Alerts
+#### Metrics
 
-Cluster alerts default to being ignored but can be fully customised with receivers and routes.
+Cluster metrics are collected by _Prometheus_ which is managed by a _Prometheus Operator_ and made HA by running _Thanos_ as a sidecar and as a cluster service. Metrics can be exported from the cluster via the _Prometheus_ remote write protocol. It is planned to also support exporting metrics using the _OpenTelemetry_ interface.
 
-### Certificates
+##### Workload Metrics
 
-All Cert Manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request. Issuers can be of the `Issuer` or `Cluster Issuer` kind. Any `Issuer` or can be referenced on the `Ingress` resources by using the `cert-manager.io/issuer` or `cert-manager.io/cluster-issuer` annotation. If this is not specified, the default `ClusterIssuer` will be used to generate certificates.
+The workload metrics interface is to expose metrics from the workload pod in _Prometheus_ format and then create either a [ServiceMonitor](https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1.ServiceMonitor) (if the workload has a service) or a [PodMonitor](https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1.PodMonitor) to configure how the metrics should be scraped by _Prometheus_. The `ServiceMonitor` and `PodMonitor` resources should be labelled with the `lnrs.io/monitoring-platform: "true"` label to ensure they are evaluated.
 
-#### DNS
+#### Metrics Alerts
 
-DNS is only generated when using an `Ingress` resource with the `lnrs.io/zone-type` annotation set on it. The value will depend on whether External DNS is running as an internal or external service. For an internal service the annotation should be set to `private`, and for an external service the annotation should be set to `public`. For an External DNS service running as both an internal and external service, the annotation should be set to `public-private`.
+Cluster alerts are powered by _AlertManager_ and are ignored by default, to configure the alerts you can use the module input variable `core_services_config.alertmanager` (see [Appendix E1](#appendix-e1)) to define [routes](https://prometheus.io/docs/alerting/latest/configuration/#route) and [receivers](https://prometheus.io/docs/alerting/latest/configuration/#receiver).
 
-Additional Kubernetes resource types to be observed for new DNS entries can be supplied through `core_services_config.external_dns.additional_sources`. By default, this is set to `service` and `ingress`.
+Custom [alert rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) can be configured by adding additional [PrometheusRule](https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1.PrometheusRule) resources to the cluster with the `lnrs.io/monitoring-platform: "true"` and either the `lnrs.io/prometheus-rule: "true"` or `lnrs.io/thanos-rule: "true"` (only use the _Thanos_ rule label if you need to process more than 6h of metrics) labels set.
 
-### Storage
+#### Traces
+
+Traces aren't currently natively supported but it is planned to support at least the collection using the _OpenTelemetry_ interface.
+
+#### Visualisation
+
+The module provides in-cluster _Grafana_ as a visualisation service for metrics and logs; this can be configured via the `core_services_config.grafana` input variable (see [Appendix E7](#appendix-e7)). You can also add additional [data sources](https://grafana.com/docs/grafana/latest/datasources/) via a `ConfigMap` with the label `grafana_datasource: "1"` and additional [dashboards](https://grafana.com/docs/grafana/latest/dashboards/) via a `ConfigMap` with the label `grafana_dashboard: "1"`.
+
+#### Certificates
+
+Clusters have [Cert Manager](https://cert-manager.io/) installed to support generating certificates from [Certificate](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate) resources referencing either a [ClusterIssuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer) or an [Issuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer); this can be configured via the `core_services_config.cert_manager` input variable (see [Appendix E2](#appendix-e2)). By default there are the following `ClusterIssuers` provided, `letsencrypt`, `letsencrypt-staging` & `zerossl`; all of which use [ACME DNS01](https://cert-manager.io/docs/configuration/acme/dns01/) which is configured via the `core_services_config.cert_manager.acme_dns_zones` input variable. It is possible to add additional `ClusterIssuer` or `Issuer` resources either via the `core_services_config.cert_manager.additional_issuers` or directly through the _Kubernetes_ API.
+
+If an `Ingress` resource is annotated with the `cert-manager.io/cluster-issuer` or `cert-manager.io/issuer` and contains TLS configuration for the hosts _Cert Manager_ can automatically generate a certificate.
+
+#### External DNS
+
+Clusters have [External DNS](https://github.com/kubernetes-sigs/external-dns/blob/master/README.md) installed to manage configuring Azure DNS external to the cluster; this can be configured via the `core_services_config.external_dns` input variable (see [Appendix E4](#appendix-e4)). There will always be an instance managing private Route53 records but if you've configured public DNS zones there will also be a public instance running to manage these. To manage resources for private DNS the `lnrs.io/zone-type: private` annotation should be set, for public DNS the `lnrs.io/zone-type: public` annotation should be set and for split horizon (public & private) DNS the `lnrs.io/zone-type: public-private` annotation should be set.
+
+ By default DNS records are only generated for `Ingress` resources with the `lnrs.io/zone-type` annotation set but additional _Kubernetes_ resource types can be supported by adding them to the `core_services_config.external_dns.additional_sources` input variable.
+
+#### Storage
 
 The module includes support for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) (always on), [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) (off by default), [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) (off by default) and [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) (off by default). There is also support creating a host path volume on the node from local disks (NVMe or the temp disk). The module storage configuration can be customised using the the [storage](#appendix-d) module input variable.
 
-#### Azure Disks CSI Driver
+##### Azure Disks CSI Driver
 
 The following `StorageClass` resources are created for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) by default to support common [Azure disk types](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-types) with default characteristics. When using a default `StorageClass` you are recommended to use the Premium SSD v2 classes where possible due to the best price-performance characteristics. If you need support for specific characteristics (such as higher IOPS or throughput) you should create a custom `StorageClass`.
 
@@ -300,36 +320,36 @@ The following `StorageClass` resources are created for the [Azure Disks CSI driv
 - `azure-disk-premium-ssd-ephemeral`
 - `azure-disk-premium-ssd-v2-ephemeral`
 
-#### Azure Files CSI Driver
+##### Azure Files CSI Driver
 
 If you wish to use the [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) you will need to enable it by setting `storage.file` to `true` and add one or more custom `StorageClass` resource.
 
-#### Azure Blob CSI Driver
+##### Azure Blob CSI Driver
 
 If you wish to use the [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) you will need to enable it by setting `storage.blob` to `true` and add one or more custom `StorageClass` resource.
 
-#### Local Volume Static Provisioner
+##### Local Volume Static Provisioner
 
 If you wish to use the [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) you will need to enable it by setting `storage.nvme_pv` to `true` and provision node groups with `nvme_mode` set to `PV`.
 
 The current behaviour is to mount each NVMe drive on the node as a separate `PersistentVolume` but is should be possible to combine all of the drives into a single RAID-0 volume and either expose it as a single `PersistentVolume` or partition to support more `PersistentVolume` per node than there are NVMe drives.
 
-#### Host Path Volume
+##### Host Path Volume
 
 If you wish to support creating a host path volume on nodes with local disks you will need to enable it by setting `storage.host_path` to `true` and provision node groups with either `temp_disk_mode` or `nvme_mode` set to `HOST_PATH`. This will create a host volume at `/mnt/scratch` backed by either the NVMe drives (RAID-0 if there are moe than one) or the temp disk. If a node has both NVMe drives and a temp disk and both are set to host path only the NVMe drives will be used.
 
-### Ingress
+#### Ingress
 
 All traffic being routed into a cluster should be configured using an `Ingress` resources backed by an ingress controller and should **NOT** be configured directly as a `Service` resource of `LoadBalancer` type (this is what the ingress controllers do behind the scenes). There are a number of different ingress controller supported by _Kubernetes_ but it is strongly recommended to use an ingress controller backed by an official Terraform module to install. All ingress traffic should enter the cluster onto nodes specifically provisioned for ingress without any other workload on them.
 
 Out of the box the cluster supports automatically generating certificates with the _Cert Manager_ default issuer, this can be overridden by the following `Ingress` annotations `cert-manager.io/cluster-issuer` or `cert-manager.io/issuer`. DNS records will be created by _External DNS_ from `Ingress` resources when the `lnrs.io/zone-type` is set, see the [DNS](#dns-1) config for how this works.
 
-#### Ingress Controllers
+##### Ingress Controllers
 
 - The following [official Terraform modules](https://github.com/search?q=topic%3Arsg-terraform-module+org%3ALexisNexis-RBA&type=Repositories) for ingress controllers are supported by the core engineering team and have been tested on AKS. These controller require you to have [ingress nodes](#ingress-nodes) registered in your cluster to work correctly.
 - [K8s Ingress NGINX Terraform Module](https://github.com/LexisNexis-RBA/rsg-terraform-kubernetes-ingress-nginx)
 
-#### Ingress Internal Core
+##### Ingress Internal Core
 
 > **Warning**
 > With the release of Kubernetes `v1.25`, the behavior of ingress communication has changed compared to `v1.24`. If you are using pod-to-ingress communication when updating from Kubernetes `v1.24` to `v1.25`, you will encounter an SSL error when connecting cluster-hosted applications to the ingress due to a bug in how iptables rules were applied in the previous version.
@@ -350,7 +370,7 @@ By default this ingress doesn't support pod-to-ingress network traffic but you c
 
 This is the only ingress controller in the cluster which doesn't require ingress nodes as it's required by all clusters and is not expected to carry a significant volume of traffic. If you do not configure ingress nodes this ingress controller will run on the system nodes.
 
-#### Ingress Nodes
+##### Ingress Nodes
 
 Ingress nodes mush have the `lnrs.io/tier: ingress` label and the `ingress=true:NoSchedule` taint to enable the ingress controller(s) to be scheduled and to isolate ingress traffic from other pods. You can also add additional labels and taints to keep specific ingress traffic isolated to it's own nodes. As ingress traffic is stateless a single node group can be used to span multiple zones by setting `single_group = true`.
 
@@ -383,7 +403,7 @@ locals {
 }
 ```
 
-### Calico and Network Policy
+#### Calico and Network Policy
 
 The module installs the Calico network policy engine on a Kubernetes cluster. Calico is a widely used networking solution for Kubernetes that allows users to define and enforce network policies for their pods. However, at this time this module does not expose Calico's functionality to operators. Instead, consumers can use native Kubernetes network policies to manage networking within their clusters.
 
