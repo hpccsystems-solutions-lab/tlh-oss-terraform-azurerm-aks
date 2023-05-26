@@ -15,7 +15,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `azure_env` variable is deprecated in favour of inferring the value from `location`, this will be removed in the `v1.14.0` release.
 - The `recommended` & `limited` control plane logging profiles are deprecated and will be removed in the `v1.15.0` release.
 - The `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables are deprecated and will be removed in the `v1.15.0` release.
 - The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
@@ -40,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Removed the `paid` option for the `sku_tier` variable as it had been deprecated. ([#1115](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1115)) [@peterabarr](https://github.com/peterabarr)
+- Removed the `azure_env` variable as it had been deprecated in favour of inferring the value from `location`. ([#1116](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1116)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.13.0] - 2023-05-24
 

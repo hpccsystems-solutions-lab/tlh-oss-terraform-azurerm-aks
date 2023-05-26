@@ -119,5 +119,5 @@ locals {
   }
 
   cni       = var.experimental.windows_support ? "azure" : "kubenet"
-  azure_env = startswith(var.location, "usgov") ? "usgovernment" : var.azure_env
+  azure_env = startswith(var.location, "usgov") ? "usgovernment" : "public"
 }

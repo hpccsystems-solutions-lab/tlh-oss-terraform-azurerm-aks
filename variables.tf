@@ -1,15 +1,3 @@
-variable "azure_env" {
-  description = "DEPRECATED - Azure cloud environment type, \"public\" & \"usgovernment\" are supported."
-  type        = string
-  nullable    = false
-  default     = "public"
-
-  validation {
-    condition     = contains(["public", "usgovernment"], var.azure_env)
-    error_message = "Available environments are \"public\" or \"usgovernment\"."
-  }
-}
-
 variable "location" {
   description = "Azure location to target."
   type        = string
