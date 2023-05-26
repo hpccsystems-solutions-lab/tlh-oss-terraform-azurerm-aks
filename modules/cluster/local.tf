@@ -15,7 +15,6 @@ data "azurerm_monitor_diagnostic_categories" "default" {
 locals {
   sku_tier_lookup = {
     free     = "Free"
-    paid     = "Standard"
     standard = "Standard"
   }
 

@@ -35,7 +35,7 @@ variable "cni" {
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\", \"standard\" & \"paid\" (deprecated) are supported."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"standard\" are supported."
   type        = string
   nullable    = false
 }

@@ -50,14 +50,14 @@ variable "cluster_version" {
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\", \"standard\" & \"paid\" (DEPRECATED) are supported. For production clusters or clusters with more than 10 nodes this should be set to \"standard\"."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"standard\" are supported. For production clusters or clusters with more than 10 nodes this should be set to \"standard\"."
   type        = string
   nullable    = false
   default     = "free"
 
   validation {
-    condition     = contains(["free", "standard", "paid"], var.sku_tier)
-    error_message = "Available SKU tiers are \"free\", \"standard\" or \"paid\"."
+    condition     = contains(["free", "standard"], var.sku_tier)
+    error_message = "Available SKU tiers are \"free\" or \"standard\"."
   }
 }
 
