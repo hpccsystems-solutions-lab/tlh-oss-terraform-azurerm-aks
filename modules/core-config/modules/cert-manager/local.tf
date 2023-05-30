@@ -1,5 +1,5 @@
 locals {
-  chart_version = "1.11.2"
+  chart_version = "1.12.1"
 
   use_aad_workload_identity = false
 
@@ -21,6 +21,10 @@ locals {
       annotations = local.use_aad_workload_identity ? {
         "azure.workload.identity/client-id" = module.identity.id
       } : {}
+    }
+
+    extraArgs = {
+      "--logging-format" = "json"
     }
 
     podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
