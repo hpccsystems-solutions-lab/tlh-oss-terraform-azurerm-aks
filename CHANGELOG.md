@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Removed the `paid` option for the `sku_tier` variable as it had been deprecated. ([#1115](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1115)) [@peterabarr](https://github.com/peterabarr)
 - Removed the `azure_env` variable as it had been deprecated in favour of inferring the value from `location`. ([#1116](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1116)) [@peterabarr](https://github.com/peterabarr)
+- Update support of Kubernetes v1.26 to GA. ([#1121](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1121)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit_ chart to [v0.30.2](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.30.2) (contains _Fluent Bit_ [v2.1.4](https://github.com/fluent/fluent-bit/releases/tag/v2.1.4)). ([#1120](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1120)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v46.4.2](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-46.4.2) and updated CRDs. ([#1120](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1120)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [v1.12.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.1). ([#1120](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1120)) [@hadeeds](https://github.com/hadeeds)

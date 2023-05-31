@@ -27,7 +27,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions \"1.25\", \"1.24\" or \"1.23\" (DEPRECATED) are supported."
+  description = "Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions \"1.26\", \"1.25\" or \"1.24\" are supported."
   type        = string
   nullable    = false
 
