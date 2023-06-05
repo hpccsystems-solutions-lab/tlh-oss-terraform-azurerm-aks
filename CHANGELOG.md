@@ -32,9 +32,18 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.14.0] - UNRELEASED
+## [v1.14.0] - 2023-06-05
 
 ### Highlights
+
+#### Kubernetes v1.26 is now Generally Available
+
+Great news! The _AKS_ module now supports the latest version of Kubernetes `v1.26`, which has just been released as GA. This update brings a range of new features and improvements to the Kubernetes platform, including enhanced security capabilities, improved scalability and stability, and better support for modern application architectures. By upgrading to Kubernetes `v1.26`, you can take advantage of these benefits.
+
+#### Removals
+
+The AKS module has the `paid` option for the `sku_tier` variable removed as it has been deprecated. If you are using this old variable and are upgrading to `v1.14.0` please change your input variable. 
+We have also removed the `azure_env` variable as it had been deprecated in favour of inferring the value from `location`.
 
 ### All Changes
 
@@ -124,6 +133,9 @@ To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azu
 - Added experimental Loki support. This can be enabled by setting the `experimental.loki` to `true`. Loki will default to an enabled state in the future. ([#1080](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1080)) [@appkins](https://github.com/appkins)
 
 ## [v1.11.0] - 2023-04-26
+
+> **Warning**
+> As of 2023-06-05 module version `v1.11.0` is no longer supported and you should upgrade to `v1.12.0` or higher.
 
 ### Highlights
 
