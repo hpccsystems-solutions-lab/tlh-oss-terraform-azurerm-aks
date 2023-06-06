@@ -8,10 +8,10 @@ resource "kubectl_manifest" "resource_files" {
 }
 
 resource "helm_release" "default" {
-  name      = "fluentd"
+  name      = local.name
   namespace = var.namespace
 
-  repository = "https://stevehipwell.github.io/helm-charts/"
+  repository = "oci://ghcr.io/stevehipwell/helm-charts"
   chart      = "fluentd-aggregator"
   version    = local.chart_version
   skip_crds  = true

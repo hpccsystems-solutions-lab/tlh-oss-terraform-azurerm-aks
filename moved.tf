@@ -17,3 +17,8 @@ moved {
   from = module.core_config.module.external_dns.kubectl_manifest.crds
   to   = module.core_config.module.crds.module.crds["external-dns"].kubectl_manifest.crds
 }
+
+moved {
+  from = module.core_config.module.fluentd
+  to   = module.core_config.module.fluentd[0]
+}

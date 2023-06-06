@@ -13,13 +13,13 @@ locals {
     "kube-system"
   ]
 
-  namespaces = [
+  namespaces = concat([
     "cert-manager",
     "dns",
     "logging",
     "ingress-core-internal",
     "monitoring"
-  ]
+  ], var.experimental.fluent_bit_aggregator ? ["observability"] : [])
 
   namespace_pod_security_labels = {
     "pod-security.kubernetes.io/audit" = "baseline"

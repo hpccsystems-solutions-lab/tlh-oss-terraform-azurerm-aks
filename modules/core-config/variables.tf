@@ -238,11 +238,19 @@ variable "timeouts" {
 variable "experimental" {
   description = "Provide experimental feature flag configuration."
   type = object({
-    aad_pod_identity_finalizer_wait = string
-    fluent_bit_use_memory_buffer    = bool
-    fluentd_memory_override         = string
-    prometheus_memory_override      = string
-    loki                            = bool
-    systemd_logs_loki               = bool
+    aad_pod_identity_finalizer_wait             = string
+    fluent_bit_use_memory_buffer                = bool
+    fluentd_memory_override                     = string
+    prometheus_memory_override                  = string
+    loki                                        = bool
+    systemd_logs_loki                           = bool
+    fluent_bit_aggregator                       = bool
+    fluent_bit_aggregator_cpu_requests_override = string
+    fluent_bit_aggregator_cpu_limits_override   = string
+    fluent_bit_aggregator_memory_override       = string
+    fluent_bit_aggregator_replicas_per_zone     = number
+    fluent_bit_aggregator_raw_filters           = string
+    fluent_bit_aggregator_raw_outputs           = string
+    fluent_bit_aggregator_lua_scripts           = map(string)
   })
 }

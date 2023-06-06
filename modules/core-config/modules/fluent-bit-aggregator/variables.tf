@@ -45,72 +45,46 @@ variable "zones" {
   nullable    = false
 }
 
-variable "image_repository" {
-  description = "Custom image repository to use for the Fluentd image, image_tag must also be set."
+variable "cpu_requests_override" {
+  description = "CPU requests override."
   type        = string
   nullable    = true
 }
 
-variable "image_tag" {
-  description = "Custom image tag to use for the Fluentd image, image_repository must also be set."
+variable "cpu_limits_override" {
+  description = "CPU limits override in millicpus."
   type        = string
   nullable    = true
 }
 
-variable "additional_env" {
-  description = "Additional environment variables."
-  type        = map(string)
-  nullable    = false
-  default     = {}
-}
-
-variable "debug" {
-  description = "If true all logs will be sent to stdout."
-  type        = bool
-  nullable    = false
-  default     = true
-}
-
-variable "filters" {
-  description = "Global filter configuration."
+variable "memory_override" {
+  description = "Memory override."
   type        = string
   nullable    = true
 }
 
-variable "route_config" {
-  description = "list of route configuration."
-  type = list(object({
-    match  = string
-    label  = string
-    copy   = optional(bool, false)
-    config = string
-  }))
-  nullable = false
-  default  = []
-}
-
-variable "loki" {
-  description = "If true Loki is enabled."
-  type        = bool
-  nullable    = false
-}
-
-variable "loki_host" {
-  description = "Loki host."
-  type        = string
-  nullable    = false
-}
-
-variable "loki_port" {
-  description = "Loki port."
+variable "replicas_per_zone" {
+  description = "The number of replicas to run per zone."
   type        = number
   nullable    = false
 }
 
-variable "loki_systemd_logs" {
-  type        = bool
-  default     = false
-  description = "Enable systemd log collection."
+variable "raw_filters" {
+  description = "Fluent Bit pipeline filters config."
+  type        = string
+  nullable    = false
+}
+
+variable "raw_outputs" {
+  description = "Fluent Bit pipeline outputs config."
+  type        = string
+  nullable    = false
+}
+
+variable "lua_scripts" {
+  description = "Fluent Bit pipeline outputs config."
+  type        = map(string)
+  nullable    = false
 }
 
 variable "tags" {
@@ -125,10 +99,4 @@ variable "timeouts" {
     helm_modify = number
   })
   nullable = false
-}
-
-variable "experimental_memory_override" {
-  description = "Provide experimental feature flag configuration."
-  type        = string
-  nullable    = true
 }

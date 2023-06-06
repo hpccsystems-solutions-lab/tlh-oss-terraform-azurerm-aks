@@ -78,6 +78,11 @@ output "external_dns_public_identity" {
   value       = module.core_config.external_dns_public_identity
 }
 
+output "fluent_bit_aggregator_identity" {
+  description = "Identity that Fluent Bit Aggregator uses."
+  value       = module.core_config.fluent_bit_aggregator_identity
+}
+
 output "fluentd_identity" {
   description = "Identity that Fluentd uses."
   value       = module.core_config.fluentd_identity

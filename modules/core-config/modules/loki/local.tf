@@ -1,4 +1,5 @@
 locals {
+  name          = "loki"
   chart_version = "5.5.3"
 
   azure_cli_image_version = "2.9.1"
@@ -6,7 +7,7 @@ locals {
   use_aad_workload_identity = false
 
   chart_values = {
-    nameOverride = "loki"
+    nameOverride = local.name
 
     global = {
       priorityClassName = ""
@@ -83,14 +84,14 @@ locals {
           userAssignedId = module.identity.client_id
         }
         bucketNames = {
-          chunks = "loki"
-          ruler  = "loki"
-          admin  = "loki"
+          chunks = local.storage_container_name
+          ruler  = local.storage_container_name
+          admin  = local.storage_container_name
         }
       }
       storage_config = {
         azure = {
-          container_name = "loki"
+          container_name = local.storage_container_name
         }
         hedging = {
           at             = "250ms"
@@ -175,8 +176,8 @@ locals {
           requiredDuringSchedulingIgnoredDuringExecution = [{
             labelSelector = {
               matchLabels = {
-                "app.kubernetes.io/name"      = "loki"
-                "app.kubernetes.io/instance"  = "loki"
+                "app.kubernetes.io/name"      = local.name
+                "app.kubernetes.io/instance"  = local.name
                 "app.kubernetes.io/component" = "backend"
               }
             }
@@ -235,8 +236,8 @@ locals {
           requiredDuringSchedulingIgnoredDuringExecution = [{
             labelSelector = {
               matchLabels = {
-                "app.kubernetes.io/name"      = "loki"
-                "app.kubernetes.io/instance"  = "loki"
+                "app.kubernetes.io/name"      = local.name
+                "app.kubernetes.io/instance"  = local.name
                 "app.kubernetes.io/component" = "write"
               }
             }
@@ -304,8 +305,8 @@ locals {
               podAffinityTerm = {
                 labelSelector = {
                   matchLabels = {
-                    "app.kubernetes.io/name"      = "loki"
-                    "app.kubernetes.io/instance"  = "loki"
+                    "app.kubernetes.io/name"      = local.name
+                    "app.kubernetes.io/instance"  = local.name
                     "app.kubernetes.io/component" = "read"
                   }
                 }
@@ -319,8 +320,8 @@ locals {
               podAffinityTerm = {
                 labelSelector = {
                   matchLabels = {
-                    "app.kubernetes.io/name"      = "loki"
-                    "app.kubernetes.io/instance"  = "loki"
+                    "app.kubernetes.io/name"      = local.name
+                    "app.kubernetes.io/instance"  = local.name
                     "app.kubernetes.io/component" = "read"
                   }
                 }
@@ -385,17 +386,39 @@ locals {
 
       affinity = jsonencode({
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = [{
-            labelSelector = {
-              matchLabels = {
-                "app.kubernetes.io/name"      = "loki"
-                "app.kubernetes.io/instance"  = "loki"
-                "app.kubernetes.io/component" = "read"
+          requiredDuringSchedulingIgnoredDuringExecution = []
+          preferredDuringSchedulingIgnoredDuringExecution = [
+            {
+              podAffinityTerm = {
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = local.name
+                    "app.kubernetes.io/instance"  = local.name
+                    "app.kubernetes.io/component" = "gateway"
+                  }
+                }
+
+                topologyKey = "kubernetes.io/hostname"
               }
+
+              weight = 100
+            },
+            {
+              podAffinityTerm = {
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = local.name
+                    "app.kubernetes.io/instance"  = local.name
+                    "app.kubernetes.io/component" = "gateway"
+                  }
+                }
+
+                topologyKey = "topology.kubernetes.io/zone"
+              }
+
+              weight = 50
             }
-            topologyKey = "topology.kubernetes.io/zone"
-          }]
-          preferredDuringSchedulingIgnoredDuringExecution = []
+          ]
         }
       })
 
@@ -469,5 +492,7 @@ locals {
       }]
     }]
   }
-  service_account_name = "loki"
+
+  service_account_name   = local.name
+  storage_container_name = local.name
 }

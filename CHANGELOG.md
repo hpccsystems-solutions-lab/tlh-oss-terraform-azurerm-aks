@@ -60,6 +60,7 @@ We have also removed the `azure_env` variable as it had been deprecated in favou
 - Updated _Kube Prometheus Stack_ chart to [v46.4.2](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-46.4.2) and updated CRDs. ([#1120](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1120)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [v1.12.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.1). ([#1120](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1120)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Ingress NGINX_ chart to [v4.7.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.7.0). ([#1123](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1123)) [@appkins](https://github.com/appkins)
+- Added experimental support for using _Fluent Bit_ as the log aggregator. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.13.0] - 2023-05-24
 

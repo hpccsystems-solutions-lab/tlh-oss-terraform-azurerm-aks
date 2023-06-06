@@ -153,7 +153,6 @@ locals {
       lowercase                true
       db                       /var/fluent-bit/state/flb-storage/systemd.db
       db.sync                  normal
-      mem_buf_limit            8MB
       storage.type             filesystem
 
     [INPUT]
@@ -172,7 +171,6 @@ locals {
       db.sync                  normal
       db.locking               true
       db.journal_mode          wal
-      mem_buf_limit            8MB
       storage.type             filesystem
   EOT
 
@@ -265,19 +263,22 @@ locals {
   EOT
 
 
-  output_config = <<-EOT
-    [OUTPUT]
-      name                     forward
-      match                    *
-      host                     fluentd.logging.svc.cluster.local
-      port                     24224
-      fluentd_compat           true
-      send_options             false
-      require_ack_response     true
-      workers                  2
-      retry_limit              false
-      storage.total_limit_size 16GB
-  EOT
+  output_config = <<EOT
+[OUTPUT]
+  name                     forward
+  match                    *
+  host                     ${var.aggregator_host}
+  port                     ${tostring(var.aggregator_forward_port)}
+  fluentd_compat           ${var.aggregator == "fluentd" ? "true" : "false"}
+  send_options             false
+  require_ack_response     true
+  %{~if var.aggregator == "fluent-bit"~}
+  compress                 gzip
+  %{~endif~}
+  workers                  2
+  retry_limit              false
+  storage.total_limit_size 16GB
+EOT
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

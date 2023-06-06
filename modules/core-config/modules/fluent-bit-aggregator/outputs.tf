@@ -5,10 +5,10 @@ output "host" {
 
 output "forward_port" {
   description = "Port the forward input is listening on."
-  value       = local.chart_values.configuration.port
+  value       = local.chart_values.service.additionalPorts[0].port
 }
 
 output "identity" {
-  description = "Identity that Fluentd uses."
+  description = "Identity that Fluent Bit Aggregator uses."
   value       = module.identity
 }

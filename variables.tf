@@ -462,6 +462,14 @@ variable "experimental" {
     control_plane_logging_log_analytics_disabled = optional(bool, false)
     loki                                         = optional(bool, false)
     systemd_logs_loki                            = optional(bool, false)
+    fluent_bit_aggregator                        = optional(bool, false)
+    fluent_bit_aggregator_cpu_requests_override  = optional(string)
+    fluent_bit_aggregator_cpu_limits_override    = optional(string)
+    fluent_bit_aggregator_memory_override        = optional(string)
+    fluent_bit_aggregator_replicas_per_zone      = optional(number, 1)
+    fluent_bit_aggregator_raw_filters            = optional(string, "")
+    fluent_bit_aggregator_raw_outputs            = optional(string, "")
+    fluent_bit_aggregator_lua_scripts            = optional(map(string), {})
   })
   nullable = false
   default  = {}

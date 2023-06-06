@@ -1,4 +1,5 @@
 locals {
+  name          = "fluentd"
   chart_version = "3.8.0"
 
   location_sanitized = lower(replace(var.location, " ", ""))
@@ -6,7 +7,7 @@ locals {
   use_aad_workload_identity = false
 
   chart_values = {
-    nameOverride = "fluentd"
+    nameOverride = local.name
 
     image = var.image_repository != null && var.image_tag != null ? {
       repository = var.image_repository
@@ -83,12 +84,6 @@ locals {
     affinity = {
       podAntiAffinity = {
         requiredDuringSchedulingIgnoredDuringExecution = [{
-          labelSelector = {
-            matchLabels = {
-              "app.kubernetes.io/name"     = "fluentd"
-              "app.kubernetes.io/instance" = "fluentd"
-            }
-          }
           topologyKey = "topology.kubernetes.io/zone"
         }]
       }
@@ -117,6 +112,7 @@ locals {
     env = [for k, v in local.additional_env : { name = k, value = v }]
 
     configuration = {
+      port        = 24224
       bindAddress = "0.0.0.0"
 
       system = {
@@ -140,7 +136,7 @@ locals {
   }, var.additional_env)
 
   loki_route_config = {
-    match  = var.systemd_logs_loki ? "**" : "kube.**"
+    match  = var.loki_systemd_logs ? "**" : "kube.**"
     label  = "@LOKI"
     copy   = true
     config = <<-EOT
@@ -153,7 +149,7 @@ locals {
       </filter>
       <match **>
         @type loki
-        url "http://loki-gateway.logging.svc.cluster.local"
+        url "http://${var.loki_host}:${tostring(var.loki_port)}"
         line_format "json"
         extract_kubernetes_labels false
         <label>
@@ -193,7 +189,7 @@ ${trimspace(var.filters)}
 %{endif~}
 EOT
 
-  service_account_name = "fluentd"
+  service_account_name = local.name
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

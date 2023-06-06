@@ -22,6 +22,25 @@ variable "labels" {
   nullable    = false
 }
 
+
+variable "aggregator" {
+  description = "Aggregator type."
+  type        = string
+  nullable    = false
+}
+
+variable "aggregator_host" {
+  description = "Aggregator host."
+  type        = string
+  nullable    = false
+}
+
+variable "aggregator_forward_port" {
+  description = "Port that the aggregator is using for forward."
+  type        = number
+  nullable    = false
+}
+
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({

@@ -151,18 +151,57 @@ module "fluent_bit" {
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
 
+  aggregator              = var.experimental.fluent_bit_aggregator ? "fluent-bit" : "fluentd"
+  aggregator_host         = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].host : module.fluentd[0].host
+  aggregator_forward_port = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].forward_port : module.fluentd[0].forward_port
+
   timeouts = var.timeouts
 
   depends_on = [
     module.crds,
     module.pre_upgrade,
     module.storage,
+    module.fluent_bit_aggregator,
     module.fluentd
+  ]
+}
+
+
+module "fluent_bit_aggregator" {
+  source = "./modules/fluent-bit-aggregator"
+  count  = var.experimental.fluent_bit_aggregator ? 1 : 0
+
+  subscription_id         = var.subscription_id
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  cluster_name            = var.cluster_name
+  cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
+  namespace               = kubernetes_namespace.default["observability"].metadata[0].name
+  labels                  = var.labels
+  zones                   = local.az_count
+  cpu_requests_override   = var.experimental.fluent_bit_aggregator_cpu_requests_override
+  cpu_limits_override     = var.experimental.fluent_bit_aggregator_cpu_limits_override
+  memory_override         = var.experimental.fluent_bit_aggregator_memory_override
+  replicas_per_zone       = var.experimental.fluent_bit_aggregator_replicas_per_zone
+  raw_filters             = var.experimental.fluent_bit_aggregator_raw_filters
+  raw_outputs             = var.experimental.fluent_bit_aggregator_raw_outputs
+  lua_scripts             = var.experimental.fluent_bit_aggregator_lua_scripts
+  tags                    = var.tags
+
+  timeouts = var.timeouts
+
+  depends_on = [
+    module.crds,
+    module.pre_upgrade,
+    module.storage,
+    module.aad_pod_identity,
+    module.loki
   ]
 }
 
 module "fluentd" {
   source = "./modules/fluentd"
+  count  = var.experimental.fluent_bit_aggregator ? 0 : 1
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -179,7 +218,9 @@ module "fluentd" {
   filters                 = var.core_services_config.fluentd.filters
   route_config            = var.core_services_config.fluentd.route_config
   loki                    = var.experimental.loki
-  systemd_logs_loki       = var.experimental.systemd_logs_loki
+  loki_host               = var.experimental.loki ? module.loki[0].host : "_"
+  loki_port               = var.experimental.loki ? module.loki[0].port : 0
+  loki_systemd_logs       = var.experimental.systemd_logs_loki
   tags                    = var.tags
 
   timeouts = var.timeouts
