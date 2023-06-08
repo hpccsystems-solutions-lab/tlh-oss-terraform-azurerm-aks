@@ -39,6 +39,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Added support for customising the core service log level via the `logging.workloads.core_service_log_level` input variable. [@stevehipwell](https://github.com/stevehipwell)
+- Updated _External DNS_ chart to [v1.13.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.13.0) (contains _External DNS_ image update to [v0.13.5](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.5)). ([#1139](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1139)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.14.0] - 2023-06-05
 
