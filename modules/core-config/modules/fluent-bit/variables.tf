@@ -22,6 +22,11 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
 
 variable "aggregator" {
   description = "Aggregator type."

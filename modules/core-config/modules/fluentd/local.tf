@@ -117,6 +117,10 @@ locals {
 
       system = {
         rootDir = "/fluentd/state"
+
+        additionalConfig = {
+          log_level = local.log_level_lookup[var.log_level]
+        }
       }
 
       filters = local.filter_config_string
@@ -190,6 +194,13 @@ ${trimspace(var.filters)}
 EOT
 
   service_account_name = local.name
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

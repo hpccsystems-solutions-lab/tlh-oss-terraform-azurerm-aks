@@ -8,6 +8,8 @@ locals {
 
     global = {
       priorityClassName = "system-cluster-critical"
+
+      logLevel = local.klog_level_lookup[var.log_level]
     }
 
     serviceAccount = {
@@ -21,10 +23,6 @@ locals {
       annotations = local.use_aad_workload_identity ? {
         "azure.workload.identity/client-id" = module.identity.id
       } : {}
-    }
-
-    extraArgs = {
-      "--logging-format" = "json"
     }
 
     podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
@@ -81,6 +79,7 @@ locals {
     }
 
     extraArgs = concat([
+      "--logging-format=json",
       "--dns01-recursive-nameservers-only",
       "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53"
       ], local.use_aad_workload_identity ? [
@@ -117,6 +116,10 @@ locals {
           memory = "512Mi"
         }
       }
+
+      extraArgs = [
+        "--logging-format=json"
+      ]
     }
 
     startupapicheck = {
@@ -151,6 +154,10 @@ locals {
           memory = "128Mi"
         }
       }
+
+      extraArgs = [
+        "--logging-format=json"
+      ]
     }
 
     webhook = {
@@ -190,6 +197,10 @@ locals {
           memory = "64Mi"
         }
       }
+
+      extraArgs = [
+        "--logging-format=json"
+      ]
     }
 
     ingressShim = {
@@ -303,6 +314,13 @@ locals {
 
   zerossl_eab_secret_key = "secret"
   zerossl_eabsecret      = "X3Nkc3MwNExIbUdlVXdsQmxBU1Brd0xESWFEZnIxUThxSXlubnppWFFaeFpRYWJGaDkyODZKbVZBQ1NjdHJUU2NFUm1IaC1pUjZXUkZ1cnQxcmRlanc="
+
+  klog_level_lookup = {
+    "ERROR" = 1
+    "WARN"  = 2
+    "INFO"  = 3
+    "DEBUG" = 4
+  }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

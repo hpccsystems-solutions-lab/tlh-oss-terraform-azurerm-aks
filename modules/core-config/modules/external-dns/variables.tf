@@ -57,6 +57,12 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "additional_sources" {
   description = "Additional sources to handle."
   type        = list(string)

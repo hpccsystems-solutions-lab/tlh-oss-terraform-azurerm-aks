@@ -97,6 +97,10 @@ locals {
         }
       }
 
+      extraArgs = {
+        "v" = local.klog_level_lookup[var.log_level]
+      }
+
       autoscaling = {
         enabled                           = true
         minReplicas                       = 3
@@ -126,6 +130,7 @@ locals {
       ingressClass = ""
 
       config = {
+        "error-log-level"              = local.log_level_lookup[var.log_level]
         "server-name-hash-bucket-size" = "256"
         "server-tokens"                = "false"
         "use-proxy-protocol"           = "false"
@@ -238,6 +243,20 @@ locals {
 
       secretName = "internal-ingress-wildcard-cert"
     }
+  }
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
+
+  klog_level_lookup = {
+    "ERROR" = 1
+    "WARN"  = 2
+    "INFO"  = 3
+    "DEBUG" = 4
   }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }

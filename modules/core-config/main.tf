@@ -63,6 +63,7 @@ module "aad_pod_identity" {
   kubelet_identity_id      = var.kubelet_identity_id
   namespace                = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels                   = var.labels
+  log_level                = var.logging.workloads.core_service_log_level
 
   timeouts = var.timeouts
 
@@ -87,6 +88,7 @@ module "cert_manager" {
   cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["cert-manager"].metadata[0].name
   labels                    = var.labels
+  log_level                 = var.logging.workloads.core_service_log_level
   acme_dns_zones            = distinct(concat([local.ingress_internal_core.domain], coalesce(var.core_services_config.cert_manager.acme_dns_zones, [])))
   additional_issuers        = var.core_services_config.cert_manager.additional_issuers
   default_issuer_kind       = var.core_services_config.cert_manager.default_issuer_kind
@@ -128,6 +130,7 @@ module "external_dns" {
   cluster_oidc_issuer_url   = var.cluster_oidc_issuer_url
   namespace                 = kubernetes_namespace.default["dns"].metadata[0].name
   labels                    = var.labels
+  log_level                 = var.logging.workloads.core_service_log_level
   additional_sources        = var.core_services_config.external_dns.additional_sources
   private_domain_filters    = local.ingress_internal_core.public_dns ? var.core_services_config.external_dns.private_domain_filters : distinct(concat([local.ingress_internal_core.domain], coalesce(var.core_services_config.external_dns.private_domain_filters, [])))
   public_domain_filters     = local.ingress_internal_core.public_dns ? distinct(concat([local.ingress_internal_core.domain], var.core_services_config.external_dns.public_domain_filters)) : coalesce(var.core_services_config.external_dns.public_domain_filters, [])
@@ -150,6 +153,7 @@ module "fluent_bit" {
 
   namespace = kubernetes_namespace.default["logging"].metadata[0].name
   labels    = var.labels
+  log_level = var.logging.workloads.core_service_log_level
 
   aggregator              = var.experimental.fluent_bit_aggregator ? "fluent-bit" : "fluentd"
   aggregator_host         = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].host : module.fluentd[0].host
@@ -178,6 +182,7 @@ module "fluent_bit_aggregator" {
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["observability"].metadata[0].name
   labels                  = var.labels
+  log_level               = var.logging.workloads.core_service_log_level
   zones                   = local.az_count
   cpu_requests_override   = var.experimental.fluent_bit_aggregator_cpu_requests_override
   cpu_limits_override     = var.experimental.fluent_bit_aggregator_cpu_limits_override
@@ -210,6 +215,7 @@ module "fluentd" {
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["logging"].metadata[0].name
   labels                  = var.labels
+  log_level               = var.logging.workloads.core_service_log_level
   zones                   = local.az_count
   image_repository        = var.core_services_config.fluentd.image_repository
   image_tag               = var.core_services_config.fluentd.image_tag
@@ -241,6 +247,7 @@ module "ingress_internal_core" {
 
   namespace               = kubernetes_namespace.default["ingress-core-internal"].metadata[0].name
   labels                  = var.labels
+  log_level               = var.logging.workloads.core_service_log_level
   ingress_node_group      = var.ingress_node_group
   lb_source_cidrs         = local.ingress_internal_core.lb_source_cidrs
   lb_subnet_name          = local.ingress_internal_core.lb_subnet_name == null ? null : local.ingress_internal_core.lb_subnet_name
@@ -267,6 +274,7 @@ module "kube_prometheus_stack" {
   cluster_oidc_issuer_url                  = var.cluster_oidc_issuer_url
   namespace                                = kubernetes_namespace.default["monitoring"].metadata[0].name
   labels                                   = var.labels
+  log_level                                = var.logging.workloads.core_service_log_level
   subnet_id                                = var.subnet_id
   zones                                    = local.az_count
   prometheus_remote_write                  = var.core_services_config.prometheus.remote_write
@@ -301,6 +309,21 @@ module "kube_prometheus_stack" {
   ]
 }
 
+module "local_static_provisioner" {
+  source = "./modules/local-static-provisioner"
+  count  = var.storage.nvme_pv.enabled ? 1 : 0
+
+  namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
+  labels    = var.labels
+
+  timeouts = var.timeouts
+
+  depends_on = [
+    module.crds,
+    module.pre_upgrade
+  ]
+}
+
 module "loki" {
   source = "./modules/loki"
   count  = var.experimental.loki ? 1 : 0
@@ -312,6 +335,7 @@ module "loki" {
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["logging"].metadata[0].name
   labels                  = var.labels
+  log_level               = var.logging.workloads.core_service_log_level
   subnet_id               = var.subnet_id
   zones                   = local.az_count
   tags                    = var.tags
@@ -325,21 +349,6 @@ module "loki" {
     module.cert_manager,
     module.ingress_internal_core,
     module.kube_prometheus_stack
-  ]
-}
-
-module "local_static_provisioner" {
-  source = "./modules/local-static-provisioner"
-  count  = var.storage.nvme_pv.enabled ? 1 : 0
-
-  namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
-  labels    = var.labels
-
-  timeouts = var.timeouts
-
-  depends_on = [
-    module.crds,
-    module.pre_upgrade
   ]
 }
 

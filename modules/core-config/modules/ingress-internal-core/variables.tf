@@ -8,6 +8,12 @@ variable "labels" {
   type        = map(string)
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "ingress_node_group" {
   description = "If an ingress node group is provisioned."
   type        = bool

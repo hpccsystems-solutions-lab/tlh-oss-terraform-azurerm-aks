@@ -139,7 +139,7 @@ locals {
       storage = true
 
       service = {
-        "log_level"                           = "info"
+        "log_level"                           = local.log_level_lookup[var.log_level]
         "http_listen"                         = "0.0.0.0"
         "grace"                               = 30
         "storage.sync"                        = "full"
@@ -177,6 +177,13 @@ ${chomp(output)}
 EOT
 
   service_account_name = local.name
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

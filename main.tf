@@ -143,7 +143,7 @@ module "core_config" {
 
   dns_resource_group_lookup = var.dns_resource_group_lookup
 
-  logging = { control_plane = { log_analytics = merge(local.logging.control_plane.log_analytics, { workspace_id = module.cluster.control_plane_log_analytics_workspace_id }), storage_account = local.logging.control_plane.storage_account } }
+  logging = { control_plane = { log_analytics = merge(local.logging.control_plane.log_analytics, { workspace_id = module.cluster.control_plane_log_analytics_workspace_id }), storage_account = local.logging.control_plane.storage_account }, workloads = local.logging.workloads }
   storage = local.storage
 
   core_services_config = local.core_services_config

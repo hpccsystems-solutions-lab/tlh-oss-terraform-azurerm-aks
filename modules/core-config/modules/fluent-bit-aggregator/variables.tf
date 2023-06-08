@@ -39,6 +39,12 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "zones" {
   description = "The number of zones this chart should be run on."
   type        = number

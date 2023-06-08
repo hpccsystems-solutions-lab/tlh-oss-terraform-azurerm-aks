@@ -80,6 +80,7 @@ locals {
         retention_days                = var.control_plane_logging_storage_account_retention_days
       }
     }
+    workloads = var.logging.workloads
   }
 
   storage = merge(var.storage, var.storage.file.enabled ? {} : { file = { enabled = var.core_services_config.storage.file } }, var.storage.blob.enabled ? {} : { blob = { enabled = var.core_services_config.storage.file } })

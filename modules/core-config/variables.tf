@@ -109,6 +109,9 @@ variable "logging" {
         retention_days                = number
       })
     })
+    workloads = object({
+      core_service_log_level = string
+    })
   })
   nullable = false
 }

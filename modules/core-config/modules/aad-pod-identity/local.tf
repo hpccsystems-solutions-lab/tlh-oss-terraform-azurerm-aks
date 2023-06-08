@@ -47,6 +47,9 @@ locals {
           memory = "128Mi"
         }
       }
+
+      logVerbosity  = local.klog_level_lookup[var.log_level]
+      loggingFormat = "json"
     }
 
     nmi = {
@@ -71,6 +74,16 @@ locals {
           memory = "64Mi"
         }
       }
+
+      logVerbosity  = local.klog_level_lookup[var.log_level]
+      loggingFormat = "json"
     }
+  }
+
+  klog_level_lookup = {
+    "ERROR" = 1
+    "WARN"  = 2
+    "INFO"  = 3
+    "DEBUG" = 4
   }
 }

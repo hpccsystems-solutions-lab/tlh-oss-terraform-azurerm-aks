@@ -62,7 +62,8 @@ locals {
         split_queries_by_interval     = "15m"
       }
       server = {
-        log_level        = "info"
+        log_level        = local.log_level_lookup[var.log_level]
+        log_format       = "json"
         http_listen_port = 3100
       }
       schemaConfig = {
@@ -495,4 +496,11 @@ locals {
 
   service_account_name   = local.name
   storage_container_name = local.name
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
 }

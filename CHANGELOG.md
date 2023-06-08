@@ -38,6 +38,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Added support for customising the core service log level via the `logging.workloads.core_service_log_level` input variable. [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.14.0] - 2023-06-05
 
 ### Highlights

@@ -57,6 +57,9 @@ locals {
         }
       }
 
+      logLevel  = local.log_level_lookup[var.log_level]
+      logFormat = "json"
+
       createCustomResource = false
       manageCrds           = false
 
@@ -255,6 +258,9 @@ locals {
           hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
+
+      logLevel  = local.log_level_lookup[var.log_level]
+      logFormat = "json"
     }
 
     alertmanager = {
@@ -347,6 +353,8 @@ locals {
           hosts = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
         }]
       }
+
+      logLevel = local.log_level_lookup[var.log_level]
     }
 
     grafana = {
@@ -383,6 +391,12 @@ locals {
       }
 
       "grafana.ini" = {
+        log = {
+          mode   = "console"
+          format = "json"
+          level  = local.log_level_lookup[var.log_level]
+        }
+
         "auth.anonymous" = {
           enabled  = true
           org_role = "Viewer"
@@ -469,6 +483,8 @@ locals {
       }
 
       sidecar = {
+        logLevel = upper(local.log_level_lookup[var.log_level])
+
         datasources = {
           defaultDatasourceEnabled = false
         }
@@ -573,6 +589,11 @@ locals {
           memory = "256Mi"
         }
       }
+
+      extraArgs = [
+        "--logtostderr",
+        "--v=${local.klog_level_lookup[var.log_level]}"
+      ]
     }
 
     nodeExporter = {
@@ -626,6 +647,11 @@ locals {
         }
       }
     }
+
+    extraArgs = [
+      "--log.level=${local.log_level_lookup[var.log_level]}",
+      "--log.format=json"
+    ]
   }
 
   thanos_chart_values = {
@@ -644,7 +670,7 @@ locals {
       key    = local.thanos_objstore_secret_key
     }
 
-    logLevel  = "info"
+    logLevel  = local.log_level_lookup[var.log_level]
     logFormat = "json"
 
     compact = {
@@ -1289,6 +1315,20 @@ locals {
   thanos_rule_service_account_name          = "thanos-rule"
   thanos_store_gateway_service_account_name = "thanos-store-gateway"
   grafana_service_account_name              = "kube-prometheus-stack-grafana"
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
+
+  klog_level_lookup = {
+    "ERROR" = 1
+    "WARN"  = 2
+    "INFO"  = 3
+    "DEBUG" = 4
+  }
 
   resource_files      = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
   resource_objects    = { thanos_ruler = local.thanos_ruler }

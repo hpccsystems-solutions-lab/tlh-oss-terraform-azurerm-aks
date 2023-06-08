@@ -124,7 +124,7 @@ locals {
   service_config = <<-EOT
     [SERVICE]
       daemon                    false
-      log_level                 info
+      log_level                 ${local.log_level_lookup[var.log_level]}
       parsers_file              parsers.conf
       parsers_file              custom_parsers.conf
       flush                     5
@@ -279,6 +279,13 @@ locals {
   retry_limit              false
   storage.total_limit_size 16GB
 EOT
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warn"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

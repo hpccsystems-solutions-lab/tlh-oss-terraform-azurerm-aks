@@ -57,6 +57,12 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "acme_dns_zones" {
   description = "DNS zones which can be managed via the ACME protocol."
   type        = list(string)

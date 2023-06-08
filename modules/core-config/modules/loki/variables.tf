@@ -37,6 +37,12 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "subnet_id" {
   description = "ID of the subnet."
   type        = string

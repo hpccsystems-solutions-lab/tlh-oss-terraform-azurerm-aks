@@ -40,6 +40,12 @@ variable "labels" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Log level."
+  type        = string
+  nullable    = false
+}
+
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({

@@ -43,6 +43,7 @@ locals {
       }
     }
 
+    logLevel  = local.log_level_lookup[var.log_level]
     logFormat = "json"
 
     sources = concat(["service", "ingress"], var.additional_sources)
@@ -158,6 +159,13 @@ locals {
 
   enable_private = length(var.private_domain_filters) > 0 && local.private_dns_zone_resource_group_name != null
   enable_public  = length(var.public_domain_filters) > 0 && local.public_dns_zone_resource_group_name != null
+
+  log_level_lookup = {
+    "ERROR" = "error"
+    "WARN"  = "warning"
+    "INFO"  = "info"
+    "DEBUG" = "debug"
+  }
 
   resource_files = { for x in fileset(path.module, "resources/*.yaml") : basename(x) => "${path.module}/${x}" }
 }

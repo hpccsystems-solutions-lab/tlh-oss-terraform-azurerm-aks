@@ -223,6 +223,9 @@ variable "logging" {
         retention_days                = optional(number, 30)
       }), {})
     }), {})
+    workloads = optional(object({
+      core_service_log_level = optional(string, "WARN")
+    }), {})
   })
   nullable = false
   default  = {}
