@@ -1,5 +1,5 @@
 locals {
-  chart_version = "46.4.2"
+  chart_version = "46.8.0"
 
   thanos_chart_version = "1.12.4"
 
@@ -514,16 +514,28 @@ locals {
       }
     }
 
-    kubeScheduler = {
-      enabled = false
+    kubernetesServiceMonitors = {
+      enabled = true
+    }
+
+    kubeApiServer = {
+      enabled = true
     }
 
     kubeControllerManager = {
       enabled = false
     }
 
+    kubeScheduler = {
+      enabled = false
+    }
+
     kubeEtcd = {
       enabled = false
+    }
+
+    kubelet = {
+      enabled = true
     }
 
     kubeProxy = {
@@ -534,6 +546,10 @@ locals {
           component = "kube-proxy"
         }
       }
+    }
+
+    coreDns = {
+      enabled = true
     }
 
     defaultRules = {
@@ -1230,7 +1246,7 @@ locals {
     # active_time_intervals = []
   }]
 
-  scrapeInterval = "30s"
+  scrapeInterval = "1m"
 
   grafana_data_sources = [
     {
