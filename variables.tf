@@ -206,10 +206,10 @@ variable "logging" {
   type = object({
     control_plane = optional(object({
       log_analytics = optional(object({
-        enabled                       = optional(bool, false)
+        enabled                       = optional(bool, true)
         external_workspace            = optional(bool, false)
         workspace_id                  = optional(string, null)
-        profile                       = optional(string, null)
+        profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
         retention_enabled             = optional(bool, false)
         retention_days                = optional(number, 30)
@@ -217,7 +217,7 @@ variable "logging" {
       storage_account = optional(object({
         enabled                       = optional(bool, false)
         id                            = optional(string, null)
-        profile                       = optional(string, null)
+        profile                       = optional(string, "all")
         additional_log_category_types = optional(list(string), [])
         retention_enabled             = optional(bool, false)
         retention_days                = optional(number, 30)
@@ -332,76 +332,6 @@ variable "core_services_config" {
   nullable = false
 }
 
-variable "control_plane_logging_external_workspace" {
-  description = "DEPRECATED - If true, the log analytics workspace referenced in control_plane_logging_external_workspace_id will be used to store the logs. Otherwise a log analytics workspace will be created to store the logs."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-variable "control_plane_logging_external_workspace_id" {
-  description = "DEPRECATED - ID of the log analytics workspace to send control plane logs to if control_plane_logging_external_workspace is true."
-  type        = string
-  nullable    = true
-  default     = null
-}
-
-variable "control_plane_logging_workspace_categories" {
-  description = "DEPRECATED - The control plane log categories to send to the log analytics workspace."
-  type        = string
-  nullable    = false
-  default     = "recommended"
-}
-
-variable "control_plane_logging_workspace_retention_enabled" {
-  description = "DEPRECATED - If true, the control plane logs being sent to log analytics will use the retention specified in control_plane_logging_workspace_retention_days otherwise the log analytics workspace default retention will be used."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-variable "control_plane_logging_workspace_retention_days" {
-  description = "DEPRECATED - How long the logs should be retained by the log analytics workspace if control_plane_logging_workspace_retention_enabled is true, in days."
-  type        = number
-  nullable    = false
-  default     = 0
-}
-
-variable "control_plane_logging_storage_account_enabled" {
-  description = "DEPRECATED - If true, cluster control plane logs will be sent to the storage account referenced in control_plane_logging_storage_account_id as well as the default log analytics workspace."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-variable "control_plane_logging_storage_account_id" {
-  description = "DEPRECATED - ID of the storage account to add cluster control plane logs to if control_plane_logging_storage_account_enabled is true. "
-  type        = string
-  nullable    = true
-  default     = null
-}
-
-variable "control_plane_logging_storage_account_categories" {
-  description = "DEPRECATED - The control plane log categories to send to the storage account."
-  type        = string
-  nullable    = false
-  default     = "all"
-}
-
-variable "control_plane_logging_storage_account_retention_enabled" {
-  description = "DEPRECATED - If true, the control plane logs being sent to the storage account will use the retention specified in control_plane_logging_storage_account_retention_days otherwise no retention will be set."
-  type        = bool
-  nullable    = false
-  default     = true
-}
-
-variable "control_plane_logging_storage_account_retention_days" {
-  description = "DEPRECATED - How long the logs should be retained by the storage account if control_plane_logging_storage_account_retention_enabled is true, in days."
-  type        = number
-  nullable    = false
-  default     = 30
-}
-
 variable "maintenance_window_offset" {
   description = "Maintenance window offset to utc."
   type        = number
@@ -450,29 +380,28 @@ variable "tags" {
 variable "experimental" {
   description = "Configure experimental features."
   type = object({
-    oms_agent                                    = optional(bool, false)
-    oms_agent_log_analytics_workspace_id         = optional(string, null)
-    oms_agent_create_configmap                   = optional(bool, true)
-    oms_agent_containerlog_schema_version        = optional(string, "v1")
-    windows_support                              = optional(bool, false)
-    arm64                                        = optional(bool, false)
-    node_group_os_config                         = optional(bool, false)
-    azure_cni_max_pods                           = optional(bool, false)
-    aad_pod_identity_finalizer_wait              = optional(string, null)
-    fluent_bit_use_memory_buffer                 = optional(bool, false)
-    fluentd_memory_override                      = optional(string, null)
-    prometheus_memory_override                   = optional(string, null)
-    control_plane_logging_log_analytics_disabled = optional(bool, false)
-    loki                                         = optional(bool, false)
-    systemd_logs_loki                            = optional(bool, false)
-    fluent_bit_aggregator                        = optional(bool, false)
-    fluent_bit_aggregator_cpu_requests_override  = optional(string)
-    fluent_bit_aggregator_cpu_limits_override    = optional(string)
-    fluent_bit_aggregator_memory_override        = optional(string)
-    fluent_bit_aggregator_replicas_per_zone      = optional(number, 1)
-    fluent_bit_aggregator_raw_filters            = optional(string, "")
-    fluent_bit_aggregator_raw_outputs            = optional(string, "")
-    fluent_bit_aggregator_lua_scripts            = optional(map(string), {})
+    oms_agent                                   = optional(bool, false)
+    oms_agent_log_analytics_workspace_id        = optional(string, null)
+    oms_agent_create_configmap                  = optional(bool, true)
+    oms_agent_containerlog_schema_version       = optional(string, "v1")
+    windows_support                             = optional(bool, false)
+    arm64                                       = optional(bool, false)
+    node_group_os_config                        = optional(bool, false)
+    azure_cni_max_pods                          = optional(bool, false)
+    aad_pod_identity_finalizer_wait             = optional(string, null)
+    fluent_bit_use_memory_buffer                = optional(bool, false)
+    fluentd_memory_override                     = optional(string, null)
+    prometheus_memory_override                  = optional(string, null)
+    loki                                        = optional(bool, false)
+    systemd_logs_loki                           = optional(bool, false)
+    fluent_bit_aggregator                       = optional(bool, false)
+    fluent_bit_aggregator_cpu_requests_override = optional(string)
+    fluent_bit_aggregator_cpu_limits_override   = optional(string)
+    fluent_bit_aggregator_memory_override       = optional(string)
+    fluent_bit_aggregator_replicas_per_zone     = optional(number, 1)
+    fluent_bit_aggregator_raw_filters           = optional(string, "")
+    fluent_bit_aggregator_raw_outputs           = optional(string, "")
+    fluent_bit_aggregator_lua_scripts           = optional(map(string), {})
   })
   nullable = false
   default  = {}

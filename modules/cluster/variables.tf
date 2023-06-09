@@ -152,7 +152,7 @@ variable "control_plane_logging" {
   }
 
   validation {
-    condition     = !var.control_plane_logging.log_analytics.enabled || (var.control_plane_logging.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty", "recommended", "limited"], coalesce(var.control_plane_logging.log_analytics.profile, "empty")))
+    condition     = !var.control_plane_logging.log_analytics.enabled || (var.control_plane_logging.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.control_plane_logging.log_analytics.profile, "empty")))
     error_message = "Control plane logging to a log analytics external workspace requires a profile."
   }
 
@@ -162,7 +162,7 @@ variable "control_plane_logging" {
   }
 
   validation {
-    condition     = !var.control_plane_logging.storage_account.enabled || (var.control_plane_logging.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty", "recommended", "limited"], coalesce(var.control_plane_logging.storage_account.profile, "empty")))
+    condition     = !var.control_plane_logging.storage_account.enabled || (var.control_plane_logging.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.control_plane_logging.storage_account.profile, "empty")))
     error_message = "Control plane logging to a storage account requires profile."
   }
 }

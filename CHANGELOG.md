@@ -15,8 +15,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `recommended` & `limited` control plane logging profiles are deprecated and will be removed in the `v1.15.0` release.
-- The `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables are deprecated and will be removed in the `v1.15.0` release.
 - The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
 - The `lnrs.io/local-storage` node label is deprecated, this will be removed in the `v1.16.0` release.
 
@@ -40,6 +38,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Added support for customising the core service log level via the `logging.workloads.core_service_log_level` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _External DNS_ chart to [v1.13.0](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.13.0) (contains _External DNS_ image update to [v0.13.5](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.5)). ([#1139](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1139)) [@peterabarr](https://github.com/peterabarr)
+- Removed the `recommended` & `limited` deprecated control plane logging profiles. [@stevehipwell](https://github.com/stevehipwell)
+- Removed the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` deprecated variables. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.14.0] - 2023-06-05
 
@@ -75,7 +75,7 @@ This change creates separate volumes for each type of local storage on a node, w
 
 #### Experimental Loki Support
 
-_Loki_ support is currently experimental and can be enabled by setting the `experimental.loki` to `true`. This currently defaults to `true` while testing moves forward for operators opting into _Loki_. _Loki_ will default to an enabled state in the future. We would like to hear feedback from any operators using _Loki_ before we put it into GA.
+Experimental _Loki_ support can be enabled by setting the `experimental.loki` input variable to `true`; this is planned to be released as an opt-in core service config option once it's been tested. We would like to hear feedback from operators using _Loki_ before we make it GA.
 
 #### Refactored CRD logic
 
@@ -140,7 +140,7 @@ To enable the [Azure AD Workload Identity](https://learn.microsoft.com/en-us/azu
 - Deprecated the `recommended` & `limited` control plane logging profiles in favour of `audit-write-only` & `minimal` respectively. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `control_plane_logging_external_workspace`, `control_plane_logging_external_workspace_id`, `control_plane_logging_workspace_categories`, `control_plane_logging_workspace_retention_enabled`, `control_plane_logging_workspace_retention_days`, `control_plane_logging_storage_account_enabled`, `control_plane_logging_storage_account_id`, `control_plane_logging_storage_account_categories`, `control_plane_logging_storage_account_retention_enabled`, `control_plane_logging_storage_account_retention_days` & `experimental.control_plane_logging_log_analytics_disabled` variables as these can be replaced with the new `logging.control_plane` variable. [@stevehipwell](https://github.com/stevehipwell)
 - Removed the `control_plane_logging_external_workspace_different_resource_group` variable as it is unused. ([#1069](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1069)) [@peterabarr](https://github.com/peterabarr)
-- Added experimental Loki support. This can be enabled by setting the `experimental.loki` to `true`. Loki will default to an enabled state in the future. ([#1080](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1080)) [@appkins](https://github.com/appkins)
+- Added experimental Loki support; this can be enabled by setting the `experimental.loki` to `true`. ([#1080](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1080)) [@appkins](https://github.com/appkins)
 
 ## [v1.11.0] - 2023-04-26
 
