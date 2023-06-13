@@ -171,10 +171,10 @@ variable "storage" {
   description = "Storage configuration."
   type = object({
     file = object({
-      enabled = optional(bool, false)
+      enabled = bool
     })
     blob = object({
-      enabled = optional(bool, false)
+      enabled = bool
     })
   })
   nullable = false

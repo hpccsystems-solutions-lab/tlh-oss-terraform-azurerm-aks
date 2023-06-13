@@ -141,69 +141,69 @@ variable "core_services_config" {
     alertmanager = object({
       smtp_host = string
       smtp_from = string
-      receivers = optional(list(object({
+      receivers = list(object({
         name              = string
-        email_configs     = optional(any, [])
-        opsgenie_configs  = optional(any, [])
-        pagerduty_configs = optional(any, [])
-        pushover_configs  = optional(any, [])
-        slack_configs     = optional(any, [])
-        sns_configs       = optional(any, [])
-        victorops_configs = optional(any, [])
-        webhook_configs   = optional(any, [])
-        wechat_configs    = optional(any, [])
-        telegram_configs  = optional(any, [])
-      })))
-      routes = optional(list(object({
+        email_configs     = any
+        opsgenie_configs  = any
+        pagerduty_configs = any
+        pushover_configs  = any
+        slack_configs     = any
+        sns_configs       = any
+        victorops_configs = any
+        webhook_configs   = any
+        wechat_configs    = any
+        telegram_configs  = any
+      }))
+      routes = list(object({
         receiver            = string
-        group_by            = optional(list(string))
-        continue            = optional(bool)
+        group_by            = list(string)
+        continue            = bool
         matchers            = list(string)
-        group_wait          = optional(string)
-        group_interval      = optional(string)
-        repeat_interval     = optional(string)
-        mute_time_intervals = optional(list(string))
-        # active_time_intervals = optional(list(string))
-      })))
+        group_wait          = string
+        group_interval      = string
+        repeat_interval     = string
+        mute_time_intervals = list(string)
+        # active_time_intervals = list(string)
+      }))
     })
-    cert_manager = optional(object({
-      acme_dns_zones      = optional(list(string))
-      additional_issuers  = optional(map(any))
-      default_issuer_kind = optional(string)
-      default_issuer_name = optional(string)
-    }), {})
-    coredns = optional(object({
-      forward_zones = optional(map(any))
-    }), {})
-    external_dns = optional(object({
-      additional_sources     = optional(list(string))
-      private_domain_filters = optional(list(string))
-      public_domain_filters  = optional(list(string))
-    }), {})
-    fluentd = optional(object({
-      image_repository = optional(string)
-      image_tag        = optional(string)
-      additional_env   = optional(map(string))
-      debug            = optional(bool, true)
-      filters          = optional(string)
-      route_config = optional(list(object({
+    cert_manager = object({
+      acme_dns_zones      = list(string)
+      additional_issuers  = map(any)
+      default_issuer_kind = string
+      default_issuer_name = string
+    })
+    coredns = object({
+      forward_zones = map(any)
+    })
+    external_dns = object({
+      additional_sources     = list(string)
+      private_domain_filters = list(string)
+      public_domain_filters  = list(string)
+    })
+    fluentd = object({
+      image_repository = string
+      image_tag        = string
+      additional_env   = map(string)
+      debug            = bool
+      filters          = string
+      route_config = list(object({
         match  = string
         label  = string
-        copy   = optional(bool)
+        copy   = bool
         config = string
-      })))
-    }), {})
-    grafana = optional(object({
-      admin_password          = optional(string)
-      additional_plugins      = optional(list(string))
-      additional_data_sources = optional(list(any))
-    }), {})
+      }))
+    })
+    grafana = object({
+      admin_password          = string
+      additional_plugins      = list(string)
+      additional_data_sources = list(any)
+    })
     ingress_internal_core = object({
       domain           = string
-      subdomain_suffix = optional(string)
-      lb_source_cidrs  = optional(list(string), ["10.0.0.0/8", "100.65.0.0/16"])
-      lb_subnet_name   = optional(string)
-      public_dns       = optional(bool, false)
+      subdomain_suffix = string
+      lb_source_cidrs  = list(string)
+      lb_subnet_name   = string
+      public_dns       = bool
     })
     oms_agent = object({
       enabled                     = bool
@@ -211,9 +211,9 @@ variable "core_services_config" {
       manage_config               = bool
       containerlog_schema_version = string
     })
-    prometheus = optional(object({
-      remote_write = optional(any)
-    }), {})
+    prometheus = object({
+      remote_write = any
+    })
   })
   nullable = false
 }

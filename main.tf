@@ -82,7 +82,7 @@ module "rbac" {
 
   azure_env     = local.azure_env
   cluster_id    = module.cluster.id
-  rbac_bindings = var.rbac_bindings
+  rbac_bindings = merge(var.rbac_bindings, { cluster_admin_groups = [] })
   labels        = local.labels
 
   depends_on = [

@@ -73,32 +73,32 @@ variable "bootstrap_vm_size" {
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
-    node_arch         = optional(string, "amd64")
-    node_os           = optional(string, "ubuntu")
-    node_type         = optional(string, "gp")
-    node_type_variant = optional(string, "default")
-    node_type_version = optional(string, "v1")
-    node_size         = string
-    ultra_ssd         = optional(bool, false)
-    os_disk_size      = optional(number, 128)
-    temp_disk_mode    = optional(string, "NONE")
-    nvme_mode         = optional(string, "NONE")
-    os_config = optional(object({
-      sysctl = map(any)
-    }), { sysctl = {} })
-    placement_group_key = optional(string, null)
-    single_group        = optional(bool, false)
-    min_capacity        = optional(number, 0)
+    node_arch           = string
+    node_os             = string
+    node_type           = string
+    node_type_variant   = string
+    node_type_version   = string
+    node_size           = string
+    ultra_ssd           = bool
+    os_disk_size        = number
+    temp_disk_mode      = string
+    nvme_mode           = string
+    placement_group_key = string
+    single_group        = bool
+    min_capacity        = number
     max_capacity        = number
-    max_pods            = optional(number, -1)
-    max_surge           = optional(string, "10%")
-    labels              = optional(map(string), {})
-    taints = optional(list(object({
+    max_pods            = number
+    max_surge           = string
+    labels              = map(string)
+    taints = list(object({
       key    = string
       value  = string
       effect = string
-    })), [])
-    tags = optional(map(string), {})
+    }))
+    os_config = object({
+      sysctl = map(any)
+    })
+    tags = map(string)
   }))
   nullable = false
 

@@ -67,14 +67,12 @@ variable "additional_env" {
   description = "Additional environment variables."
   type        = map(string)
   nullable    = false
-  default     = {}
 }
 
 variable "debug" {
   description = "If true all logs will be sent to stdout."
   type        = bool
   nullable    = false
-  default     = true
 }
 
 variable "filters" {
@@ -88,11 +86,10 @@ variable "route_config" {
   type = list(object({
     match  = string
     label  = string
-    copy   = optional(bool, false)
+    copy   = bool
     config = string
   }))
   nullable = false
-  default  = []
 }
 
 variable "loki" {
@@ -114,9 +111,9 @@ variable "loki_port" {
 }
 
 variable "loki_systemd_logs" {
+  description = "Send systemd logs to Loki."
   type        = bool
-  default     = false
-  description = "Enable systemd log collection."
+  nullable    = false
 }
 
 variable "tags" {

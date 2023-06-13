@@ -780,7 +780,7 @@ Specification for the `core_services_config` object.
 
 | **Variable**            | **Description**                         | **Type**                                 | **Default** |
 | :---------------------- | :-------------------------------------- | :--------------------------------------- | :---------- |
-| `alertmanager`          | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   |             |
+| `alertmanager`          | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   | `{}`        |
 | `cert_manager`          | Cert Manager configuration.             | `object` ([Appendix E2](#appendix-e2))   | `{}`        |
 | `coredns`               | CoreDNS configuration.                  | `object` ([Appendix E3](#appendix-e3))   | `{}`        |
 | `external_dns`          | ExternalDNS configuration.              | `object` ([Appendix E4](#appendix-e4))   | `{}`        |
@@ -796,8 +796,8 @@ Specification for the `core_services_config.alertmanager` object.
 
 | **Variable** | **Description**                                                                               | **Type**       | **Default** |
 | :----------- | :-------------------------------------------------------------------------------------------- | :------------- | :---------- |
-| `smtp_host`  | SMTP host to send alert emails.                                                               | `string`       |             |
-| `smtp_from`  | SMTP from address for alert emails.                                                           | `string`       |             |
+| `smtp_host`  | SMTP host to send alert emails.                                                               | `string`       |             | `null` |
+| `smtp_from`  | SMTP from address for alert emails.                                                           | `string`       | `null`      |
 | `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)` | `[]`        |
 | `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)` | `[]`        |
 

@@ -67,21 +67,18 @@ variable "additional_sources" {
   description = "Additional sources to handle."
   type        = list(string)
   nullable    = false
-  default     = []
 }
 
 variable "private_domain_filters" {
   description = "The domains that external-dns can manage private records for."
   type        = list(string)
   nullable    = false
-  default     = []
 }
 
 variable "public_domain_filters" {
   description = "The domains that external-dns can manage public records for."
   type        = list(string)
   nullable    = false
-  default     = []
 }
 
 variable "tags" {

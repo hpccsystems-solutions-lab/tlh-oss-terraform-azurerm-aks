@@ -67,28 +67,24 @@ variable "acme_dns_zones" {
   description = "DNS zones which can be managed via the ACME protocol."
   type        = list(string)
   nullable    = false
-  default     = []
 }
 
 variable "additional_issuers" {
   description = "Additional issuers to add to the cluster."
   type        = map(any)
   nullable    = false
-  default     = {}
 }
 
 variable "default_issuer_kind" {
   description = "The default issuer kind."
   type        = string
   nullable    = false
-  default     = "ClusterIssuer"
 }
 
 variable "default_issuer_name" {
   description = "The default issuer."
   type        = string
   nullable    = false
-  default     = "letsencrypt-staging"
 }
 
 variable "tags" {

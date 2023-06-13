@@ -14,5 +14,4 @@ variable "forward_zones" {
   description = "Map of DNS zones and DNS server IP addresses to forward DNS requests to."
   type        = map(string)
   nullable    = false
-  default     = {}
 }

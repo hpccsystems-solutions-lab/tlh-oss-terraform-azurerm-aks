@@ -59,77 +59,71 @@ variable "zones" {
 variable "prometheus_remote_write" {
   description = "Remote Prometheus endpoints to write metrics to."
   type        = any
-  default     = []
   nullable    = false
 }
 
 variable "alertmanager_smtp_host" {
   description = "The SMTP host to use for Alert Manager."
   type        = string
-  nullable    = false
+  nullable    = true
 }
 
 variable "alertmanager_smtp_from" {
   description = "The SMTP from address to use for Alert Manager."
   type        = string
-  nullable    = false
+  nullable    = true
 }
 
 variable "alertmanager_receivers" {
   description = "Alertmanager recievers to add to the default null, will always be a list."
   type = list(object({
     name              = string
-    email_configs     = optional(any, [])
-    opsgenie_configs  = optional(any, [])
-    pagerduty_configs = optional(any, [])
-    pushover_configs  = optional(any, [])
-    slack_configs     = optional(any, [])
-    sns_configs       = optional(any, [])
-    victorops_configs = optional(any, [])
-    webhook_configs   = optional(any, [])
-    wechat_configs    = optional(any, [])
-    telegram_configs  = optional(any, [])
+    email_configs     = any
+    opsgenie_configs  = any
+    pagerduty_configs = any
+    pushover_configs  = any
+    slack_configs     = any
+    sns_configs       = any
+    victorops_configs = any
+    webhook_configs   = any
+    wechat_configs    = any
+    telegram_configs  = any
   }))
   nullable = false
-  default  = []
 }
 
 variable "alertmanager_routes" {
   description = "Alertmanager routes, will always be a list."
   type = list(object({
     receiver            = string
-    group_by            = optional(list(string), [])
-    continue            = optional(bool, false)
+    group_by            = list(string)
+    continue            = bool
     matchers            = list(string)
-    group_wait          = optional(string, "30s")
-    group_interval      = optional(string, "5m")
-    repeat_interval     = optional(string, "12h")
-    mute_time_intervals = optional(list(string), [])
-    # active_time_intervals = optional(list(string), [])
+    group_wait          = string
+    group_interval      = string
+    repeat_interval     = string
+    mute_time_intervals = list(string)
+    # active_time_intervals = list(string)
   }))
   nullable = false
-  default  = []
 }
 
 variable "grafana_admin_password" {
   description = "The Grafana admin password."
   type        = string
   nullable    = false
-  default     = "changeme"
 }
 
 variable "grafana_additional_plugins" {
   description = "Additional Grafana plugins to install."
   type        = list(string)
   nullable    = false
-  default     = []
 }
 
 variable "grafana_additional_data_sources" {
   description = "Additional Grafana data sources to add, will always be a list."
   type        = any
   nullable    = false
-  default     = []
 }
 
 variable "control_plane_log_analytics_enabled" {

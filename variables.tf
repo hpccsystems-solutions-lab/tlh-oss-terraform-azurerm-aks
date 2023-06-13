@@ -161,9 +161,9 @@ variable "admin_group_object_ids" {
 variable "rbac_bindings" {
   description = "User and groups to configure in Kubernetes ClusterRoleBindings; for Azure AD these are the IDs."
   type = object({
-    cluster_admin_users = optional(map(any))
-    cluster_view_users  = optional(map(any))
-    cluster_view_groups = optional(list(string))
+    cluster_admin_users = optional(map(any), {})
+    cluster_view_users  = optional(map(any), {})
+    cluster_view_groups = optional(list(string), [])
   })
   nullable = false
   default  = {}
@@ -172,30 +172,32 @@ variable "rbac_bindings" {
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
-    node_arch           = optional(string)
-    node_os             = optional(string)
-    node_type           = optional(string)
-    node_type_variant   = optional(string)
-    node_type_version   = optional(string)
+    node_arch           = optional(string, "amd64")
+    node_os             = optional(string, "ubuntu")
+    node_type           = optional(string, "gp")
+    node_type_variant   = optional(string, "default")
+    node_type_version   = optional(string, "v1")
     node_size           = string
-    ultra_ssd           = optional(bool)
-    os_disk_size        = optional(number)
-    temp_disk_mode      = optional(string)
-    nvme_mode           = optional(string)
-    os_config           = optional(map(any))
-    placement_group_key = optional(string)
-    single_group        = optional(bool)
-    min_capacity        = optional(number)
+    ultra_ssd           = optional(bool, false)
+    os_disk_size        = optional(number, 128)
+    temp_disk_mode      = optional(string, "NONE")
+    nvme_mode           = optional(string, "NONE")
+    placement_group_key = optional(string, null)
+    single_group        = optional(bool, false)
+    min_capacity        = optional(number, 0)
     max_capacity        = number
-    max_pods            = optional(number)
-    max_surge           = optional(string)
-    labels              = optional(map(string))
+    max_pods            = optional(number, -1)
+    max_surge           = optional(string, "10%")
+    labels              = optional(map(string), {})
     taints = optional(list(object({
       key    = string
       value  = string
       effect = string
-    })))
-    tags = optional(map(string))
+    })), [])
+    os_config = optional(object({
+      sysctl = optional(map(any), {})
+    }), {})
+    tags = optional(map(string), {})
   }))
   nullable = false
   default  = {}
@@ -254,9 +256,9 @@ variable "storage" {
 variable "core_services_config" {
   description = "Core service configuration."
   type = object({
-    alertmanager = object({
-      smtp_host = string
-      smtp_from = string
+    alertmanager = optional(object({
+      smtp_host = optional(string, null)
+      smtp_from = optional(string, null)
       receivers = optional(list(object({
         name              = string
         email_configs     = optional(any, [])
@@ -272,58 +274,58 @@ variable "core_services_config" {
       })))
       routes = optional(list(object({
         receiver            = string
-        group_by            = optional(list(string))
-        continue            = optional(bool)
+        group_by            = optional(list(string), [])
+        continue            = optional(bool, false)
         matchers            = list(string)
-        group_wait          = optional(string)
-        group_interval      = optional(string)
-        repeat_interval     = optional(string)
-        mute_time_intervals = optional(list(string))
-        # active_time_intervals = optional(list(string))
+        group_wait          = optional(string, "30s")
+        group_interval      = optional(string, "5m")
+        repeat_interval     = optional(string, "12h")
+        mute_time_intervals = optional(list(string), [])
+        # active_time_intervals = optional(list(string), [])
       })))
-    })
+    }), {})
     cert_manager = optional(object({
-      acme_dns_zones      = optional(list(string))
-      additional_issuers  = optional(map(any))
-      default_issuer_kind = optional(string)
-      default_issuer_name = optional(string)
-    }))
+      acme_dns_zones      = optional(list(string), [])
+      additional_issuers  = optional(map(any), {})
+      default_issuer_kind = optional(string, "ClusterIssuer")
+      default_issuer_name = optional(string, "letsencrypt-staging")
+    }), {})
     coredns = optional(object({
-      forward_zones = optional(map(any))
-    }))
+      forward_zones = optional(map(any), {})
+    }), {})
     external_dns = optional(object({
-      additional_sources     = optional(list(string))
-      private_domain_filters = optional(list(string))
-      public_domain_filters  = optional(list(string))
-    }))
+      additional_sources     = optional(list(string), [])
+      private_domain_filters = optional(list(string), [])
+      public_domain_filters  = optional(list(string), [])
+    }), {})
     fluentd = optional(object({
-      image_repository = optional(string)
-      image_tag        = optional(string)
-      additional_env   = optional(map(string))
-      debug            = optional(bool)
-      filters          = optional(string)
+      image_repository = optional(string, null)
+      image_tag        = optional(string, null)
+      additional_env   = optional(map(string), {})
+      debug            = optional(bool, false)
+      filters          = optional(string, null)
       route_config = optional(list(object({
         match  = string
         label  = string
-        copy   = optional(bool)
+        copy   = optional(bool, false)
         config = string
-      })))
-    }))
+      })), [])
+    }), {})
     grafana = optional(object({
-      admin_password          = optional(string)
-      additional_plugins      = optional(list(string))
-      additional_data_sources = optional(list(any))
-    }))
-    ingress_internal_core = optional(object({
+      admin_password          = optional(string, "changeme")
+      additional_plugins      = optional(list(string), [])
+      additional_data_sources = optional(any, [])
+    }), {})
+    ingress_internal_core = object({
       domain           = string
-      subdomain_suffix = optional(string)
-      lb_source_cidrs  = optional(list(string))
-      lb_subnet_name   = optional(string)
-      public_dns       = optional(bool)
-    }))
+      subdomain_suffix = optional(string, null)
+      lb_source_cidrs  = optional(list(string), ["10.0.0.0/8", "100.65.0.0/16"])
+      lb_subnet_name   = optional(string, null)
+      public_dns       = optional(bool, false)
+    })
     prometheus = optional(object({
-      remote_write = optional(any)
-    }))
+      remote_write = optional(any, [])
+    }), {})
     storage = optional(object({
       file = optional(bool, false)
       blob = optional(bool, false)
