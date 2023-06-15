@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Kube Prometheus Stack_ chart to [v46.8.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-46.8.0) (contains _Prometheus Operator_ [v0.65.2](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.65.2) & _Prometheus_ [v2.44.0](https://github.com/prometheus/prometheus/releases/tag/v2.44.0)). ([#1145](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1145)) [@peterabarr](https://github.com/peterabarr)
 - Added a new issue template `prepare-module.md`. ([#1146](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1146)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluent Bit_ chart to [v0.30.4](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.30.4). ([#1149](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1149)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Fluentd_ chart to [v3.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.9.1) (contains _Fluentd Aggregator_ [v2.9.1](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.9.1)). ([#1157](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1157)) [@appkins](https://github.com/appkins)
 
 ## [v1.14.0] - 2023-06-05
 

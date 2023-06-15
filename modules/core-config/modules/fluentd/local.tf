@@ -1,6 +1,6 @@
 locals {
   name          = "fluentd"
-  chart_version = "3.8.0"
+  chart_version = "3.9.1"
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
