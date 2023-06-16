@@ -29,8 +29,8 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
   name                      = var.cluster_name
-  kubernetes_version        = var.cluster_version_full
-  automatic_channel_upgrade = "node-image"
+  kubernetes_version        = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
+  automatic_channel_upgrade = var.patch_upgrade ? "patch" : "node-image"
   sku_tier                  = local.sku_tier_lookup[var.sku_tier]
 
   resource_group_name = var.resource_group_name
@@ -139,7 +139,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     vnet_subnet_id = var.subnet_id
     zones          = [1, 2, 3]
 
-    orchestrator_version = var.cluster_version_full
+    orchestrator_version = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
 
     node_count                   = 1
     enable_auto_scaling          = false

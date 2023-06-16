@@ -14,7 +14,9 @@ module "system_node_groups" {
 
   name                         = each.key
   cluster_id                   = var.cluster_id
+  cluster_version              = var.cluster_version
   cluster_version_full         = var.cluster_version_full
+  cluster_patch_upgrade        = var.cluster_patch_upgrade
   cni                          = var.cni
   fips                         = var.fips
   subnet_id                    = var.subnet_id
@@ -64,7 +66,9 @@ module "user_node_groups" {
 
   name                         = each.key
   cluster_id                   = var.cluster_id
+  cluster_version              = var.cluster_version
   cluster_version_full         = var.cluster_version_full
+  cluster_patch_upgrade        = var.cluster_patch_upgrade
   cni                          = var.cni
   fips                         = var.fips
   subnet_id                    = var.subnet_id

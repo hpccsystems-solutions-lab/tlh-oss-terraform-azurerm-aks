@@ -397,13 +397,14 @@ variable "experimental" {
     loki                                        = optional(bool, false)
     systemd_logs_loki                           = optional(bool, false)
     fluent_bit_aggregator                       = optional(bool, false)
-    fluent_bit_aggregator_cpu_requests_override = optional(string)
-    fluent_bit_aggregator_cpu_limits_override   = optional(string)
-    fluent_bit_aggregator_memory_override       = optional(string)
+    fluent_bit_aggregator_cpu_requests_override = optional(string, null)
+    fluent_bit_aggregator_cpu_limits_override   = optional(string, null)
+    fluent_bit_aggregator_memory_override       = optional(string, null)
     fluent_bit_aggregator_replicas_per_zone     = optional(number, 1)
     fluent_bit_aggregator_raw_filters           = optional(string, "")
     fluent_bit_aggregator_raw_outputs           = optional(string, "")
     fluent_bit_aggregator_lua_scripts           = optional(map(string), {})
+    cluster_patch_upgrade                       = optional(bool, false)
   })
   nullable = false
   default  = {}

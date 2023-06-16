@@ -10,9 +10,21 @@ variable "cluster_id" {
   nullable    = false
 }
 
+variable "cluster_version" {
+  description = "The Kubernetes version of the Azure Kubernetes managed cluster."
+  type        = string
+  nullable    = false
+}
+
 variable "cluster_version_full" {
   description = "The full Kubernetes version of the Azure Kubernetes managed cluster."
   type        = string
+  nullable    = false
+}
+
+variable "cluster_patch_upgrade" {
+  description = "If the cluster upgrade channel should be set to patch instead of node-image."
+  type        = bool
   nullable    = false
 }
 

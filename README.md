@@ -569,6 +569,10 @@ The module now experimentally supports using _Fluent Bit_ as the log aggregator 
 
 The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` but to make use of it you will need to provide raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override`, `experimental.fluent_bit_aggregator_memory_override` & `experimental.fluent_bit_aggregator_replicas_per_zone` flags.
 
+### Cluster Patch Upgrade
+
+The managed Kubernetes cluster control plane should be automatically updated for us but the stable implementaiton of AKS makes you choose between keeping the nodes updated and the control plane; we need to keep the nodes up to date so the control plane is updated by a module upgrade (the oposit of our desired behaviour). There is a [public preview feature](https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-node-image) to seperate these concerns but until that can be supported by Terraform we need to stick to the current logic for general use. That said there is a case where unexpected node upgrades can cause issues to the AKS cluster; so for anyone with this issue and who is willing to keep their AKS nodes manually updated you can set `experimental = { cluster_patch_upgrade = true }` to switch the cluster to the desired behaviour and take responsibility for node upgrades.
+
 ---
 
 ## Requirements
