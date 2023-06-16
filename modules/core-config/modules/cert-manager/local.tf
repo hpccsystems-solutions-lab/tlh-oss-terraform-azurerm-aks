@@ -78,10 +78,11 @@ locals {
       }
     }
 
+    dns01RecursiveNameserversOnly = true
+    dns01RecursiveNameservers     = "8.8.8.8:53,1.1.1.1:53"
+
     extraArgs = concat([
       "--logging-format=json",
-      "--dns01-recursive-nameservers-only",
-      "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53"
       ], local.use_aad_workload_identity ? [
       "--issuer-ambient-credentials"
     ] : [])
@@ -197,10 +198,6 @@ locals {
           memory = "64Mi"
         }
       }
-
-      extraArgs = [
-        "--logging-format=json"
-      ]
     }
 
     ingressShim = {
