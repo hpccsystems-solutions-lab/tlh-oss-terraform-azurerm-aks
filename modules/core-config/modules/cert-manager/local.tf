@@ -155,10 +155,6 @@ locals {
           memory = "128Mi"
         }
       }
-
-      extraArgs = [
-        "--logging-format=json"
-      ]
     }
 
     webhook = {
@@ -199,6 +195,9 @@ locals {
         }
       }
     }
+    extraArgs = [
+      "--logging-format=json"
+    ]
 
     ingressShim = {
       defaultIssuerKind = var.default_issuer_kind
