@@ -17,6 +17,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
 - The `lnrs.io/local-storage` node label is deprecated, this will be removed in the `v1.16.0` release.
+- The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
 
 ---
 
@@ -46,6 +47,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluentd_ chart to [v3.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.9.1) (contains _Fluentd Aggregator_ [v2.9.1](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.9.1)). ([#1157](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1157)) [@appkins](https://github.com/appkins)
 - Fixed _Cert Manager_ API check container args. ([#1160](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1160)) [@peterabarr](https://github.com/peterabarr)
 - Added experimental support for switching the cluster to automatic patch upgrades (at the expense of having to manually patch nodes) via the `experimental.cluster_patch_upgrade` input variable. [@stevehipwell](https://github.com/stevehipwell)
+- Explicitly set control plane log retention for more predictable default behaviour. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated support for creating the Log Analytics Workspace for control plane logs in the module & the `logging.control_plane.log_analytics.external_workspace` input variable; the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.14.0] - 2023-06-05
 

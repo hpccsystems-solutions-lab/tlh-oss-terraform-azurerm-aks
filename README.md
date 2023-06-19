@@ -231,7 +231,7 @@ AKS cluster logging is currently split up into two parts; the control plane logs
 
 Control plane logs are exported to one (or both) of a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview), these logs are retained for `30` days by default. Both of these destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
 
-The control plane logs can be configured via the [logging.control_plane](#appendix-c1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as retention. Although the module can create a Log Analytics Workspace for control plane logs is is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
+The control plane logs can be configured via the [logging.control_plane](#appendix-c1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as changing the retention. Although the module can create a Log Analytics Workspace for control plane logs this is **DEPRECATED** and it is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
 
 ###### Control Plane Logging Profiles
 
@@ -704,15 +704,15 @@ Specification for the `logging.control_plane` object.
 
 Specification for the `logging.control_plane.log_analytics` object.
 
-| **Variable**                    | **Description**                                                     | **Type**       | **Default** |
-| :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
-| `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.  | `bool`         | `false`     |
-| `external_workspace`            | If the workspace has been created outside the module.               | `bool`         | `false`     |
-| `workspace_id`                  | The workspace ID if `external_workspace` is `true`.                 | `string`       | `null`      |
-| `profile`                       | The profile to use for the log category types.                      | `string`       | `null`      |
-| `additional_log_category_types` | Additional log category types to collect.                           | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `false`     |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`. | `bool`         | `false`     |
+| **Variable**                    | **Description**                                                                                                                | **Type**       | **Default** |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- | :------------- | :---------- |
+| `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.                                                             | `bool`         | `false`     |
+| `external_workspace`            | **DEPRECATED** - If the workspace has been created outside the module; the workspace should now be created outside the module. | `bool`         | `false`     |
+| `workspace_id`                  | The workspace ID if `external_workspace` is `true`.                                                                            | `string`       | `null`      |
+| `profile`                       | The profile to use for the log category types.                                                                                 | `string`       | `null`      |
+| `additional_log_category_types` | Additional log category types to collect.                                                                                      | `list(string)` | `[]`        |
+| `retention_enabled`             | If retention should be configured per log category collected.                                                                  | `bool`         | `true`      |
+| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.                                                            | `number`       | `30`        |
 
 ### Appendix C1b
 
@@ -720,12 +720,12 @@ Specification for the `logging.control_plane.storage_account` object.
 
 | **Variable**                    | **Description**                                                     | **Type**       | **Default** |
 | :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
-| `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.  | `bool`         | `false`     |
+| `enabled`                       | If control plane logs should be sent to a storage account.          | `bool`         | `false`     |
 | `id`                            | The Azure Storage Account ID.                                       | `string`       | `null`      |
 | `profile`                       | The profile to use for the log category types.                      | `string`       | `null`      |
 | `additional_log_category_types` | Additional log category types to collect.                           | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `false`     |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`. | `bool`         | `false`     |
+| `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `true`      |
+| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`. | `number`       | `30`        |
 
 ### Appendix C2
 

@@ -213,7 +213,7 @@ variable "logging" {
         workspace_id                  = optional(string, null)
         profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
-        retention_enabled             = optional(bool, false)
+        retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
       }), {})
       storage_account = optional(object({
@@ -221,7 +221,7 @@ variable "logging" {
         id                            = optional(string, null)
         profile                       = optional(string, "all")
         additional_log_category_types = optional(list(string), [])
-        retention_enabled             = optional(bool, false)
+        retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
       }), {})
     }), {})
