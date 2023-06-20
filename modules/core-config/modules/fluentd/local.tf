@@ -140,7 +140,7 @@ locals {
   }, var.additional_env)
 
   loki_route_config = {
-    match  = var.loki_systemd_logs ? "**" : "kube.**"
+    match  = var.loki_output.node_logs && var.loki_output.workload_logs ? "**" : (var.loki_output.node_logs ? "host.**" : "kube.**")
     label  = "@LOKI"
     copy   = true
     config = <<-EOT
@@ -153,7 +153,7 @@ locals {
       </filter>
       <match **>
         @type loki
-        url "http://${var.loki_host}:${tostring(var.loki_port)}"
+        url "http://${var.loki_output.host}:${tostring(var.loki_output.port)}"
         line_format "json"
         extract_kubernetes_labels false
         <label>
@@ -176,7 +176,7 @@ locals {
     EOT
   }
 
-  route_config = concat(var.loki ? [local.loki_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
+  route_config = concat(var.loki_output.enabled ? [local.loki_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
     match  = "**"
     label  = length(var.route_config) > 0 ? "@DEBUG" : "@DEFAULT"
     copy   = length(var.route_config) > 0
@@ -188,6 +188,16 @@ locals {
   }] : [], var.route_config)
 
   filter_config_string = <<EOT
+%{if length(var.extra_records) > 0~}
+<filter **>
+  @type record_transformer
+  <record>
+%{for k, v in var.extra_records~}
+    ${k} ${replace(v, "/(?i)\\$\\{([a-z0-9_]+)\\}/", "#{ENV['$n']}")}
+%{endfor~}
+  </record>
+</filter>
+%{endif~}
 %{if var.filters != null~}
 ${trimspace(var.filters)}
 %{endif~}

@@ -1,6 +1,6 @@
 locals {
   name          = "fluent-bit-aggregator"
-  chart_version = "0.2.1"
+  chart_version = "0.4.0"
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
@@ -58,11 +58,11 @@ locals {
 
     terminationGracePeriodSeconds = 60
 
-    env = [
+    env = concat([
       { name = "SUBSCRIPTION_ID", value = var.subscription_id },
       { name = "LOCATION", value = local.location_sanitized },
       { name = "CLUSTER_NAME", value = var.cluster_name }
-    ]
+    ], [for k, v in var.extra_env : { name = k, value = v }], [for k, v in var.secret_env : { name = k, secretKeyRef = { name = kubernetes_secret_v1.secret_env[0].metadata[0].name, key = k } }])
 
     persistence = {
       enabled       = true
@@ -154,10 +154,26 @@ locals {
 
       luaScripts = var.lua_scripts
     }
+
+    hotReload = {
+      enabled = true
+
+      resources = {
+        requests = {
+          cpu    = "10m"
+          memory = "16Mi"
+        }
+
+        limits = {
+          cpu    = "1000m"
+          memory = "16Mi"
+        }
+      }
+    }
   }
 
-  raw_filters = regexall("\\[FILTER\\][^[]+", var.raw_filters)
-  raw_outputs = regexall("\\[OUTPUT\\][^[]+", var.raw_outputs)
+  raw_filters = var.raw_filters != null ? regexall("\\[FILTER\\][^[]+", var.raw_filters) : []
+  raw_outputs = var.raw_outputs != null ? regexall("\\[OUTPUT\\][^[]+", var.raw_outputs) : []
 
   pipeline = <<EOT
 [INPUT]
@@ -168,9 +184,28 @@ locals {
     buffer_max_size                   4M
     storage.type                      filesystem
     storage.pause_on_chunks_overlimit false
+%{if length(var.extra_records) > 0}
+[FILTER]
+    name record_modifier
+    match *
+%{for k, v in var.extra_records~}
+    record ${k} ${v}
+%{endfor~}
+%{endif~}
 %{for filter in local.raw_filters}
 ${chomp(filter)}
 %{endfor~}
+%{if var.loki_output.enabled}
+[OUTPUT]
+    name                     loki
+    match                    ${var.loki_output.node_logs && var.loki_output.workload_logs ? "*" : (var.loki_output.node_logs ? "host.*" : "kube.*")}
+    host                     ${var.loki_output.host}
+    port                     ${tostring(var.loki_output.port)}
+    line_format              json
+    auto_kubernetes_labels   false
+    label_keys               $cluster, $namespace, $app
+    storage.total_limit_size 16GB
+%{endif~}
 %{for output in local.raw_outputs}
 ${chomp(output)}
 %{endfor~}

@@ -1,3 +1,16 @@
+resource "kubernetes_secret_v1" "secret_env" {
+  count = length(var.secret_env) > 0 ? 1 : 0
+
+  metadata {
+    name      = "${local.name}-secret-env"
+    namespace = var.namespace
+  }
+
+  type = "Opaque"
+
+  data = var.secret_env
+}
+
 resource "kubectl_manifest" "resource_files" {
   for_each = local.resource_files
 
@@ -24,6 +37,7 @@ resource "helm_release" "default" {
   ]
 
   depends_on = [
-    module.identity
+    module.identity,
+    kubernetes_secret_v1.secret_env
   ]
 }

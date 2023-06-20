@@ -138,6 +138,16 @@ variable "control_plane_log_analytics_workspace_id" {
   nullable    = true
 }
 
+variable "loki" {
+  description = "Loki config."
+  type = object({
+    enabled = bool
+    host    = string
+    port    = number
+  })
+  nullable = false
+}
+
 variable "oms_agent_enabled" {
   description = "If the OMS Agent is enabled."
   type        = bool

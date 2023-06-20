@@ -25,12 +25,12 @@ output "external_dns_public_identity" {
 
 output "fluent_bit_aggregator_identity" {
   description = "Identity that Fluent Bit Aggregator uses."
-  value       = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].identity : null
+  value       = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].identity : null
 }
 
 output "fluentd_identity" {
   description = "Identity that Fluentd uses."
-  value       = var.experimental.fluent_bit_aggregator ? null : module.fluentd[0].identity
+  value       = var.core_services_config.fluent_bit_aggregator.enabled ? null : module.fluentd[0].identity
 }
 
 output "grafana_identity" {

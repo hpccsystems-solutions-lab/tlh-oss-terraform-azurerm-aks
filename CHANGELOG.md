@@ -13,6 +13,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ---
 
+<!-- The release where the removal will take place should be <major>.<minor + 3>.0 where the base version is the upcoming release. -->
+
 ## Deprecations
 
 - The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
@@ -50,6 +52,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Explicitly set control plane log retention for more predictable default behaviour. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated support for creating the Log Analytics Workspace for control plane logs in the module & the `logging.control_plane.log_analytics.external_workspace` input variable; the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Fixed ingress backend node selector logic. [@stevehipwell](https://github.com/stevehipwell)
+- Added support for adding extra records to logs via the `logging.extra_records` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.14.0] - 2023-06-05
 

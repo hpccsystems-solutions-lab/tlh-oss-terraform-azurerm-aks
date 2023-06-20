@@ -109,9 +109,12 @@ variable "logging" {
         retention_days                = number
       })
     })
+
     workloads = object({
       core_service_log_level = string
     })
+
+    extra_records = map(string)
   })
   nullable = false
 }
@@ -180,6 +183,15 @@ variable "core_services_config" {
       private_domain_filters = list(string)
       public_domain_filters  = list(string)
     })
+    fluent_bit_aggregator = object({
+      enabled           = bool
+      replicas_per_zone = number
+      extra_env         = map(string)
+      secret_env        = map(string)
+      lua_scripts       = map(string)
+      raw_filters       = string
+      raw_outputs       = string
+    })
     fluentd = object({
       image_repository = string
       image_tag        = string
@@ -204,6 +216,10 @@ variable "core_services_config" {
       lb_source_cidrs  = list(string)
       lb_subnet_name   = string
       public_dns       = bool
+    })
+    loki = object({
+      enabled   = bool
+      node_logs = bool
     })
     oms_agent = object({
       enabled                     = bool
@@ -245,15 +261,8 @@ variable "experimental" {
     fluent_bit_use_memory_buffer                = bool
     fluentd_memory_override                     = string
     prometheus_memory_override                  = string
-    loki                                        = bool
-    systemd_logs_loki                           = bool
-    fluent_bit_aggregator                       = bool
     fluent_bit_aggregator_cpu_requests_override = string
     fluent_bit_aggregator_cpu_limits_override   = string
     fluent_bit_aggregator_memory_override       = string
-    fluent_bit_aggregator_replicas_per_zone     = number
-    fluent_bit_aggregator_raw_filters           = string
-    fluent_bit_aggregator_raw_outputs           = string
-    fluent_bit_aggregator_lua_scripts           = map(string)
   })
 }

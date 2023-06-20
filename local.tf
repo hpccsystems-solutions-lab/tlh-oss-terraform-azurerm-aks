@@ -62,6 +62,21 @@ locals {
   storage = merge(var.storage, var.storage.file.enabled ? {} : { file = { enabled = var.core_services_config.storage.file } }, var.storage.blob.enabled ? {} : { blob = { enabled = var.core_services_config.storage.file } })
 
   core_services_config = merge(var.core_services_config, {
+    fluent_bit_aggregator = {
+      enabled           = var.experimental.fluent_bit_aggregator
+      replicas_per_zone = var.experimental.fluent_bit_aggregator_replicas_per_zone
+      extra_env         = var.experimental.fluent_bit_aggregator_extra_env
+      secret_env        = var.experimental.fluent_bit_aggregator_secret_env
+      lua_scripts       = var.experimental.fluent_bit_aggregator_lua_scripts
+      raw_filters       = var.experimental.fluent_bit_aggregator_raw_filters
+      raw_outputs       = var.experimental.fluent_bit_aggregator_raw_outputs
+    }
+
+    loki = {
+      enabled   = var.experimental.loki
+      node_logs = var.experimental.systemd_logs_loki
+    }
+
     oms_agent = {
       enabled                     = var.experimental.oms_agent
       log_analytics_workspace_id  = var.experimental.oms_agent ? var.experimental.oms_agent_log_analytics_workspace_id : null

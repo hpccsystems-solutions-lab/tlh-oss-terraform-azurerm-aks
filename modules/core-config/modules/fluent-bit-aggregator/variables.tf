@@ -51,6 +51,12 @@ variable "zones" {
   nullable    = false
 }
 
+variable "replicas_per_zone" {
+  description = "The number of replicas to run per zone."
+  type        = number
+  nullable    = false
+}
+
 variable "cpu_requests_override" {
   description = "CPU requests override."
   type        = string
@@ -69,28 +75,53 @@ variable "memory_override" {
   nullable    = true
 }
 
-variable "replicas_per_zone" {
-  description = "The number of replicas to run per zone."
-  type        = number
+variable "extra_env" {
+  description = "Extra environment variables."
+  type        = map(string)
   nullable    = false
+}
+
+variable "secret_env" {
+  description = "Extra environment variables from secrets."
+  type        = map(string)
+  nullable    = false
+  sensitive   = true
+}
+
+variable "extra_records" {
+  description = "Extra records to add to logs."
+  type        = map(string)
+  nullable    = false
+}
+
+variable "lua_scripts" {
+  description = "Lua scripts for Fluent Bit."
+  type        = map(string)
+  nullable    = false
+}
+
+variable "loki_output" {
+  description = "Loki output config."
+  type = object({
+    enabled       = bool
+    host          = string
+    port          = number
+    node_logs     = bool
+    workload_logs = bool
+  })
+  nullable = false
 }
 
 variable "raw_filters" {
   description = "Fluent Bit pipeline filters config."
   type        = string
-  nullable    = false
+  nullable    = true
 }
 
 variable "raw_outputs" {
   description = "Fluent Bit pipeline outputs config."
   type        = string
-  nullable    = false
-}
-
-variable "lua_scripts" {
-  description = "Fluent Bit pipeline outputs config."
-  type        = map(string)
-  nullable    = false
+  nullable    = true
 }
 
 variable "tags" {

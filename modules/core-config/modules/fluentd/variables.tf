@@ -69,6 +69,12 @@ variable "additional_env" {
   nullable    = false
 }
 
+variable "extra_records" {
+  description = "Extra records to add to logs."
+  type        = map(string)
+  nullable    = false
+}
+
 variable "debug" {
   description = "If true all logs will be sent to stdout."
   type        = bool
@@ -92,28 +98,16 @@ variable "route_config" {
   nullable = false
 }
 
-variable "loki" {
-  description = "If true Loki is enabled."
-  type        = bool
-  nullable    = false
-}
-
-variable "loki_host" {
-  description = "Loki host."
-  type        = string
-  nullable    = false
-}
-
-variable "loki_port" {
-  description = "Loki port."
-  type        = number
-  nullable    = false
-}
-
-variable "loki_systemd_logs" {
-  description = "Send systemd logs to Loki."
-  type        = bool
-  nullable    = false
+variable "loki_output" {
+  description = "Loki output config."
+  type = object({
+    enabled       = bool
+    host          = string
+    port          = number
+    node_logs     = bool
+    workload_logs = bool
+  })
+  nullable = false
 }
 
 variable "tags" {

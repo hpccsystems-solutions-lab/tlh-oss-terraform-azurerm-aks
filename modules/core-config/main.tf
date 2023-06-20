@@ -155,9 +155,9 @@ module "fluent_bit" {
   labels    = var.labels
   log_level = var.logging.workloads.core_service_log_level
 
-  aggregator              = var.experimental.fluent_bit_aggregator ? "fluent-bit" : "fluentd"
-  aggregator_host         = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].host : module.fluentd[0].host
-  aggregator_forward_port = var.experimental.fluent_bit_aggregator ? module.fluent_bit_aggregator[0].forward_port : module.fluentd[0].forward_port
+  aggregator              = var.core_services_config.fluent_bit_aggregator.enabled ? "fluent-bit" : "fluentd"
+  aggregator_host         = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].host : module.fluentd[0].host
+  aggregator_forward_port = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].forward_port : module.fluentd[0].forward_port
 
   timeouts = var.timeouts
 
@@ -173,7 +173,7 @@ module "fluent_bit" {
 
 module "fluent_bit_aggregator" {
   source = "./modules/fluent-bit-aggregator"
-  count  = var.experimental.fluent_bit_aggregator ? 1 : 0
+  count  = var.core_services_config.fluent_bit_aggregator.enabled ? 1 : 0
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -184,13 +184,17 @@ module "fluent_bit_aggregator" {
   labels                  = var.labels
   log_level               = var.logging.workloads.core_service_log_level
   zones                   = local.az_count
+  replicas_per_zone       = var.core_services_config.fluent_bit_aggregator.replicas_per_zone
   cpu_requests_override   = var.experimental.fluent_bit_aggregator_cpu_requests_override
   cpu_limits_override     = var.experimental.fluent_bit_aggregator_cpu_limits_override
   memory_override         = var.experimental.fluent_bit_aggregator_memory_override
-  replicas_per_zone       = var.experimental.fluent_bit_aggregator_replicas_per_zone
-  raw_filters             = var.experimental.fluent_bit_aggregator_raw_filters
-  raw_outputs             = var.experimental.fluent_bit_aggregator_raw_outputs
-  lua_scripts             = var.experimental.fluent_bit_aggregator_lua_scripts
+  extra_env               = var.core_services_config.fluent_bit_aggregator.extra_env
+  secret_env              = var.core_services_config.fluent_bit_aggregator.secret_env
+  extra_records           = var.logging.extra_records
+  lua_scripts             = var.core_services_config.fluent_bit_aggregator.lua_scripts
+  loki_output             = local.loki_output
+  raw_filters             = var.core_services_config.fluent_bit_aggregator.raw_filters
+  raw_outputs             = var.core_services_config.fluent_bit_aggregator.raw_outputs
   tags                    = var.tags
 
   timeouts = var.timeouts
@@ -206,7 +210,7 @@ module "fluent_bit_aggregator" {
 
 module "fluentd" {
   source = "./modules/fluentd"
-  count  = var.experimental.fluent_bit_aggregator ? 0 : 1
+  count  = var.core_services_config.fluent_bit_aggregator.enabled ? 0 : 1
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -220,13 +224,11 @@ module "fluentd" {
   image_repository        = var.core_services_config.fluentd.image_repository
   image_tag               = var.core_services_config.fluentd.image_tag
   additional_env          = var.core_services_config.fluentd.additional_env
+  extra_records           = var.logging.extra_records
   debug                   = var.core_services_config.fluentd.debug
   filters                 = var.core_services_config.fluentd.filters
   route_config            = var.core_services_config.fluentd.route_config
-  loki                    = var.experimental.loki
-  loki_host               = var.experimental.loki ? module.loki[0].host : "_"
-  loki_port               = var.experimental.loki ? module.loki[0].port : 0
-  loki_systemd_logs       = var.experimental.systemd_logs_loki
+  loki_output             = local.loki_output
   tags                    = var.tags
 
   timeouts = var.timeouts
@@ -287,6 +289,7 @@ module "kube_prometheus_stack" {
   grafana_additional_data_sources          = var.core_services_config.grafana.additional_data_sources
   control_plane_log_analytics_enabled      = var.logging.control_plane.log_analytics.enabled
   control_plane_log_analytics_workspace_id = var.logging.control_plane.log_analytics.workspace_id
+  loki                                     = local.loki_output
   oms_agent_enabled                        = var.core_services_config.oms_agent.enabled
   oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_workspace_id
   ingress_class_name                       = module.ingress_internal_core.ingress_class_name
@@ -305,6 +308,7 @@ module "kube_prometheus_stack" {
     module.storage,
     module.aad_pod_identity,
     module.cert_manager,
+    module.loki,
     module.ingress_internal_core
   ]
 }
@@ -326,7 +330,7 @@ module "local_static_provisioner" {
 
 module "loki" {
   source = "./modules/loki"
-  count  = var.experimental.loki ? 1 : 0
+  count  = var.core_services_config.loki.enabled ? 1 : 0
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -346,9 +350,7 @@ module "loki" {
     module.pre_upgrade,
     module.storage,
     module.aad_pod_identity,
-    module.cert_manager,
-    module.ingress_internal_core,
-    module.kube_prometheus_stack
+    module.cert_manager
   ]
 }
 

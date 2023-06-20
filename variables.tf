@@ -225,9 +225,12 @@ variable "logging" {
         retention_days                = optional(number, 30)
       }), {})
     }), {})
+
     workloads = optional(object({
       core_service_log_level = optional(string, "WARN")
     }), {})
+
+    extra_records = optional(map(string), {})
   })
   nullable = false
   default  = {}
@@ -401,9 +404,14 @@ variable "experimental" {
     fluent_bit_aggregator_cpu_limits_override   = optional(string, null)
     fluent_bit_aggregator_memory_override       = optional(string, null)
     fluent_bit_aggregator_replicas_per_zone     = optional(number, 1)
-    fluent_bit_aggregator_raw_filters           = optional(string, "")
-    fluent_bit_aggregator_raw_outputs           = optional(string, "")
+    fluent_bit_aggregator_cpu_requests_override = optional(string, null)
+    fluent_bit_aggregator_cpu_limits_override   = optional(string, null)
+    fluent_bit_aggregator_memory_override       = optional(string, null)
+    fluent_bit_aggregator_extra_env             = optional(map(string), {})
+    fluent_bit_aggregator_secret_env            = optional(map(string), {})
     fluent_bit_aggregator_lua_scripts           = optional(map(string), {})
+    fluent_bit_aggregator_raw_filters           = optional(string, null)
+    fluent_bit_aggregator_raw_outputs           = optional(string, null)
     cluster_patch_upgrade                       = optional(bool, false)
   })
   nullable = false

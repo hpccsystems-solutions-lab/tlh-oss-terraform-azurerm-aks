@@ -565,9 +565,9 @@ To enable in-cluster Loki you can set the experimental flag `experimental = { lo
 
 ### Fluent Bit Aggregator
 
-The module now experimentally supports using _Fluent Bit_ as the log aggregator instead of _Fluentd_; the _Fluent Bit_ `StatefulSet` can have it's memory, CPU & replicas set in addition to the configuration of [filters](https://docs.fluentbit.io/manual/pipeline/filters) & [outputs](https://docs.fluentbit.io/manual/pipeline/outputs). This is currently an early experiment so if it is enabled you will not get any default behaviour and will have to configure all of the _Fluent Bit_ filters and outputs as raw configuration.
+The module now experimentally supports using _Fluent Bit_ as the log aggregator instead of _Fluentd_; the _Fluent Bit_ `StatefulSet` can have it's memory, CPU & replicas set in addition to the configuration of [filters](https://docs.fluentbit.io/manual/pipeline/filters) & [outputs](https://docs.fluentbit.io/manual/pipeline/outputs).
 
-The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` but to make use of it you will need to provide raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override`, `experimental.fluent_bit_aggregator_memory_override` & `experimental.fluent_bit_aggregator_replicas_per_zone` flags.
+The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
 
 ### Cluster Patch Upgrade
 
@@ -686,10 +686,11 @@ Specification for the `node_groups.taints` object.
 
 Specification for the `logging` object.
 
-| **Variable**    | **Description**                      | **Type**                               | **Default** |
-| :-------------- | :----------------------------------- | :------------------------------------- | :---------- |
-| `control_plane` | Control plane logging configuration. | `object` ([Appendix C1](#appendix-c1)) | `{}`        |
-| `workloads`     | Workloads logging configuration.     | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
+| **Variable**    | **Description**                                                                                                    | **Type**                               | **Default** |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :---------- |
+| `control_plane` | Control plane logging configuration.                                                                               | `object` ([Appendix C1](#appendix-c1)) | `{}`        |
+| `workloads`     | Workloads logging configuration.                                                                                   | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
+| `extra_records` | Additional records to add to the logs; env variables can be referenced within the value in the form `${<ENV_VAR>}` | `map(string)`                          | `{}`        |
 
 ### Appendix C1
 

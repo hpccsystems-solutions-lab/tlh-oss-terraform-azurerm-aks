@@ -1248,14 +1248,14 @@ locals {
 
   scrapeInterval = "1m"
 
-  grafana_data_sources = [
+  grafana_data_sources = concat([
     {
       name            = "Alertmanager"
       type            = "alertmanager"
       access          = "proxy"
       orgId           = "1"
       uid             = "alertmanager"
-      url             = "http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093"
+      url             = "http://kube-prometheus-stack-alertmanager.${var.namespace}.svc.cluster.local:9093"
       basicAuth       = null
       basicAuthUser   = null
       withCredentials = null
@@ -1305,7 +1305,27 @@ locals {
       version        = null
       editable       = false
     }
-  ]
+    ], var.loki.enabled ? [
+    {
+      name            = "Loki"
+      type            = "loki"
+      access          = "proxy"
+      orgId           = "1"
+      uid             = "loki"
+      url             = "http://${var.loki.host}:${var.loki.port}"
+      basicAuth       = null
+      basicAuthUser   = null
+      withCredentials = null
+      isDefault       = null
+      jsonData = {
+        manageAlerts    = true
+        alertmanagerUid = "alertmanager"
+      }
+      secureJsonData = null
+      version        = null
+      editable       = null
+    }
+  ] : [])
 
   thanos_objstore_secret_name     = "thanos-object-storage"
   thanos_objstore_secret_key      = "config"
