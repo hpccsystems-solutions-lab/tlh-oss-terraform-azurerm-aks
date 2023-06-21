@@ -413,6 +413,17 @@ variable "experimental" {
     fluent_bit_aggregator_raw_filters           = optional(string, null)
     fluent_bit_aggregator_raw_outputs           = optional(string, null)
     cluster_patch_upgrade                       = optional(bool, false)
+    fluent_bit_collector_multiline_parsers = optional(map(object({
+      rules = list(object({
+        name           = string
+        pattern        = string
+        next_rule_name = string
+      }))
+      workloads = list(object({
+        namespace  = string
+        pod_prefix = string
+      }))
+    })), {})
   })
   nullable = false
   default  = {}

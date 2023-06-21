@@ -573,6 +573,37 @@ The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `exp
 
 The managed Kubernetes cluster control plane should be automatically updated for us but the stable implementaiton of AKS makes you choose between keeping the nodes updated and the control plane; we need to keep the nodes up to date so the control plane is updated by a module upgrade (the oposit of our desired behaviour). There is a [public preview feature](https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-node-image) to seperate these concerns but until that can be supported by Terraform we need to stick to the current logic for general use. That said there is a case where unexpected node upgrades can cause issues to the AKS cluster; so for anyone with this issue and who is willing to keep their AKS nodes manually updated you can set `experimental = { cluster_patch_upgrade = true }` to switch the cluster to the desired behaviour and take responsibility for node upgrades.
 
+### Multiline Log Parser Support
+
+You can add custom multiline log parsing support at the _Fluent Bit_ collector level by setting the `experimental.fluent_bit_collector_multiline_parsers` input variable. Enabling this functionality could cause performance issues so a better solution where possible would be to fix the logs at the application level.
+
+For an example see below.
+
+```terraform
+locals {
+  fluent_bit_collector_multiline_parsers = {
+    test_parser = {
+      rules = [
+        {
+          name      = "start_state"
+          pattern   = "/^\\[MY\\LOG\\].*/"
+          next_rule_name = "cont"
+        },
+        {
+          name      = "cont"
+          pattern   = "/^[^\\[].*/"
+          next_rule_name = "cont"
+        }
+      ]
+      workloads = [{
+        namespace  = "default"
+        pod_prefix = "my-pod"
+      }]
+    }
+  }
+}
+```
+
 ---
 
 ## Requirements

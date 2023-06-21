@@ -264,5 +264,16 @@ variable "experimental" {
     fluent_bit_aggregator_cpu_requests_override = string
     fluent_bit_aggregator_cpu_limits_override   = string
     fluent_bit_aggregator_memory_override       = string
+    fluent_bit_collector_multiline_parsers = map(object({
+      rules = list(object({
+        name           = string
+        pattern        = string
+        next_rule_name = string
+      }))
+      workloads = list(object({
+        namespace  = string
+        pod_prefix = string
+      }))
+    }))
   })
 }

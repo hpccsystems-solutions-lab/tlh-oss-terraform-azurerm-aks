@@ -159,6 +159,8 @@ module "fluent_bit" {
   aggregator_host         = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].host : module.fluentd[0].host
   aggregator_forward_port = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].forward_port : module.fluentd[0].forward_port
 
+  multiline_parsers = var.experimental.fluent_bit_collector_multiline_parsers
+
   timeouts = var.timeouts
 
   depends_on = [

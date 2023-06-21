@@ -46,6 +46,22 @@ variable "aggregator_forward_port" {
   nullable    = false
 }
 
+variable "multiline_parsers" {
+  description = "Multiline parsers to configure."
+  type = map(object({
+    rules = list(object({
+      name           = string
+      pattern        = string
+      next_rule_name = string
+    }))
+    workloads = list(object({
+      namespace  = string
+      pod_prefix = string
+    }))
+  }))
+  nullable = false
+}
+
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({
