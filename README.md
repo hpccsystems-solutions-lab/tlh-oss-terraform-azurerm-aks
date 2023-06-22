@@ -264,6 +264,23 @@ Pods annotated with the `fluentbit.io/exclude: "true"` annotation won't have the
 
 Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation won't have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate workloads with _Loki_.
 
+Workload logs can be shipped to an Azure storage account by setting `logging.workloads.storage_account_logs` to `true`.
+
+An external storage account must be provided in the `logging.storage_account_config` settings for this feature to function. The following is an example of the configuration required:
+
+```hcl
+logging = {
+    workloads = {
+        # Enable workload log exporting
+        storage_account_logs = true
+    }
+    storage_account_config = {
+        # Configure the storage account
+        id = azurerm_storage_account.data.id
+    }
+}
+`````
+
 #### Metrics
 
 Cluster metrics are collected by _Prometheus_ which is managed by a _Prometheus Operator_ and made HA by running _Thanos_ as a sidecar and as a cluster service. Metrics can be exported from the cluster via the _Prometheus_ remote write protocol. It is planned to also support exporting metrics using the _OpenTelemetry_ interface.
@@ -721,6 +738,7 @@ Specification for the `logging` object.
 | :-------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :---------- |
 | `control_plane` | Control plane logging configuration.                                                                               | `object` ([Appendix C1](#appendix-c1)) | `{}`        |
 | `workloads`     | Workloads logging configuration.                                                                                   | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
+| `storage_account_config` | Azure storage configuration.                                                                              | `object` ([Appendix C5](#appendix-c3)) | `{}`        |
 | `extra_records` | Additional records to add to the logs; env variables can be referenced within the value in the form `${<ENV_VAR>}` | `map(string)`                          | `{}`        |
 
 ### Appendix C1
@@ -753,7 +771,7 @@ Specification for the `logging.control_plane.storage_account` object.
 | **Variable**                    | **Description**                                                     | **Type**       | **Default** |
 | :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
 | `enabled`                       | If control plane logs should be sent to a storage account.          | `bool`         | `false`     |
-| `id`                            | The Azure Storage Account ID.                                       | `string`       | `null`      |
+| `id`                            | **DEPRECATED** - The Azure Storage Account ID.                                       | `string`       | `null`      |
 | `profile`                       | The profile to use for the log category types.                      | `string`       | `null`      |
 | `additional_log_category_types` | Additional log category types to collect.                           | `list(string)` | `[]`        |
 | `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `true`      |
@@ -763,9 +781,20 @@ Specification for the `logging.control_plane.storage_account` object.
 
 Specification for the `logging.workloads` object.
 
-| **Variable**             | **Description**                                                             | **Type** | **Default** |
-| :----------------------- | :-------------------------------------------------------------------------- | :------- | :---------- |
-| `core_service_log_level` | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`. | `string` | `"WARN"`    |
+| **Variable**                  | **Description**                                                             | **Type** | **Default** |
+| :---------------------------- | :-------------------------------------------------------------------------- | :------- | :---------- |
+| `core_service_log_level`      | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`. | `string` | `"WARN"`    |
+| `storage_account_logs`        | If workload logs should be sent to Azure Blob Storage.                      | `bool`   | `false`     |
+| `storage_account_container`   | The container to use for the log storage.                                   | `string` | `workload`  |
+| `storage_account_path_prefix` | Azure blob prefix for the logs.                                             | `string` | `null`      |
+
+### Appendix C3
+
+Specification for the `logging.storage_account_config` object.
+
+| **Variable**                    | **Description**                                                     | **Type**       | **Default** |
+| :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
+| `id`                            | The Azure Storage Account ID.                                       | `string`       | `null`      |
 
 ### Appendix D
 

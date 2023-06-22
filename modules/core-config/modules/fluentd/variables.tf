@@ -110,6 +110,17 @@ variable "loki_output" {
   nullable = false
 }
 
+variable "azure_storage_output" {
+  description = "Azure storage output config."
+  type = object({
+    enabled     = bool
+    id          = string
+    container   = string
+    path_prefix = string
+  })
+  nullable = false
+}
+
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)

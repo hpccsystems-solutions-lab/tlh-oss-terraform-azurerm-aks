@@ -176,7 +176,40 @@ locals {
     EOT
   }
 
-  route_config = concat(var.loki_output.enabled ? [local.loki_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
+  azure_route_config = var.azure_storage_output.enabled ? {
+    match  = "**"
+    label  = "@AZURE"
+    copy   = true
+    config = <<-EOT
+      <match **>
+        @type azurestorage_gen2
+        azure_storage_account         ${regex("[[:alnum:]]+$", var.azure_storage_output.id)}
+        azure_container               ${var.azure_storage_output.container}
+        azure_instance_msi            ${module.identity.id}
+        azure_client_id               ${module.identity.client_id}
+        azure_object_key_format       %%{path}/%%{time_slice}_$${chunk_id}.%%{file_extension}
+        time_slice_format             %Y%m%d-%H
+        path                          "${join("/", compact([var.azure_storage_output.path_prefix, "kubernetes/${var.cluster_name}/%Y/%m/%d"]))}"
+        auto_create_container         true
+        store_as                      gzip
+        format                        json
+        <buffer time>
+          @type file
+          path /fluentd/state/azurestorage
+          timekey 900
+          timekey_wait 60
+          timekey_use_utc true
+          chunk_limit_size 128MB
+          total_limit_size 8GB
+          overflow_action drop_oldest_chunk
+          retry_type exponential_backoff
+          retry_forever true
+        </buffer>
+      </match>
+    EOT
+  } : {}
+
+  route_config = concat(var.loki_output.enabled ? [local.loki_route_config] : [], var.azure_storage_output.enabled ? [local.azure_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
     match  = "**"
     label  = length(var.route_config) > 0 ? "@DEBUG" : "@DEFAULT"
     copy   = length(var.route_config) > 0

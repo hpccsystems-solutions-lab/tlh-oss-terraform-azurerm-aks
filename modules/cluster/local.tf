@@ -33,10 +33,10 @@ locals {
     "empty" = []
   }
 
-  log_analytics_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.control_plane_logging.log_analytics.profile], var.control_plane_logging.log_analytics.additional_log_category_types))
+  log_analytics_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.logging.control_plane.log_analytics.profile], var.logging.control_plane.log_analytics.additional_log_category_types))
   log_analytics_log_category_types       = length(setintersection(local.log_analytics_log_category_types_input, local.log_category_types_audit)) > 1 ? setsubtract(local.log_analytics_log_category_types_input, local.log_category_types_audit_fix) : local.log_analytics_log_category_types_input
 
-  storage_account_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.control_plane_logging.storage_account.profile], var.control_plane_logging.storage_account.additional_log_category_types))
+  storage_account_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.logging.control_plane.storage_account.profile], var.logging.control_plane.storage_account.additional_log_category_types))
   storage_account_log_category_types       = length(setintersection(local.storage_account_log_category_types_input, local.log_category_types_audit)) > 1 ? setsubtract(local.storage_account_log_category_types_input, local.log_category_types_audit_fix) : local.storage_account_log_category_types_input
 
   maintenance_window_location_offsets = {

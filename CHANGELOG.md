@@ -20,6 +20,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - The `core_services_config.storage` variable is deprecated in favour of the `storage` variable, this will be removed in the `v1.16.0` release.
 - The `lnrs.io/local-storage` node label is deprecated, this will be removed in the `v1.16.0` release.
 - The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
+- The `logging.control_plane.storage_account.id` variable is deprecated in favor of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
 
 ---
 
@@ -55,6 +56,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added support for adding extra records to logs via the `logging.extra_records` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Added support for experimental multiline parsers via the `experimental.fluent_bit_collector_multiline_parsers` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Changed the logging system tags for workload logs to use the format `kube.<namespace_name>.<pod_name>.<container_name>`; if you're writing custom configuration in _Fluentd_ or _Fluent Bit Aggregator_ you will need to make sure that this doesn't impact you. [@stevehipwell](https://github.com/stevehipwell)
+- Added the `logging.workloads` input variable. This provides opt-in support for fluentd output to an azure storage account. The account is specified in the shared `logging.storage_account_config`. This is an operator supplied storage account used for both control plane logging (log analytics) and azure storage output from fluentd. ([#1122](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1122)) [@appkins](https://github.com/appkins)
+- Added azure storage output for *Fluentd* logs. ([#1122](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1122)) [@appkins](https://github.com/appkins)
 
 ## [v1.14.0] - 2023-06-05
 
@@ -381,7 +384,7 @@ In this revision to the _AKS_ module, we added support for use of the _Azure Blo
 
 #### Azure Blob CSI Driver
 
-Added configuration for `storage` under `core_services_config` which includes support for the built in _Azure Blob CSI Driver_.
+Added configuration for `storage` under `core_services_config` which includes support for the built in _Azure Blob CSI Driver_.
 
 #### Deprecations
 

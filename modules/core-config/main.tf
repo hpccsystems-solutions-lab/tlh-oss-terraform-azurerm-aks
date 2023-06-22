@@ -231,6 +231,7 @@ module "fluentd" {
   filters                 = var.core_services_config.fluentd.filters
   route_config            = var.core_services_config.fluentd.route_config
   loki_output             = local.loki_output
+  azure_storage_output    = local.azure_storage_output
   tags                    = var.tags
 
   timeouts = var.timeouts

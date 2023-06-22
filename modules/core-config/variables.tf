@@ -102,7 +102,6 @@ variable "logging" {
       })
       storage_account = object({
         enabled                       = bool
-        id                            = string
         profile                       = string
         additional_log_category_types = list(string)
         retention_enabled             = bool
@@ -111,7 +110,13 @@ variable "logging" {
     })
 
     workloads = object({
-      core_service_log_level = string
+      core_service_log_level      = string
+      storage_account_logs        = bool
+      storage_account_container   = string
+      storage_account_path_prefix = string
+    })
+    storage_account_config = object({
+      id = string
     })
 
     extra_records = map(string)

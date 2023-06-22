@@ -61,7 +61,7 @@ module "cluster" {
   admin_group_object_ids               = var.admin_group_object_ids
   bootstrap_name                       = local.bootstrap_name
   bootstrap_vm_size                    = local.bootstrap_vm_size
-  control_plane_logging                = var.logging.control_plane
+  logging                              = var.logging
   storage                              = local.storage
   maintenance_window_offset            = var.maintenance_window_offset
   maintenance_window_allowed_days      = var.maintenance_window_allowed_days

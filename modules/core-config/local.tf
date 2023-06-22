@@ -34,6 +34,14 @@ locals {
     workload_logs = true
   }
 
+  azure_storage_output = {
+    enabled     = var.logging.workloads.storage_account_logs
+    id          = var.logging.storage_account_config.id
+    container   = var.logging.workloads.storage_account_container
+    path_prefix = var.logging.workloads.storage_account_path_prefix
+
+  }
+
   ingress_internal_core = merge(var.core_services_config.ingress_internal_core, var.core_services_config.ingress_internal_core.subdomain_suffix == null ? { subdomain_suffix = var.cluster_name } : {}, {
     annotations = {
       "lnrs.io/zone-type" = var.core_services_config.ingress_internal_core.public_dns ? "public" : "private"

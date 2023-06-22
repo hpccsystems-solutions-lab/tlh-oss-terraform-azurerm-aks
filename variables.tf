@@ -227,7 +227,13 @@ variable "logging" {
     }), {})
 
     workloads = optional(object({
-      core_service_log_level = optional(string, "WARN")
+      core_service_log_level      = optional(string, "WARN")
+      storage_account_logs        = optional(bool, false)
+      storage_account_container   = optional(string, "workload")
+      storage_account_path_prefix = optional(string, null)
+    }), {})
+    storage_account_config = optional(object({
+      id = optional(string)
     }), {})
 
     extra_records = optional(map(string), {})

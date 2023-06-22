@@ -124,51 +124,56 @@ variable "bootstrap_vm_size" {
   nullable    = false
 }
 
-variable "control_plane_logging" {
-  description = "Control plane logging configuration."
+variable "logging" {
+  description = "Logging configuration."
   type = object({
-    log_analytics = object({
-      enabled                       = bool
-      external_workspace            = bool
-      workspace_id                  = string
-      profile                       = string
-      additional_log_category_types = list(string)
-      retention_enabled             = bool
-      retention_days                = number
+    control_plane = object({
+      log_analytics = object({
+        enabled                       = bool
+        external_workspace            = bool
+        workspace_id                  = string
+        profile                       = string
+        additional_log_category_types = list(string)
+        retention_enabled             = bool
+        retention_days                = number
+      })
+      storage_account = object({
+        enabled                       = bool
+        id                            = string
+        profile                       = string
+        additional_log_category_types = list(string)
+        retention_enabled             = bool
+        retention_days                = number
+      })
     })
-    storage_account = object({
-      enabled                       = bool
-      id                            = string
-      profile                       = string
-      additional_log_category_types = list(string)
-      retention_enabled             = bool
-      retention_days                = number
+    storage_account_config = object({
+      id = string
     })
   })
   nullable = false
 
   validation {
-    condition     = var.control_plane_logging.log_analytics.enabled || var.control_plane_logging.storage_account.enabled
+    condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
     error_message = "Control plane logging must be enabled."
   }
 
   validation {
-    condition     = !var.control_plane_logging.log_analytics.enabled || (!var.control_plane_logging.log_analytics.external_workspace || var.control_plane_logging.log_analytics.workspace_id != null)
+    condition     = !var.logging.control_plane.log_analytics.enabled || (!var.logging.control_plane.log_analytics.external_workspace || var.logging.control_plane.log_analytics.workspace_id != null)
     error_message = "Control plane logging to a log analytics external workspace requires a workspace ID."
   }
 
   validation {
-    condition     = !var.control_plane_logging.log_analytics.enabled || (var.control_plane_logging.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.control_plane_logging.log_analytics.profile, "empty")))
+    condition     = !var.logging.control_plane.log_analytics.enabled || (var.logging.control_plane.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.log_analytics.profile, "empty")))
     error_message = "Control plane logging to a log analytics external workspace requires a profile."
   }
 
   validation {
-    condition     = !var.control_plane_logging.storage_account.enabled || var.control_plane_logging.storage_account.id != null
+    condition     = !var.logging.control_plane.storage_account.enabled || var.logging.control_plane.storage_account.id != null
     error_message = "Control plane logging to a storage account requires an ID."
   }
 
   validation {
-    condition     = !var.control_plane_logging.storage_account.enabled || (var.control_plane_logging.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.control_plane_logging.storage_account.profile, "empty")))
+    condition     = !var.logging.control_plane.storage_account.enabled || (var.logging.control_plane.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.storage_account.profile, "empty")))
     error_message = "Control plane logging to a storage account requires profile."
   }
 }
