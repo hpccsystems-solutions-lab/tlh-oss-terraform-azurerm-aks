@@ -34,9 +34,29 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.15.0] - UNRELEASED
+## [v1.15.0] - 2023-06-22
 
 ### Highlights
+
+#### Updated Workload Log Tags
+
+Changed the logging system tags for workload logs to follow the format `kube.<namespace_name>.<pod_name>.<container_name>`. This update ensures a consistent and structured approach to workload log tagging. If you have custom configurations in place with Fluentd or Fluent Bit Aggregator, please review and verify that this change does not impact your current setup.
+
+#### Core Services Log Level Customization
+
+Added support for customizing the log level of the core services. Operators can now specify the desired log level for the core services, allowing for more flexibility in logging configuration. For more details, refer to [Appendix C](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c).
+
+#### Support for Extra Records in Logs
+
+Introduced the ability to include extra records in logs. Operators can now add additional information or custom records to their logs. For further information, see [Appendix C](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c).
+
+#### Fluentd Output for Azure Blob Storage
+
+This provides opt-in support for fluentd output to an azure storage account. This is an operator supplied storage account used for both control plane logging (log analytics) and azure storage output from fluentd. There is now azure storage output for Fluentd logs. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#workload-logging).
+
+#### Experimental Multiline Log Parsing Support
+
+Introduced experimental support for multiline log parsing. Operators can now leverage this feature to handle multiline logs at the Fluent Bit collector level. For more details, refer to  [Experimental Multiline Log Parsing Support](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#multiline-log-parser-support).
 
 ### All Changes
 
