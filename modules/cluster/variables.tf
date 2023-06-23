@@ -151,31 +151,6 @@ variable "logging" {
     })
   })
   nullable = false
-
-  validation {
-    condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
-    error_message = "Control plane logging must be enabled."
-  }
-
-  validation {
-    condition     = !var.logging.control_plane.log_analytics.enabled || (!var.logging.control_plane.log_analytics.external_workspace || var.logging.control_plane.log_analytics.workspace_id != null)
-    error_message = "Control plane logging to a log analytics external workspace requires a workspace ID."
-  }
-
-  validation {
-    condition     = !var.logging.control_plane.log_analytics.enabled || (var.logging.control_plane.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.log_analytics.profile, "empty")))
-    error_message = "Control plane logging to a log analytics external workspace requires a profile."
-  }
-
-  validation {
-    condition     = !var.logging.control_plane.storage_account.enabled || var.logging.control_plane.storage_account.id != null
-    error_message = "Control plane logging to a storage account requires an ID."
-  }
-
-  validation {
-    condition     = !var.logging.control_plane.storage_account.enabled || (var.logging.control_plane.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.storage_account.profile, "empty")))
-    error_message = "Control plane logging to a storage account requires profile."
-  }
 }
 
 variable "storage" {

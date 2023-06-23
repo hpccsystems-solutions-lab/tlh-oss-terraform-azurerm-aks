@@ -201,6 +201,51 @@ variable "node_groups" {
   }))
   nullable = false
   default  = {}
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : length(k) <= 10])
+    error_message = "Node group names must be 10 characters or less."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["amd64", "arm64"], v.node_arch)])
+    error_message = "Node group architecture must be either \"amd64\" or \"arm64\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows2019", "windows2022"], v.node_os)])
+    error_message = "Node group OS must be one of \"ubuntu\", \"windows2019\" or \"windows2022\" (EXPERIMENTAL)."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["gp", "gpd", "mem", "memd", "cpu", "stor"], v.node_type)])
+    error_message = "Node group type must be one of \"gp\", \"gpd\", \"mem\", \"memd\", \"cpu\" or \"stor\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["NONE", "KUBELET", "HOST_PATH"], v.temp_disk_mode)])
+    error_message = "Temp disk mode must be one of \"NONE\", \"KUBELET\", \"HOST_PATH\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : contains(["NONE", "PV", "HOST_PATH"], v.nvme_mode)])
+    error_message = "NVMe mode must be one of \"NONE\", \"PV\", \"HOST_PATH\"."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : length(coalesce(v.placement_group_key, "_")) <= 11])
+    error_message = "Node group placement key must be 11 characters or less."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : v.max_pods == -1 || (v.max_pods >= 12 && v.max_pods <= 110)])
+    error_message = "Node group max pads must either be -1 or between 12 & 110."
+  }
+
+  validation {
+    condition     = alltrue([for k, v in var.node_groups : can(tonumber(replace(v.max_surge, "%", "")))])
+    error_message = "Node group max surge must either be a number or a percent; e.g. 1 or 10%."
+  }
 }
 
 variable "logging" {
@@ -240,6 +285,31 @@ variable "logging" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
+    error_message = "Control plane logging must be enabled."
+  }
+
+  validation {
+    condition     = !var.logging.control_plane.log_analytics.enabled || (!var.logging.control_plane.log_analytics.external_workspace || var.logging.control_plane.log_analytics.workspace_id != null)
+    error_message = "Control plane logging to an external log analytics external workspace requires a workspace ID."
+  }
+
+  validation {
+    condition     = !var.logging.control_plane.log_analytics.enabled || (var.logging.control_plane.log_analytics.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.log_analytics.profile, "empty")))
+    error_message = "Control plane logging to a log analytics external workspace requires a profile."
+  }
+
+  validation {
+    condition     = !var.logging.control_plane.storage_account.enabled || var.logging.control_plane.storage_account.id != null
+    error_message = "Control plane logging to a storage account requires an ID."
+  }
+
+  validation {
+    condition     = !var.logging.control_plane.storage_account.enabled || (var.logging.control_plane.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.storage_account.profile, "empty")))
+    error_message = "Control plane logging to a storage account requires profile."
+  }
 }
 
 variable "storage" {
