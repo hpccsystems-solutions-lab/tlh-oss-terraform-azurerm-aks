@@ -62,7 +62,7 @@ module "cluster" {
   bootstrap_name                       = local.bootstrap_name
   bootstrap_vm_size                    = local.bootstrap_vm_size
   logging                              = var.logging
-  storage                              = local.storage
+  storage                              = var.storage
   maintenance_window_offset            = var.maintenance_window_offset
   maintenance_window_allowed_days      = var.maintenance_window_allowed_days
   maintenance_window_allowed_hours     = var.maintenance_window_allowed_hours
@@ -147,7 +147,7 @@ module "core_config" {
   dns_resource_group_lookup = var.dns_resource_group_lookup
 
   logging = merge(var.logging, { control_plane = { log_analytics = merge(var.logging.control_plane.log_analytics, { workspace_id = module.cluster.control_plane_log_analytics_workspace_id }), storage_account = var.logging.control_plane.storage_account } })
-  storage = local.storage
+  storage = var.storage
 
   core_services_config = local.core_services_config
 

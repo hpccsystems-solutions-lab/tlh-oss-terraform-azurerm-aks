@@ -949,15 +949,6 @@ Specification for the `core_services_config.prometheus` object.
 | :------------- | :---------------------------------- | :------------- | :---------- |
 | `remote_write` | Remote write endpoints for metrics. | `list(object)` | `[]`        |
 
-### Appendix E10
-
-Specification for the **DEPRECATED** `core_services_config.storage` object.
-
-| **Variable** | **Description**                                       | **Type** | **Default** |
-| :----------- | :---------------------------------------------------- | :------- | :---------- |
-| `file`       | If support for the file CSI driver should be enabled. | `bool`   | `false`     |
-| `blob`       | If support for the blob CSI driver should be enabled. | `bool`   | `false`     |
-
 ### Appendix F
 
 Specification for the `maintenance_window_not_allowed` object.

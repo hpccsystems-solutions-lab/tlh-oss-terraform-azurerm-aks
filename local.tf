@@ -59,8 +59,6 @@ locals {
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
-  storage = merge(var.storage, var.storage.file.enabled ? {} : { file = { enabled = var.core_services_config.storage.file } }, var.storage.blob.enabled ? {} : { blob = { enabled = var.core_services_config.storage.file } })
-
   core_services_config = merge(var.core_services_config, {
     fluent_bit_aggregator = {
       enabled           = var.experimental.fluent_bit_aggregator
