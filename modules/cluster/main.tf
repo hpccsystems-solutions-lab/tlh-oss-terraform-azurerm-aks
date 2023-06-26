@@ -28,10 +28,12 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
 #tfsec:ignore:azure-container-limit-authorized-ips
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
-  name                      = var.cluster_name
-  kubernetes_version        = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
+  name               = var.cluster_name
+  kubernetes_version = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
+  sku_tier           = local.sku_tier_lookup[var.sku_tier]
+
   automatic_channel_upgrade = var.patch_upgrade ? "patch" : "node-image"
-  sku_tier                  = local.sku_tier_lookup[var.sku_tier]
+  node_os_channel_upgrade   = "NodeImage"
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -106,14 +108,14 @@ resource "azurerm_kubernetes_cluster" "default" {
 
   maintenance_window {
     dynamic "allowed" {
-      for_each = local.maintenance_window.allowed
+      for_each = local.maintenance_windows.basic
       content {
         day   = allowed.value.day
         hours = allowed.value.hours
       }
     }
     dynamic "not_allowed" {
-      for_each = local.maintenance_window.not_allowed
+      for_each = local.maintenance_windows.not_allowed
       content {
         end   = not_allowed.value.end
         start = not_allowed.value.start

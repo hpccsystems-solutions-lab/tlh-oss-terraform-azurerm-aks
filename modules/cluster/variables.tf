@@ -166,30 +166,19 @@ variable "storage" {
   nullable = false
 }
 
-variable "maintenance_window_offset" {
-  description = "Maintenance window offset to utc."
-  type        = number
-  nullable    = true
-}
-
-variable "maintenance_window_allowed_days" {
-  description = "List of allowed days covering the maintenance window."
-  type        = list(string)
-  nullable    = false
-}
-
-variable "maintenance_window_allowed_hours" {
-  description = "List of allowed hours covering the maintenance window."
-  type        = list(number)
-  nullable    = false
-}
-
-variable "maintenance_window_not_allowed" {
-  description = "Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
-  type = list(object({
-    start = string
-    end   = string
-  }))
+variable "maintenance" {
+  description = "Maintenance configuration."
+  type = object({
+    utc_offset = string
+    basic = list(object({
+      day   = string
+      hours = list(number)
+    }))
+    not_allowed = list(object({
+      start = string
+      end   = string
+    }))
+  })
   nullable = false
 }
 

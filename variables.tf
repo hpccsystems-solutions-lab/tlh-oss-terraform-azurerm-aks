@@ -409,29 +409,51 @@ variable "core_services_config" {
   nullable = false
 }
 
+variable "maintenance" {
+  description = "Maintenance configuration."
+  type = object({
+    utc_offset = optional(string, null)
+    basic = optional(list(object({
+      day   = string
+      hours = list(number)
+    })), [])
+    not_allowed = optional(list(object({
+      start = string
+      end   = string
+    })), [])
+  })
+  nullable = false
+  default  = {}
+
+  validation {
+    condition     = alltrue([for x in var.maintenance.basic : contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], x.day)])
+    error_message = "Day must be one of \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\" or \"SUNDAY\"."
+  }
+}
+
 variable "maintenance_window_offset" {
-  description = "Maintenance window offset to utc."
+  description = "DEPRECATED - Maintenance window offset to utc."
   type        = number
   nullable    = true
   default     = null
 }
 
 variable "maintenance_window_allowed_days" {
-  description = "List of allowed days covering the maintenance window."
+  description = "DEPRECATED - List of allowed days covering the maintenance window."
   type        = list(string)
   nullable    = false
   default     = []
 }
 
 variable "maintenance_window_allowed_hours" {
-  description = "List of allowed hours covering the maintenance window."
+  description = "DEPRECATED - List of allowed hours covering the maintenance window."
   type        = list(number)
   nullable    = false
   default     = []
 }
 
 variable "maintenance_window_not_allowed" {
-  description = "Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
+  description = "DEPRECATED - Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
   type = list(object({
     start = string
     end   = string
@@ -484,7 +506,6 @@ variable "experimental" {
     fluent_bit_aggregator_lua_scripts           = optional(map(string), {})
     fluent_bit_aggregator_raw_filters           = optional(string, null)
     fluent_bit_aggregator_raw_outputs           = optional(string, null)
-    cluster_patch_upgrade                       = optional(bool, false)
     fluent_bit_collector_multiline_parsers = optional(map(object({
       rules = list(object({
         name           = string
@@ -496,6 +517,7 @@ variable "experimental" {
         pod_prefix = string
       }))
     })), {})
+    cluster_patch_upgrade = optional(bool, false)
   })
   nullable = false
   default  = {}

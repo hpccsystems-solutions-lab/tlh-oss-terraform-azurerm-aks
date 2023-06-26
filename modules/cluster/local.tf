@@ -39,31 +39,38 @@ locals {
   storage_account_log_category_types_input = distinct(concat(local.log_category_types_lookup[var.logging.control_plane.storage_account.profile], var.logging.control_plane.storage_account.additional_log_category_types))
   storage_account_log_category_types       = length(setintersection(local.storage_account_log_category_types_input, local.log_category_types_audit)) > 1 ? setsubtract(local.storage_account_log_category_types_input, local.log_category_types_audit_fix) : local.storage_account_log_category_types_input
 
-  maintenance_window_location_offsets = {
-    westeurope = 0
-    uksouth    = 0
-    eastus     = 5
-    eastus2    = 5
-    centralus  = 6
-    westus     = 8
+  maintenance_utc_offset_lookup = {
+    westeurope = "+00:00"
+    uksouth    = "+00:00"
+    eastus     = "+05:00"
+    eastus2    = "+05:00"
+    centralus  = "+06:00"
+    westus     = "+08:00"
   }
 
-  maintenance_window_offset = var.maintenance_window_offset != null ? var.maintenance_window_offset : lookup(local.maintenance_window_location_offsets, var.location, 0)
+  maintainance_day_of_week_lookup = {
+    "MONDAY"    = "Monday"
+    "TUESDAY"   = "Tuesday"
+    "WEDNESDAY" = "Wednesday"
+    "THURSDAY"  = "Thursday"
+    "FRIDAY"    = "Friday"
+    "SATURDAY"  = "Saturday"
+    "SUNDAY"    = "Sunday"
+  }
 
-  maintenance_window_allowed_days = length(var.maintenance_window_allowed_days) == 0 ? ["Tuesday", "Wednesday", "Thursday"] : var.maintenance_window_allowed_days
+  maintenance_utc_offset                = var.maintenance.utc_offset != null ? var.maintenance.utc_offset : lookup(local.maintenance_utc_offset_lookup, var.location, "+00:00")
+  maintenance_utc_offset_match          = regex("^(\\+|\\-)(\\d{2})\\:(\\d{2})$", local.maintenance_utc_offset)
+  maintenance_utc_offset_duration       = "${local.maintenance_utc_offset_match[0]}${local.maintenance_utc_offset_match[1]}h${local.maintenance_utc_offset_match[2]}m"
+  maintenance_utc_offset_duration_hours = parseint(regex("^(\\+|\\-)(\\d{2})", local.maintenance_utc_offset_duration)[1], 10)
 
-  maintenance_window_allowed_hours = length(var.maintenance_window_allowed_hours) == 0 ? [10, 11, 12, 13, 14, 15] : var.maintenance_window_allowed_hours
-
-  maintenance_window_not_allowed = length(var.maintenance_window_not_allowed) == 0 ? [] : var.maintenance_window_not_allowed
-
-  maintenance_window = {
-    allowed = [for d in local.maintenance_window_allowed_days : {
-      day   = d
-      hours = [for h in local.maintenance_window_allowed_hours : h + local.maintenance_window_offset]
+  maintenance_windows = {
+    basic = [for a in var.maintenance.basic : {
+      day   = local.maintainance_day_of_week_lookup[a.day]
+      hours = [for h in a.hours : h + local.maintenance_utc_offset_duration_hours]
     }]
-    not_allowed = [for x in local.maintenance_window_not_allowed : {
-      start = timeadd(x.start, format("%vh", local.maintenance_window_offset))
-      end   = timeadd(x.end, format("%vh", local.maintenance_window_offset))
+    not_allowed = [for x in var.maintenance.not_allowed : {
+      start = timeadd(x.start, format("%vh", local.maintenance_utc_offset_duration))
+      end   = timeadd(x.end, format("%vh", local.maintenance_utc_offset_duration))
     }]
   }
 }

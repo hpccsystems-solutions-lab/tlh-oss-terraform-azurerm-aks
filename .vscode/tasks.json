@@ -54,9 +54,7 @@
       "label": "tflint",
       "type": "shell",
       "command": "tflint",
-      "args": [
-        "./"
-      ],
+      "args": [],
       "problemMatcher": []
     },
     {

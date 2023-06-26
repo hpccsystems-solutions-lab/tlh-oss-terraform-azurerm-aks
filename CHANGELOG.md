@@ -19,6 +19,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
 - The `logging.control_plane.storage_account.id` variable is deprecated in favor of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
+- The `maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed` input variables are deprecated in favour of `maintenance_window`. These will be removed in the `v1.19.0` release.
 
 ---
 
@@ -38,6 +39,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Removed the `lnrs.io/local-storage` node label which was deprecated. [@hadeeds](https://github.com/hadeeds)
 - Removed the deprecated `core_services_config.storage` variable. ([#1180](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1180)) [@peterabarr](https://github.com/peterabarr)
+- Updated the minimum version of the `azurerm` Terraform provider to [v3.62.1](https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.62.1) to support automated node upgrades. [@stevehipwell](https://github.com/stevehipwell)
+- Improved the `experimental.cluster_patch_upgrade` behaviour to run node image upgrades during the maintenance window, this will be the default module behaviour once it's been tested. [@stevehipwell](https://github.com/stevehipwell)
+- Added a new `maintenance` input variable to replace the individual maintenance window variables, this variable provides more granular control over the maintenance windows. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed` input variables. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.15.0] - 2023-06-22
 
