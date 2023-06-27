@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Improved the `experimental.cluster_patch_upgrade` behaviour to run node image upgrades during the maintenance window, this will be the default module behaviour once it's been tested. [@stevehipwell](https://github.com/stevehipwell)
 - Added a new `maintenance` input variable to replace the individual maintenance window variables, this variable provides more granular control over the maintenance windows. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated `maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed` input variables. [@stevehipwell](https://github.com/stevehipwell)
+- Updated _Fluent Bit_ chart to [v0.34.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.0). ([#1189](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1189)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.15.0] - 2023-06-22
 

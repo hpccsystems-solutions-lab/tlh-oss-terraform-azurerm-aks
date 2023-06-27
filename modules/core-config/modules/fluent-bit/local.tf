@@ -1,5 +1,5 @@
 locals {
-  chart_version = "0.30.4"
+  chart_version = "0.34.0"
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
