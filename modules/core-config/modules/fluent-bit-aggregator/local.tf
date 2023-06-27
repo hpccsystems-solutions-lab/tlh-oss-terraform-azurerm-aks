@@ -1,6 +1,6 @@
 locals {
   name          = "fluent-bit-aggregator"
-  chart_version = "0.4.0"
+  chart_version = "0.6.0"
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
