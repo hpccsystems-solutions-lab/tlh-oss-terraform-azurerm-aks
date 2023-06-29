@@ -120,6 +120,22 @@ locals {
       filters       = local.filter_config
       outputs       = local.output_config
     }
+
+    hotReload = {
+      enabled = true
+
+      resources = {
+        requests = {
+          cpu    = "10m"
+          memory = "16Mi"
+        }
+
+        limits = {
+          cpu    = "1000m"
+          memory = "16Mi"
+        }
+      }
+    }
   }
 
   multiline_parser_filters = flatten([for k, v in var.multiline_parsers : [for x in v.workloads : {

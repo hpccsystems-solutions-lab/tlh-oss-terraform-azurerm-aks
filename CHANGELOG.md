@@ -48,7 +48,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluentd_ chart to [v3.10.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluentd-aggregator-3.10.0) (contains _Fluentd Aggregator_ [v2.9.2](https://github.com/stevehipwell/fluentd-aggregator/releases/tag/v2.9.2)). ([#1191](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1191)) [@hadeeds](https://github.com/hadeeds)
 - Updated _AAD Pod Identity_ chart to `v4.1.18` (contains _AAD Pod Identity_ [v1.8.17](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.17)). ([#1193](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1193)) [@hadeeds](https://github.com/hadeeds)
 - Fix all metrics churn on no-op applies. ([#1194](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1194)) [@appkins](https://github.com/appkins)
-  
+- Add hot reload to fluent-bit collector ([#1188](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1188)) [@appkins](https://github.com/appkins)
+
 ## [v1.15.0] - 2023-06-22
 
 ### Highlights
