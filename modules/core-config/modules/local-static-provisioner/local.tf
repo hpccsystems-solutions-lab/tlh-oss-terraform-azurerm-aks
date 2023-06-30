@@ -28,9 +28,9 @@ locals {
       priorityClassName = "system-node-critical"
 
       nodeSelector = {
-        "kubernetes.io/os"  = "linux"
-        "lnrs.io/nvme"      = "true"
-        "lnrs.io/nvme-mode" = "PV"
+        "kubernetes.io/os"       = "linux"
+        "node.lnrs.io/nvme"      = "true"
+        "node.lnrs.io/nvme-mode" = "PV"
       }
 
       tolerations = [
