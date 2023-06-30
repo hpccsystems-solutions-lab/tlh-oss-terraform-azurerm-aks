@@ -122,7 +122,7 @@ locals {
     }
 
     hotReload = {
-      enabled = true
+      enabled = false
 
       resources = {
         requests = {
