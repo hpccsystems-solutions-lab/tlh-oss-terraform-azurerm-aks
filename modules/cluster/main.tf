@@ -33,7 +33,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   sku_tier           = local.sku_tier_lookup[var.sku_tier]
 
   automatic_channel_upgrade = var.patch_upgrade ? "patch" : "node-image"
-  node_os_channel_upgrade   = "NodeImage"
+  node_os_channel_upgrade   = var.patch_upgrade ? "NodeImage" : null
 
   resource_group_name = var.resource_group_name
   location            = var.location
