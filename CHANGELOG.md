@@ -49,7 +49,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _AAD Pod Identity_ chart to `v4.1.18` (contains _AAD Pod Identity_ [v1.8.17](https://github.com/Azure/aad-pod-identity/releases/tag/v1.8.17)). ([#1193](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1193)) [@hadeeds](https://github.com/hadeeds)
 - Fix all metrics churn on no-op applies. ([#1194](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1194)) [@appkins](https://github.com/appkins)
 - Fixed node selector labels for _local-static-provisioner_ to start with `node.lnrs.io`. ([#1200](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1200)) [@james-alford-ln](https://github.com/james-alford-ln)
-
+- Updated _Kube Prometheus Stack_ chart to [v47.1.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-47.1.0) (contains _Prometheus Operator_ [v0.66.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.66.0), _Prometheus_ [v2.45.0](https://github.com/prometheus/prometheus/releases/tag/v2.45.0), _Grafana_ [v9.5.5](https://github.com/grafana/grafana/releases/tag/v9.5.5) & _Prometheus Node Exporter_ [v1.6.0](https://github.com/prometheus/node_exporter/releases/tag/v1.6.0)) also updated the CRDs. ([#1195](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1195)) [@peterabarr](https://github.com/peterabarr)
+  
 ## [v1.15.0] - 2023-06-22
 
 ### Highlights

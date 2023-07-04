@@ -335,8 +335,8 @@ spec:
                       label via relabeling. If empty, Prometheus uses the default
                       value `http`.
                     enum:
-                     - http
-                     - https
+                    - http
+                    - https
                     type: string
                   url:
                     description: Mandatory URL of the prober.
@@ -718,4 +718,3 @@ spec:
         type: object
     served: true
     storage: true
-    
