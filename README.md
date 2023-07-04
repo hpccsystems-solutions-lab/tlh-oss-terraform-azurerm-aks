@@ -954,20 +954,24 @@ Specification for the `core_services_config.prometheus` object.
 
 Specification for the `maintenance` object.
 
-| **Variable**  | **Description**                                                                                                                                  | **Type**                                     | **Default** |
-| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
-| `utc_offset`  | Maintenance offset to UTC as a duration (e.g. `+00:00`); this will be used to offset the windows (only whole hours are supported for `default`). | `string`                                     | `null`      |
-| `basic`       | Repeating time windows when maintainance is allowed.                                                                                             | `list(object)` ([Appendix F1](#appendix-f1)) | []          |
-| `not_allowed` | Absolute time windows when maintainance is not allowed.                                                                                          | `list(object)` ([Appendix F2](#appendix-f2)) | []          |
+| **Variable**    | **Description**                                                                                                                                                                  | **Type**                                     | **Default** |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
+| `utc_offset`    | Maintenance offset to UTC as a duration (e.g. `+00:00`); this will be used to specify local time. If this is not set a default will be calculated based on the cluster location. | `string`                                     | `null`      |
+| `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix F1](#appendix-f1))       | []          |
+| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix F1](#appendix-f1))       | []          |
+| `not_allowed`   | Absolute windows when maintainance is not allowed.                                                                                                                               | `list(object)` ([Appendix F2](#appendix-f2)) | []          |
 
 ### Appendix F1
 
-Specification for the `maintenance_window.basic` object.
+Specification for the `maintenance_window.control_plane` & `maintenance_window.nodes` objects.
 
-| **Variable** | **Description**                                                              | **Type**       | **Default** |
-| :----------- | :--------------------------------------------------------------------------- | :------------- | :---------- |
-| `day`        | Day of week for the basic maintainance window; as uppercase e.g. `"MONDAY"`. | `string`       |             |
-| `hours`      | Hours of the day for the basic maintainance window.                          | `list(number)` |             |
+| **Variable**   | **Description**                                                                                                                                                                          | **Type** | **Default** |
+| :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :---------- |
+| `frequency`    | Frequency of the maintainance window; one of `WEEKLY`, `FORTNIGHTLY` or `MONTHLY` for `control_plane` with `nodes` supporting `DAILY` in addition.                                       | `string` | `WEEKLY`    |
+| `day_of_month` | Day of the month for the maintainance window if the frequency is set to `MONTHLY`; between `1` & `28`.                                                                                   | `number` | `1`         |
+| `day_of_week`  | Day of the week for the maintainance window if the frequency is set to `WEEKLY` or `FORTNIGHTLY`; one of `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` or `SUNDAY`. | `string` | `SUNDAY`    |
+| `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
+| `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
 ### Appendix F2
 

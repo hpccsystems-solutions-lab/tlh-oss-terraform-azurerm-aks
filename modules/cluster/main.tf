@@ -91,38 +91,6 @@ resource "azurerm_kubernetes_cluster" "default" {
     skip_nodes_with_local_storage = false
   }
 
-  dynamic "oms_agent" {
-    for_each = var.oms_agent ? ["default"] : []
-    content {
-      log_analytics_workspace_id = var.oms_agent_log_analytics_workspace_id
-    }
-  }
-
-  dynamic "windows_profile" {
-    for_each = var.windows_support ? ["default"] : []
-    content {
-      admin_username = random_password.windows_admin_username[0].result
-      admin_password = random_password.windows_admin_password[0].result
-    }
-  }
-
-  maintenance_window {
-    dynamic "allowed" {
-      for_each = local.maintenance_windows.basic
-      content {
-        day   = allowed.value.day
-        hours = allowed.value.hours
-      }
-    }
-    dynamic "not_allowed" {
-      for_each = local.maintenance_windows.not_allowed
-      content {
-        end   = not_allowed.value.end
-        start = not_allowed.value.start
-      }
-    }
-  }
-
   storage_profile {
     disk_driver_enabled = true
     disk_driver_version = "v1" # TODO: explore experimental support of v2 driver version
@@ -130,6 +98,72 @@ resource "azurerm_kubernetes_cluster" "default" {
     file_driver_enabled         = var.storage.file.enabled
     blob_driver_enabled         = var.storage.blob.enabled
     snapshot_controller_enabled = true # Default is true - We may explore allowing operators to disable this feature in future updates.
+  }
+
+  dynamic "maintenance_window" {
+    for_each = length(var.maintenance.basic) > 0 ? [true] : []
+    content {
+      dynamic "allowed" {
+        for_each = local.maintenance_windows.basic
+        content {
+          day   = allowed.value.day
+          hours = allowed.value.hours
+        }
+      }
+      dynamic "not_allowed" {
+        for_each = local.maintenance_windows.not_allowed
+        content {
+          end   = not_allowed.value.end
+          start = not_allowed.value.start
+        }
+      }
+    }
+  }
+
+  dynamic "maintenance_window_auto_upgrade" {
+    for_each = length(var.maintenance.basic) > 0 ? [] : [true]
+
+    content {
+      utc_offset   = local.maintenance_utc_offset
+      frequency    = local.maintainance_frequency_lookup[var.maintenance.control_plane.frequency]
+      interval     = local.maintainance_interval_lookup[var.maintenance.control_plane.frequency]
+      day_of_month = var.maintenance.control_plane.frequency == "MONTHLY" ? var.maintenance.control_plane.day_of_month : null
+      day_of_week  = var.maintenance.control_plane.frequency == "WEEKLY" || var.maintenance.control_plane.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.control_plane.day_of_week] : null
+      start_time   = var.maintenance.control_plane.start_time
+      duration     = var.maintenance.control_plane.duration
+
+      dynamic "not_allowed" {
+        for_each = var.maintenance.not_allowed
+
+        content {
+          start = not_allowed.value.start
+          end   = not_allowed.value.end
+        }
+      }
+    }
+  }
+
+  dynamic "maintenance_window_node_os" {
+    for_each = length(var.maintenance.basic) > 0 ? [] : [true]
+
+    content {
+      utc_offset   = local.maintenance_utc_offset
+      frequency    = local.maintainance_frequency_lookup[var.maintenance.nodes.frequency]
+      interval     = local.maintainance_interval_lookup[var.maintenance.nodes.frequency]
+      day_of_month = var.maintenance.nodes.frequency == "MONTHLY" ? var.maintenance.nodes.day_of_month : null
+      day_of_week  = var.maintenance.nodes.frequency == "WEEKLY" || var.maintenance.nodes.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.nodes.day_of_week] : null
+      start_time   = var.maintenance.nodes.start_time
+      duration     = var.maintenance.nodes.duration
+
+      dynamic "not_allowed" {
+        for_each = var.maintenance.not_allowed
+
+        content {
+          start = not_allowed.value.start
+          end   = not_allowed.value.end
+        }
+      }
+    }
   }
 
   node_resource_group = "mc_${var.cluster_name}"
@@ -155,6 +189,21 @@ resource "azurerm_kubernetes_cluster" "default" {
     fips_enabled = var.fips
 
     tags = var.tags
+  }
+
+  dynamic "oms_agent" {
+    for_each = var.oms_agent ? ["default"] : []
+    content {
+      log_analytics_workspace_id = var.oms_agent_log_analytics_workspace_id
+    }
+  }
+
+  dynamic "windows_profile" {
+    for_each = var.windows_support ? ["default"] : []
+    content {
+      admin_username = random_password.windows_admin_username[0].result
+      admin_password = random_password.windows_admin_password[0].result
+    }
   }
 
   tags = var.tags

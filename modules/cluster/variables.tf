@@ -174,6 +174,20 @@ variable "maintenance" {
       day   = string
       hours = list(number)
     }))
+    control_plane = object({
+      frequency    = string
+      day_of_month = number
+      day_of_week  = string
+      start_time   = string
+      duration     = number
+    })
+    nodes = object({
+      frequency    = string
+      day_of_month = number
+      day_of_week  = string
+      start_time   = string
+      duration     = number
+    })
     not_allowed = list(object({
       start = string
       end   = string

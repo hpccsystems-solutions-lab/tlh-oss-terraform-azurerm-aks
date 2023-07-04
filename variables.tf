@@ -413,10 +413,20 @@ variable "maintenance" {
   description = "Maintenance configuration."
   type = object({
     utc_offset = optional(string, null)
-    basic = optional(list(object({
-      day   = string
-      hours = list(number)
-    })), [])
+    control_plane = optional(object({
+      frequency    = optional(string, "WEEKLY")
+      day_of_month = optional(number, 1)
+      day_of_week  = optional(string, "SUNDAY")
+      start_time   = optional(string, "00:00")
+      duration     = optional(number, 4)
+    }), {})
+    nodes = optional(object({
+      frequency    = optional(string, "WEEKLY")
+      day_of_month = optional(number, 1)
+      day_of_week  = optional(string, "SUNDAY")
+      start_time   = optional(string, "00:00")
+      duration     = optional(number, 4)
+    }), {})
     not_allowed = optional(list(object({
       start = string
       end   = string
@@ -426,8 +436,33 @@ variable "maintenance" {
   default  = {}
 
   validation {
-    condition     = alltrue([for x in var.maintenance.basic : contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], x.day)])
-    error_message = "Day must be one of \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\" or \"SUNDAY\"."
+    condition     = contains(["WEEKLY", "FORTNIGHTLY", "MONTHLY"], var.maintenance.control_plane.frequency)
+    error_message = "Control plane maintainance frequency must be one of \"WEEKLY\", \"FORTNIGHTLY\" or \"MONTHLY\"."
+  }
+
+  validation {
+    condition     = contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.maintenance.control_plane.day_of_week)
+    error_message = "Control plane maintainance day of week must be one of \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\" or \"SUNDAY\"."
+  }
+
+  validation {
+    condition     = var.maintenance.control_plane.day_of_month >= 1 && var.maintenance.control_plane.day_of_month <= 28
+    error_message = "Control plane maintainance day of month must be between 1 & 28."
+  }
+
+  validation {
+    condition     = contains(["DAILY", "WEEKLY", "FORTNIGHTLY", "MONTHLY"], var.maintenance.nodes.frequency)
+    error_message = "Node maintainance frequency must be one of \"DAILY\", \"WEEKLY\", \"FORTNIGHTLY\" or \"MONTHLY\"."
+  }
+
+  validation {
+    condition     = contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.maintenance.nodes.day_of_week)
+    error_message = "Node maintainance day of week must be one of \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\", \"SATURDAY\" or \"SUNDAY\"."
+  }
+
+  validation {
+    condition     = var.maintenance.nodes.day_of_month >= 1 && var.maintenance.control_plane.day_of_month <= 28
+    error_message = "Control plane maintainance day of month must be between 1 & 28."
   }
 }
 

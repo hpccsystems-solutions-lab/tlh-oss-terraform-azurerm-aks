@@ -48,6 +48,20 @@ locals {
     westus     = "+08:00"
   }
 
+  maintainance_frequency_lookup = {
+    "DAILY"       = "Daily"
+    "WEEKLY"      = "Weekly"
+    "FORTNIGHTLY" = "Weekly"
+    "MONTHLY"     = "AbsoluteMonthly"
+  }
+
+  maintainance_interval_lookup = {
+    "DAILY"       = 1
+    "WEEKLY"      = 1
+    "FORTNIGHTLY" = 2
+    "MONTHLY"     = 1
+  }
+
   maintainance_day_of_week_lookup = {
     "MONDAY"    = "Monday"
     "TUESDAY"   = "Tuesday"
@@ -69,8 +83,8 @@ locals {
       hours = [for h in a.hours : h + local.maintenance_utc_offset_duration_hours]
     }]
     not_allowed = [for x in var.maintenance.not_allowed : {
-      start = timeadd(x.start, format("%vh", local.maintenance_utc_offset_duration))
-      end   = timeadd(x.end, format("%vh", local.maintenance_utc_offset_duration))
+      start = timeadd(x.start, local.maintenance_utc_offset_duration)
+      end   = timeadd(x.end, local.maintenance_utc_offset_duration)
     }]
   }
 }
