@@ -40,6 +40,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated _Cert Manager_ related alerts to give more accurate alerts with reference to timescales of expring certificates. ([#1221](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1221)) [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.16.0] - 2023-07-05
 
 ### Highlights
