@@ -34,7 +34,19 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.16.0] - UNRELEASED
+## [v1.16.0] - 2023-07-05
+
+### Highlights
+
+#### Security
+
+The latest version of _Kube Prometheus Stack_ contains _Grafana_ `v9.5.5` which addresses a critical vulnerability tracked as [CVE-202303128](https://nvd.nist.gov/vuln/detail/CVE-2023-3128). This is particularly important when using _Grafana_ to authenticate against Azure AD, allowing attackers to impersonate valid usesrs to gain access to logs and systems.
+
+#### Maintenance Windows
+
+The recent updates to the maintenance functionality bring significant improvements to the module. The behaviour of cluster upgrades has been enhanced to allow node image upgrades during the maintenance window, resulting in a more streamlined upgrade process. This improvement, facilitated by the `experimental.cluster_patch_upgrade` setting, is currently being tested and will become the default behaviour once validated. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#cluster-patch-upgrade).
+
+The introduction of the new input variable, `maintenance`, replaces the deprecated variables previously used for managing maintenance windows. This variable offers users more precise control over maintenance schedules and parameters, empowering operators to customize and optimize their maintenance operations within the module. Operators can now define separate maintenance windows for the control plane and nodes, allowing for better coordination and resource management. The maintenance variable allows maintenance to be performed as frequently as once per day, which can be particularly useful in lower or development environments where more frequent updates are desired. This flexibility enables operators to align maintenance operations with their specific needs and requirements. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-f).
 
 ### All Changes
 
