@@ -63,7 +63,7 @@ module "cluster" {
   bootstrap_vm_size                    = local.bootstrap_vm_size
   logging                              = var.logging
   storage                              = var.storage
-  maintenance                          = local.maintenance
+  maintenance                          = var.maintenance
   oms_agent                            = var.experimental.oms_agent
   oms_agent_log_analytics_workspace_id = var.experimental.oms_agent_log_analytics_workspace_id
   windows_support                      = var.experimental.windows_support

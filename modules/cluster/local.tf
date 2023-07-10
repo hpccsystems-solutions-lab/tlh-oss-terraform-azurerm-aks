@@ -72,19 +72,5 @@ locals {
     "SUNDAY"    = "Sunday"
   }
 
-  maintenance_utc_offset                = var.maintenance.utc_offset != null ? var.maintenance.utc_offset : lookup(local.maintenance_utc_offset_lookup, var.location, "+00:00")
-  maintenance_utc_offset_match          = regex("^(\\+|\\-)(\\d{2})\\:(\\d{2})$", local.maintenance_utc_offset)
-  maintenance_utc_offset_duration       = "${local.maintenance_utc_offset_match[0]}${local.maintenance_utc_offset_match[1]}h${local.maintenance_utc_offset_match[2]}m"
-  maintenance_utc_offset_duration_hours = parseint(regex("^(\\+|\\-)(\\d{2})", local.maintenance_utc_offset_duration)[1], 10)
-
-  maintenance_windows = {
-    basic = [for a in var.maintenance.basic : {
-      day   = local.maintainance_day_of_week_lookup[a.day]
-      hours = [for h in a.hours : h + local.maintenance_utc_offset_duration_hours]
-    }]
-    not_allowed = [for x in var.maintenance.not_allowed : {
-      start = timeadd(x.start, local.maintenance_utc_offset_duration)
-      end   = timeadd(x.end, local.maintenance_utc_offset_duration)
-    }]
-  }
+  maintenance_utc_offset = var.maintenance.utc_offset != null ? var.maintenance.utc_offset : lookup(local.maintenance_utc_offset_lookup, var.location, "+00:00")
 }

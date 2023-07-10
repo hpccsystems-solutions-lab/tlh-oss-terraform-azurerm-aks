@@ -83,17 +83,6 @@ locals {
     }
   })
 
-  maintenance = merge(var.maintenance, {
-    utc_offset = var.maintenance.utc_offset != null ? var.maintenance.utc_offset : format("%+03g:00", coalesce(var.maintenance_window_offset, 0))
-
-    basic = length(var.maintenance_window_allowed_days) > 0 || length(var.maintenance_window_allowed_hours) > 0 ? [for d in coalescelist(var.maintenance_window_allowed_days, ["TUESDAY", "WEDNESDAY", "THURSDAY"]) : {
-      day   = upper(d)
-      hours = coalescelist(var.maintenance_window_allowed_hours, [10, 11, 12, 13, 14, 15])
-    }] : []
-
-    not_allowed = length(var.maintenance.not_allowed) > 0 ? var.maintenance.not_allowed : var.maintenance_window_not_allowed
-  })
-
   labels = {
     "lnrs.io/k8s-platform" = "true"
   }

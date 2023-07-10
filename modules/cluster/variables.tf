@@ -170,10 +170,6 @@ variable "maintenance" {
   description = "Maintenance configuration."
   type = object({
     utc_offset = string
-    basic = list(object({
-      day   = string
-      hours = list(number)
-    }))
     control_plane = object({
       frequency    = string
       day_of_month = number

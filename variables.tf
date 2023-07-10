@@ -466,37 +466,6 @@ variable "maintenance" {
   }
 }
 
-variable "maintenance_window_offset" {
-  description = "DEPRECATED - Maintenance window offset to utc."
-  type        = number
-  nullable    = true
-  default     = null
-}
-
-variable "maintenance_window_allowed_days" {
-  description = "DEPRECATED - List of allowed days covering the maintenance window."
-  type        = list(string)
-  nullable    = false
-  default     = []
-}
-
-variable "maintenance_window_allowed_hours" {
-  description = "DEPRECATED - List of allowed hours covering the maintenance window."
-  type        = list(number)
-  nullable    = false
-  default     = []
-}
-
-variable "maintenance_window_not_allowed" {
-  description = "DEPRECATED - Array of not allowed blocks including start and end times in rfc3339 format. A not allowed block takes priority if it overlaps an allowed blocks in a maintenance window."
-  type = list(object({
-    start = string
-    end   = string
-  }))
-  nullable = false
-  default  = []
-}
-
 variable "fips" {
   description = "If true, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created."
   type        = bool

@@ -19,8 +19,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
 - The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
-- The `maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed` input variables are deprecated in favour of `maintenance`. These will be removed in the `v1.19.0` release.
-- The current default maintenance window is deprecated and will be replaced by the default values in `maintenance` (weekly on a Sunday at 00:00 for 4 hours) in the `v1.19.0` release unless `maintenance` overridden with custom values.
 
 ---
 
@@ -40,7 +38,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
-- Updated _Cert Manager_ related alerts to give more accurate alerts with reference to timescales of expring certificates. ([#1221](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1221)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Cert Manager_ related alerts to give more accurate alerts with reference to timescales of expiring certificates. ([#1221](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1221)) [@hadeeds](https://github.com/hadeeds)
+- Removed legacy maintenance input variables (`maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed`) as the behaviour they control is deprecated and due to change to no longer function as expected. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.16.0] - 2023-07-05
 
@@ -48,7 +47,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 #### Security
 
-The latest version of _Kube Prometheus Stack_ contains _Grafana_ `v9.5.5` which addresses a critical vulnerability tracked as [CVE-202303128](https://nvd.nist.gov/vuln/detail/CVE-2023-3128). This is particularly important when using _Grafana_ to authenticate against Azure AD, allowing attackers to impersonate valid usesrs to gain access to logs and systems.
+The latest version of _Kube Prometheus Stack_ contains _Grafana_ `v9.5.5` which addresses a critical vulnerability tracked as [CVE-202303128](https://nvd.nist.gov/vuln/detail/CVE-2023-3128). This is particularly important when using _Grafana_ to authenticate against Azure AD, allowing attackers to impersonate valid users to gain access to logs and systems.
 
 #### Maintenance Windows
 
