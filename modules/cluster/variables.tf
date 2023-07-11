@@ -34,6 +34,12 @@ variable "patch_upgrade" {
   nullable    = false
 }
 
+variable "node_upgrade_manual" {
+  description = "If the nodes should be manually upgraded."
+  type        = bool
+  nullable    = false
+}
+
 variable "cni" {
   description = "Kubernetes CNI, \"kubenet\" & \"azure\" are supported."
   type        = string

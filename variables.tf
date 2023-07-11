@@ -522,6 +522,7 @@ variable "experimental" {
       }))
     })), {})
     cluster_patch_upgrade = optional(bool, false)
+    node_upgrade_manual   = optional(bool, false)
   })
   nullable = false
   default  = {}

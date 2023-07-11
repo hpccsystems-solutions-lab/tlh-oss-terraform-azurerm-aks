@@ -46,6 +46,7 @@ module "cluster" {
   cluster_version                      = var.cluster_version
   cluster_version_full                 = local.cluster_version_full
   patch_upgrade                        = var.experimental.cluster_patch_upgrade
+  node_upgrade_manual                  = var.experimental.node_upgrade_manual
   sku_tier                             = var.sku_tier
   fips                                 = var.fips
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access

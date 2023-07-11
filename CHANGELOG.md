@@ -38,8 +38,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
-- Updated _Cert Manager_ related alerts to give more accurate alerts with reference to timescales of expiring certificates. ([#1221](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1221)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Cert Manager_ related alerts to give more accurate alerts with reference to timescales of expiiring certificates. ([#1221](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1221)) [@hadeeds](https://github.com/hadeeds)
 - Removed legacy maintenance input variables (`maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed`) as the behaviour they control is deprecated and due to change to no longer function as expected. [@stevehipwell](https://github.com/stevehipwell)
+- Added experimental support to allow end users to manually manage their node upgrades via the `experimental.node_upgrade_manual` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.16.0] - 2023-07-05
 

@@ -14,7 +14,7 @@ Support for this module **isn't** operational; by using this module you're agree
 
 At any given time the last 3 minor versions of this module are supported; this means these versions will get patch fixes for critical bugs, core service CVEs & AKS patches. It is the module operators and end-users responsibility to make sure that clusters are running the latest patch version of a supported version, failure to do this in a timely manner could expose the cluster to significant risks.
 
-> **Info**
+> **Note**
 > If there have been versions `v3.0.0`, `v3.1.0`, `v3.1.1`, `v3.2.0`, `v3.3.0` & `v3.3.1` released then the supported versions would be `v3.1.1`, `v3.2.0` & `v3.3.1` (latest patch versions of the last 3 minor versions).
 
 ### General Help
@@ -107,18 +107,9 @@ The node group configuration provided by the `node_groups` input variable allows
 
 The single_group parameter controls whether a single node group is created that spans multiple zones, or if a separate node group is created for each zone in a cluster. When this parameter is set to `true`, a single node group is created that spans all zones, and the `min_capacity` and `max_capacity` settings apply to the total number of nodes across all zones. When set to false, separate node groups are created for each zone and the `min_capacity` and `max_capacity` settings apply to the number of nodes in each individual zone and must be scaled accordingly. It is advised to not use `single_group` unless you have a specific problem to solve and have spoken to the core engineering team.
 
-#### Node image upgrades
+#### Node Image Upgrades
 
-AKS supports upgrading the images on a node so you're up to date with the newest OS and runtime updates. AKS regularly provides new images with the latest updates, so it's beneficial to upgrade your node's images regularly for the latest AKS features. Linux node images are updated weekly, and Windows node images updated monthly. For more information please visit the official [Microsoft documentation](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade).
-
-Within the AKS module we use two features to automatically upgrade the node images:
-
-- [Automatic upgrade channel](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade)
-- [Maintenance Window](https://docs.microsoft.com/en-us/azure/aks/upgrade-cluster#set-auto-upgrade-channel)
-
-Unlike EKS there is no way of specifying the node image version via Terraform so we use the Automatic upgrade channel set to node-image. this enables automatic node image upgrades outside of Terraform. Note Kubernetes patch, minor and major versions are controlled separately. Combining the automatic upgrade channel with a maintenance window gives us the ability to control when the upgrades take place.
-
-The module sets a default of a maintenance window of Tuesdays, Wednesdays and Thursdays between the hours of 10am and 4pm. The default maintenance window can be overwritten in the client side code, for an example please visit the [RSG Kubernetes Documentation](https://legendary-doodle-a57ed2c8.pages.github.io/).
+Unlike EKS there is no way of specifying the node image version via Terraform so we use an automatic upgrade channel to do this (see the [Upgrading](#upgrading) section).
 
 #### System Node Group
 
@@ -428,25 +419,28 @@ When utilizing custom tags with the module, it is essential to be aware of the p
 
 ### Upgrading
 
-Core service and node upgrades are automated as part of running this module and don't require any user interaction. Kubernetes minor version upgrades are supported by the module as long as the upgrade is only to the next minor version and the cluster has had the latest module version run against it.
+The module automatically manages the upgrading of the control plane, nodes and core services either via an AKS automatic upgrade or when a new version of the module is applied. When AKS automatic upgrades are scheduled is controlled by the `maintenance` module variable which separates the control plane and node upgrade schedules; see the [docs](#appendix-f) for the defaults and what can be configured.
 
-### Regular Upgrade Steps
+#### Control Plane Upgrades
 
-The following steps should be followed to automatically upgrade a clusters configuration.
+> **Note**
+> Control plane patch upgrades will be managed by an AKS automatic upgrade once we're confident that the Azure APIs to support this have been rolled out globally.
 
-- Re-run `terraform plan` with no code changes and the module reference set to a major version tag such as `v1`
-- Review changes
-- Apply updated configuration if there are any changes
+Control plane patch level upgrades are either applied by a new module version (the current default) or managed by an AKS automatic upgrade channel (if the [Cluster Patch Upgrade](#cluster-patch-upgrade) experiment is enabled). There are additional control plane level upgrades, such as for AKS provided services, which are also managed by the AKS automatic upgrade channel.
 
-### Kubernetes Minor Version Upgrade Steps
+AKS provides weekly updates for AKS so your maintenance window configuration should take this into account.
 
-The following steps should be followed to upgrade a cluster's Kubernetes minor version.
+_Kubernetes_ minor version upgrades are controlled directly by the module and supported as long as the upgrade is only to the next minor version and the cluster has had a supported module version run against it. Although it is possible to upgrade the module version and the _Kubernetes_ version as a single operation it is advised to upgrade the module first and then upgrade the minor version second.
 
-- Follow the regular upgrade steps first
-- Increment the _cluster_version_ by a single minor version e.g. `1.23` -> `1.24`
-- Run `terraform plan`
-- Review changes
-- Apply changes
+#### Node Upgrades
+
+Node upgrades are either managed as an AKS automatic upgrade or manually by the cluster-operator (if the [Cluster Patch Upgrade](#cluster-patch-upgrade) experiment is enabled with the additional manual node upgrade flag). If nodes are being manually upgraded they still need to keep to the minimum requirement of monthly upgrades with this being recommended to be more frequently where possible.
+
+AKS regularly provides new images with the latest updates, Linux node images are updated weekly and Windows node images updated monthly ([docs](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade)), so your maintenance window configuration should take this into account.
+
+#### Core Service upgrades
+
+Core services are upgraded by running a new version of this module, this should happen at least monthly with the recommendation that this should be fortnightly wherever possible.
 
 ### Connecting to the Cluster
 
@@ -456,7 +450,7 @@ AKS clusters created by this module use [Azure AD authentication](https://docs.m
 
 When running this module or using a Kubernetes based provider (`kubernetes`, `helm` or `kubectl`) the Terraform identity either needs to have the [Azure Kubernetes Service RBAC Cluster Admin](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-kubernetes-service-rbac-cluster-admin) scoped to the cluster or you need to pass the identities AD group ID into the `admin_group_object_ids` module input variable.
 
-> **INFO**
+> **Note**
 > If you're using TFE you need to use the `admin_group_object_ids` input variable unless specifically told otherwise.
 
 From Terraform workspaces all Kubernetes based providers should be configured to use the [exec plugin](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs#exec-plugins) pattern and for AKS clusters this is [Kubelogin](https://github.com/Azure/kubelogin) which should be configured as below, note the constant `--server-id` of `6dae42f8-4368-4678-94ff-3960e28e3630` and the values which need to be defined in locals (or elsewhere). The `exec` block is the same as `kubernetes` for the `helm` and `kubectl` providers but is nested under the `kubernetes` block in them.
@@ -477,7 +471,7 @@ provider "kubernetes" {
 
 #### End User Access
 
-To connect to an AKS cluster after it's been created your AD user will need to have been added to the cluster via the `rbac_bindings` input variable. You can run the following commands, assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and you are logged in to it.
+To connect to an AKS cluster after it's been created your AD user will need to have been added to the cluster via the `rbac_bindings` input variable. You can run the following commands, assuming that you have the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and you are logged in to it. By default this will configure `kubectl` to require a device login but this behaviour can be changed to use the Azure CLI by replacing the `--login` argument of `devicelogin` with `azurecli` in the _~/.kube/config_ file.
 
 ```shell
 az aks install-cli
@@ -486,7 +480,6 @@ az aks install-cli
 ```shell
 az account set --subscription "${SUBSCRIPTION}"
 az aks get-credentials --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
-kubelogin convert-kubeconfig -l azurecli
 ```
 
 ### Examples
@@ -499,7 +492,7 @@ kubelogin convert-kubeconfig -l azurecli
 
 ## Experimental Features
 
-> **Info**
+> **Note**
 > Experimental features are not officially supported and do not follow SemVer like the rest of this module; use them at your own risk.
 
 Experimental features allow end users to try out new functionality which isn't stable in the context of a stable module release, they are enabled by setting the required variables on the `experimental` module variable.
@@ -586,10 +579,6 @@ The module now experimentally supports using _Fluent Bit_ as the log aggregator 
 
 The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
 
-### Cluster Patch Upgrade
-
-You can test the soon to be default cluster upgrade behaviour of updating the nodes during the maintainance window by setting the `experimental = { cluster_patch_upgrade = true }` input variable.
-
 ### Multiline Log Parser Support
 
 You can add custom multiline log parsing support at the _Fluent Bit_ collector level by setting the `experimental.fluent_bit_collector_multiline_parsers` input variable. Enabling this functionality could cause performance issues so a better solution where possible would be to fix the logs at the application level.
@@ -620,6 +609,12 @@ locals {
   }
 }
 ```
+
+### Cluster Patch Upgrade
+
+You can test the soon to be default cluster [behaviour](#control-plane-upgrades) of upgrading the nodes during the maintainance window by setting the `experimental = { cluster_patch_upgrade = true }` input variable.
+
+With the patch upgrade experiment enabled you can also set `experimental.node_upgrade_manual` to `true` to take responsibility to manually [upgrade](#node-upgrades) the cluster nodes.
 
 ---
 
