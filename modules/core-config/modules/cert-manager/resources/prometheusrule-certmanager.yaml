@@ -21,7 +21,7 @@ spec:
             runbook_url: https://gitlab.com/uneeq-oss/cert-manager-mixin/-/blob/master/RUNBOOK.md#certmanagerabsent
             summary: Cert Manager has dissapeared from Prometheus service discovery.
           expr: absent(up{job="cert-manager"})
-          for: 10m.
+          for: 10m
           labels:
             job: "{{ $labels.job }}"
             severity: critical
@@ -36,7 +36,7 @@ spec:
             description: The domain that this cert covers will be unavailable after {{ $value | humanizeDuration }}. Clients using endpoints that this cert protects will start to fail in {{ $value | humanizeDuration }}.
             dashboard_url: https://grafana.example.com/d/TvuRo2iMk/cert-manager
             runbook_url: https://gitlab.com/uneeq-oss/cert-manager-mixin/-/blob/master/RUNBOOK.md#certmanagercertexpirysoon
-            summary: The cert `{{ $labels.name }}` is {{ $value | humanizeDuration }} away from expiry. 
+            summary: The cert `{{ $labels.name }}` is {{ $value | humanizeDuration }} away from expiry.
         - alert: CertManagerCertExpirySoonWarning
           expr: avg by (exported_namespace, namespace, name) (certmanager_certificate_expiration_timestamp_seconds - time()) < (7 * 24 * 3600) and avg by (exported_namespace, namespace, name) (certmanager_certificate_expiration_timestamp_seconds - time()) >= 0
           for: 1h
@@ -49,8 +49,7 @@ spec:
             summary: The cert `{{ $labels.name }}` is {{ $value | humanizeDuration }} away from expiry. Renewal should be done soon.
         - alert: CertManagerCertExpired
           annotations:
-            description: 
-              The domain that this cert covers is currently unavailable. Clients using endpoints that this cert protects will fail to establish secure connections.
+            description: The domain that this cert covers is currently unavailable. Clients using endpoints that this cert protects will fail to establish secure connections.
             dashboard_url: https://grafana.example.com/d/TvuRo2iMk/cert-manager
             runbook_url: https://gitlab.com/uneeq-oss/cert-manager-mixin/-/blob/master/RUNBOOK.md#certmanagercertexpired
             summary: The cert `{{ $labels.name }}` has expired. Renewal is required immediately.
