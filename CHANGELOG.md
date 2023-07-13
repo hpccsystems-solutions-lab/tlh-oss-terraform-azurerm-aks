@@ -43,6 +43,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed legacy maintenance input variables (`maintenance_window_offset`, `maintenance_window_allowed_days`, `maintenance_window_allowed_hours` & `maintenance_window_not_allowed`) as the behaviour they control is deprecated and due to change to no longer function as expected. [@stevehipwell](https://github.com/stevehipwell)
 - Added experimental support to allow end users to manually manage their node upgrades via the `experimental.node_upgrade_manual` input variable. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated AKS cluster version `v1.24`. ([#1229](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1229)) [@peterabarr](https://github.com/peterabarr)
+- Updated _Fluent Bit_ chart to [v0.34.2](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.2). ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
+- Added hot reload to _Fluent Bit_. ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.16.0] - 2023-07-05
 

@@ -1,5 +1,5 @@
 locals {
-  chart_version = "0.34.0"
+  chart_version = "0.34.2"
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
@@ -122,7 +122,7 @@ locals {
     }
 
     hotReload = {
-      enabled = false
+      enabled = true
 
       resources = {
         requests = {
