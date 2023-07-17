@@ -19,7 +19,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
 - The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
-- AKS cluster version `v1.24` is deprecated and will be removed in the `v1.18.0` release.
+- AKS cluster version `v1.24` is deprecated and will be removed in the `v1.19.0` release.
 
 ---
 
@@ -33,9 +33,29 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.17.0] - UNRELEASED
+## [v1.17.0] - 2023-07-17
 
 ### Highlights
+
+#### Service Updates
+
+We updated a number of services inside the _EKS_ module so that they are up to date with the latest releases.
+
+#### Cert Manager Alerts
+
+We updated the alerts that _Cert Manager_ sends so that they are more accurate with reference to timescales of expiring certificates.
+
+#### Fluent Bit Hot Reload
+
+_Fluent Bit_ does not need to restart whenever there has been a configuration change inside the module, ensuring uninterrupted service.
+
+#### Kubernetes 1.24 Removal
+
+Kubernetes version `1.24` removal has been pushed back to the next release and will be removed in `v1.19.0`.
+
+#### Node Upgrade Experimental Support Added
+
+We have added an expreimental feature to support users manually managing node upgrades.
 
 ### All Changes
 
