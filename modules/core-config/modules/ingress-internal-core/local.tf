@@ -78,6 +78,19 @@ locals {
               }
 
               weight = 100
+            },
+            {
+              podAffinityTerm = {
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = "ingress-nginx"
+                    "app.kubernetes.io/instance"  = local.name
+                    "app.kubernetes.io/component" = "controller"
+                  }
+                }
+                topologyKey = "topology.kubernetes.io/zone"
+              }
+              weight = 50
             }
           ]
         }
@@ -113,11 +126,11 @@ locals {
         type = "RollingUpdate"
         rollingUpdate = {
           maxSurge       = "100%"
-          maxUnavailable = 0
+          maxUnavailable = "34%"
         }
       }
 
-      minAvailable = "33%"
+      minAvailable = "66%"
 
       ingressClassResource = {
         enabled         = true
@@ -135,6 +148,7 @@ locals {
         "server-tokens"                = "false"
         "use-proxy-protocol"           = "false"
         "use-forwarded-headers"        = "true"
+        "worker-shutdown-timeout"      = "240"
       }
 
       proxySetHeaders = {
@@ -209,13 +223,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "10m"
-          memory = "64Mi"
+          cpu    = "100m"
+          memory = "32Mi"
         }
 
         limits = {
           cpu    = "1000m"
-          memory = "64Mi"
+          memory = "32Mi"
         }
       }
     }

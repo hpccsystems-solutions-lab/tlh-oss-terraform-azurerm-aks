@@ -45,6 +45,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated AKS cluster version `v1.24`. ([#1229](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1229)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluent Bit_ chart to [v0.34.2](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.2). ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
 - Added hot reload to _Fluent Bit_. ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
+- Update NGINX to use pod topology spread constraints. ([#1126](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1126)) [@appkins](https://github.com/appkins)
 
 ## [v1.16.0] - 2023-07-05
 
