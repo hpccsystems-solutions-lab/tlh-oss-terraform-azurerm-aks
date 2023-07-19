@@ -93,7 +93,6 @@ variable "logging" {
     control_plane = object({
       log_analytics = object({
         enabled                       = bool
-        external_workspace            = bool
         workspace_id                  = string
         profile                       = string
         additional_log_category_types = list(string)

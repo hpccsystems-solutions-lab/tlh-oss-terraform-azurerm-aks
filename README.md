@@ -749,8 +749,7 @@ Specification for the `logging.control_plane.log_analytics` object.
 | **Variable**                    | **Description**                                                                                                                | **Type**       | **Default** |
 | :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- | :------------- | :---------- |
 | `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.                                                             | `bool`         | `false`     |
-| `external_workspace`            | **DEPRECATED** - If the workspace has been created outside the module; the workspace should now be created outside the module. | `bool`         | `false`     |
-| `workspace_id`                  | The workspace ID if `external_workspace` is `true`.                                                                            | `string`       | `null`      |
+| `workspace_id`                  | The workspace ID is required if Log Analytics is set to `true`.                                                                            | `string`       | `null`      |
 | `profile`                       | The profile to use for the log category types.                                                                                 | `string`       | `null`      |
 | `additional_log_category_types` | Additional log category types to collect.                                                                                      | `list(string)` | `[]`        |
 | `retention_enabled`             | If retention should be configured per log category collected.                                                                  | `bool`         | `true`      |

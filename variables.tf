@@ -254,7 +254,6 @@ variable "logging" {
     control_plane = optional(object({
       log_analytics = optional(object({
         enabled                       = optional(bool, true)
-        external_workspace            = optional(bool, false)
         workspace_id                  = optional(string, null)
         profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
@@ -292,8 +291,8 @@ variable "logging" {
   }
 
   validation {
-    condition     = !var.logging.control_plane.log_analytics.enabled || (!var.logging.control_plane.log_analytics.external_workspace || var.logging.control_plane.log_analytics.workspace_id != null)
-    error_message = "Control plane logging to an external log analytics external workspace requires a workspace ID."
+    condition     = !var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.log_analytics.workspace_id != null
+    error_message = "Control plane logging to a log analytics workspace requires a workspace ID."
   }
 
   validation {

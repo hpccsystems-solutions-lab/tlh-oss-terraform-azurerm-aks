@@ -17,7 +17,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `logging.control_plane.log_analytics.external_workspace` variable is deprecated as the Log Analytics Workspace for control plane logs should be created outside the module and passed in via the `logging.control_plane.log_analytics.workspace_id`, this will be removed in `v1.18.0` and to use Log Analytics for control plane logs the workspace ID will need passing in via the `logging.control_plane.log_analytics.workspace_id` input variable.
 - The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
 - AKS cluster version `v1.24` is deprecated and will be removed in the `v1.19.0` release.
 
@@ -38,6 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### Highlights
 
 ### All Changes
+
+- Removed the `logging.control_plane.log_analytics.external_workspace` variable as the feature is deprecated and the module will no longer create a Log Analytics workspace. [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.17.0] - 2023-07-17
 

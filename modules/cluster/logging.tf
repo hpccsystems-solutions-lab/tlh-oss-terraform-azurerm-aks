@@ -1,30 +1,10 @@
-resource "random_string" "workspace_suffix" {
-  count = var.logging.control_plane.log_analytics.enabled && !var.logging.control_plane.log_analytics.external_workspace ? 1 : 0
-
-  length  = 5
-  special = false
-  lower   = true
-  upper   = false
-}
-
-resource "azurerm_log_analytics_workspace" "default" {
-  count = var.logging.control_plane.log_analytics.enabled && !var.logging.control_plane.log_analytics.external_workspace ? 1 : 0
-
-  location            = var.location
-  resource_group_name = var.resource_group_name
-
-  name              = "${regex("aks-\\d+", var.cluster_name)}-control-plane-logs-${random_string.workspace_suffix[0].result}"
-  retention_in_days = 30
-  tags              = merge(var.tags, { description = "control-plane-logs" })
-}
-
 resource "azurerm_monitor_diagnostic_setting" "workspace" {
   count = var.logging.control_plane.log_analytics.enabled ? 1 : 0
 
   name               = "control-plane-log-analytics"
   target_resource_id = azurerm_kubernetes_cluster.default.id
 
-  log_analytics_workspace_id = var.logging.control_plane.log_analytics.external_workspace ? var.logging.control_plane.log_analytics.workspace_id : azurerm_log_analytics_workspace.default[0].id
+  log_analytics_workspace_id = var.logging.control_plane.log_analytics.workspace_id
 
   log_analytics_destination_type = "AzureDiagnostics"
 
