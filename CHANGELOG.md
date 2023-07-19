@@ -17,7 +17,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.18.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
+- The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.19.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
 - AKS cluster version `v1.24` is deprecated and will be removed in the `v1.19.0` release.
 
 ---
@@ -32,7 +32,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-# [v1.18.0] - UNRELEASED
+## [v1.18.0] - UNRELEASED
 
 ### Highlights
 
