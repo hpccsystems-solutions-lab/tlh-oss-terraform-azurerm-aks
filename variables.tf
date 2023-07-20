@@ -251,9 +251,9 @@ variable "node_groups" {
 variable "logging" {
   description = "Logging configuration."
   type = object({
-    control_plane = optional(object({
+    control_plane = object({
       log_analytics = optional(object({
-        enabled                       = optional(bool, true)
+        enabled                       = optional(bool, false)
         workspace_id                  = optional(string, null)
         profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
@@ -268,7 +268,7 @@ variable "logging" {
         retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
       }), {})
-    }), {})
+    })
 
     workloads = optional(object({
       core_service_log_level      = optional(string, "WARN")
@@ -276,14 +276,14 @@ variable "logging" {
       storage_account_container   = optional(string, "workload")
       storage_account_path_prefix = optional(string, null)
     }), {})
+
     storage_account_config = optional(object({
-      id = optional(string)
+      id = optional(string, null)
     }), {})
 
     extra_records = optional(map(string), {})
   })
   nullable = false
-  default  = {}
 
   validation {
     condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
