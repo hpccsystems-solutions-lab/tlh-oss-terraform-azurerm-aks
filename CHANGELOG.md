@@ -42,6 +42,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed the `logging.control_plane.log_analytics.external_workspace` variable as the feature is deprecated and the module will no longer create a Log Analytics workspace. [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit_ chart to [v0.36.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.2). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit Aggregator_ chart to [v0.7.1](https://github.com/stevehipwell/helm-charts/releases/tag/fluent-bit-aggregator-0.7.1) (contains Fluent Bit OCI image update to [v2.1.7](https://github.com/fluent/fluent-bit/releases/tag/v2.1.7)). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Ingress NGINX_ chart to [v4.7.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.7.1) (contains Nginx Controller update to [v1.8.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.8.1)). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.17.0] - 2023-07-17
 
