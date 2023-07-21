@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Removed the `logging.control_plane.log_analytics.external_workspace` variable as the feature is deprecated and the module will no longer create a Log Analytics workspace. [@hadeeds](https://github.com/hadeeds)
+- Updated _Fluent Bit_ chart to [v0.36.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.2). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.17.0] - 2023-07-17
 
