@@ -520,6 +520,10 @@ variable "experimental" {
         pod_prefix = string
       }))
     })), {})
+    fluent_bit_collector_parsers = optional(map(object({
+      pattern = string
+      types   = optional(map(string), {})
+    })), {})
     cluster_patch_upgrade = optional(bool, false)
     node_upgrade_manual   = optional(bool, false)
   })

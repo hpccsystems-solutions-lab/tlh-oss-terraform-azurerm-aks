@@ -62,6 +62,15 @@ variable "multiline_parsers" {
   nullable = false
 }
 
+variable "parsers" {
+  description = "Parsers to configure."
+  type = map(object({
+    pattern = string
+    types   = map(string)
+  }))
+  nullable = false
+}
+
 variable "timeouts" {
   description = "Timeout configuration."
   type = object({

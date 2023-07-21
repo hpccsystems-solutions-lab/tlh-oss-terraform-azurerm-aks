@@ -148,6 +148,13 @@ locals {
     name   kubernetes-tag
     format regex
     regex  ^(?<namespace_name>[^.]+)\.(?<pod_name>[^.]+)\.(?<container_name>[^.]+)
+%{for k, v in var.parsers}
+[PARSER]
+    name          ${k}
+    format        regex
+    regex         ${v.pattern}
+    types         ${join(" ", [for k, v in v.types : "${k}:${v}"])}
+%{endfor~}
 %{for k, v in var.multiline_parsers}
 [MULTILINE_PARSER]
     name          ${k}

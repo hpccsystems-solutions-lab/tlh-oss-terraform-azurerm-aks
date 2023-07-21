@@ -579,6 +579,49 @@ The module now experimentally supports using _Fluent Bit_ as the log aggregator 
 
 The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
 
+### Single Line Log Parser Support
+
+You can add custom single line log parsing support at the _Fluent Bit_ collector level by setting the `experimental.fluent_bit_collector_parsers` input variable. Enabling this functionality could cause performance issues so a better solution where possible would be to fix the logs at the application level.
+
+Once a parser has been defined, to use the parser for your application, add the annotation `fluentbit.io/parser` to the spec template so that pods recieve the annotation when deployed. The value for the `fluentbit.io/parser` annotation is the name provided to the parser in the terraform object which in this example is "custom-regex".
+
+If pods contain multiple containers however you require parsing on specific container in the pod or if you need to limit parsing to a specific stream (stdout or stderr), you can add stream and container name as suffixes to the annotation key `fluentbit.io/parser[_stream][-container]`. This will cause parsing to happen only on specific containers and/or specific stream.
+
+The pattern object takes regex to match into named capturing groups. If your regex uses `\` characters then you will need to prepend each of them with another `\` character as this is an escape sequence character in terraform.
+
+The types object is optional and is a string that contains named capturing group names and types in the format <named_group>:<type>. Multiple can be specified, using space as a delimeter.
+
+See below example where log line would contain key value pairs with
+- Pipe `|` separating  key value pairs
+- Space separating key and value
+- Regex that contains `\` character
+- Mutiple types.
+
+```text
+A text|B 1|C 2.08
+```
+
+```terraform
+locals {
+  fluent_bit_collector_parsers = {
+      "custom-regex" = {
+        pattern = "^A (?<a>[^|]*)\\|B (?<b>[^|]*)\\|C (?<c>[^|]*)$"
+        types   = {
+          a = "string",
+          b = "integer",
+          c = "float"
+        }
+      }
+  }
+}
+```
+
+```
+annotations:
+  fluentbit.io/parser: custom-regex
+```
+
+
 ### Multiline Log Parser Support
 
 You can add custom multiline log parsing support at the _Fluent Bit_ collector level by setting the `experimental.fluent_bit_collector_multiline_parsers` input variable. Enabling this functionality could cause performance issues so a better solution where possible would be to fix the logs at the application level.

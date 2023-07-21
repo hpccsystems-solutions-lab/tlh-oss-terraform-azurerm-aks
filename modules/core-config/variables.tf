@@ -279,5 +279,9 @@ variable "experimental" {
         pod_prefix = string
       }))
     }))
+    fluent_bit_collector_parsers = map(object({
+      pattern = string
+      types   = map(string)
+    }))
   })
 }
