@@ -33,7 +33,9 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed -->
 
 ## [v1.18.0] - UNRELEASED
-- Added experimental feature of custom fluent bit single line parser ([#1235](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1235) [@james-alford-ln](https://github.com/james-alford-ln)
+
+- Added experimental feature of custom _Fluent Bit_ single line parser ([#1235](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1235) [@james-alford-ln](https://github.com/james-alford-ln)
+- Removed duplicate _Prometheus_ rule `KubernetesOutOfCapacity`. ([#1254](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1254)) [@peterabarr](https://github.com/peterabarr)
 
 ### Highlights
 
