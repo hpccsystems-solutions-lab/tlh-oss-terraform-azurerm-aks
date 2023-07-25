@@ -1,5 +1,5 @@
 locals {
-  chart_version = "47.1.0"
+  chart_version = "48.2.0"
 
   thanos_chart_version = "1.12.4"
 
@@ -67,12 +67,12 @@ locals {
         resources = {
           requests = {
             cpu    = "50m"
-            memory = "16Mi"
+            memory = "64Mi"
           }
 
           limits = {
             cpu    = "500m"
-            memory = "16Mi"
+            memory = "64Mi"
           }
         }
       }
