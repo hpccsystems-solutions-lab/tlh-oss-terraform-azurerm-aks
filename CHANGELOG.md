@@ -52,6 +52,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### Highlights
 
+#### Removed legacy maintenance input variables
+
+The following legacy maintenance input variables have been removed prior to the planned release due to breaking behaviour changes in AKS; to customise your cluster's maintenance windows you will now need to use the `maintenance` input variable.
+
+- `maintenance_window_offset`
+- `maintenance_window_allowed_days`
+- `maintenance_window_allowed_hours`
+- `maintenance_window_not_allowed`
+
+If you are currently setting one of these variables you will need to change you inputs to use the [maintenance](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-f) input variable, which was released in [v1.16.0](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/releases/tag/v1.16.0), and separates the windows for updating the control plane and nodes. If you are using the default maintenance configuration you will be using the updated behaviour introduced in [v1.16.0](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/releases/tag/v1.16.0).
+
 #### Service Updates
 
 We updated a number of services inside the _EKS_ module so that they are up to date with the latest releases.
@@ -94,7 +105,7 @@ The latest version of _Kube Prometheus Stack_ contains _Grafana_ `v9.5.5` which 
 
 The recent updates to the maintenance functionality bring significant improvements to the module. The behaviour of cluster upgrades has been enhanced to allow node image upgrades during the maintenance window, resulting in a more streamlined upgrade process. This improvement, facilitated by the `experimental.cluster_patch_upgrade` setting, is currently being tested and will become the default behaviour once validated. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#cluster-patch-upgrade).
 
-The introduction of the new input variable, `maintenance`, replaces the deprecated variables previously used for managing maintenance windows. This variable offers users more precise control over maintenance schedules and parameters, empowering operators to customize and optimize their maintenance operations within the module. Operators can now define separate maintenance windows for the control plane and nodes, allowing for better coordination and resource management. The maintenance variable allows maintenance to be performed as frequently as once per day, which can be particularly useful in lower or development environments where more frequent updates are desired. This flexibility enables operators to align maintenance operations with their specific needs and requirements. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-f).
+The introduction of the new input variable, `maintenance`, replaces the deprecated variables previously used for managing maintenance windows. This variable offers users more precise control over maintenance schedules and parameters, empowering operators to customize and optimize their maintenance operations within the module. Operators can now define separate maintenance windows for the control plane and nodes, allowing for better coordination and resource management. The maintenance variable allows node maintenance to be performed as frequently as once per dayproves particularly valuable in lower or development environments where more frequent updates are desired. Additionally, control plane maintenance can be performed as frequently as once per week. This level of flexibility enables operators to align maintenance operations with their specific needs and requirements. By default both the control plane and nodes will will have a weekly maintenance window on Sunday from _00:00_ (local time based on the offset) and lasting for _4 hours_; for more information see the [README](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-f).
 
 ### All Changes
 
