@@ -47,6 +47,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed duplicate _Prometheus_ rule `KubernetesOutOfCapacity`. ([#1254](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1254)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Kube Prometheus Stack_ chart to [v48.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.2.0) (contains _Grafana_ [v10.0.2](https://github.com/grafana/grafana/releases/tag/v10.0.2), _Prometheus_ [v2.45.0](https://github.com/prometheus/prometheus/releases/tag/v2.45.0), _Prometheus Windows Exporter_ [v0.22.0](https://github.com/prometheus-community/windows_exporter/releases/tag/v0.22.0) and _Kube State Metrics_ [v2.9.2](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.9.2)). ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
 - Changed `prometheusConfigReloader` memory resources to `64Mi`. ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
+- Fixed an issue in the Fluent Bit Aggregator service where secret environment variables were not being configured correctly. ([#1275](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1275)) [@aydosman](https://github.com/aydosman)
 
 ## [v1.17.0] - 2023-07-17
 

@@ -62,7 +62,10 @@ locals {
       { name = "SUBSCRIPTION_ID", value = var.subscription_id },
       { name = "LOCATION", value = local.location_sanitized },
       { name = "CLUSTER_NAME", value = var.cluster_name }
-    ], [for k, v in var.extra_env : { name = k, value = v }], [for k, v in var.secret_env : { name = k, secretKeyRef = { name = kubernetes_secret_v1.secret_env[0].metadata[0].name, key = k } }])
+      ],
+      [for k, v in var.extra_env : { name = k, value = v }],
+      [for k, v in var.secret_env : { name = k, valueFrom = { secretKeyRef = { name = kubernetes_secret_v1.secret_env[0].metadata[0].name, key = k } } }]
+    )
 
     persistence = {
       enabled       = true
