@@ -15,10 +15,10 @@ module "identity" {
   roles = concat([{
     id    = "Reader"
     scope = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.ContainerService/managedClusters/${var.cluster_name}"
-    }], var.azure_storage_output.enabled ? [{
+    }], [for x in local.storage_account_ids : {
     id    = "Storage Blob Data Contributor"
-    scope = var.azure_storage_output.id
-  }] : [])
+    scope = x
+  }])
 
   tags = var.tags
 }

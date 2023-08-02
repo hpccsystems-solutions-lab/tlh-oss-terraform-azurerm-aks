@@ -577,7 +577,7 @@ To enable in-cluster Loki you can set the experimental flag `experimental = { lo
 
 The module now experimentally supports using _Fluent Bit_ as the log aggregator instead of _Fluentd_; the _Fluent Bit_ `StatefulSet` can have it's memory, CPU & replicas set in addition to the configuration of [filters](https://docs.fluentbit.io/manual/pipeline/filters) & [outputs](https://docs.fluentbit.io/manual/pipeline/outputs).
 
-The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
+The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` but it does **NOT** support exporting logs to Azure storage accounts due to a lack of authentication support. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
 
 ### Single Line Log Parser Support
 
@@ -769,12 +769,14 @@ Specification for the `node_groups.taints` object.
 
 Specification for the `logging` object.
 
-| **Variable**             | **Description**                                                                                                    | **Type**                               | **Default** |
-| :----------------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :---------- |
-| `control_plane`          | Control plane logging configuration.                                                                               | `object` ([Appendix C1](#appendix-c1)) |             |
-| `workloads`              | Workloads logging configuration.                                                                                   | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
-| `storage_account_config` | Azure storage configuration.                                                                                       | `object` ([Appendix C5](#appendix-c3)) | `{}`        |
-| `extra_records`          | Additional records to add to the logs; env variables can be referenced within the value in the form `${<ENV_VAR>}` | `map(string)`                          | `{}`        |
+| **Variable**                     | **Description**                                                                                                    | **Type**                               | **Default** |
+| :------------------------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :---------- |
+| `control_plane`                  | Control plane logging configuration.                                                                               | `object` ([Appendix C1](#appendix-c1)) |             |
+| `nodes`                          | Nodes logging configuration.                                                                                       | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
+| `workloads`                      | Workloads logging configuration.                                                                                   | `object` ([Appendix C3](#appendix-c3)) | `{}`        |
+| `log_analytics_workspace_config` | Default Azure Log Analytics workspace configuration.                                                               | `object` ([Appendix C4](#appendix-c4)) | `{}`        |
+| `storage_account_config`         | Default Azure storage configuration.                                                                               | `object` ([Appendix C5](#appendix-c5)) | `{}`        |
+| `extra_records`                  | Additional records to add to the logs; env variables can be referenced within the value in the form `${<ENV_VAR>}` | `map(string)`                          | `{}`        |
 
 ### Appendix C1
 
@@ -789,46 +791,85 @@ Specification for the `logging.control_plane` object.
 
 Specification for the `logging.control_plane.log_analytics` object.
 
-| **Variable**                    | **Description**                                                     | **Type**       | **Default** |
-| :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
-| `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.  | `bool`         | `false`     |
-| `workspace_id`                  | The workspace ID is required if Log Analytics is set to `true`.     | `string`       | `null`      |
-| `profile`                       | The profile to use for the log category types.                      | `string`       | `null`      |
-| `additional_log_category_types` | Additional log category types to collect.                           | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `true`      |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`. | `number`       | `30`        |
+| **Variable**                    | **Description**                                                                  | **Type**       | **Default** |
+| :------------------------------ | :------------------------------------------------------------------------------- | :------------- | :---------- |
+| `enabled`                       | If control plane logs should be sent to a Log Analytics Workspace.               | `bool`         | `false`     |
+| `workspace_id`                  | The Azure Log Analytics workspace ID, if not specified the default will be used. | `string`       | `null`      |
+| `profile`                       | The profile to use for the log category types.                                   | `string`       | `null`      |
+| `additional_log_category_types` | Additional log category types to collect.                                        | `list(string)` | `[]`        |
+| `retention_enabled`             | If retention should be configured per log category collected.                    | `bool`         | `true`      |
+| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.              | `number`       | `30`        |
 
 ### Appendix C1b
 
 Specification for the `logging.control_plane.storage_account` object.
 
-| **Variable**                    | **Description**                                                     | **Type**       | **Default** |
-| :------------------------------ | :------------------------------------------------------------------ | :------------- | :---------- |
-| `enabled`                       | If control plane logs should be sent to a storage account.          | `bool`         | `false`     |
-| `id`                            | **DEPRECATED** - The Azure Storage Account ID.                      | `string`       | `null`      |
-| `profile`                       | The profile to use for the log category types.                      | `string`       | `null`      |
-| `additional_log_category_types` | Additional log category types to collect.                           | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.       | `bool`         | `true`      |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`. | `number`       | `30`        |
+| **Variable**                    | **Description**                                                          | **Type**       | **Default** |
+| :------------------------------ | :----------------------------------------------------------------------- | :------------- | :---------- |
+| `enabled`                       | If control plane logs should be sent to a storage account.               | `bool`         | `false`     |
+| `id`                            | The Azure Storage Account ID, if not specified the default will be used. | `string`       | `null`      |
+| `profile`                       | The profile to use for the log category types.                           | `string`       | `null`      |
+| `additional_log_category_types` | Additional log category types to collect.                                | `list(string)` | `[]`        |
+| `retention_enabled`             | If retention should be configured per log category collected.            | `bool`         | `true`      |
+| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.      | `number`       | `30`        |
 
 ### Appendix C2
 
-Specification for the `logging.workloads` object.
+Specification for the `logging.nodes` object.
 
-| **Variable**                  | **Description**                                                             | **Type** | **Default** |
-| :---------------------------- | :-------------------------------------------------------------------------- | :------- | :---------- |
-| `core_service_log_level`      | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`. | `string` | `"WARN"`    |
-| `storage_account_logs`        | If workload logs should be sent to Azure Blob Storage.                      | `bool`   | `false`     |
-| `storage_account_container`   | The container to use for the log storage.                                   | `string` | `workload`  |
-| `storage_account_path_prefix` | Azure blob prefix for the logs.                                             | `string` | `null`      |
+| **Variable**      | **Description**                          | **Type**                                 | **Default** |
+| :---------------- | :--------------------------------------- | :--------------------------------------- | :---------- |
+| `storage_account` | Node logs storage account configuration. | `object` ([Appendix C2a](#appendix-c2a)) | `{}`        |
+
+### Appendix C2a
+
+Specification for the `logging.nodes.storage_account` object.
+
+| **Variable**  | **Description**                                                          | **Type** | **Default** |
+| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
+| `enabled`     | If node logs should be sent to a storage account.                        | `bool`   | `false`     |
+| `id`          | The Azure Storage Account ID, if not specified the default will be used. | `string` | `null`      |
+| `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
+| `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
 
 ### Appendix C3
 
+Specification for the `logging.workloads` object.
+
+| **Variable**                  | **Description**                                                                                | **Type**                                 | **Default** |
+| :---------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------- | :---------- |
+| `core_service_log_level`      | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`.                    | `string`                                 | `"WARN"`    |
+| `storage_account`             | Workload logs storage account configuration.                                                   | `object` ([Appendix C3a](#appendix-c3a)) | `{}`        |
+| `storage_account_logs`        | **DEPRECATED** - If workload logs should be sent to Azure Blob Storage, use `storage_account`. | `bool`                                   | `false`     |
+| `storage_account_container`   | **DEPRECATED** - The container to use for the log storage, use `storage_account`.              | `string`                                 | `null`      |
+| `storage_account_path_prefix` | **DEPRECATED** - Blob prefix for the logs, use `storage_account`.                              | `string`                                 | `null`      |
+
+### Appendix C3a
+
+Specification for the `logging.workloads.storage_account` object.
+
+| **Variable**  | **Description**                                                          | **Type** | **Default** |
+| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
+| `enabled`     | If workload logs should be sent to a storage account.                    | `bool`   | `false`     |
+| `id`          | The Azure Storage Account ID, if not specified the default will be used. | `string` | `null`      |
+| `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
+| `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
+
+### Appendix C4
+
+Specification for the `logging.log_analytics_workspace_config` object.
+
+| **Variable** | **Description**                                             | **Type** | **Default** |
+| :----------- | :---------------------------------------------------------- | :------- | :---------- |
+| `id`         | The Azure Loc Analytics workspace ID to be used by default. | `string` | `null`      |
+
+### Appendix C5
+
 Specification for the `logging.storage_account_config` object.
 
-| **Variable** | **Description**               | **Type** | **Default** |
-| :----------- | :---------------------------- | :------- | :---------- |
-| `id`         | The Azure Storage Account ID. | `string` | `null`      |
+| **Variable** | **Description**                                     | **Type** | **Default** |
+| :----------- | :-------------------------------------------------- | :------- | :---------- |
+| `id`         | The Azure Storage Account ID to be used by default. | `string` | `null`      |
 
 ### Appendix D
 

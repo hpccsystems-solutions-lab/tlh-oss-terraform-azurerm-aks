@@ -17,8 +17,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `logging.control_plane.storage_account.id` variable is deprecated in favour of the `logging.storage_account_config.id` input variable. It will be removed in `v1.19.0`. Storage accounts for both workload and control plane logs can be configured via the `logging.storage_account_config.id` input variable.
 - AKS cluster version `v1.24` is deprecated and will be removed in the `v1.19.0` release.
+- The `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables are deprecated and will be removed in the `v1.21.0` release.
 
 ---
 
@@ -48,6 +48,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Kube Prometheus Stack_ chart to [v48.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.2.0) (contains _Grafana_ [v10.0.2](https://github.com/grafana/grafana/releases/tag/v10.0.2), _Prometheus_ [v2.45.0](https://github.com/prometheus/prometheus/releases/tag/v2.45.0), _Prometheus Windows Exporter_ [v0.22.0](https://github.com/prometheus-community/windows_exporter/releases/tag/v0.22.0) and _Kube State Metrics_ [v2.9.2](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.9.2)). ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
 - Changed `prometheusConfigReloader` memory resources to `64Mi`. ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
 - Fixed an issue in the Fluent Bit Aggregator service where secret environment variables were not being configured correctly. ([#1275](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1275)) [@aydosman](https://github.com/aydosman)
+- Added validation that the maintenance windows are all at least 4 hours long. [@stevehipwell](https://github.com/stevehipwell)
+- Added support for managing the node log export to Azure storage independently to the workload logs via the new `logging.nodes` input variable. [@stevehipwell](https://github.com/stevehipwell)
+- Changed the default storage account container for workload logs from `workload` to `workloads` for consistency. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated the `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables in favour of the `logging.workloads.storage_account` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.17.0] - 2023-07-17
 

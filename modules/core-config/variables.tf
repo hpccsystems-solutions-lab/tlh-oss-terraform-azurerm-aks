@@ -101,6 +101,7 @@ variable "logging" {
       })
       storage_account = object({
         enabled                       = bool
+        id                            = string
         profile                       = string
         additional_log_category_types = list(string)
         retention_enabled             = bool
@@ -108,12 +109,30 @@ variable "logging" {
       })
     })
 
+    nodes = optional(object({
+      storage_account = optional(object({
+        enabled     = optional(bool, false)
+        id          = optional(string, null)
+        container   = optional(string, "nodes")
+        path_prefix = optional(string, null)
+      }), {})
+    }), {})
+
     workloads = object({
-      core_service_log_level      = string
-      storage_account_logs        = bool
-      storage_account_container   = string
-      storage_account_path_prefix = string
+      core_service_log_level = string
+
+      storage_account = object({
+        enabled     = bool
+        id          = string
+        container   = string
+        path_prefix = string
+      })
     })
+
+    log_analytics_workspace_config = object({
+      id = string
+    })
+
     storage_account_config = object({
       id = string
     })

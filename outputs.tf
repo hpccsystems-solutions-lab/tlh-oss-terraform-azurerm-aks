@@ -23,11 +23,6 @@ output "cluster_name" {
   value       = module.cluster.cluster_name
 }
 
-output "control_plane_log_analytics_workspace_id" {
-  description = "ID of the default log analytics workspace created for control plane logs."
-  value       = module.cluster.control_plane_log_analytics_workspace_id
-}
-
 output "node_resource_group_name" {
   description = "Auto-generated resource group which contains the resources for this managed Kubernetes cluster."
   value       = module.cluster.node_resource_group_name

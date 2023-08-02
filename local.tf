@@ -57,6 +57,19 @@ locals {
   subnet_id                         = "${local.virtual_network_id}/subnets/${var.subnet_name}"
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
+  logging = merge(var.logging, {
+    workloads = {
+      core_service_log_level = var.logging.workloads.core_service_log_level
+
+      storage_account = {
+        enabled     = var.logging.workloads.storage_account.enabled || var.logging.workloads.storage_account_logs
+        id          = var.logging.workloads.storage_account.id
+        container   = coalesce(var.logging.workloads.storage_account_container, var.logging.workloads.storage_account.container)
+        path_prefix = var.logging.workloads.storage_account_path_prefix != null ? var.logging.workloads.storage_account_path_prefix : var.logging.workloads.storage_account.path_prefix
+      }
+    }
+  })
+
   core_services_config = merge(var.core_services_config, {
     fluent_bit_aggregator = {
       enabled           = var.experimental.fluent_bit_aggregator

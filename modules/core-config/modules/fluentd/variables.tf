@@ -110,8 +110,19 @@ variable "loki_output" {
   nullable = false
 }
 
-variable "azure_storage_output" {
-  description = "Azure storage output config."
+variable "azure_storage_nodes_output" {
+  description = "Azure storage output config for node logs."
+  type = object({
+    enabled     = bool
+    id          = string
+    container   = string
+    path_prefix = string
+  })
+  nullable = false
+}
+
+variable "azure_storage_workloads_output" {
+  description = "Azure storage output config for workload logs."
   type = object({
     enabled     = bool
     id          = string

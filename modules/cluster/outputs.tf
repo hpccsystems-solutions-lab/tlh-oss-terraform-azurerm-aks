@@ -49,11 +49,6 @@ output "node_resource_group_name" {
   value       = azurerm_kubernetes_cluster.default.node_resource_group
 }
 
-output "control_plane_log_analytics_workspace_id" {
-  description = "ID of the default log analytics workspace created for control plane logs."
-  value       = var.logging.control_plane.log_analytics.enabled ? var.logging.control_plane.log_analytics.workspace_id : null
-}
-
 output "oms_agent_identity" {
   description = "Identity that the OMS agent uses."
   value       = var.oms_agent ? azurerm_kubernetes_cluster.default.oms_agent[0].oms_agent_identity : null

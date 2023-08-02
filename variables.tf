@@ -252,30 +252,53 @@ variable "logging" {
   description = "Logging configuration."
   type = object({
     control_plane = object({
-      log_analytics = object({
-        enabled                       = bool
-        workspace_id                  = optional(string)
+      log_analytics = optional(object({
+        enabled                       = optional(bool, false)
+        workspace_id                  = optional(string, null)
         profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
-        retention_enabled             = optional(bool, true)
-        retention_days                = optional(number, 30)
-      })
+      }), {})
 
-      storage_account = object({
-        enabled                       = bool
-        id                            = optional(string)
+      storage_account = optional(object({
+        enabled                       = optional(bool, false)
+        id                            = optional(string, null)
         profile                       = optional(string, "all")
         additional_log_category_types = optional(list(string), [])
         retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
-      })
+      }), {})
     })
 
+    nodes = optional(object({
+      storage_account = optional(object({
+        enabled     = optional(bool, false)
+        id          = optional(string, null)
+        container   = optional(string, "nodes")
+        path_prefix = optional(string, null)
+      }), {})
+      loki = optional(object({
+        enabled = optional(bool, false)
+      }), {})
+    }), {})
+
     workloads = optional(object({
-      core_service_log_level      = optional(string, "WARN")
-      storage_account_logs        = optional(bool, false)
-      storage_account_container   = optional(string, "workload")
-      storage_account_path_prefix = optional(string, null)
+      core_service_log_level = optional(string, "WARN")
+
+      storage_account = optional(object({
+        enabled     = optional(bool, false)
+        id          = optional(string, null)
+        container   = optional(string, "workloads")
+        path_prefix = optional(string, null)
+      }), {})
+
+      loki = optional(object({
+        enabled = optional(bool, false)
+      }), {})
+
+    }), {})
+
+    log_analytics_workspace_config = optional(object({
+      id = optional(string, null)
     }), {})
 
     storage_account_config = optional(object({
@@ -284,21 +307,15 @@ variable "logging" {
 
     extra_records = optional(map(string), {})
   })
-
   nullable = false
 
-  default = {
-    control_plane = {
-      log_analytics = {
-        enabled = false
-      }
-      storage_account = {
-        enabled = false
-      }
-    }
-  }
   validation {
-    condition     = !var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.log_analytics.workspace_id != null
+    condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
+    error_message = "Control plane logging must be enabled."
+  }
+
+  validation {
+    condition     = !var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.log_analytics.workspace_id != null || var.logging.log_analytics_workspace_config.id != null
     error_message = "Control plane logging to a log analytics workspace requires a workspace ID."
   }
 
@@ -308,13 +325,23 @@ variable "logging" {
   }
 
   validation {
-    condition     = !var.logging.control_plane.storage_account.enabled || var.logging.control_plane.storage_account.id != null
+    condition     = !var.logging.control_plane.storage_account.enabled || var.logging.control_plane.storage_account.id != null || var.logging.storage_account_config.id != null
     error_message = "Control plane logging to a storage account requires an ID."
   }
 
   validation {
     condition     = !var.logging.control_plane.storage_account.enabled || (var.logging.control_plane.storage_account.profile != null && contains(["all", "audit-write-only", "minimal", "empty"], coalesce(var.logging.control_plane.storage_account.profile, "empty")))
     error_message = "Control plane logging to a storage account requires profile."
+  }
+
+  validation {
+    condition     = !var.logging.nodes.storage_account.enabled || var.logging.nodes.storage_account.id != null || var.logging.storage_account_config.id != null
+    error_message = "Nodes logging to a storage account requires an ID."
+  }
+
+  validation {
+    condition     = !var.logging.workloads.storage_account.enabled || var.logging.workloads.storage_account.id != null || var.logging.storage_account_config.id != null
+    error_message = "Workloads logging to a storage account requires an ID."
   }
 }
 
@@ -457,6 +484,11 @@ variable "maintenance" {
   }
 
   validation {
+    condition     = var.maintenance.control_plane.duration >= 4
+    error_message = "Control plane maintainance duration must be 4 hours or more."
+  }
+
+  validation {
     condition     = contains(["DAILY", "WEEKLY", "FORTNIGHTLY", "MONTHLY"], var.maintenance.nodes.frequency)
     error_message = "Node maintainance frequency must be one of \"DAILY\", \"WEEKLY\", \"FORTNIGHTLY\" or \"MONTHLY\"."
   }
@@ -468,7 +500,12 @@ variable "maintenance" {
 
   validation {
     condition     = var.maintenance.nodes.day_of_month >= 1 && var.maintenance.control_plane.day_of_month <= 28
-    error_message = "Control plane maintainance day of month must be between 1 & 28."
+    error_message = "Node maintainance day of month must be between 1 & 28."
+  }
+
+  validation {
+    condition     = var.maintenance.nodes.duration >= 4
+    error_message = "Node maintainance duration must be 4 hours or more."
   }
 }
 

@@ -215,25 +215,26 @@ module "fluentd" {
   source = "./modules/fluentd"
   count  = var.core_services_config.fluent_bit_aggregator.enabled ? 0 : 1
 
-  subscription_id         = var.subscription_id
-  location                = var.location
-  resource_group_name     = var.resource_group_name
-  cluster_name            = var.cluster_name
-  cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
-  namespace               = kubernetes_namespace.default["logging"].metadata[0].name
-  labels                  = var.labels
-  log_level               = var.logging.workloads.core_service_log_level
-  zones                   = local.az_count
-  image_repository        = var.core_services_config.fluentd.image_repository
-  image_tag               = var.core_services_config.fluentd.image_tag
-  additional_env          = var.core_services_config.fluentd.additional_env
-  extra_records           = var.logging.extra_records
-  debug                   = var.core_services_config.fluentd.debug
-  filters                 = var.core_services_config.fluentd.filters
-  route_config            = var.core_services_config.fluentd.route_config
-  loki_output             = local.loki_output
-  azure_storage_output    = local.azure_storage_output
-  tags                    = var.tags
+  subscription_id                = var.subscription_id
+  location                       = var.location
+  resource_group_name            = var.resource_group_name
+  cluster_name                   = var.cluster_name
+  cluster_oidc_issuer_url        = var.cluster_oidc_issuer_url
+  namespace                      = kubernetes_namespace.default["logging"].metadata[0].name
+  labels                         = var.labels
+  log_level                      = var.logging.workloads.core_service_log_level
+  zones                          = local.az_count
+  image_repository               = var.core_services_config.fluentd.image_repository
+  image_tag                      = var.core_services_config.fluentd.image_tag
+  additional_env                 = var.core_services_config.fluentd.additional_env
+  extra_records                  = var.logging.extra_records
+  debug                          = var.core_services_config.fluentd.debug
+  filters                        = var.core_services_config.fluentd.filters
+  route_config                   = var.core_services_config.fluentd.route_config
+  loki_output                    = local.loki_output
+  azure_storage_nodes_output     = local.azure_storage_nodes_output
+  azure_storage_workloads_output = local.azure_storage_workloads_output
+  tags                           = var.tags
 
   timeouts = var.timeouts
 
@@ -292,7 +293,7 @@ module "kube_prometheus_stack" {
   grafana_additional_plugins               = var.core_services_config.grafana.additional_plugins
   grafana_additional_data_sources          = var.core_services_config.grafana.additional_data_sources
   control_plane_log_analytics_enabled      = var.logging.control_plane.log_analytics.enabled
-  control_plane_log_analytics_workspace_id = var.logging.control_plane.log_analytics.workspace_id
+  control_plane_log_analytics_workspace_id = var.logging.control_plane.log_analytics.enabled ? coalesce(var.logging.control_plane.log_analytics.workspace_id, var.logging.log_analytics_workspace_config.id) : null
   loki                                     = local.loki_output
   oms_agent_enabled                        = var.core_services_config.oms_agent.enabled
   oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_workspace_id

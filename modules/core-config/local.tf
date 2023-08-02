@@ -34,12 +34,18 @@ locals {
     workload_logs = true
   }
 
-  azure_storage_output = {
-    enabled     = var.logging.workloads.storage_account_logs
-    id          = var.logging.storage_account_config.id
-    container   = var.logging.workloads.storage_account_container
-    path_prefix = var.logging.workloads.storage_account_path_prefix
+  azure_storage_nodes_output = {
+    enabled     = var.logging.nodes.storage_account.enabled
+    id          = var.logging.nodes.storage_account.enabled ? coalesce(var.logging.nodes.storage_account.id, var.logging.storage_account_config.id) : null
+    container   = var.logging.nodes.storage_account.container
+    path_prefix = var.logging.nodes.storage_account.path_prefix
+  }
 
+  azure_storage_workloads_output = {
+    enabled     = var.logging.workloads.storage_account.enabled
+    id          = var.logging.workloads.storage_account.enabled ? coalesce(var.logging.workloads.storage_account.id, var.logging.storage_account_config.id) : null
+    container   = var.logging.workloads.storage_account.container
+    path_prefix = var.logging.workloads.storage_account.path_prefix
   }
 
   ingress_internal_core = merge(var.core_services_config.ingress_internal_core, var.core_services_config.ingress_internal_core.subdomain_suffix == null ? { subdomain_suffix = var.cluster_name } : {}, {

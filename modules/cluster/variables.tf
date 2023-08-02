@@ -151,6 +151,11 @@ variable "logging" {
         retention_days                = number
       })
     })
+
+    log_analytics_workspace_config = object({
+      id = string
+    })
+
     storage_account_config = object({
       id = string
     })
