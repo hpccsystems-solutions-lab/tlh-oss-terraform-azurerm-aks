@@ -32,18 +32,44 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.18.0] - UNRELEASED
+## [v1.18.0] - 2023-08-02
 
 ### Highlights
 
+This release enhances the logging capabilities with more granular control for logging configurations.
+
+#### Logging
+
+Control Plane Logging Configuration: We have introduced an improved configuration for control plane logging. This configuration determines if control plane logs should be sent to an Azure Log Analytics workspace or an Azure Storage Account. It allows for the specification of retention policies, choice of profile for log categories, and the addition of custom log category types. [Appendix C1](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c1)
+
+Nodes Logging Configuration: We provide a specification for Azure Storage Account configurations for node-based logging. Users can select if node logs should be sent to a storage account, specify the Azure Storage Account ID, and set the storage container and the blob prefix for the logs. [Appendix C2](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c2)
+
+Workloads Logging Configuration: The logging configuration for workloads allows users to set the log level for the core services. We have replaced deprecated variables for Azure Blob Storage with the `storage_account` object. This object offers a streamlined interface for deciding whether logs should be sent to a storage account and for configuring it. [Appendix C3](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c3)
+
+Azure Log Analytics Workspace Configuration: Users can now utilize the `log_analytics_workspace_config` object to set a default Azure Log Analytics workspace ID for logging. [Appendix C4](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c4)
+
+Azure Storage Configuration: Users can use the `storage_account_config` object to set a default Azure Storage Account ID for logging. [Appendix C5](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-c5)
+
+Additional Log Records: The `extra_records` variable enables users to add extra records to the logs. Environment variables can be referenced in the value using the `${<ENV_VAR>}` format.
+
+Retention Policies: Users can specify retention policies on a per-log-category basis. This includes the ability to enable or disable retention and set the number of days for log retention.
+
+#### Fluent Bit Single Line Parser
+
+A new experimental feature has been introduced, enabling single-line log parsing at the _Fluent Bit_ collector level. This functionality allows operators to create custom regex patterns that segment parts of a log entry into named groups, and to define the types for each group object. This feature facilitates the _Fluent Bit_ collector in effectively parsing logs and forwarding them to the aggregator. Read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#single-line-log-parser-support).
+
+#### Kubernetes v1.24 Deprecation
+
+Kubernetes version `1.24` has been deprecated and will be removed in `v1.19.0`.
+
 ### All Changes
 
-- Removed the `logging.control_plane.log_analytics.external_workspace` variable as the feature is deprecated and the module will no longer create a Log Analytics workspace. [@hadeeds](https://github.com/hadeeds)
+- Removed the `logging.control_plane.log_analytics.external_workspace` variable as the feature is deprecated and the module will no longer create a Log Analytics workspace. ([#1246](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1246)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit_ chart to [v0.36.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.34.2). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit Aggregator_ chart to [v0.7.1](https://github.com/stevehipwell/helm-charts/releases/tag/fluent-bit-aggregator-0.7.1) (contains Fluent Bit OCI image update to [v2.1.7](https://github.com/fluent/fluent-bit/releases/tag/v2.1.7)). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Ingress NGINX_ chart to [v4.7.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.7.1) (contains Nginx Controller update to [v1.8.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.8.1)). ([#1251](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1251)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Cert Manager_ chart to [v1.12.3](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.3). ([#1268](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1268)) [@hadeeds](https://github.com/hadeeds)
-- Added experimental feature of custom _Fluent Bit_ single line parser ([#1235](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1235) [@james-alford-ln](https://github.com/james-alford-ln)
+- Added experimental feature of custom _Fluent Bit_ single line parser ([#1235](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1235)) [@james-alford-ln](https://github.com/james-alford-ln)
 - Removed duplicate _Prometheus_ rule `KubernetesOutOfCapacity`. ([#1254](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1254)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Kube Prometheus Stack_ chart to [v48.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.2.0) (contains _Grafana_ [v10.0.2](https://github.com/grafana/grafana/releases/tag/v10.0.2), _Prometheus_ [v2.45.0](https://github.com/prometheus/prometheus/releases/tag/v2.45.0), _Prometheus Windows Exporter_ [v0.22.0](https://github.com/prometheus-community/windows_exporter/releases/tag/v0.22.0) and _Kube State Metrics_ [v2.9.2](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.9.2)). ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
 - Changed `prometheusConfigReloader` memory resources to `64Mi`. ([#1256](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1256)) [@hadeeds](https://github.com/hadeeds)
