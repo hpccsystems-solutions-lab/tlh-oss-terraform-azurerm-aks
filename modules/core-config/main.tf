@@ -188,9 +188,6 @@ module "fluent_bit_aggregator" {
   log_level               = var.logging.workloads.core_service_log_level
   zones                   = local.az_count
   replicas_per_zone       = var.core_services_config.fluent_bit_aggregator.replicas_per_zone
-  cpu_requests_override   = var.experimental.fluent_bit_aggregator_cpu_requests_override
-  cpu_limits_override     = var.experimental.fluent_bit_aggregator_cpu_limits_override
-  memory_override         = var.experimental.fluent_bit_aggregator_memory_override
   extra_env               = var.core_services_config.fluent_bit_aggregator.extra_env
   secret_env              = var.core_services_config.fluent_bit_aggregator.secret_env
   extra_records           = var.logging.extra_records
@@ -198,6 +195,7 @@ module "fluent_bit_aggregator" {
   loki_output             = local.loki_output
   raw_filters             = var.core_services_config.fluent_bit_aggregator.raw_filters
   raw_outputs             = var.core_services_config.fluent_bit_aggregator.raw_outputs
+  resource_overrides      = local.resource_overrides
   tags                    = var.tags
 
   timeouts = var.timeouts
@@ -233,12 +231,11 @@ module "fluentd" {
   route_config                   = var.core_services_config.fluentd.route_config
   loki_output                    = local.loki_output
   azure_storage_nodes_output     = local.azure_storage_nodes_output
+  resource_overrides             = local.resource_overrides
   azure_storage_workloads_output = local.azure_storage_workloads_output
   tags                           = var.tags
 
   timeouts = var.timeouts
-
-  experimental_memory_override = var.experimental.fluentd_memory_override
 
   depends_on = [
     module.crds,
@@ -301,11 +298,10 @@ module "kube_prometheus_stack" {
   ingress_domain                           = local.ingress_internal_core.domain
   ingress_subdomain_suffix                 = local.ingress_internal_core.subdomain_suffix
   ingress_annotations                      = local.ingress_internal_core.annotations
+  resource_overrides                       = local.resource_overrides
   tags                                     = var.tags
 
   timeouts = var.timeouts
-
-  experimental_prometheus_memory_override = var.experimental.prometheus_memory_override
 
   depends_on = [
     module.crds,

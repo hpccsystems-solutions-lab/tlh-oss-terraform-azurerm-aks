@@ -91,13 +91,12 @@ locals {
 
     resources = {
       requests = {
-        cpu    = "500m"
-        memory = coalesce(var.experimental_memory_override, "512Mi")
+        cpu    = "${coalesce(try(var.resource_overrides.fluentd_default.cpu, null), "500")}m"
+        memory = "${coalesce(try(var.resource_overrides.fluentd_default.memory, null), "512")}Mi"
       }
-
       limits = {
-        cpu    = "1000m"
-        memory = coalesce(var.experimental_memory_override, "512Mi")
+        cpu    = "${coalesce(try(var.resource_overrides.fluentd_default.cpu_limit, null), "1000")}m"
+        memory = "${coalesce(try(var.resource_overrides.fluentd_default.memory, null), "512")}Mi"
       }
     }
 

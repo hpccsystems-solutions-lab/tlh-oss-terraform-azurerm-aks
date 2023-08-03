@@ -395,6 +395,11 @@ variable "core_services_config" {
         mute_time_intervals = optional(list(string), [])
         # active_time_intervals = optional(list(string), [])
       })))
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
     }), {})
     cert_manager = optional(object({
       acme_dns_zones      = optional(list(string), [])
@@ -422,11 +427,21 @@ variable "core_services_config" {
         copy   = optional(bool, false)
         config = string
       })), [])
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
     }), {})
     grafana = optional(object({
       admin_password          = optional(string, "changeme")
       additional_plugins      = optional(list(string), [])
       additional_data_sources = optional(any, [])
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
     }), {})
     ingress_internal_core = object({
       domain           = string
@@ -437,6 +452,53 @@ variable "core_services_config" {
     })
     prometheus = optional(object({
       remote_write = optional(any, [])
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    prometheus_node_exporter = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    thanos_store_gateway = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    thanos_rule = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    thanos_query_frontend = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    thanos_query = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
+    thanos_compact = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
     }), {})
   })
   nullable = false
@@ -526,33 +588,30 @@ variable "tags" {
 variable "experimental" {
   description = "Configure experimental features."
   type = object({
-    oms_agent                                   = optional(bool, false)
-    oms_agent_log_analytics_workspace_id        = optional(string, null)
-    oms_agent_create_configmap                  = optional(bool, true)
-    oms_agent_containerlog_schema_version       = optional(string, "v1")
-    windows_support                             = optional(bool, false)
-    arm64                                       = optional(bool, false)
-    node_group_os_config                        = optional(bool, false)
-    azure_cni_max_pods                          = optional(bool, false)
-    aad_pod_identity_finalizer_wait             = optional(string, null)
-    fluent_bit_use_memory_buffer                = optional(bool, false)
-    fluentd_memory_override                     = optional(string, null)
-    prometheus_memory_override                  = optional(string, null)
-    loki                                        = optional(bool, false)
-    systemd_logs_loki                           = optional(bool, false)
-    fluent_bit_aggregator                       = optional(bool, false)
-    fluent_bit_aggregator_cpu_requests_override = optional(string, null)
-    fluent_bit_aggregator_cpu_limits_override   = optional(string, null)
-    fluent_bit_aggregator_memory_override       = optional(string, null)
-    fluent_bit_aggregator_replicas_per_zone     = optional(number, 1)
-    fluent_bit_aggregator_cpu_requests_override = optional(string, null)
-    fluent_bit_aggregator_cpu_limits_override   = optional(string, null)
-    fluent_bit_aggregator_memory_override       = optional(string, null)
-    fluent_bit_aggregator_extra_env             = optional(map(string), {})
-    fluent_bit_aggregator_secret_env            = optional(map(string), {})
-    fluent_bit_aggregator_lua_scripts           = optional(map(string), {})
-    fluent_bit_aggregator_raw_filters           = optional(string, null)
-    fluent_bit_aggregator_raw_outputs           = optional(string, null)
+    oms_agent                               = optional(bool, false)
+    oms_agent_log_analytics_workspace_id    = optional(string, null)
+    oms_agent_create_configmap              = optional(bool, true)
+    oms_agent_containerlog_schema_version   = optional(string, "v1")
+    windows_support                         = optional(bool, false)
+    arm64                                   = optional(bool, false)
+    node_group_os_config                    = optional(bool, false)
+    azure_cni_max_pods                      = optional(bool, false)
+    aad_pod_identity_finalizer_wait         = optional(string, null)
+    fluent_bit_use_memory_buffer            = optional(bool, false)
+    loki                                    = optional(bool, false)
+    systemd_logs_loki                       = optional(bool, false)
+    fluent_bit_aggregator                   = optional(bool, false)
+    fluent_bit_aggregator_replicas_per_zone = optional(number, 1)
+    fluent_bit_aggregator_extra_env         = optional(map(string), {})
+    fluent_bit_aggregator_secret_env        = optional(map(string), {})
+    fluent_bit_aggregator_lua_scripts       = optional(map(string), {})
+    fluent_bit_aggregator_raw_filters       = optional(string, null)
+    fluent_bit_aggregator_raw_outputs       = optional(string, null)
+    fluent_bit_aggregator_resource_overrides = optional(map(object({
+      cpu       = optional(number, null)
+      cpu_limit = optional(number, null)
+      memory    = optional(number, null)
+    })), {})
     fluent_bit_collector_multiline_parsers = optional(map(object({
       rules = list(object({
         name           = string

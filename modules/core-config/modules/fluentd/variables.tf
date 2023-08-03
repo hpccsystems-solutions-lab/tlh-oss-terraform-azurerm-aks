@@ -132,6 +132,8 @@ variable "azure_storage_workloads_output" {
   nullable = false
 }
 
+
+
 variable "tags" {
   description = "Tags to apply to all resources."
   type        = map(string)
@@ -146,8 +148,12 @@ variable "timeouts" {
   nullable = false
 }
 
-variable "experimental_memory_override" {
-  description = "Provide experimental feature flag configuration."
-  type        = string
-  nullable    = true
+variable "resource_overrides" {
+  description = "Override resources for containers"
+  type = map(object({
+    cpu       = number
+    cpu_limit = number
+    memory    = number
+  }))
+  nullable = true
 }

@@ -191,6 +191,11 @@ variable "core_services_config" {
         mute_time_intervals = list(string)
         # active_time_intervals = list(string)
       }))
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
     cert_manager = object({
       acme_dns_zones      = list(string)
@@ -214,6 +219,11 @@ variable "core_services_config" {
       lua_scripts       = map(string)
       raw_filters       = string
       raw_outputs       = string
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
     fluentd = object({
       image_repository = string
@@ -227,11 +237,21 @@ variable "core_services_config" {
         copy   = bool
         config = string
       }))
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
     grafana = object({
       admin_password          = string
       additional_plugins      = list(string)
       additional_data_sources = list(any)
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
     ingress_internal_core = object({
       domain           = string
@@ -252,8 +272,56 @@ variable "core_services_config" {
     })
     prometheus = object({
       remote_write = any
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    prometheus_node_exporter = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    thanos_store_gateway = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    thanos_rule = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    thanos_query_frontend = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    thanos_query = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
+    thanos_compact = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
   })
+
   nullable = false
 }
 
@@ -280,13 +348,8 @@ variable "timeouts" {
 variable "experimental" {
   description = "Provide experimental feature flag configuration."
   type = object({
-    aad_pod_identity_finalizer_wait             = string
-    fluent_bit_use_memory_buffer                = bool
-    fluentd_memory_override                     = string
-    prometheus_memory_override                  = string
-    fluent_bit_aggregator_cpu_requests_override = string
-    fluent_bit_aggregator_cpu_limits_override   = string
-    fluent_bit_aggregator_memory_override       = string
+    aad_pod_identity_finalizer_wait = string
+    fluent_bit_use_memory_buffer    = bool
     fluent_bit_collector_multiline_parsers = map(object({
       rules = list(object({
         name           = string

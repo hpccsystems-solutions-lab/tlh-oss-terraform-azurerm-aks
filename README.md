@@ -511,12 +511,6 @@ By default the module will configure the OMS agent by creating the `container-az
 
 You can override the default Log Analytics ContainerLog schema to ContainerLogV2 by setting the `experimental.oms_agent_containerlog_schema_version` input variable to `v2`.
 
-### Manual Service Memory Override
-
-There are a number of services which can't be dynamically scaled horizontally but still need to be scaled as the cluster size and or load grows. in the future this will be handled by a combination of functionality, but until we have a working solution you can manually override the default memory given to them by setting one of the following variables  (e.g. `experimental = { fluentd_memory_override = "1024Mi" }`).
-
-- _Fluentd_ - `fluentd_memory_override`
-- _Prometheus_ - `prometheus_memory_override`
 
 ### Windows Node Support
 
@@ -577,7 +571,11 @@ To enable in-cluster Loki you can set the experimental flag `experimental = { lo
 
 The module now experimentally supports using _Fluent Bit_ as the log aggregator instead of _Fluentd_; the _Fluent Bit_ `StatefulSet` can have it's memory, CPU & replicas set in addition to the configuration of [filters](https://docs.fluentbit.io/manual/pipeline/filters) & [outputs](https://docs.fluentbit.io/manual/pipeline/outputs).
 
-The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` but it does **NOT** support exporting logs to Azure storage accounts due to a lack of authentication support. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_cpu_requests_override`, `experimental.fluent_bit_aggregator_cpu_limits_override` & `experimental.fluent_bit_aggregator_memory_override` flags.
+The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_resources_override` flags.
+
+| **Variable** | **Description** | **Type**  | **Default** |
+| :----------- | :-------------- | :-------- | :---------- |
+| `fluent_bit_aggregator_resources_override` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader`| `map(object)` (see [Appendix F](#appendix-f)) | `{}` |
 
 ### Single Line Log Parser Support
 
@@ -918,17 +916,23 @@ Specification for the `storage.host_path` object.
 
 Specification for the `core_services_config` object.
 
-| **Variable**            | **Description**                         | **Type**                                 | **Default** |
-| :---------------------- | :-------------------------------------- | :--------------------------------------- | :---------- |
-| `alertmanager`          | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   | `{}`        |
-| `cert_manager`          | Cert Manager configuration.             | `object` ([Appendix E2](#appendix-e2))   | `{}`        |
-| `coredns`               | CoreDNS configuration.                  | `object` ([Appendix E3](#appendix-e3))   | `{}`        |
-| `external_dns`          | ExternalDNS configuration.              | `object` ([Appendix E4](#appendix-e4))   | `{}`        |
-| `fluentd`               | Fluentd configuration.                  | `object` ([Appendix E5](#appendix-e5))   | `{}`        |
-| `grafana`               | Grafana configuration.                  | `object` ([Appendix E7](#appendix-e7))   | `{}`        |
-| `ingress_internal_core` | Ingress internal-core configuration.    | `object` ([Appendix E8](#appendix-e8))   |             |
-| `prometheus`            | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
-| `storage`               | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
+| **Variable**               | **Description**                         | **Type**                                 | **Default** |
+| :------------------------- | :-------------------------------------- | :--------------------------------------- | :---------- |
+| `alertmanager`             | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   | `{}`        |
+| `cert_manager`             | Cert Manager configuration.             | `object` ([Appendix E2](#appendix-e2))   | `{}`        |
+| `coredns`                  | CoreDNS configuration.                  | `object` ([Appendix E3](#appendix-e3))   | `{}`        |
+| `external_dns`             | ExternalDNS configuration.              | `object` ([Appendix E4](#appendix-e4))   | `{}`        |
+| `fluentd`                  | Fluentd configuration.                  | `object` ([Appendix E5](#appendix-e5))   | `{}`        |
+| `grafana`                  | Grafana configuration.                  | `object` ([Appendix E7](#appendix-e7))   | `{}`        |
+| `ingress_internal_core`    | Ingress internal-core configuration.    | `object` ([Appendix E8](#appendix-e8))   |             |
+| `prometheus`               | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
+| `storage`                  | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
+| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
+| `thanos_store_gateway`     | Thanos Store Gateway configuration.     | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
+| `thanos_rule`              | Thanos Rule configuration.              | `object` ([Appendix E13](#appendix-e13)) | `{}`        |
+| `thanos_query_frontend`    | Thanos Query Frontend configuration.    | `object` ([Appendix E14](#appendix-e14)) | `{}`        |
+| `thanos_query`             | Thanos Query configuration.             | `object` ([Appendix E15](#appendix-e15)) | `{}`        |
+| `thanos_compact`           | Thanos Compact configuration.           | `object` ([Appendix E16](#appendix-e16)) | `{}`        |
 
 ### Appendix E1
 
@@ -940,6 +944,7 @@ Specification for the `core_services_config.alertmanager` object.
 | `smtp_from`  | SMTP from address for alert emails.                                                           | `string`       | `null`      |
 | `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)` | `[]`        |
 | `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)` | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E2
 
@@ -975,13 +980,14 @@ Specification for the `core_services_config.external_dns` object.
 Specification for the `core_services_config.fluentd` object.
 
 | **Variable**       | **Description**                                                                                                                                                                    | **Type**                                     | **Default** |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
-| `image_repository` | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                | `null`      |
-| `image_tag`        | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                | `null`      |
-| `additional_env`   | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
-| `debug`            | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                       | `true`      |
-| `filters`          | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
-| `route_config`     | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6)) | `[]`        |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
+| `image_repository`   | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                | `null`      |
+| `image_tag`          | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                | `null`      |
+| `additional_env`     | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
+| `debug`              | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                       | `true`      |
+| `filters`            | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
+| `route_config`       | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6)) | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E6
 
@@ -998,11 +1004,12 @@ Specification for the `core_services_config.fluentd.route_config` object.
 
 Specification for the `core_services_config.grafana` object.
 
-| **Variable**              | **Description**                | **Type**       | **Default** |
-| :------------------------ | :----------------------------- | :------------- | :---------- |
-| `admin_password`          | Admin password.                | `string`       | `changeme`  |
-| `additional_data_sources` | Additional data sources.       | `list(object)` | `[]`        |
-| `additional_plugins`      | Additional plugins to install. | `list(string)` | `[]`        |
+| **Variable**              | **Description**                       | **Type**                                        | **Default** |
+| :------------------------ | :------------------------------------ | :-----------------------------------------------| :---------- |
+| `admin_password`          | Admin password.                       | `string`                                        | `changeme`  |
+| `additional_data_sources` | Additional data sources.              | `list(object)`                                  | `[]`        |
+| `additional_plugins`      | Additional plugins to install.        | `list(string)`                                  | `[]`        |
+| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`, `sidecar`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E8
 
@@ -1020,22 +1027,82 @@ Specification for the `core_services_config.ingress_internal_core` object.
 
 Specification for the `core_services_config.prometheus` object.
 
-| **Variable**   | **Description**                     | **Type**       | **Default** |
-| :------------- | :---------------------------------- | :------------- | :---------- |
-| `remote_write` | Remote write endpoints for metrics. | `list(object)` | `[]`        |
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `remote_write`       | Remote write endpoints for metrics.    | `list(object)`                                  | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+
+### Appendix E11
+
+Specification for the `core_services_config.prometheus_node_exporter` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E12
+
+Specification for the `core_services_config.thanos_store_gateway` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E13
+
+Specification for the `core_services_config.thanos_rule` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E14
+
+Specification for the `core_services_config.thanos_query_frontend` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E15
+
+Specification for the `core_services_config.thanos_query` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E16
+
+Specification for the `core_services_config.thanos_compact` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
 
 ### Appendix F
+
+Specification for the `resource_overrides` object.
+
+| **Variable** | **Description**                                                              | **Type** | **Default** |
+| :----------- | :--------------------------------------------------------------------------- | :------- | :---------- |
+| `cpu`        | Value to set for cpu requests | `number` | null            |
+| `cpu_limit`  | Value to set for cpu limit. If `cpu_limit` specified, and `cpu` not specified then will be rounded to nearest full cpu to `cpu` value  | `number` | null |
+| `memory`     | Value to set for memory | `number` | null |
+
+
+### Appendix G
 
 Specification for the `maintenance` object.
 
 | **Variable**    | **Description**                                                                                                                                                                  | **Type**                                     | **Default** |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
 | `utc_offset`    | Maintenance offset to UTC as a duration (e.g. `+00:00`); this will be used to specify local time. If this is not set a default will be calculated based on the cluster location. | `string`                                     | `null`      |
-| `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix F1](#appendix-f1))       | []          |
-| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix F1](#appendix-f1))       | []          |
-| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix F2](#appendix-f2)) | []          |
+| `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix G1](#appendix-g1))       | []          |
+| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix G1](#appendix-g1))       | []          |
+| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix G2](#appendix-g2)) | []          |
 
-### Appendix F1
+### Appendix G1
 
 Specification for the `maintenance_window.control_plane` & `maintenance_window.nodes` objects.
 
@@ -1047,7 +1114,7 @@ Specification for the `maintenance_window.control_plane` & `maintenance_window.n
 | `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
 | `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
-### Appendix F2
+### Appendix G2
 
 Specification for the `maintenance_window.not_allowed` object.
 

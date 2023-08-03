@@ -78,13 +78,12 @@ locals {
 
     resources = {
       requests = {
-        cpu    = coalesce(var.cpu_requests_override, "200m")
-        memory = coalesce(var.memory_override, "512Mi")
+        cpu    = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_default.cpu, null), "200")}m"
+        memory = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_default.memory, null), "512")}Mi"
       }
-
       limits = {
-        cpu    = coalesce(var.cpu_limits_override, "1000m")
-        memory = coalesce(var.memory_override, "512Mi")
+        cpu    = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_default.cpu_limit, null), "1000")}m"
+        memory = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_default.memory, null), "512")}Mi"
       }
     }
 
@@ -163,13 +162,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "10m"
-          memory = "16Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_reloader.cpu, null), "10")}m"
+          memory = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_reloader.memory, null), "16")}Mi"
         }
-
         limits = {
-          cpu    = "1000m"
-          memory = "16Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_reloader.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.fluent_bit_aggregator_reloader.memory, null), "16")}Mi"
         }
       }
     }

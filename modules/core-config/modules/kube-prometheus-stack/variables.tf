@@ -198,8 +198,12 @@ variable "timeouts" {
   nullable = false
 }
 
-variable "experimental_prometheus_memory_override" {
-  description = "Provide experimental feature flag configuration."
-  type        = string
-  nullable    = true
+variable "resource_overrides" {
+  description = "Override resources for containers"
+  type = map(object({
+    cpu       = number
+    cpu_limit = number
+    memory    = number
+  }))
+  nullable = true
 }

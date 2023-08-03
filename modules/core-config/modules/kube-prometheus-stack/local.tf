@@ -66,13 +66,12 @@ locals {
       prometheusConfigReloader = {
         resources = {
           requests = {
-            cpu    = "50m"
-            memory = "64Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.prometheus_config_reloader.cpu, null), "50")}m"
+            memory = "${coalesce(try(var.resource_overrides.prometheus_config_reloader.memory, null), "64")}Mi"
           }
-
           limits = {
-            cpu    = "500m"
-            memory = "64Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.prometheus_config_reloader.cpu_limit, null), "500")}m"
+            memory = "${coalesce(try(var.resource_overrides.prometheus_config_reloader.memory, null), "64")}Mi"
           }
         }
       }
@@ -189,13 +188,12 @@ locals {
 
         resources = {
           requests = {
-            cpu    = "500m"
-            memory = coalesce(var.experimental_prometheus_memory_override, "4096Mi")
+            cpu    = "${coalesce(try(var.resource_overrides.prometheus_default.cpu, null), "500")}m"
+            memory = "${coalesce(try(var.resource_overrides.prometheus_default.memory, null), "4096")}Mi"
           }
-
           limits = {
-            cpu    = "2000m"
-            memory = coalesce(var.experimental_prometheus_memory_override, "4096Mi")
+            cpu    = "${coalesce(try(var.resource_overrides.prometheus_default.cpu_limit, null), "2000")}m"
+            memory = "${coalesce(try(var.resource_overrides.prometheus_default.memory, null), "4096")}Mi"
           }
         }
 
@@ -204,13 +202,12 @@ locals {
 
           resources = {
             requests = {
-              cpu    = "50m"
-              memory = "64Mi"
+              cpu    = "${coalesce(try(var.resource_overrides.prometheus_thanos_sidecar.cpu, null), "50")}m"
+              memory = "${coalesce(try(var.resource_overrides.prometheus_thanos_sidecar.memory, null), "64")}Mi"
             }
-
             limits = {
-              cpu    = "1000m"
-              memory = "64Mi"
+              cpu    = "${coalesce(try(var.resource_overrides.prometheus_thanos_sidecar.cpu_limit, null), "1000")}m"
+              memory = "${coalesce(try(var.resource_overrides.prometheus_thanos_sidecar.memory, null), "64")}Mi"
             }
           }
 
@@ -309,13 +306,13 @@ locals {
 
         resources = {
           requests = {
-            cpu    = "10m"
-            memory = "64Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.alertmanager_default.cpu, null), "10")}m"
+            memory = "${coalesce(try(var.resource_overrides.alertmanager_default.memory, null), "64")}Mi"
           }
 
           limits = {
-            cpu    = "1000m"
-            memory = "64Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.alertmanager_default.cpu_limit, null), "1000")}m"
+            memory = "${coalesce(try(var.resource_overrides.alertmanager_default.memory, null), "64")}Mi"
           }
         }
       }
@@ -465,13 +462,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.grafana_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.grafana_default.memory, null), "256")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.grafana_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.grafana_default.memory, null), "256")}Mi"
         }
       }
 
@@ -502,13 +499,13 @@ locals {
 
         resources = {
           requests = {
-            cpu    = "100m"
-            memory = "128Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.grafana_sidecar.cpu, null), "100")}m"
+            memory = "${coalesce(try(var.resource_overrides.grafana_sidecar.memory, null), "128")}Mi"
           }
 
           limits = {
-            cpu    = "1000m"
-            memory = "128Mi"
+            cpu    = "${coalesce(try(var.resource_overrides.grafana_sidecar.cpu_limit, null), "1000")}m"
+            memory = "${coalesce(try(var.resource_overrides.grafana_sidecar.memory, null), "128")}Mi"
           }
         }
       }
@@ -653,13 +650,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "64Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.prometheus_node_exporter_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.prometheus_node_exporter_default.memory, null), "64")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "64Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.prometheus_node_exporter_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.prometheus_node_exporter_default.memory, null), "64")}Mi"
         }
       }
     }
@@ -717,13 +714,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "512Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_compact_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_compact_default.memory, null), "512")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "512Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_compact_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_compact_default.memory, null), "512")}Mi"
         }
       }
 
@@ -793,13 +790,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "500m"
-          memory = "1024Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_query_default.cpu, null), "500")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_query_default.memory, null), "1024")}Mi"
         }
 
         limits = {
-          cpu    = "2000m"
-          memory = "1024Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_query_default.cpu_limit, null), "2000")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_query_default.memory, null), "1024")}Mi"
         }
       }
 
@@ -880,13 +877,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "64Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_query_frontend_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_query_frontend_default.memory, null), "64")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "64Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_query_frontend_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_query_frontend_default.memory, null), "64")}Mi"
         }
       }
 
@@ -969,13 +966,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "128Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_rule_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_rule_default.memory, null), "128")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "128Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_rule_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_rule_default.memory, null), "128")}Mi"
         }
       }
 
@@ -1070,13 +1067,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "500m"
-          memory = "2048Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_store_gateway_default.cpu, null), "500")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_store_gateway_default.memory, null), "2048")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "2048Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.thanos_store_gateway_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.thanos_store_gateway_default.memory, null), "2048")}Mi"
         }
       }
 

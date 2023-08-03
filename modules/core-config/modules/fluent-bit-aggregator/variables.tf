@@ -57,24 +57,6 @@ variable "replicas_per_zone" {
   nullable    = false
 }
 
-variable "cpu_requests_override" {
-  description = "CPU requests override."
-  type        = string
-  nullable    = true
-}
-
-variable "cpu_limits_override" {
-  description = "CPU limits override in millicpus."
-  type        = string
-  nullable    = true
-}
-
-variable "memory_override" {
-  description = "Memory override."
-  type        = string
-  nullable    = true
-}
-
 variable "extra_env" {
   description = "Extra environment variables."
   type        = map(string)
@@ -136,4 +118,14 @@ variable "timeouts" {
     helm_modify = number
   })
   nullable = false
+}
+
+variable "resource_overrides" {
+  description = "Override resources for containers"
+  type = map(object({
+    cpu       = number
+    cpu_limit = number
+    memory    = number
+  }))
+  nullable = true
 }

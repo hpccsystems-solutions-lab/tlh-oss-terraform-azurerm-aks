@@ -72,13 +72,14 @@ locals {
 
   core_services_config = merge(var.core_services_config, {
     fluent_bit_aggregator = {
-      enabled           = var.experimental.fluent_bit_aggregator
-      replicas_per_zone = var.experimental.fluent_bit_aggregator_replicas_per_zone
-      extra_env         = var.experimental.fluent_bit_aggregator_extra_env
-      secret_env        = var.experimental.fluent_bit_aggregator_secret_env
-      lua_scripts       = var.experimental.fluent_bit_aggregator_lua_scripts
-      raw_filters       = var.experimental.fluent_bit_aggregator_raw_filters
-      raw_outputs       = var.experimental.fluent_bit_aggregator_raw_outputs
+      enabled            = var.experimental.fluent_bit_aggregator
+      replicas_per_zone  = var.experimental.fluent_bit_aggregator_replicas_per_zone
+      extra_env          = var.experimental.fluent_bit_aggregator_extra_env
+      secret_env         = var.experimental.fluent_bit_aggregator_secret_env
+      lua_scripts        = var.experimental.fluent_bit_aggregator_lua_scripts
+      raw_filters        = var.experimental.fluent_bit_aggregator_raw_filters
+      raw_outputs        = var.experimental.fluent_bit_aggregator_raw_outputs
+      resource_overrides = var.experimental.fluent_bit_aggregator_resource_overrides
     }
 
     loki = {
@@ -92,6 +93,7 @@ locals {
       manage_config               = var.experimental.oms_agent_create_configmap
       containerlog_schema_version = var.experimental.oms_agent_containerlog_schema_version
     }
+
   })
 
   labels = {

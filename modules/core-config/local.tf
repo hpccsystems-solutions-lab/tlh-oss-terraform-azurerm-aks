@@ -53,4 +53,17 @@ locals {
       "lnrs.io/zone-type" = var.core_services_config.ingress_internal_core.public_dns ? "public" : "private"
     }
   })
+
+  resource_overrides = merge(flatten([
+    for service, settings in var.core_services_config : [
+      for container, resources in lookup(settings, "resource_overrides", {}) : {
+        "${service}_${container}" = {
+          cpu       = resources.cpu
+          cpu_limit = resources.cpu_limit != null ? resources.cpu_limit : (resources.cpu != null ? ceil(resources.cpu / 1000) * 1000 : null)
+          memory    = resources.memory
+        }
+      }
+    ]
+  ])...)
+
 }
