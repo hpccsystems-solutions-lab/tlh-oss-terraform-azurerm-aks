@@ -38,6 +38,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated Kubernetes Cluster Version Lookup for regions. ([#1279](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1279)) [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.18.0] - 2023-08-02
 
 ### Highlights
