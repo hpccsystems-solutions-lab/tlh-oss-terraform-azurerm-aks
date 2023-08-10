@@ -1,10 +1,12 @@
 locals {
   name          = "loki"
-  chart_version = "5.5.3"
+  chart_version = "5.8.8"
 
   azure_cli_image_version = "2.9.1"
 
   use_aad_workload_identity = false
+
+  azure_environment = startswith(var.location, "usgov") ? "AzureUSGovernment" : "AzureCloud"
 
   chart_values = {
     nameOverride = local.name
@@ -83,6 +85,7 @@ locals {
         azure = {
           accountName    = azurerm_storage_account.data.name
           userAssignedId = module.identity.client_id
+          endpointSuffix = substr(replace(azurerm_storage_account.data.primary_blob_host, azurerm_storage_account.data.name, ""), 1, -1)
         }
         bucketNames = {
           chunks = local.storage_container_name
@@ -472,7 +475,7 @@ locals {
       command = [
         "sh",
         "-c",
-        "az login --identity --username $(AZURE_CLIENT_ID) --allow-no-subscriptions;az storage container create --name loki --account-name $(AZURE_STORAGE_ACCOUNT) --auth-mode login"
+        "az cloud set --name $(AZURE_ENVIRONMENT); az login --identity --username $(AZURE_CLIENT_ID) --allow-no-subscriptions;az storage container create --name loki --account-name $(AZURE_STORAGE_ACCOUNT) --auth-mode login"
       ]
 
       env = [
@@ -483,6 +486,10 @@ locals {
         {
           name  = "AZURE_STORAGE_ACCOUNT"
           value = azurerm_storage_account.data.name
+        },
+        {
+          name  = "AZURE_ENVIRONMENT"
+          value = local.azure_environment
         }
       ]
 
