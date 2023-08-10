@@ -928,11 +928,7 @@ Specification for the `core_services_config` object.
 | `prometheus`               | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
 | `storage`                  | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
 | `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
-| `thanos_store_gateway`     | Thanos Store Gateway configuration.     | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
-| `thanos_rule`              | Thanos Rule configuration.              | `object` ([Appendix E13](#appendix-e13)) | `{}`        |
-| `thanos_query_frontend`    | Thanos Query Frontend configuration.    | `object` ([Appendix E14](#appendix-e14)) | `{}`        |
-| `thanos_query`             | Thanos Query configuration.             | `object` ([Appendix E15](#appendix-e15)) | `{}`        |
-| `thanos_compact`           | Thanos Compact configuration.           | `object` ([Appendix E16](#appendix-e16)) | `{}`        |
+| `thanos`                   | Thanos configuration.                   | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
 
 ### Appendix E1
 
@@ -1042,43 +1038,11 @@ Specification for the `core_services_config.prometheus_node_exporter` object.
 
 ### Appendix E12
 
-Specification for the `core_services_config.thanos_store_gateway` object.
+Specification for the `core_services_config.thanos` object.
 
 | **Variable**         | **Description**                        | **Type**                                        | **Default** |
 | :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
-
-### Appendix E13
-
-Specification for the `core_services_config.thanos_rule` object.
-
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
-
-### Appendix E14
-
-Specification for the `core_services_config.thanos_query_frontend` object.
-
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
-
-### Appendix E15
-
-Specification for the `core_services_config.thanos_query` object.
-
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
-
-### Appendix E16
-
-Specification for the `core_services_config.thanos_compact` object.
-
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
 
 ### Appendix F
 

@@ -465,35 +465,7 @@ variable "core_services_config" {
         memory    = optional(number, null)
       })), {})
     }), {})
-    thanos_store_gateway = optional(object({
-      resource_overrides = optional(map(object({
-        cpu       = optional(number, null)
-        cpu_limit = optional(number, null)
-        memory    = optional(number, null)
-      })), {})
-    }), {})
-    thanos_rule = optional(object({
-      resource_overrides = optional(map(object({
-        cpu       = optional(number, null)
-        cpu_limit = optional(number, null)
-        memory    = optional(number, null)
-      })), {})
-    }), {})
-    thanos_query_frontend = optional(object({
-      resource_overrides = optional(map(object({
-        cpu       = optional(number, null)
-        cpu_limit = optional(number, null)
-        memory    = optional(number, null)
-      })), {})
-    }), {})
-    thanos_query = optional(object({
-      resource_overrides = optional(map(object({
-        cpu       = optional(number, null)
-        cpu_limit = optional(number, null)
-        memory    = optional(number, null)
-      })), {})
-    }), {})
-    thanos_compact = optional(object({
+    thanos = optional(object({
       resource_overrides = optional(map(object({
         cpu       = optional(number, null)
         cpu_limit = optional(number, null)
