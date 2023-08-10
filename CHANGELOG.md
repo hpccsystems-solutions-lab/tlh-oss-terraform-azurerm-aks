@@ -44,6 +44,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluent Bit Aggregator_ chart to [v0.8.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluent-bit-aggregator-0.8.0) (contains Fluent Bit OCI image update to [v2.1.8](https://github.com/fluent/fluent-bit/releases/tag/v2.1.8)). ([#1284](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1284)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Kube Prometheus Stack_ chart to [v48.3.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.3.0). ([#1284](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1284)) [@hadeeds](https://github.com/hadeeds)
 - Fixed storage endpoint bug for Loki in gov cloud. ([#1289](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1289)) [@appkins](https://github.com/appkins)
+- Updated _Thanos_ chart to [v1.13.2](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.13.2). ([#1293](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1293)) [@peterabarr](https://github.com/peterabarr)
+- Changed _Thanos_ configuration from using `replicaLabels` to `additionalReplicaLabels` and `additionalStores` to `additionalEndpoints`. ([#1293](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1293)) [@peterabarr](https://github.com/peterabarr)
   
 ## [v1.18.0] - 2023-08-02
 

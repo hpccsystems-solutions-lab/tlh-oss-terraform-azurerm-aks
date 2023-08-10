@@ -1,7 +1,7 @@
 locals {
   chart_version = "48.3.0"
 
-  thanos_chart_version = "1.12.4"
+  thanos_chart_version = "1.13.2"
 
   # Thanos image version should match version in Thanos chart
   thanos_image_version = "0.31.0"
@@ -677,6 +677,11 @@ locals {
 
     commonLabels = var.labels
 
+    additionalReplicaLabels = ["prometheus_replica"]
+    additionalEndpoints = [
+      "dnssrv+_grpc._tcp.kube-prometheus-stack-thanos-discovery.${var.namespace}.svc.cluster.local"
+    ]
+
     objstoreConfig = {
       create = false
       name   = local.thanos_objstore_secret_name
@@ -688,6 +693,8 @@ locals {
 
     compact = {
       enabled = true
+
+      replicaDeDuplication = true
 
       serviceAccount = {
         create = true
@@ -782,11 +789,6 @@ locals {
       }
 
       priorityClassName = ""
-
-      replicaLabels = ["prometheus_replica"]
-      additionalStores = [
-        "dnssrv+_grpc._tcp.kube-prometheus-stack-thanos-discovery.${var.namespace}.svc.cluster.local"
-      ]
 
       resources = {
         requests = {
