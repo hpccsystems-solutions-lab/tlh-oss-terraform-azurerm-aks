@@ -147,6 +147,7 @@ module "external_dns" {
 
 module "fluent_bit" {
   source = "./modules/fluent-bit"
+  count  = var.logging.enabled ? 1 : 0
 
   location     = var.location
   cluster_name = var.cluster_name
@@ -176,7 +177,7 @@ module "fluent_bit" {
 
 module "fluent_bit_aggregator" {
   source = "./modules/fluent-bit-aggregator"
-  count  = var.core_services_config.fluent_bit_aggregator.enabled ? 1 : 0
+  count  = var.logging.enabled && var.core_services_config.fluent_bit_aggregator.enabled ? 1 : 0
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -212,7 +213,7 @@ module "fluent_bit_aggregator" {
 
 module "fluentd" {
   source = "./modules/fluentd"
-  count  = var.core_services_config.fluent_bit_aggregator.enabled ? 0 : 1
+  count  = var.logging.enabled && !var.core_services_config.fluent_bit_aggregator.enabled ? 1 : 0
 
   subscription_id                = var.subscription_id
   location                       = var.location
@@ -333,7 +334,7 @@ module "local_static_provisioner" {
 
 module "loki" {
   source = "./modules/loki"
-  count  = var.logging.nodes.loki.enabled || var.logging.workloads.loki.enabled ? 1 : 0
+  count  = var.logging.enabled && (var.logging.nodes.loki.enabled || var.logging.workloads.loki.enabled) ? 1 : 0
 
   subscription_id         = var.subscription_id
   location                = var.location

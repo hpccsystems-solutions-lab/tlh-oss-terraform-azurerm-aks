@@ -19,7 +19,7 @@ locals {
     "logging",
     "ingress-core-internal",
     "monitoring"
-  ], var.core_services_config.fluent_bit_aggregator.enabled ? ["observability"] : [])
+  ], var.logging.enabled && var.core_services_config.fluent_bit_aggregator.enabled ? ["observability"] : [])
 
   namespace_pod_security_labels = {
     "pod-security.kubernetes.io/audit" = "baseline"
@@ -39,14 +39,14 @@ locals {
   }
 
   azure_storage_nodes_output = {
-    enabled     = var.logging.nodes.storage_account.enabled
+    enabled     = var.logging.enabled && var.logging.nodes.storage_account.enabled
     id          = var.logging.nodes.storage_account.enabled ? coalesce(var.logging.nodes.storage_account.id, var.logging.storage_account_config.id) : null
     container   = var.logging.nodes.storage_account.container
     path_prefix = var.logging.nodes.storage_account.path_prefix
   }
 
   azure_storage_workloads_output = {
-    enabled     = var.logging.workloads.storage_account.enabled
+    enabled     = var.logging.enabled && var.logging.workloads.storage_account.enabled
     id          = var.logging.workloads.storage_account.enabled ? coalesce(var.logging.workloads.storage_account.id, var.logging.storage_account_config.id) : null
     container   = var.logging.workloads.storage_account.container
     path_prefix = var.logging.workloads.storage_account.path_prefix

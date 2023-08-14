@@ -513,20 +513,6 @@ By default the module will configure the OMS agent by creating the `container-az
 
 You can override the default Log Analytics ContainerLog schema to ContainerLogV2 by setting the `experimental.oms_agent_containerlog_schema_version` input variable to `v2`.
 
-
-### Windows Node Support
-
-> **Important**
-> Teams must seek approval from their business unit Architect and IOG Architecture before using Windows node pools.
-
-Windows Node support is **best effort** and is currently significantly limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent Bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **should** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
-
-As of AKS `v1.25` the default AKS Windows version will be Windows Server 2022 which hasn't had any testing due to the lack of available resources, please make sure that you've updated your `node_os` inputs to specify the version of Windows required before upgrading to AKS `v1.25`.
-
-There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward.
-
-To enable Windows support you need to set `experimental = { windows_support = true }`.
-
 ### Custom OS Configuration
 
 To enable experimental support for [OS custom configuration](https://learn.microsoft.com/en-us/azure/aks/custom-node-configuration#linux-os-custom-configuration) you can set `experimental = { node_group_os_config = true }` and then add an `os_config` block to applicable `node_groups` objects.
@@ -658,6 +644,35 @@ locals {
 You can test the soon to be default cluster [behaviour](#control-plane-upgrades) of upgrading the nodes during the maintainance window by setting the `experimental = { cluster_patch_upgrade = true }` input variable.
 
 With the patch upgrade experiment enabled you can also set `experimental.node_upgrade_manual` to `true` to take responsibility to manually [upgrade](#node-upgrades) the cluster nodes.
+
+---
+
+## Unsupported Features
+
+Some features in the AKS module are in a category of "use at your own risk". These features are unlikely to be fully supported in the forseeable future. This includes disabling the logging stack and windows support.
+
+### Logging Stack
+
+It is possible to entirely disable the logging stack. This should only be done by groups with explicit approval to do so. The aim of this flag is to enable groups to experiment with alternative approaches to external logging in development and nonproduction environments. This use case is **unsupported**.
+
+To disable the logging stack, you can pass in the following configuration:
+
+```terraform
+unsupported = { logging_disabled = true }
+```
+
+### Windows Node Support
+
+> **Important**
+> Teams must seek approval from their business unit Architect and IOG Architecture before using Windows node pools.
+
+Windows Node support is **best effort** and is currently significantly limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent Bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **should** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
+
+As of AKS `v1.25` the default AKS Windows version will be Windows Server 2022 which hasn't had any testing due to the lack of available resources, please make sure that you've updated your `node_os` inputs to specify the version of Windows required before upgrading to AKS `v1.25`.
+
+There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward.
+
+To enable Windows support you need to set `unsupported = { windows_support = true }`.
 
 ---
 

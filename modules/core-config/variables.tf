@@ -90,6 +90,8 @@ variable "dns_resource_group_lookup" {
 variable "logging" {
   description = "Logging configuration."
   type = object({
+    enabled = bool
+
     control_plane = object({
       log_analytics = object({
         enabled                       = bool

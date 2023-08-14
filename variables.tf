@@ -620,3 +620,13 @@ variable "availability_zones" {
   nullable    = false
   default     = [1]
 }
+
+variable "unsupported" {
+  description = "Configure unsupported features."
+  type = object({
+    logging_disabled = optional(bool, false)
+    windows_support  = optional(bool, false)
+  })
+  nullable = false
+  default  = {}
+}

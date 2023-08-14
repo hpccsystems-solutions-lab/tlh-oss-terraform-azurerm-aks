@@ -58,6 +58,7 @@ locals {
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
   logging = merge(var.logging, {
+    enabled = !var.unsupported.logging_disabled
     workloads = {
       core_service_log_level = var.logging.workloads.core_service_log_level
 
@@ -118,6 +119,6 @@ locals {
     helm_modify       = 600
   }
 
-  cni       = var.experimental.windows_support ? "azure" : "kubenet"
+  cni       = var.experimental.windows_support || var.unsupported.windows_support ? "azure" : "kubenet"
   azure_env = startswith(var.location, "usgov") ? "usgovernment" : "public"
 }

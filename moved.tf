@@ -22,3 +22,8 @@ moved {
   from = module.core_config.module.fluentd
   to   = module.core_config.module.fluentd[0]
 }
+
+moved {
+  from = module.core_config.module.fluent_bit
+  to   = module.core_config.module.fluent_bit[0]
+}
