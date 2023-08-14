@@ -37,8 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Loki object changes
   `systemd_logs_loki` and `experimental.loki` have been removed.
   `logging.nodes.loki` and `logging.workloads.loki` have been added. 
-  Setting either `logging.nodes.loki` or `logging.workloads.loki` true will enable loki. 
-  If `logging.workloads.loki` is true, workload logs will be sent to Loki and if `logging.nodes.loki` is true, node logs will be sent to Loki
+  Setting either `logging.nodes.loki.enabled` or `logging.workloads.loki.enabled` true will enable loki.
+  If `logging.workloads.loki.enabled` is true, workload logs will be sent to Loki and if `logging.nodes.loki.enabled` is true, node logs will be sent to Loki
   Loki is still an experimental feature and further changes may occur.
 
 ### All Changes
