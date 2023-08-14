@@ -67,3 +67,8 @@ output "windows_config" {
     admin_password = var.windows_support ? random_password.windows_admin_password[0].result : null
   }
 }
+
+output "kube_admin_config" {
+  description = "kube_admin_config for the Azure Kubernetes managed cluster API server."
+  value       = azurerm_kubernetes_cluster.default.kube_admin_config
+}

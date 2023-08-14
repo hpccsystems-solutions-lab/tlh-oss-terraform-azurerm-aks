@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-config_file="$(mktemp -p /tmp)"
+config_file="$(mktemp -t /tmp)"
 trap '{ rm -f "${config_file}"; }' EXIT
 
 export KUBECONFIG="${config_file}"

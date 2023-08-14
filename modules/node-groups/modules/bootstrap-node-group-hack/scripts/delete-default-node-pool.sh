@@ -14,7 +14,7 @@ fi
 lookup="$(az aks nodepool list \
   --subscription "${SUBSCRIPTION_ID}" \
   --resource-group "${RESOURCE_GROUP_NAME}" \
-  --cluster-name "${CLUSTER_NAME}" \
+  --cluster-name "${CLUSTER_NAME}" -o json \
   | jq -r --arg node_pool_name "${NODE_POOL_NAME}" '.[] | select(.name == $node_pool_name)')"
 
 if [[ -n "${lookup}" ]]

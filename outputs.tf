@@ -97,3 +97,8 @@ output "windows_config" {
   description = "Windows configuration."
   value       = module.cluster.windows_config
 }
+
+output "kube_admin_config" {
+  description = "Azure Kubernetes Service (AKS) kube_admin_config."
+  value       = module.cluster.kube_admin_config
+}

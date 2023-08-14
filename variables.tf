@@ -252,22 +252,23 @@ variable "logging" {
   description = "Logging configuration."
   type = object({
     control_plane = object({
-      log_analytics = optional(object({
-        enabled                       = optional(bool, false)
-        workspace_id                  = optional(string, null)
+      log_analytics = object({
+        enabled                       = bool
+        workspace_id                  = optional(string)
         profile                       = optional(string, "audit-write-only")
         additional_log_category_types = optional(list(string), [])
         retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
-      }), {})
-      storage_account = optional(object({
-        enabled                       = optional(bool, false)
-        id                            = optional(string, null)
+      })
+
+      storage_account = object({
+        enabled                       = bool
+        id                            = optional(string)
         profile                       = optional(string, "all")
         additional_log_category_types = optional(list(string), [])
         retention_enabled             = optional(bool, true)
         retention_days                = optional(number, 30)
-      }), {})
+      })
     })
 
     workloads = optional(object({
@@ -283,13 +284,19 @@ variable "logging" {
 
     extra_records = optional(map(string), {})
   })
+
   nullable = false
 
-  validation {
-    condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
-    error_message = "Control plane logging must be enabled."
+  default = {
+    control_plane = {
+      log_analytics = {
+        enabled = false
+      }
+      storage_account = {
+        enabled = false
+      }
+    }
   }
-
   validation {
     condition     = !var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.log_analytics.workspace_id != null
     error_message = "Control plane logging to a log analytics workspace requires a workspace ID."
