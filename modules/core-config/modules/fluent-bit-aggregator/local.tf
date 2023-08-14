@@ -196,12 +196,12 @@ locals {
 %{for filter in local.raw_filters}
 ${chomp(filter)}
 %{endfor~}
-%{if var.loki_output.enabled}
+%{if var.loki_nodes_output.enabled || var.loki_workloads_output.enabled}
 [OUTPUT]
     name                     loki
-    match                    ${var.loki_output.node_logs && var.loki_output.workload_logs ? "*" : (var.loki_output.node_logs ? "host.*" : "kube.*")}
-    host                     ${var.loki_output.host}
-    port                     ${tostring(var.loki_output.port)}
+    match                    ${var.loki_nodes_output.enabled && var.loki_workloads_output.enabled ? "*" : (var.loki_nodes_output.enabled ? "host.*" : "kube.*")}
+    host                     ${coalesce(var.loki_nodes_output.host, var.loki_workloads_output.host, "NULL")}
+    port                     ${tostring(coalesce(var.loki_nodes_output.port, var.loki_workloads_output.port, -1))}
     line_format              json
     auto_kubernetes_labels   false
     label_keys               $cluster, $namespace, $app

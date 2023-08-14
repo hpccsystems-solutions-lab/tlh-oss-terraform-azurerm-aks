@@ -243,7 +243,7 @@ Both node (systemd) and pod/container logs are collected from the node by the _F
 
 Logging outputs can be configured directly against _Fluentd_ via the module input variable `core_services_config.fluentd` (see [Appendix E5](#appendix-e5)); it is also possible to modify the logs as part of the route configuration but modifying logs in any way more advanced than adding fields for cluster context can significantly impact the _Fluentd_ throughput and so is strongly advised against.
 
-In cluster _Loki_ support is currently experimental and can be enabled by setting the `experimental.loki` to `true`; this enables powerful log querying through the in cluster _Grafana_.
+In cluster _Loki_ support is currently experimental and can be enabled by setting the `logging.nodes.loki.enabled` or `logging.workloads.loki.enabled` to `true`; this enables powerful log querying through the in cluster _Grafana_.
 
 ###### Workload Logging
 
@@ -256,6 +256,8 @@ Pods annotated with the `fluentbit.io/exclude: "true"` annotation won't have the
 Pods annotated with the `lnrs.io/loki-ignore: "true"` annotation won't have their logs aggregated in the cluster _Loki_, this is advised against as it reduces log visibility but can be used to gradually integrate workloads with _Loki_.
 
 Workload logs can be shipped to an Azure storage account by setting `logging.workloads.storage_account_logs` to `true`.
+
+Workload logs can be shipped to an Loki by setting `logging.workloads.loki.enabled` to `true`.
 
 An external storage account must be provided in the `logging.storage_account_config` settings for this feature to function. The following is an example of the configuration required:
 
@@ -818,6 +820,7 @@ Specification for the `logging.nodes` object.
 | **Variable**      | **Description**                          | **Type**                                 | **Default** |
 | :---------------- | :--------------------------------------- | :--------------------------------------- | :---------- |
 | `storage_account` | Node logs storage account configuration. | `object` ([Appendix C2a](#appendix-c2a)) | `{}`        |
+| `loki`            | Loki workload logs configuration         | `object` ([Appendix C3a](#appendix-c2b)) | `{}`        |
 
 ### Appendix C2a
 
@@ -830,6 +833,15 @@ Specification for the `logging.nodes.storage_account` object.
 | `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
 | `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
 
+### Appendix C2b
+
+Specification for the `logging.nodes.loki` object.
+
+| **Variable**  | **Description**                                                          | **Type** | **Default** |
+| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
+| `enabled`     | If node logs should be sent to Loki.                                     | `bool`   | `false`     |
+
+
 ### Appendix C3
 
 Specification for the `logging.workloads` object.
@@ -841,6 +853,7 @@ Specification for the `logging.workloads` object.
 | `storage_account_logs`        | **DEPRECATED** - If workload logs should be sent to Azure Blob Storage, use `storage_account`. | `bool`                                   | `false`     |
 | `storage_account_container`   | **DEPRECATED** - The container to use for the log storage, use `storage_account`.              | `string`                                 | `null`      |
 | `storage_account_path_prefix` | **DEPRECATED** - Blob prefix for the logs, use `storage_account`.                              | `string`                                 | `null`      |
+| `loki` | Loki workload logs configuration | `object` ([Appendix C3a](#appendix-c3b))| `{}` |
 
 ### Appendix C3a
 
@@ -852,6 +865,14 @@ Specification for the `logging.workloads.storage_account` object.
 | `id`          | The Azure Storage Account ID, if not specified the default will be used. | `string` | `null`      |
 | `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
 | `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
+
+### Appendix C3b
+
+Specification for the `logging.workloads.loki` object.
+
+| **Variable**  | **Description**                                                          | **Type** | **Default** |
+| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
+| `enabled`     | If node logs should be sent to Loki.                                     | `bool`   | `false`     |
 
 ### Appendix C4
 
@@ -929,6 +950,7 @@ Specification for the `core_services_config` object.
 | `storage`                  | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
 | `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
 | `thanos`                   | Thanos configuration.                   | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
+| `loki`                     | Loki.                                   | `object` ([Appendix E13](#appendix-e13)) | `{}`        |
 
 ### Appendix E1
 
@@ -1043,6 +1065,15 @@ Specification for the `core_services_config.thanos` object.
 | **Variable**         | **Description**                        | **Type**                                        | **Default** |
 | :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
+### Appendix E13
+
+Specification for the `core_services_config.loki` object.
+
+| **Variable**         | **Description**                        | **Type**                                        | **Default** |
+| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `gateway_default`, `write_default` `read_default` or `backend_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+
 
 ### Appendix F
 

@@ -139,7 +139,7 @@ locals {
   }, var.additional_env)
 
   loki_route_config = {
-    match  = var.loki_output.node_logs && var.loki_output.workload_logs ? "**" : (var.loki_output.node_logs ? "host.**" : "kube.**")
+    match  = var.loki_nodes_output.enabled && var.loki_workloads_output.enabled ? "**" : (var.loki_nodes_output.enabled ? "host.**" : "kube.**")
     label  = "@LOKI"
     copy   = true
     config = <<-EOT
@@ -152,7 +152,7 @@ locals {
       </filter>
       <match **>
         @type loki
-        url "http://${var.loki_output.host}:${tostring(var.loki_output.port)}"
+        url "http://${coalesce(var.loki_nodes_output.host, var.loki_workloads_output.host, "NULL")}:${tostring(coalesce(var.loki_nodes_output.port, var.loki_workloads_output.port, -1))}"
         line_format "json"
         extract_kubernetes_labels false
         <label>
@@ -241,7 +241,7 @@ locals {
     EOT
   } : {}
 
-  route_config = concat(var.loki_output.enabled ? [local.loki_route_config] : [], var.azure_storage_nodes_output.enabled ? [local.azure_storage_nodes_route_config] : [], var.azure_storage_workloads_output.enabled ? [local.azure_storage_workloads_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
+  route_config = concat((var.loki_nodes_output.enabled || var.loki_workloads_output.enabled) ? [local.loki_route_config] : [], var.azure_storage_nodes_output.enabled ? [local.azure_storage_nodes_route_config] : [], var.azure_storage_workloads_output.enabled ? [local.azure_storage_workloads_route_config] : [], length(var.route_config) == 0 || var.debug ? [{
     match  = "**"
     label  = length(var.route_config) > 0 ? "@DEBUG" : "@DEFAULT"
     copy   = length(var.route_config) > 0

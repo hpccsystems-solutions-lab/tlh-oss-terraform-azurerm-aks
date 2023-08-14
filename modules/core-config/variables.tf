@@ -109,14 +109,17 @@ variable "logging" {
       })
     })
 
-    nodes = optional(object({
-      storage_account = optional(object({
-        enabled     = optional(bool, false)
-        id          = optional(string, null)
-        container   = optional(string, "nodes")
-        path_prefix = optional(string, null)
-      }), {})
-    }), {})
+    nodes = object({
+      storage_account = object({
+        enabled     = bool
+        id          = string
+        container   = string
+        path_prefix = string
+      })
+      loki = object({
+        enabled = bool
+      })
+    })
 
     workloads = object({
       core_service_log_level = string
@@ -127,6 +130,11 @@ variable "logging" {
         container   = string
         path_prefix = string
       })
+
+      loki = object({
+        enabled = bool
+      })
+
     })
 
     log_analytics_workspace_config = object({
@@ -261,8 +269,11 @@ variable "core_services_config" {
       public_dns       = bool
     })
     loki = object({
-      enabled   = bool
-      node_logs = bool
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
     })
     oms_agent = object({
       enabled                     = bool

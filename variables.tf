@@ -295,6 +295,9 @@ variable "logging" {
         enabled = optional(bool, false)
       }), {})
 
+      storage_account_logs        = optional(bool, false)
+      storage_account_container   = optional(string, null)
+      storage_account_path_prefix = optional(string, null)
     }), {})
 
     log_analytics_workspace_config = optional(object({
@@ -472,6 +475,13 @@ variable "core_services_config" {
         memory    = optional(number, null)
       })), {})
     }), {})
+    loki = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
   })
   nullable = false
 }
@@ -570,8 +580,6 @@ variable "experimental" {
     azure_cni_max_pods                      = optional(bool, false)
     aad_pod_identity_finalizer_wait         = optional(string, null)
     fluent_bit_use_memory_buffer            = optional(bool, false)
-    loki                                    = optional(bool, false)
-    systemd_logs_loki                       = optional(bool, false)
     fluent_bit_aggregator                   = optional(bool, false)
     fluent_bit_aggregator_replicas_per_zone = optional(number, 1)
     fluent_bit_aggregator_extra_env         = optional(map(string), {})

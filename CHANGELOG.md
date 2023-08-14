@@ -34,6 +34,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.19.0] - UNRELEASED
 
 ### Highlights
+- Loki object changes
+  `systemd_logs_loki` and `experimental.loki` have been removed.
+  `logging.nodes.loki` and `logging.workloads.loki` have been added. 
+  Setting either `logging.nodes.loki` or `logging.workloads.loki` true will enable loki. 
+  If `logging.workloads.loki` is true, workload logs will be sent to Loki and if `logging.nodes.loki` is true, node logs will be sent to Loki
+  Loki is still an experimental feature and further changes may occur.
 
 ### All Changes
 
@@ -47,7 +53,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Thanos_ chart to [v1.13.2](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.13.2). ([#1293](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1293)) [@peterabarr](https://github.com/peterabarr)
 - Changed _Thanos_ configuration from using `replicaLabels` to `additionalReplicaLabels` and `additionalStores` to `additionalEndpoints`. ([#1293](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1293)) [@peterabarr](https://github.com/peterabarr)
 - Added experimental support for [AKS v1.27](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/). ([#1232](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1232)) [@peterabarr](https://github.com/peterabarr)
-  
+- Add in resource override functionality for Loki. ([#1291](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1291))  [@james-alford-ln](https://github.com/james-alford-ln)
+- Removed `systemd_logs_loki` and `experimental.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
+- Added `logging.nodes.loki` and `logging.workloads.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
+
 ## [v1.18.0] - 2023-08-02
 
 ### Highlights

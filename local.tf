@@ -67,6 +67,8 @@ locals {
         container   = coalesce(var.logging.workloads.storage_account_container, var.logging.workloads.storage_account.container)
         path_prefix = var.logging.workloads.storage_account_path_prefix != null ? var.logging.workloads.storage_account_path_prefix : var.logging.workloads.storage_account.path_prefix
       }
+
+      loki = var.logging.workloads.loki
     }
   })
 
@@ -80,11 +82,6 @@ locals {
       raw_filters        = var.experimental.fluent_bit_aggregator_raw_filters
       raw_outputs        = var.experimental.fluent_bit_aggregator_raw_outputs
       resource_overrides = var.experimental.fluent_bit_aggregator_resource_overrides
-    }
-
-    loki = {
-      enabled   = var.experimental.loki
-      node_logs = var.experimental.systemd_logs_loki
     }
 
     oms_agent = {

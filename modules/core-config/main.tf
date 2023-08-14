@@ -192,7 +192,8 @@ module "fluent_bit_aggregator" {
   secret_env              = var.core_services_config.fluent_bit_aggregator.secret_env
   extra_records           = var.logging.extra_records
   lua_scripts             = var.core_services_config.fluent_bit_aggregator.lua_scripts
-  loki_output             = local.loki_output
+  loki_nodes_output       = local.loki_nodes_output
+  loki_workloads_output   = local.loki_workloads_output
   raw_filters             = var.core_services_config.fluent_bit_aggregator.raw_filters
   raw_outputs             = var.core_services_config.fluent_bit_aggregator.raw_outputs
   resource_overrides      = local.resource_overrides
@@ -229,7 +230,8 @@ module "fluentd" {
   debug                          = var.core_services_config.fluentd.debug
   filters                        = var.core_services_config.fluentd.filters
   route_config                   = var.core_services_config.fluentd.route_config
-  loki_output                    = local.loki_output
+  loki_nodes_output              = local.loki_nodes_output
+  loki_workloads_output          = local.loki_workloads_output
   azure_storage_nodes_output     = local.azure_storage_nodes_output
   resource_overrides             = local.resource_overrides
   azure_storage_workloads_output = local.azure_storage_workloads_output
@@ -291,7 +293,7 @@ module "kube_prometheus_stack" {
   grafana_additional_data_sources          = var.core_services_config.grafana.additional_data_sources
   control_plane_log_analytics_enabled      = var.logging.control_plane.log_analytics.enabled
   control_plane_log_analytics_workspace_id = var.logging.control_plane.log_analytics.enabled ? coalesce(var.logging.control_plane.log_analytics.workspace_id, var.logging.log_analytics_workspace_config.id) : null
-  loki                                     = local.loki_output
+  loki                                     = local.loki_nodes_output.enabled ? local.loki_nodes_output : local.loki_workloads_output
   oms_agent_enabled                        = var.core_services_config.oms_agent.enabled
   oms_agent_log_analytics_workspace_id     = var.core_services_config.oms_agent.log_analytics_workspace_id
   ingress_class_name                       = module.ingress_internal_core.ingress_class_name
@@ -331,7 +333,7 @@ module "local_static_provisioner" {
 
 module "loki" {
   source = "./modules/loki"
-  count  = var.core_services_config.loki.enabled ? 1 : 0
+  count  = var.logging.nodes.loki.enabled || var.logging.workloads.loki.enabled ? 1 : 0
 
   subscription_id         = var.subscription_id
   location                = var.location
@@ -343,8 +345,12 @@ module "loki" {
   log_level               = var.logging.workloads.core_service_log_level
   subnet_id               = var.subnet_id
   zones                   = local.az_count
-  tags                    = var.tags
-  timeouts                = var.timeouts
+
+  resource_overrides = local.resource_overrides
+
+  tags = var.tags
+
+  timeouts = var.timeouts
 
   depends_on = [
     module.crds,

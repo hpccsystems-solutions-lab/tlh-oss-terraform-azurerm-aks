@@ -68,3 +68,13 @@ variable "timeouts" {
   })
   nullable = false
 }
+
+variable "resource_overrides" {
+  description = "Override resources for containers"
+  type = map(object({
+    cpu       = number
+    cpu_limit = number
+    memory    = number
+  }))
+  nullable = true
+}

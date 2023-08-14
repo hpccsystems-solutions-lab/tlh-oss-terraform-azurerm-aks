@@ -98,14 +98,22 @@ variable "route_config" {
   nullable = false
 }
 
-variable "loki_output" {
+variable "loki_nodes_output" {
   description = "Loki output config."
   type = object({
-    enabled       = bool
-    host          = string
-    port          = number
-    node_logs     = bool
-    workload_logs = bool
+    enabled = bool
+    host    = string
+    port    = number
+  })
+  nullable = false
+}
+
+variable "loki_workloads_output" {
+  description = "Loki output config."
+  type = object({
+    enabled = bool
+    host    = string
+    port    = number
   })
   nullable = false
 }

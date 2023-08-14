@@ -200,13 +200,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "512Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_backend_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_backend_default.memory, null), "512")}Mi"
         }
-
         limits = {
-          cpu    = "1000m"
-          memory = "512Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_backend_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_backend_default.memory, null), "512")}Mi"
         }
       }
     }, local.additional_config, local.init_config)
@@ -260,13 +259,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "500m"
-          memory = "2048Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_write_default.cpu, null), "500")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_write_default.memory, null), "2048")}Mi"
         }
-
         limits = {
-          cpu    = "1000m"
-          memory = "2048Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_write_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_write_default.memory, null), "2048")}Mi"
         }
       }
     }, local.additional_config, local.init_config)
@@ -348,13 +346,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_read_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_read_default.memory, null), "256")}Mi"
         }
-
         limits = {
-          cpu    = "1000m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_read_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_read_default.memory, null), "256")}Mi"
         }
       }
     }, local.additional_config, local.init_config)
@@ -428,13 +425,12 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "100m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_gateway_default.cpu, null), "100")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_gateway_default.memory, null), "256")}Mi"
         }
-
         limits = {
-          cpu    = "1000m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.loki_gateway_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.loki_gateway_default.memory, null), "256")}Mi"
         }
       }
 
