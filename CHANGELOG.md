@@ -57,7 +57,16 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed `systemd_logs_loki` and `experimental.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
 - Added `logging.nodes.loki` and `logging.workloads.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
 
+## [v1.18.1] - 2023-08-16
+
+### All Changes
+
+- Updated full AKS versions which include patch versions for `1.25` & `v1.26`. [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.18.0] - 2023-08-02
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.18.1` instead due to AKS Kubernetes version updates.
 
 ### Highlights
 
