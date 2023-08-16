@@ -31,15 +31,27 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.19.0] - UNRELEASED
+## [v1.19.0] - 2023-08-16
 
 ### Highlights
-- Loki object changes
-  `systemd_logs_loki` and `experimental.loki` have been removed.
-  `logging.nodes.loki` and `logging.workloads.loki` have been added. 
-  Setting either `logging.nodes.loki.enabled` or `logging.workloads.loki.enabled` true will enable loki.
-  If `logging.workloads.loki.enabled` is true, workload logs will be sent to Loki and if `logging.nodes.loki.enabled` is true, node logs will be sent to Loki
-  Loki is still an experimental feature and further changes may occur.
+
+#### Loki Object Changes
+
+We have removed the `systemd_logs_loki` and `experimental.loki` variables and added the `logging.nodes.loki` and `logging.workloads.loki` variables. Loki is disabled by default and if `logging.workloads.loki.enabled` is true, workload logs will be sent to Loki and if `logging.nodes.loki.enabled` is true, node logs will be sent to Loki. To read more on Loki within the module, please read [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#node--pod-logs).
+Loki is still an experimental feature and further changes may occur.
+
+#### AKS Kubernetes versions
+
+Kubernetes version `v1.24` has been removed as it was previously deprecated.
+Kubernetes version `v1.27` has been added as an experimental feature for use.
+
+#### Resource Management
+
+We have introduced core services resource override functionality for enhanced resoure management as a feature. Please read more about it [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks#appendix-f).
+
+#### AKS Topology
+
+For kubernetes version v1.27 or above, `topologySpreadConstraints` have been added to the module core services.
 
 ### All Changes
 
