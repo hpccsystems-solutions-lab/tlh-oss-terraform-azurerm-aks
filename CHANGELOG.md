@@ -44,7 +44,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - AKS cluster version `v1.24` is deprecated and has been removed. ([#1288](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1288)) [@hadeeds](https://github.com/hadeeds)
-- Updated Kubernetes Cluster Version Lookup for regions. ([#1279](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1279)) [@hadeeds](https://github.com/hadeeds)
+- Updated Kubernetes Cluster Version Lookup for regions. ([#1310](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1310)) [@hadeeds](https://github.com/hadeeds)
 - Add in resource override functionality. ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
 - Updated _Fluent Bit_ chart to [v0.37.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.37.0). ([#1284](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1284)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Fluent Bit Aggregator_ chart to [v0.8.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluent-bit-aggregator-0.8.0) (contains Fluent Bit OCI image update to [v2.1.8](https://github.com/fluent/fluent-bit/releases/tag/v2.1.8)). ([#1284](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1284)) [@hadeeds](https://github.com/hadeeds)
