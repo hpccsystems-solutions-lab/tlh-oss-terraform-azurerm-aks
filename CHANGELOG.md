@@ -149,7 +149,16 @@ We have added an expreimental feature to support users manually managing node up
 - Added hot reload to _Fluent Bit_. ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
 - Update NGINX to use pod topology spread constraints. ([#1126](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1126)) [@appkins](https://github.com/appkins)
 
+## [v1.16.1] - 2023-08-16
+
+### All Changes
+
+- Updated full AKS versions which include patch versions for `1.25` & `v1.26`. [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.16.0] - 2023-07-05
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.16.1` instead due to AKS Kubernetes version updates.
 
 ### Highlights
 
