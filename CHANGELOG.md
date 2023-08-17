@@ -37,6 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Updated _Kube Prometheus Stack_ chart to [v48.3.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.3.1). ([#1317](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1317)) [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.19.0] - 2023-08-16
 
 ### Highlights
