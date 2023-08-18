@@ -22,12 +22,6 @@ variable "cluster_version_full" {
   nullable    = false
 }
 
-variable "cluster_patch_upgrade" {
-  description = "If the cluster upgrade channel should be set to patch instead of node-image."
-  type        = bool
-  nullable    = false
-}
-
 variable "cni" {
   description = "Kubernetes CNI, \"kubenet\" & \"azure\" are supported."
   type        = string

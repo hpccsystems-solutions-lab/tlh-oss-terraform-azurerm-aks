@@ -1,3 +1,9 @@
+variable "subscription_id" {
+  description = "ID of the subscription being used."
+  type        = string
+  nullable    = false
+}
+
 variable "location" {
   description = "Azure region in which to build resources."
   type        = string
@@ -22,20 +28,8 @@ variable "cluster_version" {
   nullable    = false
 }
 
-variable "cluster_version_full" {
-  description = "The full Kubernetes version of the Azure Kubernetes managed cluster."
-  type        = string
-  nullable    = false
-}
-
-variable "patch_upgrade" {
-  description = "If the cluster upgrade channel should be set to patch instead of node-image."
-  type        = bool
-  nullable    = false
-}
-
-variable "node_upgrade_manual" {
-  description = "If the nodes should be manually upgraded."
+variable "manual_upgrades" {
+  description = "If the AKS cluster should require manual upgrades."
   type        = bool
   nullable    = false
 }

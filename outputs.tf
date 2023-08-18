@@ -1,6 +1,26 @@
 output "cluster_id" {
-  description = "Azure Kubernetes Service (AKS) managed cluster ID."
+  description = "ID of the Azure Kubernetes Service (AKS) managed cluster."
   value       = module.cluster.id
+}
+
+output "cluster_name" {
+  description = "Name of the Azure Kubernetes Service (AKS) managed cluster."
+  value       = module.cluster.cluster_name
+}
+
+output "cluster_version" {
+  description = "Version of the Azure Kubernetes Service (AKS) managed cluster (<major>.<minor>)."
+  value       = module.cluster.cluster_version
+}
+
+output "cluster_version_full" {
+  description = "Full version of the Azure Kubernetes Service (AKS) managed cluster (<major>.<minor>.<patch>)."
+  value       = module.cluster.cluster_version_full
+}
+
+output "latest_version_full" {
+  description = "Latest full Kubernetes version the Azure Kubernetes Service (AKS) managed cluster could be on (<major>.<minor>.<patch>)."
+  value       = module.cluster.latest_version_full
 }
 
 output "cluster_fqdn" {
@@ -16,11 +36,6 @@ output "cluster_endpoint" {
 output "cluster_certificate_authority_data" {
   description = "Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server."
   value       = module.cluster.certificate_authority_data
-}
-
-output "cluster_name" {
-  description = "Name of cluster"
-  value       = module.cluster.cluster_name
 }
 
 output "node_resource_group_name" {

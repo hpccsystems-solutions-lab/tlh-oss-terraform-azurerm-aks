@@ -501,7 +501,7 @@ variable "maintenance" {
       frequency    = optional(string, "WEEKLY")
       day_of_month = optional(number, 1)
       day_of_week  = optional(string, "SUNDAY")
-      start_time   = optional(string, "00:00")
+      start_time   = optional(string, "04:00")
       duration     = optional(number, 4)
     }), {})
     not_allowed = optional(list(object({
@@ -567,6 +567,17 @@ variable "tags" {
   default     = {}
 }
 
+variable "unsupported" {
+  description = "Configure unsupported features."
+  type = object({
+    logging_disabled = optional(bool, false)
+    manual_upgrades  = optional(bool, false)
+    windows_support  = optional(bool, false)
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "experimental" {
   description = "Configure experimental features."
   type = object({
@@ -607,8 +618,6 @@ variable "experimental" {
       pattern = string
       types   = optional(map(string), {})
     })), {})
-    cluster_patch_upgrade = optional(bool, false)
-    node_upgrade_manual   = optional(bool, false)
   })
   nullable = false
   default  = {}

@@ -29,11 +29,11 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
   name               = var.cluster_name
-  kubernetes_version = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
+  kubernetes_version = var.cluster_version
   sku_tier           = local.sku_tier_lookup[var.sku_tier]
 
-  automatic_channel_upgrade = var.patch_upgrade ? "patch" : "node-image"
-  node_os_channel_upgrade   = var.patch_upgrade ? (var.node_upgrade_manual ? "None" : "NodeImage") : null
+  automatic_channel_upgrade = !var.manual_upgrades ? "patch" : null
+  node_os_channel_upgrade   = !var.manual_upgrades ? "NodeImage" : "None"
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -147,8 +147,6 @@ resource "azurerm_kubernetes_cluster" "default" {
     vnet_subnet_id = var.subnet_id
     zones          = [1, 2, 3]
 
-    orchestrator_version = var.patch_upgrade ? var.cluster_version : var.cluster_version_full
-
     node_count                   = 1
     enable_auto_scaling          = false
     only_critical_addons_enabled = true
@@ -210,4 +208,53 @@ resource "time_sleep" "modify" {
   depends_on = [
     azurerm_kubernetes_cluster.default
   ]
+}
+
+module "cluster_version" {
+  source = "../shell-script"
+
+  subscription_id = var.subscription_id
+
+  environment_variables = {
+    "RESOURCE_GROUP_NAME" = var.resource_group_name
+    "CLUSTER_NAME"        = var.cluster_name
+  }
+
+  read_script = <<-EOF
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [[ -n "$${AZURE_ENVIRONMENT:-}" ]]
+    then
+      az cloud set --name "$${AZURE_ENVIRONMENT}" > /dev/null 2>&1
+    fi
+
+    if [[ -n "$${AZURE_TENANT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_SECRET:-}" ]]
+    then
+      az login --service-principal --user "$${AZURE_CLIENT_ID}" --password "$${AZURE_CLIENT_SECRET}" --tenant "$${AZURE_TENANT_ID}" > /dev/null 2>&1
+    fi
+
+    az aks show \
+      --subscription "$${SUBSCRIPTION_ID}" \
+      --resource-group "$${RESOURCE_GROUP_NAME}" \
+      --name "$${CLUSTER_NAME}" \
+      | jq -c '{current_kubernetes_version: .currentKubernetesVersion}' \
+      || echo "{}"
+
+    if [[ -n "$${AZURE_TENANT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_SECRET:-}" ]]
+    then
+      az logout --username "$${AZURE_CLIENT_ID}" > /dev/null 2>&1 || true
+    fi
+  EOF
+
+  depends_on = [
+    azurerm_kubernetes_cluster.default,
+    time_sleep.modify
+  ]
+}
+
+data "azurerm_kubernetes_service_versions" "default" {
+  location        = var.location
+  version_prefix  = var.cluster_version
+  include_preview = false
 }

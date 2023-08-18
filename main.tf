@@ -40,15 +40,14 @@ resource "terraform_data" "immutable_inputs" {
 module "cluster" {
   source = "./modules/cluster"
 
-  location                             = var.location
-  resource_group_name                  = var.resource_group_name
-  cluster_name                         = var.cluster_name
-  cluster_version                      = var.cluster_version
-  cluster_version_full                 = local.cluster_version_full
-  patch_upgrade                        = var.experimental.cluster_patch_upgrade
-  node_upgrade_manual                  = var.experimental.node_upgrade_manual
-  sku_tier                             = var.sku_tier
-  fips                                 = var.fips
+  subscription_id     = local.subscription_id
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  cluster_name        = var.cluster_name
+  cluster_version     = var.cluster_version
+  manual_upgrades     = var.unsupported.manual_upgrades
+  sku_tier            = var.sku_tier
+  fips                = var.fips
   # cluster_endpoint_public_access       = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
   cni                                  = local.cni
@@ -92,23 +91,22 @@ module "rbac" {
 module "node_groups" {
   source = "./modules/node-groups"
 
-  subscription_id       = local.subscription_id
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  cluster_id            = module.cluster.id
-  cluster_name          = var.cluster_name
-  cluster_version       = var.cluster_version
-  cluster_version_full  = local.cluster_version_full
-  cluster_patch_upgrade = var.experimental.cluster_patch_upgrade
-  cni                   = local.cni
-  fips                  = var.fips
-  subnet_id             = local.subnet_id
-  availability_zones    = var.availability_zones
-  bootstrap_name        = local.bootstrap_name
-  bootstrap_vm_size     = local.bootstrap_vm_size
-  node_groups           = var.node_groups
-  labels                = local.labels
-  tags                  = local.tags
+  subscription_id      = local.subscription_id
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  cluster_id           = module.cluster.id
+  cluster_name         = var.cluster_name
+  cluster_version      = var.cluster_version
+  cluster_version_full = module.cluster.cluster_version_full
+  cni                  = local.cni
+  fips                 = var.fips
+  subnet_id            = local.subnet_id
+  availability_zones   = local.availability_zones
+  bootstrap_name       = local.bootstrap_name
+  bootstrap_vm_size    = local.bootstrap_vm_size
+  node_groups          = var.node_groups
+  labels               = local.labels
+  tags                 = local.tags
 
   timeouts = local.timeouts
 
@@ -162,7 +160,7 @@ module "core_config" {
   ]
 }
 
-module "cluster_module_version_tag" {
+module "cluster_version_tag" {
   source = "./modules/resource-tags"
 
   subscription_id     = local.subscription_id

@@ -471,7 +471,7 @@ locals {
       command = [
         "sh",
         "-c",
-        "az cloud set --name $(AZURE_ENVIRONMENT); az login --identity --username $(AZURE_CLIENT_ID) --allow-no-subscriptions;az storage container create --name loki --account-name $(AZURE_STORAGE_ACCOUNT) --auth-mode login"
+        "az cloud set --name $(AZURE_ENVIRONMENT) > /dev/null 2>&1; az login --identity --username $(AZURE_CLIENT_ID) --allow-no-subscriptions > /dev/null 2>&1; az storage container create --name loki --account-name $(AZURE_STORAGE_ACCOUNT) --auth-mode login"
       ]
 
       env = [

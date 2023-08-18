@@ -38,6 +38,12 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Updated _Kube Prometheus Stack_ chart to [v48.3.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.3.1). ([#1317](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1317)) [@hadeeds](https://github.com/hadeeds)
+- Changed the default cluster automatic upgrade behaviour to support Kubernetes patch upgrades and node image upgrades during the configured maintenance windows. [@stevehipwell](https://github.com/stevehipwell)
+- Changed the default node upgrade window start time to `04:00` so it no longer overlaps with the control plane upgrade window. [@stevehipwell](https://github.com/stevehipwell)
+- Removed the `experimental.cluster_patch_upgrade` input variable as this is now the default behaviour. [@stevehipwell](https://github.com/stevehipwell)
+- Added the `unsupported.manual_upgrades` input variable to control if the cluster kubernetes patch upgrades should be manually applied. [@stevehipwell](https://github.com/stevehipwell)
+- Removed the `experimental.node_upgrade_manual` input variable as `unsupported.manual_upgrades` covers it's purpose and more. [@stevehipwell](https://github.com/stevehipwell)
+- Added `cluster_version`, `cluster_version_full` & `latest_version_full` module outputs. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.19.0] - 2023-08-16
 

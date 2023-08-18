@@ -46,11 +46,30 @@ The core engineering team are responsible for triaging bugs in a timely manner a
 
 See [documentation](/docs) for system architecture, requirements and user guides for cluster services.
 
-### FIPS Support
+### Upgrading
 
-When you create a new cluster, you can enable FIPS 140-2 mode by setting the `fips` module variable to `true` . Keep in mind that once a cluster has been created, you cannot enable or disable FIPS mode; you will need to create a new cluster if you want to change the FIPS mode.
+> **Warning**
+> AKS automatic upgrades can be sensitive to incorrectly configured workloads or transient failures in the AKS system; as a result you should closely monitor your clusters to ensure they're suitable for automatic upgrades.
 
-FIPS 140-2 mode is a security standard that specifies the security requirements for cryptographic modules used in government and industry, and enabling it on your cluster can help ensure the security and integrity of the cryptographic functions used by your cluster. However, it can also introduce additional overhead and complexity, so operators should carefully consider whether it is necessary for the use case. It is crucial to ensure that any software running on the cluster is FIPS compliant in order for the cluster to function properly in FIPS 140-2 mode. This includes any applications or services that utilize cryptographic functions, as well as any external libraries or dependencies that may utilize cryptographic functions. Failure to do so can result in errors and potential security vulnerabilities.
+The AKS module is handles the Kubernetes minor version updates and the core service versions; the core service versions are upgraded as part of a module upgrade and the Kubernetes minor version is a module input. The AKS module also configures a maintenance window for when the [control plane automatically upgrades](#appendix-g1) and a maintenance window for when the [nodes automatically upgrade](#appendix-g2); it is possible (but **UNSUPPORTED**) to [disable](#manual-upgrades) these upgrades. The control plane upgrade window will also be used for upgrading the AKS managed services in the cluster, and so is always required to be configured.
+
+You should never upgrade the AKS Kubernetes minor version outside the AKS module; however, it may be feasible to manually upgrade the patch version, though this is **UNSUPPORTED** until we verify that it doesn't cause adverse effects.
+
+Always use a supported AKS module version. It's highly recommended to move to the latest supported AKS module version promptly.
+
+#### Control Plane Upgrades
+
+Control plane upgrades either bump the Kubernetes version (patch or minor) or upgrade AKS services; automated control plane upgrades will only ever be for Kubernetes patch upgrades or AKS managed services. And Kubernetes bump will first upgrade the control plane and then [upgrade the nodes](#node-upgrades); this sequence might disrupt some workloads, unlike some other managed Kubernetes solutions.
+
+#### Node Upgrades
+
+Node upgrades take the form of a new node image version which is used to replace nodes with the old version; this is implemented by creating new nodes (based on the surging configuration) and terminating workloads form old nodes once the new nodes are ready which will cause some workload interruption. Unfortunately the current implementation attempts to keep the VMs underpinning the original nodes instead of the new VMs so there is additional disruption while workloads flip-flop between "new" nodes.
+
+AKS regularly provides new images with the latest updates, Linux node images are updated weekly and Windows node images updated monthly, so your maintenance window configuration should take this into account.
+
+#### Core Service upgrades
+
+Core services are upgraded by running a new version of this module or by changing the Kubernetes version for the cluster; these services have been tested together to provide a simple and safe way to keep the cluster secure and functional.
 
 ### Networking
 
@@ -100,20 +119,16 @@ While _External DNS_ supports both public and private zones, in split-horizon se
 
 The node group configuration provided by the `node_groups` input variable allows a cluster to be created with node groups that span multiple availability zones and can be configured with the specific required behaviour. The node group name prefix is the map key and at a minimum `node_size` & `max_capacity` must be provided with the other values having a default (see [Appendix B](#appendix-b)).
 
-### Single Node Group
+#### System Node Group
+
+AKS always created a system node pool upon creation and modifying the system node pool results in the cluster being destroyed and re-built. An "initial" bootstrap node pool allows us to modify the system node pools without requiring a cluster re-build every time the system node pool gets modified. Once the cluster is ready, we attach our 3 system node pools (we need 3 to use storage) and when they are ready, we remove the "bootstrap" node pool.
+
+#### Single Node Group
 
 > **Warning**
 > Do not use this it is likely to be deprecated in future module versions.
 
 The single_group parameter controls whether a single node group is created that spans multiple zones, or if a separate node group is created for each zone in a cluster. When this parameter is set to `true`, a single node group is created that spans all zones, and the `min_capacity` and `max_capacity` settings apply to the total number of nodes across all zones. When set to false, separate node groups are created for each zone and the `min_capacity` and `max_capacity` settings apply to the number of nodes in each individual zone and must be scaled accordingly. It is advised to not use `single_group` unless you have a specific problem to solve and have spoken to the core engineering team.
-
-#### Node Image Upgrades
-
-Unlike EKS there is no way of specifying the node image version via Terraform so we use an automatic upgrade channel to do this (see the [Upgrading](#upgrading) section).
-
-#### System Node Group
-
-AKS always created a system node pool upon creation and modifying the system node pool results in the cluster being destroyed and re-built. An "initial" bootstrap node pool allows us to modify the system node pools without requiring a cluster re-build every time the system node pool gets modified. Once the cluster is ready, we attach our 3 system node pools (we need 3 to use storage) and when they are ready, we remove the "bootstrap" node pool.
 
 #### Node Sizes
 
@@ -199,6 +214,12 @@ This module currently only supports user access by users or groups passed into t
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `cluster-admin`<sup>*</sup> | Allows super-user access to perform any action on any resource. It gives full control over every resource in the cluster and in all namespaces.                                                                                                                                                                                             |
 | `view`<sup>*</sup>          | Allows read-only access to see most objects in all namespaces. It does not allow viewing roles or role bindings. This role does not allow viewing `Secrets`, since reading the contents of `Secrets` enables access to `ServiceAccount` credentials, which would allow API access as any `ServiceAccount` (a form of privilege escalation). |
+
+### FIPS Support
+
+When you create a new cluster, you can enable FIPS 140-2 mode by setting the `fips` module variable to `true` . Keep in mind that once a cluster has been created, you cannot enable or disable FIPS mode; you will need to create a new cluster if you want to change the FIPS mode.
+
+FIPS 140-2 mode is a security standard that specifies the security requirements for cryptographic modules used in government and industry, and enabling it on your cluster can help ensure the security and integrity of the cryptographic functions used by your cluster. However, it can also introduce additional overhead and complexity, so operators should carefully consider whether it is necessary for the use case. It is crucial to ensure that any software running on the cluster is FIPS compliant in order for the cluster to function properly in FIPS 140-2 mode. This includes any applications or services that utilize cryptographic functions, as well as any external libraries or dependencies that may utilize cryptographic functions. Failure to do so can result in errors and potential security vulnerabilities.
 
 ---
 
@@ -419,31 +440,6 @@ Native Kubernetes network policies allow users to specify which pods can communi
 
 When utilizing custom tags with the module, it is essential to be aware of the potential limitations that may impact the removal of tags. Some tags may not be removed when attempting to remove them through the module, which can result in unexpected behaviour or errors in your pipeline. To avoid these issues, it is recommended to thoroughly review and test the behaviour of custom tags before implementing them in any environment. If necessary, persistent tags can be manually removed through the Azure portal, CLI or API to ensure that they are properly removed from the resource. For more information on tag limitations, you can refer to the Microsoft documentation [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources?tabs=json#limitations)
 
-### Upgrading
-
-The module automatically manages the upgrading of the control plane, nodes and core services either via an AKS automatic upgrade or when a new version of the module is applied. When AKS automatic upgrades are scheduled is controlled by the `maintenance` module variable which separates the control plane and node upgrade schedules; see the [docs](#appendix-f) for the defaults and what can be configured.
-
-#### Control Plane Upgrades
-
-> **Note**
-> Control plane patch upgrades will be managed by an AKS automatic upgrade once we're confident that the Azure APIs to support this have been rolled out globally.
-
-Control plane patch level upgrades are either applied by a new module version (the current default) or managed by an AKS automatic upgrade channel (if the [Cluster Patch Upgrade](#cluster-patch-upgrade) experiment is enabled). There are additional control plane level upgrades, such as for AKS provided services, which are also managed by the AKS automatic upgrade channel.
-
-AKS provides weekly updates for AKS so your maintenance window configuration should take this into account.
-
-_Kubernetes_ minor version upgrades are controlled directly by the module and supported as long as the upgrade is only to the next minor version and the cluster has had a supported module version run against it. Although it is possible to upgrade the module version and the _Kubernetes_ version as a single operation it is advised to upgrade the module first and then upgrade the minor version second.
-
-#### Node Upgrades
-
-Node upgrades are either managed as an AKS automatic upgrade or manually by the cluster-operator (if the [Cluster Patch Upgrade](#cluster-patch-upgrade) experiment is enabled with the additional manual node upgrade flag). If nodes are being manually upgraded they still need to keep to the minimum requirement of monthly upgrades with this being recommended to be more frequently where possible.
-
-AKS regularly provides new images with the latest updates, Linux node images are updated weekly and Windows node images updated monthly ([docs](https://docs.microsoft.com/en-us/azure/aks/node-image-upgrade)), so your maintenance window configuration should take this into account.
-
-#### Core Service upgrades
-
-Core services are upgraded by running a new version of this module, this should happen at least monthly with the recommendation that this should be fortnightly wherever possible.
-
 ### Connecting to the Cluster
 
 AKS clusters created by this module use [Azure AD authentication](https://docs.microsoft.com/en-us/azure/aks/managed-aad) and don't create local accounts.
@@ -561,9 +557,9 @@ The module now experimentally supports using _Fluent Bit_ as the log aggregator 
 
 The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `experimental = { fluent_bit_aggregator = true }` and it supports the same outputs as _Fluentd_. Additional functionality can be configured with raw Fluent Bit configuration via the `experimental.fluent_bit_aggregator_raw_filters` & `experimental.fluent_bit_aggregator_raw_outputs` flags. You can also provide env variables via the `experimental.fluent_bit_aggregator_extra_env` flag, secret env variables via the `experimental.fluent_bit_aggregator_secret_env` flag, and custom scripts to be used by the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) via the `experimental.fluent_bit_aggregator_lua_scripts` flag. The `StatefulSet` can be configured by the `experimental.fluent_bit_aggregator_replicas_per_zone`, `experimental.fluent_bit_aggregator_resources_override` flags.
 
-| **Variable** | **Description** | **Type**  | **Default** |
-| :----------- | :-------------- | :-------- | :---------- |
-| `fluent_bit_aggregator_resources_override` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader`| `map(object)` (see [Appendix F](#appendix-f)) | `{}` |
+| **Variable**                               | **Description**                                                                                         | **Type**                                      | **Default** |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
+| `fluent_bit_aggregator_resources_override` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Single Line Log Parser Support
 
@@ -578,6 +574,7 @@ The pattern object takes regex to match into named capturing groups. If your reg
 The types object is optional and is a string that contains named capturing group names and types in the format <named_group>:<type>. Multiple can be specified, using space as a delimeter.
 
 See below example where log line would contain key value pairs with
+
 - Pipe `|` separating  key value pairs
 - Space separating key and value
 - Regex that contains `\` character
@@ -602,11 +599,10 @@ locals {
 }
 ```
 
-```
+```yaml
 annotations:
   fluentbit.io/parser: custom-regex
 ```
-
 
 ### Multiline Log Parser Support
 
@@ -639,23 +635,17 @@ locals {
 }
 ```
 
-### Cluster Patch Upgrade
-
-You can test the soon to be default cluster [behaviour](#control-plane-upgrades) of upgrading the nodes during the maintainance window by setting the `experimental = { cluster_patch_upgrade = true }` input variable.
-
-With the patch upgrade experiment enabled you can also set `experimental.node_upgrade_manual` to `true` to take responsibility to manually [upgrade](#node-upgrades) the cluster nodes.
-
 ---
 
 ## Unsupported Features
 
 Some features in the AKS module are in a category of "use at your own risk". These features are unlikely to be fully supported in the forseeable future. This includes disabling the logging stack and windows support.
 
-### Logging Stack
+### Dissable Logging Stack
 
-It is possible to entirely disable the logging stack. This should only be done by groups with explicit approval to do so. The aim of this flag is to enable groups to experiment with alternative approaches to external logging in development and nonproduction environments. This use case is **unsupported**.
+It is possible, but **UNSUPPORTED**, to entirely disable the logging stack. This should only be done by groups with explicit approval to do so. The aim of this flag is to enable groups to experiment with alternative approaches to external logging in development and non-production environments.
 
-To disable the logging stack, you can pass in the following configuration:
+To disable the logging stack, you can use the following configuration.
 
 ```terraform
 unsupported = { logging_disabled = true }
@@ -666,13 +656,27 @@ unsupported = { logging_disabled = true }
 > **Important**
 > Teams must seek approval from their business unit Architect and IOG Architecture before using Windows node pools.
 
-Windows Node support is **best effort** and is currently significantly limited, Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent Bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **should** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
+Using Windows Nodes in an AKS cluster is **UNSUPPORTED** and is currently significantly limited; Windows node pools do not include platform `daemonsets` such as the Prometheus metrics exporter, Fluent Bit log collection or Azure AD Pod Identity. In the interim it is expected teams provide their own support for these features, e.g. use Azure Container Insights for log collection. Services provided by the AKS platform **SHOULD** work but have not been tested, including `kube-proxy`, CSI drivers and Calico network policy.
 
 As of AKS `v1.25` the default AKS Windows version will be Windows Server 2022 which hasn't had any testing due to the lack of available resources, please make sure that you've updated your `node_os` inputs to specify the version of Windows required before upgrading to AKS `v1.25`.
 
 There may be other requirements or specific configuration required for Windows nodes, yet to be identified. We encourage teams to identify, report and contribute code and documentation to improve support going forward.
 
-To enable Windows support you need to set `unsupported = { windows_support = true }`.
+To enable Windows support, you can use the following configuration.
+
+```terraform
+unsupported = { windows_support = true }
+```
+
+### Manual Upgrades
+
+There are some potential cases where automatic cluster upgrades might cause problems, so you can enable this **UNSUPPORTED** functionality to take responsibility for manually upgrading your Kubernetes patch version. If you're using this functionality you are still required to meet our security baseline. Be aware that as AKS is a managed service Azure resurve the right to upgrade components at any time if the feel that it is necessary, an up to date cluster is less likely to fall into this category.
+
+To disable automatic upgrades and require manual upgrades, you can use the following configuration.
+
+```terraform
+unsupported = { manual_upgrades = true }
+```
 
 ---
 
@@ -707,7 +711,7 @@ This module requires the following versions to be configured in the workspace `t
 | `location`                            | Azure location to target.                                                                                                                                                                                                                                                                                                                                                                                           | `string`                                  |                   |
 | `resource_group_name`                 | Name of the resource group to create resources in, some resources will be created in a separate AKS managed resource group.                                                                                                                                                                                                                                                                                         | `string`                                  |                   |
 | `cluster_name`                        | Kubernetes Service managed cluster to create, also used as a prefix in names of related resources. This must be lowercase and contain the pattern `aks-{ordinal}` (e.g. `app-aks-0` or `app-aks-1`).                                                                                                                                                                                                                | `string`                                  |                   |
-| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions `1.27` (**EXPERIMENTAL**), `1.26` and `1.25` are supported.                                                                                                                                                                                                                                                                           | `string`                                  |                   |
+| `cluster_version`                     | Kubernetes version to use for the Azure Kubernetes Service managed cluster; versions `1.27` (**EXPERIMENTAL**), `1.26` and `1.25` are supported.                                                                                                                                                                                                                                                                    | `string`                                  |                   |
 | `sku_tier`                            | Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"standard\" are supported. For production clusters or clusters with more than 10 nodes this should be set to `standard` (see [docs](https://learn.microsoft.com/en-us/azure/aks/free-standard-pricing-tiers)).                                                                                                                           | `string`                                  | `"free"`          |
 | `cluster_endpoint_public_access`      | Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled.                                                                                                                                                                                                                                                                                                        | `bool`                                    |                   |
 | `cluster_endpoint_access_cidrs`       | List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster.                                                                                                                                                                                                                                    | `list(string)`                            |                   |
@@ -730,7 +734,8 @@ This module requires the following versions to be configured in the workspace `t
 | `maintenance`                         | Maintenance configuration.                                                                                                                                                                                                                                                                                                                                                                                          | `object` ([Appendix E](#appendix-e))      | `{}`              |
 | `tags`                                | Tags to apply to all resources.                                                                                                                                                                                                                                                                                                                                                                                     | `map(string)`                             | `{}`              |
 | `fips`                                | If `true`, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created.                                                                                                                                                                                                                                                                                       | `bool`                                    | `false`           |
-| `experimental`                        | Configure experimental features.                                                                                                                                                                                                                                                                                                                                                                                    | `any`                                     | `{}`              |
+| `unsupported`                         | Configure [unsupported](#unsupported-features) features.                                                                                                                                                                                                                                                                                                                                                            | `any`                                     | `{}`              |
+| `experimental`                        | Configure [experimental](#experimental-features) features.                                                                                                                                                                                                                                                                                                                                                          | `any`                                     | `{}`              |
 
 ### Appendix A
 
@@ -852,9 +857,9 @@ Specification for the `logging.nodes.storage_account` object.
 
 Specification for the `logging.nodes.loki` object.
 
-| **Variable**  | **Description**                                                          | **Type** | **Default** |
-| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
-| `enabled`     | If node logs should be sent to Loki.                                     | `bool`   | `false`     |
+| **Variable** | **Description**                      | **Type** | **Default** |
+| :----------- | :----------------------------------- | :------- | :---------- |
+| `enabled`    | If node logs should be sent to Loki. | `bool`   | `false`     |
 
 
 ### Appendix C3
@@ -868,7 +873,7 @@ Specification for the `logging.workloads` object.
 | `storage_account_logs`        | **DEPRECATED** - If workload logs should be sent to Azure Blob Storage, use `storage_account`. | `bool`                                   | `false`     |
 | `storage_account_container`   | **DEPRECATED** - The container to use for the log storage, use `storage_account`.              | `string`                                 | `null`      |
 | `storage_account_path_prefix` | **DEPRECATED** - Blob prefix for the logs, use `storage_account`.                              | `string`                                 | `null`      |
-| `loki` | Loki workload logs configuration | `object` ([Appendix C3a](#appendix-c3b))| `{}` |
+| `loki`                        | Loki workload logs configuration                                                               | `object` ([Appendix C3a](#appendix-c3b)) | `{}`        |
 
 ### Appendix C3a
 
@@ -885,9 +890,9 @@ Specification for the `logging.workloads.storage_account` object.
 
 Specification for the `logging.workloads.loki` object.
 
-| **Variable**  | **Description**                                                          | **Type** | **Default** |
-| :------------ | :----------------------------------------------------------------------- | :------- | :---------- |
-| `enabled`     | If node logs should be sent to Loki.                                     | `bool`   | `false`     |
+| **Variable** | **Description**                      | **Type** | **Default** |
+| :----------- | :----------------------------------- | :------- | :---------- |
+| `enabled`    | If node logs should be sent to Loki. | `bool`   | `false`     |
 
 ### Appendix C4
 
@@ -971,13 +976,13 @@ Specification for the `core_services_config` object.
 
 Specification for the `core_services_config.alertmanager` object.
 
-| **Variable** | **Description**                                                                               | **Type**       | **Default** |
-| :----------- | :-------------------------------------------------------------------------------------------- | :------------- | :---------- |
-| `smtp_host`  | SMTP host to send alert emails.                                                               | `string`       |             | `null` |
-| `smtp_from`  | SMTP from address for alert emails.                                                           | `string`       | `null`      |
-| `receivers`  | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)` | `[]`        |
-| `routes`     | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)` | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| **Variable**         | **Description**                                                                               | **Type**                                      | **Default** |
+| :------------------- | :-------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
+| `smtp_host`          | SMTP host to send alert emails.                                                               | `string`                                      |             | `null` |
+| `smtp_from`          | SMTP from address for alert emails.                                                           | `string`                                      | `null`      |
+| `receivers`          | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)`                                | `[]`        |
+| `routes`             | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)`                                | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                            | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E2
 
@@ -1012,15 +1017,15 @@ Specification for the `core_services_config.external_dns` object.
 
 Specification for the `core_services_config.fluentd` object.
 
-| **Variable**       | **Description**                                                                                                                                                                    | **Type**                                     | **Default** |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
-| `image_repository`   | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                | `null`      |
-| `image_tag`          | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                | `null`      |
-| `additional_env`     | Additional environment variables.                                                                                                                                                  | `map(string)`                                | `{}`        |
-| `debug`              | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                       | `true`      |
-| `filters`            | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                     | `null`      |
-| `route_config`       | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6)) | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| **Variable**         | **Description**                                                                                                                                                                    | **Type**                                      | **Default** |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
+| `image_repository`   | Custom image repository to use for the _Fluentd_ image, `image_tag` must also be set.                                                                                              | `map(string)`                                 | `null`      |
+| `image_tag`          | Custom image tag to use for the _Fluentd_ image, `image_repository` must also be set.                                                                                              | `map(string)`                                 | `null`      |
+| `additional_env`     | Additional environment variables.                                                                                                                                                  | `map(string)`                                 | `{}`        |
+| `debug`              | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                        | `true`      |
+| `filters`            | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                      | `null`      |
+| `route_config`       | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6))  | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                                                                                                                 | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E6
 
@@ -1037,12 +1042,12 @@ Specification for the `core_services_config.fluentd.route_config` object.
 
 Specification for the `core_services_config.grafana` object.
 
-| **Variable**              | **Description**                       | **Type**                                        | **Default** |
-| :------------------------ | :------------------------------------ | :-----------------------------------------------| :---------- |
-| `admin_password`          | Admin password.                       | `string`                                        | `changeme`  |
-| `additional_data_sources` | Additional data sources.              | `list(object)`                                  | `[]`        |
-| `additional_plugins`      | Additional plugins to install.        | `list(string)`                                  | `[]`        |
-| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`, `sidecar`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| **Variable**              | **Description**                                                               | **Type**                                      | **Default** |
+| :------------------------ | :---------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
+| `admin_password`          | Admin password.                                                               | `string`                                      | `changeme`  |
+| `additional_data_sources` | Additional data sources.                                                      | `list(object)`                                | `[]`        |
+| `additional_plugins`      | Additional plugins to install.                                                | `list(string)`                                | `[]`        |
+| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`, `sidecar` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E8
 
@@ -1060,46 +1065,44 @@ Specification for the `core_services_config.ingress_internal_core` object.
 
 Specification for the `core_services_config.prometheus` object.
 
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `remote_write`       | Remote write endpoints for metrics.    | `list(object)`                                  | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader`| `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| **Variable**         | **Description**                                                                                         | **Type**                                      | **Default** |
+| :------------------- | :------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
+| `remote_write`       | Remote write endpoints for metrics.                                                                     | `list(object)`                                | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E11
 
 Specification for the `core_services_config.prometheus_node_exporter` object.
 
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+| **Variable**         | **Description**                                                    | **Type**                                      | **Default** |
+| :------------------- | :----------------------------------------------------------------- | :-------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E12
 
 Specification for the `core_services_config.thanos` object.
 
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
+| **Variable**         | **Description**                                                                                                                                                | **Type**                                      | **Default** |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix E13
 
 Specification for the `core_services_config.loki` object.
 
-| **Variable**         | **Description**                        | **Type**                                        | **Default** |
-| :------------------- | :------------------------------------- | :---------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `gateway_default`, `write_default` `read_default` or `backend_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`  |
-
+| **Variable**         | **Description**                                                                                                                 | **Type**                                      | **Default** |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `gateway_default`, `write_default` `read_default` or `backend_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
 ### Appendix F
 
 Specification for the `resource_overrides` object.
 
-| **Variable** | **Description**                                                              | **Type** | **Default** |
-| :----------- | :--------------------------------------------------------------------------- | :------- | :---------- |
-| `cpu`        | Value to set for cpu requests | `number` | null            |
-| `cpu_limit`  | Value to set for cpu limit. If `cpu_limit` specified, and `cpu` not specified then will be rounded to nearest full cpu to `cpu` value  | `number` | null |
-| `memory`     | Value to set for memory | `number` | null |
-
+| **Variable** | **Description**                                                                                                                       | **Type** | **Default** |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------ | :------- | :---------- |
+| `cpu`        | Value to set for cpu requests                                                                                                         | `number` | null        |
+| `cpu_limit`  | Value to set for cpu limit. If `cpu_limit` specified, and `cpu` not specified then will be rounded to nearest full cpu to `cpu` value | `number` | null        |
+| `memory`     | Value to set for memory                                                                                                               | `number` | null        |
 
 ### Appendix G
 
@@ -1109,22 +1112,34 @@ Specification for the `maintenance` object.
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
 | `utc_offset`    | Maintenance offset to UTC as a duration (e.g. `+00:00`); this will be used to specify local time. If this is not set a default will be calculated based on the cluster location. | `string`                                     | `null`      |
 | `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix G1](#appendix-g1))       | []          |
-| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix G1](#appendix-g1))       | []          |
-| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix G2](#appendix-g2)) | []          |
+| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix G2](#appendix-g2))       | []          |
+| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix G3](#appendix-g3)) | []          |
 
 ### Appendix G1
 
-Specification for the `maintenance_window.control_plane` & `maintenance_window.nodes` objects.
+Specification for the `maintenance_window.control_plane` object.
 
 | **Variable**   | **Description**                                                                                                                                                                          | **Type** | **Default** |
 | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :---------- |
-| `frequency`    | Frequency of the maintainance window; one of `WEEKLY`, `FORTNIGHTLY` or `MONTHLY` for `control_plane` with `nodes` supporting `DAILY` in addition.                                       | `string` | `WEEKLY`    |
+| `frequency`    | Frequency of the maintainance window; one of `WEEKLY`, `FORTNIGHTLY` or `MONTHLY`.                                                                                                       | `string` | `WEEKLY`    |
 | `day_of_month` | Day of the month for the maintainance window if the frequency is set to `MONTHLY`; between `1` & `28`.                                                                                   | `number` | `1`         |
 | `day_of_week`  | Day of the week for the maintainance window if the frequency is set to `WEEKLY` or `FORTNIGHTLY`; one of `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` or `SUNDAY`. | `string` | `SUNDAY`    |
 | `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
 | `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
 ### Appendix G2
+
+Specification for the `maintenance_window.nodes` object.
+
+| **Variable**   | **Description**                                                                                                                                                                          | **Type** | **Default** |
+| :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :---------- |
+| `frequency`    | Frequency of the maintainance window; one of `WEEKLY`, `FORTNIGHTLY`, `MONTHLY` or `DAILY`.                                                                                              | `string` | `WEEKLY`    |
+| `day_of_month` | Day of the month for the maintainance window if the frequency is set to `MONTHLY`; between `1` & `28`.                                                                                   | `number` | `1`         |
+| `day_of_week`  | Day of the week for the maintainance window if the frequency is set to `WEEKLY` or `FORTNIGHTLY`; one of `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` or `SUNDAY`. | `string` | `SUNDAY`    |
+| `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `04:00`     |
+| `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
+
+### Appendix G3
 
 Specification for the `maintenance_window.not_allowed` object.
 
@@ -1139,7 +1154,11 @@ Specification for the `maintenance_window.not_allowed` object.
 
 | **Variable**                                 | **Description**                                                                                                                                                 | **Type**       |
 | :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
-| `cluster_id`                                 | Azure Kubernetes Service (AKS) managed cluster ID.                                                                                                              | `string`       |
+| `cluster_id`                                 | ID of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                       | `string`       |
+| `cluster_name`                               | Name of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                     | `string`       |
+| `cluster_version`                            | Version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>`).                                                                              | `string`       |
+| `cluster_version_full`                       | Full version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>.<patch>`).                                                                 | `string`       |
+| `latest_version_full`                        | Latest full Kubernetes version the Azure Kubernetes Service (AKS) managed cluster could be on (`<major>.<minor>.<patch>`).                                      | `string`       |
 | `cluster_fqdn`                               | FQDN of the Azure Kubernetes Service managed cluster.                                                                                                           | `string`       |
 | `cluster_endpoint`                           | Endpoint for the Azure Kubernetes Service managed cluster API server.                                                                                           | `string`       |
 | `cluster_certificate_authority_data`         | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                                                                    | `string`       |

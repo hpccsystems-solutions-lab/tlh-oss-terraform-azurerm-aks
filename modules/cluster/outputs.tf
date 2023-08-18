@@ -4,6 +4,26 @@ output "id" {
   depends_on  = [time_sleep.modify]
 }
 
+output "cluster_name" {
+  description = "Name of the cluster."
+  value       = azurerm_kubernetes_cluster.default.name
+}
+
+output "cluster_version" {
+  description = "Kubernetes version of the cluster as <major>.<minor>."
+  value       = azurerm_kubernetes_cluster.default.kubernetes_version
+}
+
+output "cluster_version_full" {
+  description = "Full Kubernetes version of the cluster."
+  value       = module.cluster_version.values != null && startswith(lookup(coalesce(module.cluster_version.values, {}), "current_kubernetes_version", ""), var.cluster_version) ? module.cluster_version.values.current_kubernetes_version : data.azurerm_kubernetes_service_versions.default.latest_version
+}
+
+output "latest_version_full" {
+  description = "Latest full Kubernetes version the cluster could be on."
+  value       = data.azurerm_kubernetes_service_versions.default.latest_version
+}
+
 output "fqdn" {
   description = "FQDN of the Azure Kubernetes managed cluster."
   value       = azurerm_kubernetes_cluster.default.fqdn
@@ -27,11 +47,6 @@ output "oidc_issuer_url" {
 output "cluster_identity" {
   description = "User assigned identity used by the cluster."
   value       = azurerm_user_assigned_identity.default
-}
-
-output "cluster_name" {
-  description = "Name of cluster"
-  value       = azurerm_kubernetes_cluster.default.name
 }
 
 output "kubelet_identity" {

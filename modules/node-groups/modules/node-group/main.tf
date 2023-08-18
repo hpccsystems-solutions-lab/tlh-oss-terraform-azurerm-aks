@@ -2,7 +2,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   name = var.name
 
   kubernetes_cluster_id = var.cluster_id
-  orchestrator_version  = var.cluster_patch_upgrade ? var.cluster_version : var.cluster_version_full
+  orchestrator_version  = var.cluster_version_full
 
   vnet_subnet_id = var.subnet_id
   zones          = var.availability_zones

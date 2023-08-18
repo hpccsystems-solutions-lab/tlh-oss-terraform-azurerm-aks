@@ -8,12 +8,12 @@ export KUBECONFIG="${config_file}"
 
 if [[ -n "${AZURE_ENVIRONMENT:-}" ]]
 then
-  az cloud set --name "${AZURE_ENVIRONMENT}"
+  az cloud set --name "${AZURE_ENVIRONMENT}" > /dev/null 2>&1
 fi
 
 if [[ -n "${AZURE_TENANT_ID:-}" ]] && [[ -n "${AZURE_CLIENT_ID:-}" ]] && [[ -n "${AZURE_CLIENT_SECRET:-}" ]]
 then
-  az login --service-principal --user "${AZURE_CLIENT_ID}"  --password "${AZURE_CLIENT_SECRET}" --tenant "${AZURE_TENANT_ID}"
+  az login --service-principal --user "${AZURE_CLIENT_ID}" --password "${AZURE_CLIENT_SECRET}" --tenant "${AZURE_TENANT_ID}" > /dev/null 2>&1
 fi
 
 az aks get-credentials --subscription "${SUBSCRIPTION_ID}" --resource-group "${RESOURCE_GROUP_NAME}" --name "${CLUSTER_NAME}"
@@ -39,4 +39,9 @@ then
 
   kubectl --namespace monitoring delete "$(kubectl --namespace monitoring get daemonset.apps -l app=prometheus-node-exporter --output name)"
   echo "${json_value_4}" | kubectl apply -f -
+fi
+
+if [[ -n "${AZURE_TENANT_ID:-}" ]] && [[ -n "${AZURE_CLIENT_ID:-}" ]] && [[ -n "${AZURE_CLIENT_SECRET:-}" ]]
+then
+  az logout --username "${AZURE_CLIENT_ID}" > /dev/null 2>&1 || true
 fi

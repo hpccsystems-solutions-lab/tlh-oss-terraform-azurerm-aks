@@ -8,45 +8,10 @@ locals {
   module_name    = "terraform-azurerm-aks"
   module_version = "v1.20.0-beta.1"
 
-  # az aks get-versions --location eastus --output table
-  # az aks get-versions --location westeurope --output table
-  # https://releases.aks.azure.com/webpage/index.html
-  cluster_version_full_lookup = {
-    westeurope = {
-      "1.27" = "1.27.3"
-      "1.26" = "1.26.6"
-      "1.25" = "1.25.11"
-    }
-
-    eastus = {
-      "1.27" = "1.27.3"
-      "1.26" = "1.26.6"
-      "1.25" = "1.25.11"
-    }
-
-    centralus = {
-      "1.27" = "1.27.3"
-      "1.26" = "1.26.6"
-      "1.25" = "1.25.11"
-    }
-
-    usgovvirginia = {
-      "1.27" = "1.27.3"
-      "1.26" = "1.26.6"
-      "1.25" = "1.25.11"
-    }
-
-    usgovtexas = {
-      "1.27" = "1.27.3"
-      "1.26" = "1.26.6"
-      "1.25" = "1.25.11"
-    }
-  }
+  availability_zones = [1, 2, 3]
 
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
-
-  cluster_version_full = try(local.cluster_version_full_lookup[var.location][var.cluster_version], local.cluster_version_full_lookup["westeurope"][var.cluster_version])
 
   tenant_id       = data.azurerm_subscription.current.tenant_id
   subscription_id = data.azurerm_subscription.current.subscription_id
