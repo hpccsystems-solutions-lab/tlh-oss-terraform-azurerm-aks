@@ -45,7 +45,17 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed the `experimental.node_upgrade_manual` input variable as `unsupported.manual_upgrades` covers it's purpose and more. [@stevehipwell](https://github.com/stevehipwell)
 - Added `cluster_version`, `cluster_version_full` & `latest_version_full` module outputs. [@stevehipwell](https://github.com/stevehipwell)
 
+## [v1.19.1] - 2023-08-25
+
+### All Changes
+
+- Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@peterabarr](https://github.com/peterabarr)
+- Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.19.0] - 2023-08-16
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.19.0` instead due to a breaking change.
 
 ### Highlights
 
@@ -83,7 +93,17 @@ For kubernetes version v1.27 or above, `topologySpreadConstraints` have been add
 - Removed `systemd_logs_loki` and `experimental.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
 - Added `logging.nodes.loki` and `logging.workloads.loki` objects ([#1273](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1273))  [@james-alford-ln](https://github.com/james-alford-ln)
 
+## [v1.18.2] - 2023-08-25
+
+### All Changes
+
+- Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@peterabarr](https://github.com/peterabarr)
+- Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.18.1] - 2023-08-16
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.18.2` instead due to a breaking change.
 
 ### All Changes
 
@@ -92,7 +112,7 @@ For kubernetes version v1.27 or above, `topologySpreadConstraints` have been add
 ## [v1.18.0] - 2023-08-02
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.18.1` instead due to AKS Kubernetes version updates.
+> **DO NOT USE THIS VERSION** - Please use `v1.18.2` instead due to AKS Kubernetes version updates.
 
 ### Highlights
 
@@ -139,7 +159,17 @@ Kubernetes version `1.24` has been deprecated and will be removed in `v1.19.0`.
 - Changed the default storage account container for workload logs from `workload` to `workloads` for consistency. [@stevehipwell](https://github.com/stevehipwell)
 - Deprecated the `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables in favour of the `logging.workloads.storage_account` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
+## [v1.17.2] - 2023-08-25
+
+- Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@peterabarr](https://github.com/peterabarr)
+- Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@peterabarr](https://github.com/peterabarr)
+
+### All Changes
+
 ## [v1.17.1] - 2023-08-16
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.17.2` instead due to a breaking change.
 
 ### All Changes
 
@@ -148,7 +178,7 @@ Kubernetes version `1.24` has been deprecated and will be removed in `v1.19.0`.
 ## [v1.17.0] - 2023-07-17
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.17.1` instead due to AKS Kubernetes version updates.
+> **DO NOT USE THIS VERSION** - Please use `v1.17.2` instead due to AKS Kubernetes version updates.
 
 ### Highlights
 
@@ -193,7 +223,17 @@ We have added an expreimental feature to support users manually managing node up
 - Added hot reload to _Fluent Bit_. ([#1234](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1234)) [@hadeeds](https://github.com/hadeeds)
 - Update NGINX to use pod topology spread constraints. ([#1126](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1126)) [@appkins](https://github.com/appkins)
 
+## [v1.16.2] - 2023-08-25
+
+### All Changes
+
+- Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@peterabarr](https://github.com/peterabarr)
+- Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@peterabarr](https://github.com/peterabarr)
+
 ## [v1.16.1] - 2023-08-16
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.16.2` instead due to a breaking change.
 
 ### All Changes
 
@@ -202,7 +242,7 @@ We have added an expreimental feature to support users manually managing node up
 ## [v1.16.0] - 2023-07-05
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.16.1` instead due to AKS Kubernetes version updates.
+> **DO NOT USE THIS VERSION** - Please use `v1.16.2` instead due to AKS Kubernetes version updates.
 
 ### Highlights
 
