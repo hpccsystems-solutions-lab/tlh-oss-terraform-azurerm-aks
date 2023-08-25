@@ -242,8 +242,9 @@ locals {
   }
 
   max_pods = {
-    azure   = 30
-    kubenet = 110
+    "KUBENET"       = 110
+    "AZURE_OVERLAY" = 110
+    "AZURE"         = 30
   }
 
   taint_effects = {

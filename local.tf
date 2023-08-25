@@ -16,6 +16,9 @@ locals {
   tenant_id       = data.azurerm_subscription.current.tenant_id
   subscription_id = data.azurerm_subscription.current.subscription_id
   # client_id       = data.azurerm_client_config.current.client_id
+  azure_env = startswith(var.location, "usgov") ? "usgovernment" : "public"
+
+  cni = var.experimental.azure_cni_overlay ? "AZURE_OVERLAY" : (var.experimental.windows_support || var.unsupported.windows_support ? "AZURE" : "KUBENET")
 
   virtual_network_resource_group_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.virtual_network_resource_group_name}"
   virtual_network_id                = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}"
@@ -83,7 +86,4 @@ locals {
     node_group_delete = 3600
     helm_modify       = 600
   }
-
-  cni       = var.experimental.windows_support || var.unsupported.windows_support ? "azure" : "kubenet"
-  azure_env = startswith(var.location, "usgov") ? "usgovernment" : "public"
 }

@@ -635,6 +635,10 @@ locals {
 }
 ```
 
+### Azure CNI Overlay Mode
+
+You can test the ability to create a new Linux only AKS cluster with the [Azure CNI in Overlay mode](https://learn.microsoft.com/en-us/azure/aks/azure-cni-overlay) by setting the `experimental = { azure_cni_overlay = true }` input variable.
+
 ---
 
 ## Unsupported Features
@@ -757,7 +761,7 @@ Specification for the `node_groups` objects.
 | **Variable**          | **Description**                                                                                                                                                                                                                                                                                                                                                         | **Type**                     | **Default** |
 | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :---------- |
 | `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the node group(s), `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                                                               | `string`                     | `amd64`     |
-| `node_os`             | OS to use for the node group(s), `ubuntu`, `windows2019` & `windows2022` (**EXPERIMENTAL**) are supported, [Windows node support](#windows-node-support) is not guaranteed but best-effort and needs manually enabling.                                                                                                                                                 | `string`                     | `"ubuntu"`  |
+| `node_os`             | OS to use for the node group(s), `ubuntu`, `windows2019 (**UNSUPPORTED**)` & `windows2022` (**EXPERIMENTAL**) are valid; [Windows node support](#windows-node-support) is not guaranteed but best-effort and needs manually enabling.                                                                                                                                   | `string`                     | `"ubuntu"`  |
 | `node_type`           | Node type to use, one of `gp`, `gpd`, `mem`, `memd`, `cpu` or `stor`. See [node types](#node-types) for more information.                                                                                                                                                                                                                                               | `string`                     | `"gp"`      |
 | `node_type_variant`   | The variant of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                     | `"default"` |
 | `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                     | `"v1"`      |
@@ -858,7 +862,6 @@ Specification for the `logging.nodes.loki` object.
 | **Variable** | **Description**                      | **Type** | **Default** |
 | :----------- | :----------------------------------- | :------- | :---------- |
 | `enabled`    | If node logs should be sent to Loki. | `bool`   | `false`     |
-
 
 ### Appendix C3
 
@@ -965,10 +968,9 @@ Specification for the `core_services_config` object.
 | `grafana`                  | Grafana configuration.                  | `object` ([Appendix E7](#appendix-e7))   | `{}`        |
 | `ingress_internal_core`    | Ingress internal-core configuration.    | `object` ([Appendix E8](#appendix-e8))   |             |
 | `prometheus`               | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
-| `storage`                  | **DEPRECATED** - Storage configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
-| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
-| `thanos`                   | Thanos configuration.                   | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
-| `loki`                     | Loki.                                   | `object` ([Appendix E13](#appendix-e13)) | `{}`        |
+| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
+| `thanos`                   | Thanos configuration.                   | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
+| `loki`                     | Loki.                                   | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
 
 ### Appendix E1
 
@@ -1068,7 +1070,7 @@ Specification for the `core_services_config.prometheus` object.
 | `remote_write`       | Remote write endpoints for metrics.                                                                     | `list(object)`                                | `[]`        |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
-### Appendix E11
+### Appendix E10
 
 Specification for the `core_services_config.prometheus_node_exporter` object.
 
@@ -1076,7 +1078,7 @@ Specification for the `core_services_config.prometheus_node_exporter` object.
 | :------------------- | :----------------------------------------------------------------- | :-------------------------------------------- | :---------- |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
-### Appendix E12
+### Appendix E11
 
 Specification for the `core_services_config.thanos` object.
 
@@ -1084,7 +1086,7 @@ Specification for the `core_services_config.thanos` object.
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
 
-### Appendix E13
+### Appendix E12
 
 Specification for the `core_services_config.loki` object.
 
@@ -1134,7 +1136,7 @@ Specification for the `maintenance_window.nodes` object.
 | `frequency`    | Frequency of the maintainance window; one of `WEEKLY`, `FORTNIGHTLY`, `MONTHLY` or `DAILY`.                                                                                              | `string` | `WEEKLY`    |
 | `day_of_month` | Day of the month for the maintainance window if the frequency is set to `MONTHLY`; between `1` & `28`.                                                                                   | `number` | `1`         |
 | `day_of_week`  | Day of the week for the maintainance window if the frequency is set to `WEEKLY` or `FORTNIGHTLY`; one of `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` or `SUNDAY`. | `string` | `SUNDAY`    |
-| `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `04:00`     |
+| `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
 | `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
 ### Appendix G3

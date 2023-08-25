@@ -38,14 +38,14 @@ variable "cluster_version" {
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"standard\" are supported. For production clusters or clusters with more than 10 nodes this should be set to \"standard\"."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"FREE\", \"STANDARD\", \"free\" (DEPRECATED) & \"standard\" (DEPRECATED) are supported. For production clusters or clusters with more than 10 nodes this should be set to \"STANDARD\"."
   type        = string
   nullable    = false
-  default     = "free"
+  default     = "FREE"
 
   validation {
-    condition     = contains(["free", "standard"], var.sku_tier)
-    error_message = "Available SKU tiers are \"free\" or \"standard\"."
+    condition     = contains(["FREE", "STANDARD"], upper(var.sku_tier))
+    error_message = "Available SKU tiers are \"FREE\", \"STANDARD\", \"free\" (DEPRECATED) or \"standard\" (DEPRECATED)."
   }
 }
 
@@ -186,7 +186,7 @@ variable "node_groups" {
     single_group        = optional(bool, false)
     min_capacity        = optional(number, 0)
     max_capacity        = number
-    max_pods            = optional(number, -1)
+    max_pods            = optional(number, null)
     max_surge           = optional(string, "10%")
     labels              = optional(map(string), {})
     taints = optional(list(object({
@@ -214,7 +214,7 @@ variable "node_groups" {
 
   validation {
     condition     = alltrue([for k, v in var.node_groups : contains(["ubuntu", "windows2019", "windows2022"], v.node_os)])
-    error_message = "Node group OS must be one of \"ubuntu\", \"windows2019\" or \"windows2022\" (EXPERIMENTAL)."
+    error_message = "Node group OS must be one of \"ubuntu\", \"windows2019\" (UNSUPPORTED) or \"windows2022\" (EXPERIMENTAL)."
   }
 
   validation {
@@ -238,8 +238,8 @@ variable "node_groups" {
   }
 
   validation {
-    condition     = alltrue([for k, v in var.node_groups : v.max_pods == -1 || (v.max_pods >= 12 && v.max_pods <= 110)])
-    error_message = "Node group max pads must either be -1 or between 12 & 110."
+    condition     = alltrue([for k, v in var.node_groups : v.max_pods == null || (coalesce(v.max_pods, 110) >= 12 && coalesce(v.max_pods, 110) <= 110)])
+    error_message = "Node group max pods must either be null or between 12 & 110."
   }
 
   validation {
@@ -501,7 +501,7 @@ variable "maintenance" {
       frequency    = optional(string, "WEEKLY")
       day_of_month = optional(number, 1)
       day_of_week  = optional(string, "SUNDAY")
-      start_time   = optional(string, "04:00")
+      start_time   = optional(string, "00:00")
       duration     = optional(number, 4)
     }), {})
     not_allowed = optional(list(object({
@@ -618,6 +618,7 @@ variable "experimental" {
       pattern = string
       types   = optional(map(string), {})
     })), {})
+    azure_cni_overlay = optional(bool, false)
   })
   nullable = false
   default  = {}

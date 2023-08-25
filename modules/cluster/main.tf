@@ -25,6 +25,32 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
   scope                = var.nat_gateway_id
 }
 
+resource "terraform_data" "maintenance_control_plane_start_date" {
+  input = timecmp(formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timestamp()), timestamp()) == -1 ? formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timeadd(timestamp(), "24h")) : formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timestamp())
+
+  triggers_replace = [
+    var.maintenance.control_plane,
+    var.maintenance.control_plane.start_time
+  ]
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+
+resource "terraform_data" "maintenance_nodes_start_date" {
+  input = timecmp(formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timestamp()), timestamp()) == -1 ? formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timeadd(timestamp(), "24h")) : formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timestamp())
+
+  triggers_replace = [
+    var.maintenance.nodes,
+    var.maintenance.nodes.start_time
+  ]
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+
 #tfsec:ignore:azure-container-limit-authorized-ips
 #tfsec:ignore:azure-container-logging
 resource "azurerm_kubernetes_cluster" "default" {
@@ -53,11 +79,12 @@ resource "azurerm_kubernetes_cluster" "default" {
   }
 
   network_profile {
-    network_plugin = var.cni
-    network_policy = "calico"
-    service_cidr   = "172.20.0.0/16"
-    dns_service_ip = "172.20.0.10"
-    pod_cidr       = var.cni == "kubenet" ? var.podnet_cidr_block : null
+    network_plugin      = local.cni_lookup[var.cni]
+    network_plugin_mode = var.cni == "AZURE_OVERLAY" ? "overlay" : null
+    network_policy      = "calico"
+    service_cidr        = "172.20.0.0/16"
+    dns_service_ip      = "172.20.0.10"
+    pod_cidr            = var.cni == "KUBENET" ? var.podnet_cidr_block : null
 
     outbound_type = var.nat_gateway_id != null ? "userAssignedNATGateway" : "loadBalancer"
 
@@ -106,6 +133,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     interval     = local.maintainance_interval_lookup[var.maintenance.control_plane.frequency]
     day_of_month = var.maintenance.control_plane.frequency == "MONTHLY" ? var.maintenance.control_plane.day_of_month : null
     day_of_week  = var.maintenance.control_plane.frequency == "WEEKLY" || var.maintenance.control_plane.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.control_plane.day_of_week] : null
+    start_date   = "${split("T", terraform_data.maintenance_control_plane_start_date.output)[0]}T00:00:00Z"
     start_time   = var.maintenance.control_plane.start_time
     duration     = var.maintenance.control_plane.duration
 
@@ -125,6 +153,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     interval     = local.maintainance_interval_lookup[var.maintenance.nodes.frequency]
     day_of_month = var.maintenance.nodes.frequency == "MONTHLY" ? var.maintenance.nodes.day_of_month : null
     day_of_week  = var.maintenance.nodes.frequency == "WEEKLY" || var.maintenance.nodes.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.nodes.day_of_week] : null
+    start_date   = "${split("T", terraform_data.maintenance_nodes_start_date.output)[0]}T00:00:00Z"
     start_time   = var.maintenance.nodes.start_time
     duration     = var.maintenance.nodes.duration
 
@@ -210,42 +239,9 @@ resource "time_sleep" "modify" {
   ]
 }
 
-module "cluster_version" {
-  source = "../shell-script"
-
-  subscription_id = var.subscription_id
-
-  environment_variables = {
-    "RESOURCE_GROUP_NAME" = var.resource_group_name
-    "CLUSTER_NAME"        = var.cluster_name
-  }
-
-  read_script = <<-EOF
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    if [[ -n "$${AZURE_ENVIRONMENT:-}" ]]
-    then
-      az cloud set --name "$${AZURE_ENVIRONMENT}" > /dev/null 2>&1
-    fi
-
-    if [[ -n "$${AZURE_TENANT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_SECRET:-}" ]]
-    then
-      az login --service-principal --user "$${AZURE_CLIENT_ID}" --password "$${AZURE_CLIENT_SECRET}" --tenant "$${AZURE_TENANT_ID}" > /dev/null 2>&1
-    fi
-
-    az aks show \
-      --subscription "$${SUBSCRIPTION_ID}" \
-      --resource-group "$${RESOURCE_GROUP_NAME}" \
-      --name "$${CLUSTER_NAME}" \
-      | jq -c '{current_kubernetes_version: .currentKubernetesVersion}' \
-      || echo "{}"
-
-    if [[ -n "$${AZURE_TENANT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_ID:-}" ]] && [[ -n "$${AZURE_CLIENT_SECRET:-}" ]]
-    then
-      az logout --username "$${AZURE_CLIENT_ID}" > /dev/null 2>&1 || true
-    fi
-  EOF
+data "azurerm_kubernetes_cluster" "default" {
+  name                = var.cluster_name
+  resource_group_name = var.resource_group_name
 
   depends_on = [
     azurerm_kubernetes_cluster.default,

@@ -3,9 +3,8 @@ resource "time_static" "timestamp" {}
 resource "terraform_data" "immutable_inputs" {
   input = {
     cluster_name = var.cluster_name
-    ipv6         = false
     cni          = local.cni
-    windows      = var.experimental.windows_support
+    ipv6         = false
     system_nodes = {
       arch         = "amd64"
       os           = "ubuntu"
@@ -21,7 +20,6 @@ resource "terraform_data" "immutable_inputs" {
       input.cluster_name,
       input.ipv6,
       input.cni,
-      input.windows,
       input.system_nodes
     ]
 
@@ -31,8 +29,13 @@ resource "terraform_data" "immutable_inputs" {
     }
 
     postcondition {
-      condition     = var.experimental.windows_support == self.output.windows
-      error_message = "You can't enable/disable Windows support for an existing cluster."
+      condition     = local.cni == upper(self.output.cni)
+      error_message = "Cluster CNI is immutable."
+    }
+
+    postcondition {
+      condition     = local.cni != "AZURE_OVERLAY" || alltrue([for k, v in var.node_groups : v.node_os != "windows2019"])
+      error_message = "Azure Overlay CNI doesn't support Windows Server 2019."
     }
   }
 }
@@ -40,15 +43,14 @@ resource "terraform_data" "immutable_inputs" {
 module "cluster" {
   source = "./modules/cluster"
 
-  subscription_id     = local.subscription_id
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  cluster_name        = var.cluster_name
-  cluster_version     = var.cluster_version
-  manual_upgrades     = var.unsupported.manual_upgrades
-  sku_tier            = var.sku_tier
-  fips                = var.fips
-  # cluster_endpoint_public_access       = var.cluster_endpoint_public_access
+  subscription_id                      = local.subscription_id
+  location                             = var.location
+  resource_group_name                  = var.resource_group_name
+  cluster_name                         = var.cluster_name
+  cluster_version                      = var.cluster_version
+  manual_upgrades                      = var.unsupported.manual_upgrades
+  sku_tier                             = upper(var.sku_tier)
+  fips                                 = var.fips
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
   cni                                  = local.cni
   subnet_id                            = local.subnet_id

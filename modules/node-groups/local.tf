@@ -7,7 +7,7 @@ locals {
     }, var.experimental.node_group_os_config ? {} : {
     os_config = { sysctl = {} }
     }, var.experimental.azure_cni_max_pods ? {} : {
-    max_pods = -1
+    max_pods = null
   })
 
   system_node_groups_input = {
@@ -28,7 +28,7 @@ locals {
       temp_disk_mode      = "NONE"
       nvme_mode           = "NONE"
       placement_group_key = null
-      max_pods            = -1
+      max_pods            = null
       max_surge           = "10%"
       labels = {
         "lnrs.io/tier" = "system"

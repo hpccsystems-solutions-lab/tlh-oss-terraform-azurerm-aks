@@ -13,9 +13,15 @@ data "azurerm_monitor_diagnostic_categories" "default" {
 }
 
 locals {
+  cni_lookup = {
+    "KUBENET"       = "kubenet"
+    "AZURE_OVERLAY" = "azure"
+    "AZURE"         = "azure"
+  }
+
   sku_tier_lookup = {
-    free     = "Free"
-    standard = "Standard"
+    "FREE"     = "Free"
+    "STANDARD" = "Standard"
   }
 
   log_category_types_audit     = ["kube-audit", "kube-audit-admin"]

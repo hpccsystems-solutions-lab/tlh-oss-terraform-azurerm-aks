@@ -16,7 +16,7 @@ output "cluster_version" {
 
 output "cluster_version_full" {
   description = "Full Kubernetes version of the cluster."
-  value       = module.cluster_version.values != null && startswith(lookup(coalesce(module.cluster_version.values, {}), "current_kubernetes_version", ""), var.cluster_version) ? module.cluster_version.values.current_kubernetes_version : data.azurerm_kubernetes_service_versions.default.latest_version
+  value       = startswith(data.azurerm_kubernetes_cluster.default.current_kubernetes_version, var.cluster_version) ? data.azurerm_kubernetes_cluster.default.current_kubernetes_version : data.azurerm_kubernetes_service_versions.default.latest_version
 }
 
 output "latest_version_full" {

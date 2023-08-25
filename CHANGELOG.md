@@ -18,6 +18,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## Deprecations
 
 - The `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables are deprecated and will be removed in the `v1.21.0` release.
+- The `sku_tier` options `free` & `standard` are deprecated and will be removed in the `v1.23.0` release.
 
 ---
 
@@ -39,7 +40,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Updated _Kube Prometheus Stack_ chart to [v48.3.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-48.3.1). ([#1317](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1317)) [@hadeeds](https://github.com/hadeeds)
 - Changed the default cluster automatic upgrade behaviour to support Kubernetes patch upgrades and node image upgrades during the configured maintenance windows. [@stevehipwell](https://github.com/stevehipwell)
-- Changed the default node upgrade window start time to `04:00` so it no longer overlaps with the control plane upgrade window. [@stevehipwell](https://github.com/stevehipwell)
 - Removed the `experimental.cluster_patch_upgrade` input variable as this is now the default behaviour. [@stevehipwell](https://github.com/stevehipwell)
 - Added the `unsupported.manual_upgrades` input variable to control if the cluster kubernetes patch upgrades should be manually applied. [@stevehipwell](https://github.com/stevehipwell)
 - Removed the `experimental.node_upgrade_manual` input variable as `unsupported.manual_upgrades` covers it's purpose and more. [@stevehipwell](https://github.com/stevehipwell)
@@ -53,6 +53,10 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 - Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@peterabarr](https://github.com/peterabarr)
 - Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@peterabarr](https://github.com/peterabarr)
+- Added experimental support for creating new Linux clusters with the Azure CNI in overlay mode via the `experimental.azure_cni_overlay` input variable. [@stevehipwell](https://github.com/stevehipwell)
+- Added `FREE` & `STANDARD` to the available values for `sku_tier` to replace `free` & `standard`. [@stevehipwell](https://github.com/stevehipwell)
+- Deprecated `sku_tier` values `free` & `standard`. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed maintenance windows start date bug. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.19.0] - 2023-08-16
 
