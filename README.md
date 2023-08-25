@@ -817,8 +817,6 @@ Specification for the `logging.control_plane.log_analytics` object.
 | `workspace_id`                  | The Azure Log Analytics workspace ID, if not specified the default will be used. | `string`       | `null`      |
 | `profile`                       | The profile to use for the log category types.                                   | `string`       | `null`      |
 | `additional_log_category_types` | Additional log category types to collect.                                        | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.                    | `bool`         | `true`      |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.              | `number`       | `30`        |
 
 ### Appendix C1b
 

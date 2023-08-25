@@ -44,6 +44,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added the `unsupported.manual_upgrades` input variable to control if the cluster kubernetes patch upgrades should be manually applied. [@stevehipwell](https://github.com/stevehipwell)
 - Removed the `experimental.node_upgrade_manual` input variable as `unsupported.manual_upgrades` covers it's purpose and more. [@stevehipwell](https://github.com/stevehipwell)
 - Added `cluster_version`, `cluster_version_full` & `latest_version_full` module outputs. [@stevehipwell](https://github.com/stevehipwell)
+- Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@appkins](https://github.com/appkins)
+- Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@appkins](https://github.com/appkins)
 
 ## [v1.19.1] - 2023-08-25
 

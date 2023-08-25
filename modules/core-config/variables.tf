@@ -98,8 +98,6 @@ variable "logging" {
         workspace_id                  = string
         profile                       = string
         additional_log_category_types = list(string)
-        retention_enabled             = bool
-        retention_days                = number
       })
       storage_account = object({
         enabled                       = bool
