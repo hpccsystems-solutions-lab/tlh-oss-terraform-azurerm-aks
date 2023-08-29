@@ -103,7 +103,7 @@ module "node_groups" {
   cni                   = local.cni
   fips                  = var.fips
   subnet_id             = local.subnet_id
-  availability_zones    = local.availability_zones
+  availability_zones    = var.availability_zones
   bootstrap_name        = local.bootstrap_name
   bootstrap_vm_size     = local.bootstrap_vm_size
   node_groups           = var.node_groups

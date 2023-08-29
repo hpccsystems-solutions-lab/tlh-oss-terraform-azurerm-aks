@@ -537,3 +537,10 @@ variable "experimental" {
   nullable = false
   default  = {}
 }
+
+variable "availability_zones" {
+  description = "Availability zones to use for the node groups."
+  type        = list(number)
+  nullable    = false
+  default     = [1]
+}
