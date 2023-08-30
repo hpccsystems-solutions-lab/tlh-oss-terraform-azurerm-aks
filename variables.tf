@@ -49,12 +49,6 @@ variable "sku_tier" {
   }
 }
 
-# variable "cluster_endpoint_public_access" {
-#   description = "Indicates whether or not the Azure Kubernetes Service managed cluster public API server endpoint is enabled."
-#   type        = bool
-#   nullable    = false
-# }
-
 variable "cluster_endpoint_access_cidrs" {
   description = "List of CIDR blocks which can access the Azure Kubernetes Service managed cluster API server endpoint, an empty list will not error but will block public access to the cluster."
   type        = list(string)

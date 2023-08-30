@@ -52,12 +52,6 @@ variable "fips" {
   nullable    = false
 }
 
-# variable "cluster_endpoint_public_access" {
-#   description = "Indicates whether or not the Azure Kubernetes managed cluster public API server endpoint is enabled."
-#   type        = bool
-#   nullable    = false
-# }
-
 variable "cluster_endpoint_access_cidrs" {
   description = "List of CIDR blocks which can access the Azure Kubernetes managed cluster API server endpoint."
   type        = list(string)
