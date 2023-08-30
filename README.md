@@ -51,7 +51,7 @@ See [documentation](/docs) for system architecture, requirements and user guides
 > **Warning**
 > AKS automatic upgrades can be sensitive to incorrectly configured workloads or transient failures in the AKS system; as a result you should closely monitor your clusters to ensure they're suitable for automatic upgrades.
 
-The AKS module is handles the Kubernetes minor version updates and the core service versions; the core service versions are upgraded as part of a module upgrade and the Kubernetes minor version is a module input. The AKS module also configures a maintenance window for when the [control plane automatically upgrades](#appendix-g1) and a maintenance window for when the [nodes automatically upgrade](#appendix-g2); it is possible (but **UNSUPPORTED**) to [disable](#manual-upgrades) these upgrades. The control plane upgrade window will also be used for upgrading the AKS managed services in the cluster, and so is always required to be configured.
+The AKS module is handles the Kubernetes minor version updates and the core service versions; the core service versions are upgraded as part of a module upgrade and the Kubernetes minor version is a module input. The AKS module also configures a maintenance window for when the [control plane automatically upgrades](#appendix-h1) and a maintenance window for when the [nodes automatically upgrade](#appendix-h2); it is possible (but **UNSUPPORTED**) to [disable](#manual-upgrades) these upgrades. The control plane upgrade window will also be used for upgrading the AKS managed services in the cluster, and so is always required to be configured.
 
 You should never upgrade the AKS Kubernetes minor version outside the AKS module; however, it may be feasible to manually upgrade the patch version, though this is **UNSUPPORTED** until we verify that it doesn't cause adverse effects.
 
@@ -117,7 +117,7 @@ While _External DNS_ supports both public and private zones, in split-horizon se
 
 ### Node Groups
 
-The node group configuration provided by the `node_groups` input variable allows a cluster to be created with node groups that span multiple availability zones and can be configured with the specific required behaviour. The node group name prefix is the map key and at a minimum `node_size` & `max_capacity` must be provided with the other values having a default (see [Appendix B](#appendix-b)).
+The node group configuration provided by the `node_groups` input variable allows a cluster to be created with node groups that span multiple availability zones and can be configured with the specific required behaviour. The node group name prefix is the map key and at a minimum `node_size` & `max_capacity` must be provided with the other values having a default (see [Appendix C](#appendix-c)).
 
 #### System Node Group
 
@@ -229,7 +229,7 @@ This module is expected to be referenced by it's major version (e.g. `v1`) and r
 
 ### Core Service Configuration
 
-The core service configuration, input variable [core_services_config](#appendix-e), allows the customisation of the core cluster services. All core services run on a dedicated system node group reserved only for these services, although `DaemonSets` will be scheduled on all cluster nodes.
+The core service configuration, input variable [core_services_config](#appendix-f), allows the customisation of the core cluster services. All core services run on a dedicated system node group reserved only for these services, although `DaemonSets` will be scheduled on all cluster nodes.
 
 #### Node Auto-scaling
 
@@ -243,7 +243,7 @@ AKS cluster logging is currently split up into two parts; the control plane logs
 
 Control plane logs are exported to one (or both) of a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview), these logs are retained for `30` days by default. Both of these destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
 
-The control plane logs can be configured via the [logging.control_plane](#appendix-c1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as changing the retention. Although the module can create a Log Analytics Workspace for control plane logs this is **DEPRECATED** and it is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
+The control plane logs can be configured via the [logging.control_plane](#appendix-d1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as changing the retention. Although the module can create a Log Analytics Workspace for control plane logs this is **DEPRECATED** and it is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
 
 ###### Control Plane Logging Profiles
 
@@ -262,7 +262,7 @@ The following control plane log profiles with their default log category types a
 
 Both node (systemd) and pod/container logs are collected from the node by the _Fluent Bit_ collector `DaemonSet`, _Fluent Bit_ adds additional metadata to the collected logs before sending them off the ephemeral node to the persistent aggregation service. The persistent aggregation service is currently provided by _Fluentd_ running as a `StatefulSet` with a single pod in each cluster availability zone, _Fluentd_ makes sure that the logs can't be lost once they've been received by backing them on persistent storage. _Fluentd_ is then responsible for sending the logs to one or more destination. This architecture provides high throughput of logs, over 15k logs a second, and resilience to both node and network outages.
 
-Logging outputs can be configured directly against _Fluentd_ via the module input variable `core_services_config.fluentd` (see [Appendix E5](#appendix-e5)); it is also possible to modify the logs as part of the route configuration but modifying logs in any way more advanced than adding fields for cluster context can significantly impact the _Fluentd_ throughput and so is strongly advised against.
+Logging outputs can be configured directly against _Fluentd_ via the module input variable `core_services_config.fluentd` (see [Appendix F5](#appendix-f5)); it is also possible to modify the logs as part of the route configuration but modifying logs in any way more advanced than adding fields for cluster context can significantly impact the _Fluentd_ throughput and so is strongly advised against.
 
 In cluster _Loki_ support is currently experimental and can be enabled by setting the `logging.nodes.loki.enabled` or `logging.workloads.loki.enabled` to `true`; this enables powerful log querying through the in cluster _Grafana_.
 
@@ -305,7 +305,7 @@ The workload metrics interface is to expose metrics from the workload pod in _Pr
 
 #### Metrics Alerts
 
-Cluster alerts are powered by _AlertManager_ and are ignored by default, to configure the alerts you can use the module input variable `core_services_config.alertmanager` (see [Appendix E1](#appendix-e1)) to define [routes](https://prometheus.io/docs/alerting/latest/configuration/#route) and [receivers](https://prometheus.io/docs/alerting/latest/configuration/#receiver).
+Cluster alerts are powered by _AlertManager_ and are ignored by default, to configure the alerts you can use the module input variable `core_services_config.alertmanager` (see [Appendix F1](#appendix-f1)) to define [routes](https://prometheus.io/docs/alerting/latest/configuration/#route) and [receivers](https://prometheus.io/docs/alerting/latest/configuration/#receiver).
 
 Custom [alert rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) can be configured by adding additional [PrometheusRule](https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1.PrometheusRule) resources to the cluster with the `lnrs.io/monitoring-platform: "true"` and either the `lnrs.io/prometheus-rule: "true"` or `lnrs.io/thanos-rule: "true"` (only use the _Thanos_ rule label if you need to process more than 6h of metrics) labels set.
 
@@ -315,23 +315,23 @@ Traces aren't currently natively supported but it is planned to support at least
 
 #### Visualisation
 
-The module provides in-cluster _Grafana_ as a visualisation service for metrics and logs; this can be configured via the `core_services_config.grafana` input variable (see [Appendix E7](#appendix-e7)). You can also add additional [data sources](https://grafana.com/docs/grafana/latest/datasources/) via a `ConfigMap` with the label `grafana_datasource: "1"` and additional [dashboards](https://grafana.com/docs/grafana/latest/dashboards/) via a `ConfigMap` with the label `grafana_dashboard: "1"`.
+The module provides in-cluster _Grafana_ as a visualisation service for metrics and logs; this can be configured via the `core_services_config.grafana` input variable (see [Appendix F7](#appendix-f7)). You can also add additional [data sources](https://grafana.com/docs/grafana/latest/datasources/) via a `ConfigMap` with the label `grafana_datasource: "1"` and additional [dashboards](https://grafana.com/docs/grafana/latest/dashboards/) via a `ConfigMap` with the label `grafana_dashboard: "1"`.
 
 #### Certificates
 
-Clusters have [Cert Manager](https://cert-manager.io/) installed to support generating certificates from [Certificate](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate) resources referencing either a [ClusterIssuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer) or an [Issuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer); this can be configured via the `core_services_config.cert_manager` input variable (see [Appendix E2](#appendix-e2)). By default there are the following `ClusterIssuers` provided, `letsencrypt`, `letsencrypt-staging` & `zerossl`; all of which use [ACME DNS01](https://cert-manager.io/docs/configuration/acme/dns01/) which is configured via the `core_services_config.cert_manager.acme_dns_zones` input variable. It is possible to add additional `ClusterIssuer` or `Issuer` resources either via the `core_services_config.cert_manager.additional_issuers` or directly through the _Kubernetes_ API.
+Clusters have [Cert Manager](https://cert-manager.io/) installed to support generating certificates from [Certificate](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate) resources referencing either a [ClusterIssuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer) or an [Issuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer); this can be configured via the `core_services_config.cert_manager` input variable (see [Appendix F2](#appendix-f2)). By default there are the following `ClusterIssuers` provided, `letsencrypt`, `letsencrypt-staging` & `zerossl`; all of which use [ACME DNS01](https://cert-manager.io/docs/configuration/acme/dns01/) which is configured via the `core_services_config.cert_manager.acme_dns_zones` input variable. It is possible to add additional `ClusterIssuer` or `Issuer` resources either via the `core_services_config.cert_manager.additional_issuers` or directly through the _Kubernetes_ API.
 
 If an `Ingress` resource is annotated with the `cert-manager.io/cluster-issuer` or `cert-manager.io/issuer` and contains TLS configuration for the hosts _Cert Manager_ can automatically generate a certificate.
 
 #### External DNS
 
-Clusters have [External DNS](https://github.com/kubernetes-sigs/external-dns/blob/master/README.md) installed to manage configuring Azure DNS external to the cluster; this can be configured via the `core_services_config.external_dns` input variable (see [Appendix E4](#appendix-e4)). There will always be an instance managing private Route53 records but if you've configured public DNS zones there will also be a public instance running to manage these. To manage resources for private DNS the `lnrs.io/zone-type: private` annotation should be set, for public DNS the `lnrs.io/zone-type: public` annotation should be set and for split horizon (public & private) DNS the `lnrs.io/zone-type: public-private` annotation should be set.
+Clusters have [External DNS](https://github.com/kubernetes-sigs/external-dns/blob/master/README.md) installed to manage configuring Azure DNS external to the cluster; this can be configured via the `core_services_config.external_dns` input variable (see [Appendix F4](#appendix-f4)). There will always be an instance managing private Route53 records but if you've configured public DNS zones there will also be a public instance running to manage these. To manage resources for private DNS the `lnrs.io/zone-type: private` annotation should be set, for public DNS the `lnrs.io/zone-type: public` annotation should be set and for split horizon (public & private) DNS the `lnrs.io/zone-type: public-private` annotation should be set.
 
  By default DNS records are only generated for `Ingress` resources with the `lnrs.io/zone-type` annotation set but additional _Kubernetes_ resource types can be supported by adding them to the `core_services_config.external_dns.additional_sources` input variable.
 
 #### Storage
 
-The module includes support for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) (always on), [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) (off by default), [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) (off by default) and [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) (off by default). There is also support creating a host path volume on the node from local disks (NVMe or the temp disk). The module storage configuration can be customised using the the [storage](#appendix-d) module input variable.
+The module includes support for the [Azure Disks CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-disk-csi) (always on), [Azure Files CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) (off by default), [Azure Blob CSI driver](https://learn.microsoft.com/en-us/azure/aks/azure-blob-csi) (off by default) and [Local Volume Static Provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) (off by default). There is also support creating a host path volume on the node from local disks (NVMe or the temp disk). The module storage configuration can be customised using the the [storage](#appendix-e) module input variable.
 
 ##### Azure Disks CSI Driver
 
@@ -559,7 +559,7 @@ The _Fluent Bit Aggregator_ can be enabled by setting the experimental flag `exp
 
 | **Variable**                               | **Description**                                                                                         | **Type**                                      | **Default** |
 | :----------------------------------------- | :------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
-| `fluent_bit_aggregator_resources_override` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `fluent_bit_aggregator_resources_override` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
 ### Single Line Log Parser Support
 
@@ -731,11 +731,12 @@ This module requires the following versions to be configured in the workspace `t
 | `managed_outbound_idle_timeout`       | Desired outbound flow idle timeout in seconds for the cluster managed load balancer, see the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-load-balancer-idle-timeout). Ignored if NAT gateway is specified, must be between `240` and `7200` inclusive.                                                                                                          | `number`                                  | `240`             |
 | `admin_group_object_ids`              | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                                                                                                                                                                                                                 | `list(string)`                            | `[]`              |
 | `rbac_bindings`                       | User and groups to configure in Kubernetes `ClusterRoleBindings`; for Azure AD these are the IDs.                                                                                                                                                                                                                                                                                                                   | `object` ([Appendix A](#appendix-a))      | `{}`              |
-| `node_groups`                         | Node groups to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix B](#appendix-b)) | `{}`              |
-| `logging`                             | Logging configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix C](#appendix-c)) | `{}`              |
-| `storage`                             | Storage configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix D](#appendix-d)) | `{}`              |
-| `core_services_config`                | Core service configuration.                                                                                                                                                                                                                                                                                                                                                                                         | `any` ([Appendix F](#appendix-f))         |                   |
-| `maintenance`                         | Maintenance configuration.                                                                                                                                                                                                                                                                                                                                                                                          | `object` ([Appendix E](#appendix-e))      | `{}`              |
+| `system_nodes`                         | System nodes to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix B](#appendix-b)) | `{}`              |
+| `node_groups`                         | Node groups to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix C](#appendix-c)) | `{}`              |
+| `logging`                             | Logging configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix D](#appendix-d)) | `{}`              |
+| `storage`                             | Storage configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix E](#appendix-e)) | `{}`              |
+| `core_services_config`                | Core service configuration.                                                                                                                                                                                                                                                                                                                                                                                         | `any` ([Appendix G](#appendix-g))         |                   |
+| `maintenance`                         | Maintenance configuration.                                                                                                                                                                                                                                                                                                                                                                                          | `object` ([Appendix H](#appendix-h))      | `{}`              |
 | `tags`                                | Tags to apply to all resources.                                                                                                                                                                                                                                                                                                                                                                                     | `map(string)`                             | `{}`              |
 | `fips`                                | If `true`, the cluster will be created with FIPS 140-2 mode enabled; this can't be changed once the cluster has been created.                                                                                                                                                                                                                                                                                       | `bool`                                    | `false`           |
 | `unsupported`                         | Configure [unsupported](#unsupported-features) features.                                                                                                                                                                                                                                                                                                                                                            | `any`                                     | `{}`              |
@@ -755,6 +756,17 @@ Specification for the `rbac_bindings` object.
 | `cluster_view_groups` | Groups to bind to the `view` `ClusterRole`, list of group IDs.                                       | `list(string)` | `[]`        |
 
 ### Appendix B
+
+Specification for the `system_nodes` objects.
+
+| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                                                                         | **Type**                     | **Default** |
+| :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :---------- |
+| `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the system node group, `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                                                               | `string`                     | `amd64`     |
+| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                     | `"v1"`      |
+| `node_size`           | Size of the instance to create in the system node group. See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                                                                | `string`                     |             |
+| `min_capacity`        | Minimum number of nodes in the system node group, this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                                                               | `number`                     | `3`         |
+
+### Appendix C
 
 Specification for the `node_groups` objects.
 
@@ -789,29 +801,29 @@ Specification for the `node_groups.taints` object.
 | `value`      | The value of the taint. Maximum length of 63.                                             | `string` |             |
 | `effect`     | The effect of the taint. Valid values: `NO_SCHEDULE`, `NO_EXECUTE`, `PREFER_NO_SCHEDULE`. | `string` |             |
 
-### Appendix C
+### Appendix D
 
 Specification for the `logging` object.
 
 | **Variable**                     | **Description**                                                                                                    | **Type**                               | **Default** |
 | :------------------------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :---------- |
-| `control_plane`                  | Control plane logging configuration.                                                                               | `object` ([Appendix C1](#appendix-c1)) |             |
-| `nodes`                          | Nodes logging configuration.                                                                                       | `object` ([Appendix C2](#appendix-c2)) | `{}`        |
-| `workloads`                      | Workloads logging configuration.                                                                                   | `object` ([Appendix C3](#appendix-c3)) | `{}`        |
-| `log_analytics_workspace_config` | Default Azure Log Analytics workspace configuration.                                                               | `object` ([Appendix C4](#appendix-c4)) | `{}`        |
-| `storage_account_config`         | Default Azure storage configuration.                                                                               | `object` ([Appendix C5](#appendix-c5)) | `{}`        |
+| `control_plane`                  | Control plane logging configuration.                                                                               | `object` ([Appendix D1](#appendix-d1)) |             |
+| `nodes`                          | Nodes logging configuration.                                                                                       | `object` ([Appendix D2](#appendix-d2)) | `{}`        |
+| `workloads`                      | Workloads logging configuration.                                                                                   | `object` ([Appendix D3](#appendix-d3)) | `{}`        |
+| `log_analytics_workspace_config` | Default Azure Log Analytics workspace configuration.                                                               | `object` ([Appendix D4](#appendix-d4)) | `{}`        |
+| `storage_account_config`         | Default Azure storage configuration.                                                                               | `object` ([Appendix D5](#appendix-d5)) | `{}`        |
 | `extra_records`                  | Additional records to add to the logs; env variables can be referenced within the value in the form `${<ENV_VAR>}` | `map(string)`                          | `{}`        |
 
-### Appendix C1
+### Appendix D1
 
 Specification for the `logging.control_plane` object.
 
 | **Variable**      | **Description**                                      | **Type**                                 | **Default** |
 | :---------------- | :--------------------------------------------------- | :--------------------------------------- | :---------- |
-| `log_analytics`   | Control plane logging log analytics configuration.   | `object` ([Appendix C1a](#appendix-c1a)) | `{}`        |
-| `storage_account` | Control plane logging storage account configuration. | `object` ([Appendix C1b](#appendix-c1b)) | `{}`        |
+| `log_analytics`   | Control plane logging log analytics configuration.   | `object` ([Appendix D1a](#appendix-d1a)) | `{}`        |
+| `storage_account` | Control plane logging storage account configuration. | `object` ([Appendix D1b](#appendix-d1b)) | `{}`        |
 
-### Appendix C1a
+### Appendix D1a
 
 Specification for the `logging.control_plane.log_analytics` object.
 
@@ -822,7 +834,7 @@ Specification for the `logging.control_plane.log_analytics` object.
 | `profile`                       | The profile to use for the log category types.                                   | `string`       | `null`      |
 | `additional_log_category_types` | Additional log category types to collect.                                        | `list(string)` | `[]`        |
 
-### Appendix C1b
+### Appendix D1b
 
 Specification for the `logging.control_plane.storage_account` object.
 
@@ -835,16 +847,16 @@ Specification for the `logging.control_plane.storage_account` object.
 | `retention_enabled`             | If retention should be configured per log category collected.            | `bool`         | `true`      |
 | `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.      | `number`       | `30`        |
 
-### Appendix C2
+### Appendix D2
 
 Specification for the `logging.nodes` object.
 
 | **Variable**      | **Description**                          | **Type**                                 | **Default** |
 | :---------------- | :--------------------------------------- | :--------------------------------------- | :---------- |
-| `storage_account` | Node logs storage account configuration. | `object` ([Appendix C2a](#appendix-c2a)) | `{}`        |
-| `loki`            | Loki workload logs configuration         | `object` ([Appendix C3a](#appendix-c2b)) | `{}`        |
+| `storage_account` | Node logs storage account configuration. | `object` ([Appendix D2a](#appendix-d2a)) | `{}`        |
+| `loki`            | Loki workload logs configuration         | `object` ([Appendix D3a](#appendix-d2b)) | `{}`        |
 
-### Appendix C2a
+### Appendix D2a
 
 Specification for the `logging.nodes.storage_account` object.
 
@@ -855,7 +867,7 @@ Specification for the `logging.nodes.storage_account` object.
 | `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
 | `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
 
-### Appendix C2b
+### Appendix D2b
 
 Specification for the `logging.nodes.loki` object.
 
@@ -863,20 +875,20 @@ Specification for the `logging.nodes.loki` object.
 | :----------- | :----------------------------------- | :------- | :---------- |
 | `enabled`    | If node logs should be sent to Loki. | `bool`   | `false`     |
 
-### Appendix C3
+### Appendix D3
 
 Specification for the `logging.workloads` object.
 
 | **Variable**                  | **Description**                                                                                | **Type**                                 | **Default** |
 | :---------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------- | :---------- |
 | `core_service_log_level`      | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`.                    | `string`                                 | `"WARN"`    |
-| `storage_account`             | Workload logs storage account configuration.                                                   | `object` ([Appendix C3a](#appendix-c3a)) | `{}`        |
+| `storage_account`             | Workload logs storage account configuration.                                                   | `object` ([Appendix D3a](#appendix-d3a)) | `{}`        |
 | `storage_account_logs`        | **DEPRECATED** - If workload logs should be sent to Azure Blob Storage, use `storage_account`. | `bool`                                   | `false`     |
 | `storage_account_container`   | **DEPRECATED** - The container to use for the log storage, use `storage_account`.              | `string`                                 | `null`      |
 | `storage_account_path_prefix` | **DEPRECATED** - Blob prefix for the logs, use `storage_account`.                              | `string`                                 | `null`      |
-| `loki`                        | Loki workload logs configuration                                                               | `object` ([Appendix C3a](#appendix-c3b)) | `{}`        |
+| `loki`                        | Loki workload logs configuration                                                               | `object` ([Appendix D3a](#appendix-d3b)) | `{}`        |
 
-### Appendix C3a
+### Appendix D3a
 
 Specification for the `logging.workloads.storage_account` object.
 
@@ -887,7 +899,7 @@ Specification for the `logging.workloads.storage_account` object.
 | `container`   | The container to use for the log storage.                                | `string` | `"nodes"`   |
 | `path_prefix` | Blob prefix for the logs.                                                | `string` | `null`      |
 
-### Appendix C3b
+### Appendix D3b
 
 Specification for the `logging.workloads.loki` object.
 
@@ -895,7 +907,7 @@ Specification for the `logging.workloads.loki` object.
 | :----------- | :----------------------------------- | :------- | :---------- |
 | `enabled`    | If node logs should be sent to Loki. | `bool`   | `false`     |
 
-### Appendix C4
+### Appendix D4
 
 Specification for the `logging.log_analytics_workspace_config` object.
 
@@ -903,7 +915,7 @@ Specification for the `logging.log_analytics_workspace_config` object.
 | :----------- | :---------------------------------------------------------- | :------- | :---------- |
 | `id`         | The Azure Loc Analytics workspace ID to be used by default. | `string` | `null`      |
 
-### Appendix C5
+### Appendix D5
 
 Specification for the `logging.storage_account_config` object.
 
@@ -911,18 +923,18 @@ Specification for the `logging.storage_account_config` object.
 | :----------- | :-------------------------------------------------- | :------- | :---------- |
 | `id`         | The Azure Storage Account ID to be used by default. | `string` | `null`      |
 
-### Appendix D
+### Appendix E
 
 Specification for the `storage` object.
 
 | **Variable** | **Description**                                              | **Type**                               | **Default** |
 | :----------- | :----------------------------------------------------------- | :------------------------------------- | :---------- |
-| `file`       | Azure File CSI configuration.                                | `object` ([Appendix D1](#appendix-d1)) | `{}`        |
-| `blob`       | Azure Blob CSI configuration.                                | `object` ([Appendix D2](#appendix-d2)) | `{}`        |
-| `nvme_pv`    | NVMe Local Volume Static Provisioner configuration.          | `object` ([Appendix D3](#appendix-d3)) | `{}`        |
-| `host_path`  | NVMe & temp disk host path configuration (**EXPERIMENTAL**). | `object` ([Appendix D4](#appendix-d4)) | `{}`        |
+| `file`       | Azure File CSI configuration.                                | `object` ([Appendix E1](#appendix-e1)) | `{}`        |
+| `blob`       | Azure Blob CSI configuration.                                | `object` ([Appendix E2](#appendix-e2)) | `{}`        |
+| `nvme_pv`    | NVMe Local Volume Static Provisioner configuration.          | `object` ([Appendix E3](#appendix-e3)) | `{}`        |
+| `host_path`  | NVMe & temp disk host path configuration (**EXPERIMENTAL**). | `object` ([Appendix E4](#appendix-e4)) | `{}`        |
 
-### Appendix D1
+### Appendix E1
 
 Specification for the `storage.file` object.
 
@@ -930,7 +942,7 @@ Specification for the `storage.file` object.
 | :----------- | :--------------------------------------- | :------- | :---------- |
 | `enabled`    | If the Azure File CSI should be enabled. | `bool`   | `false`     |
 
-### Appendix D2
+### Appendix E2
 
 Specification for the `storage.blob` object.
 
@@ -938,7 +950,7 @@ Specification for the `storage.blob` object.
 | :----------- | :--------------------------------------- | :------- | :---------- |
 | `enabled`    | If the Azure Blob CSI should be enabled. | `bool`   | `false`     |
 
-### Appendix D3
+### Appendix E3
 
 Specification for the `storage.nvme_pv` object.
 
@@ -946,7 +958,7 @@ Specification for the `storage.nvme_pv` object.
 | :----------- | :------------------------------------------------------------------------------------ | :------- | :---------- |
 | `enabled`    | If the Local Volume Static Provisioner should be enabled to mount NVMe drives as PVs. | `bool`   | `false`     |
 
-### Appendix D4
+### Appendix E4
 
 Specification for the `storage.host_path` object.
 
@@ -954,25 +966,25 @@ Specification for the `storage.host_path` object.
 | :----------- | :------------------------------------------------------------ | :------- | :---------- |
 | `enabled`    | If the NVMe or temp disk host path support should be enabled. | `bool`   | `false`     |
 
-### Appendix E
+### Appendix F
 
 Specification for the `core_services_config` object.
 
 | **Variable**               | **Description**                         | **Type**                                 | **Default** |
 | :------------------------- | :-------------------------------------- | :--------------------------------------- | :---------- |
-| `alertmanager`             | Alertmanager configuration.             | `object` ([Appendix E1](#appendix-e1))   | `{}`        |
-| `cert_manager`             | Cert Manager configuration.             | `object` ([Appendix E2](#appendix-e2))   | `{}`        |
-| `coredns`                  | CoreDNS configuration.                  | `object` ([Appendix E3](#appendix-e3))   | `{}`        |
-| `external_dns`             | ExternalDNS configuration.              | `object` ([Appendix E4](#appendix-e4))   | `{}`        |
-| `fluentd`                  | Fluentd configuration.                  | `object` ([Appendix E5](#appendix-e5))   | `{}`        |
-| `grafana`                  | Grafana configuration.                  | `object` ([Appendix E7](#appendix-e7))   | `{}`        |
-| `ingress_internal_core`    | Ingress internal-core configuration.    | `object` ([Appendix E8](#appendix-e8))   |             |
-| `prometheus`               | Prometheus configuration.               | `object` ([Appendix E9](#appendix-e9))   | `{}`        |
-| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix E10](#appendix-e10)) | `{}`        |
-| `thanos`                   | Thanos configuration.                   | `object` ([Appendix E11](#appendix-e11)) | `{}`        |
-| `loki`                     | Loki.                                   | `object` ([Appendix E12](#appendix-e12)) | `{}`        |
+| `alertmanager`             | Alertmanager configuration.             | `object` ([Appendix F1](#appendix-f1))   | `{}`        |
+| `cert_manager`             | Cert Manager configuration.             | `object` ([Appendix F2](#appendix-f2))   | `{}`        |
+| `coredns`                  | CoreDNS configuration.                  | `object` ([Appendix F3](#appendix-f3))   | `{}`        |
+| `external_dns`             | ExternalDNS configuration.              | `object` ([Appendix F4](#appendix-f4))   | `{}`        |
+| `fluentd`                  | Fluentd configuration.                  | `object` ([Appendix F5](#appendix-f5))   | `{}`        |
+| `grafana`                  | Grafana configuration.                  | `object` ([Appendix F7](#appendix-f7))   | `{}`        |
+| `ingress_internal_core`    | Ingress internal-core configuration.    | `object` ([Appendix F8](#appendix-f8))   |             |
+| `prometheus`               | Prometheus configuration.               | `object` ([Appendix F9](#appendix-f9))   | `{}`        |
+| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix F10](#appendix-f10)) | `{}`        |
+| `thanos`                   | Thanos configuration.                   | `object` ([Appendix F11](#appendix-f11)) | `{}`        |
+| `loki`                     | Loki.                                   | `object` ([Appendix F12](#appendix-f12)) | `{}`        |
 
-### Appendix E1
+### Appendix F1
 
 Specification for the `core_services_config.alertmanager` object.
 
@@ -982,9 +994,9 @@ Specification for the `core_services_config.alertmanager` object.
 | `smtp_from`          | SMTP from address for alert emails.                                                           | `string`                                      | `null`      |
 | `receivers`          | [Receiver configuration](https://prometheus.io/docs/alerting/latest/configuration/#receiver). | `list(object)`                                | `[]`        |
 | `routes`             | [Route configuration](https://prometheus.io/docs/alerting/latest/configuration/#route).       | `list(object)`                                | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                            | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                            | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E2
+### Appendix F2
 
 Specification for the `core_services_config.cert_manager` object.
 
@@ -995,7 +1007,7 @@ Specification for the `core_services_config.cert_manager` object.
 | `default_issuer_kind` | Kind of the default issuer.                                    | `string`       | `"ClusterIssuer"`       |
 | `default_issuer_name` | Name of the default issuer , use `letsencrypt` for prod certs. | `string`       | `"letsencrypt-staging"` |
 
-### Appendix E3
+### Appendix F3
 
 Specification for the `core_services_config.coredns` object.
 
@@ -1003,7 +1015,7 @@ Specification for the `core_services_config.coredns` object.
 | :-------------- | :----------------------------------------------------------------------- | :------------ | :---------- |
 | `forward_zones` | Map of DNS zones and DNS server IP addresses to forward DNS requests to. | `map(string)` | `{}`        |
 
-### Appendix E4
+### Appendix F4
 
 Specification for the `core_services_config.external_dns` object.
 
@@ -1013,7 +1025,7 @@ Specification for the `core_services_config.external_dns` object.
 | `private_domain_filters` | Domains that can have DNS records created for them, these must be set up in the VPC as private hosted zones.    | `list(string)` | `[]`        |
 | `public_domain_filters`  | Domains that can have DNS records created for them, these must be set up in the account as public hosted zones. | `list(string)` | `[]`        |
 
-### Appendix E5
+### Appendix F5
 
 Specification for the `core_services_config.fluentd` object.
 
@@ -1024,10 +1036,10 @@ Specification for the `core_services_config.fluentd` object.
 | `additional_env`     | Additional environment variables.                                                                                                                                                  | `map(string)`                                 | `{}`        |
 | `debug`              | If `true` all logs will be sent to stdout.                                                                                                                                         | `bool`                                        | `true`      |
 | `filters`            | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `string`                                      | `null`      |
-| `route_config`       | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix E6](#appendix-e6))  | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                                                                                                                 | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `route_config`       | Global [Fluentd filter configuration](https://docs.fluentd.org/filter) which will be run before the route output. This can be multiple `<filter>` blocks as a single string value. | `list(object)` ([Appendix F6](#appendix-f6))  | `[]`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`                                                                                                                 | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E6
+### Appendix F6
 
 Specification for the `core_services_config.fluentd.route_config` object.
 
@@ -1038,7 +1050,7 @@ Specification for the `core_services_config.fluentd.route_config` object.
 | `copy`       | If the matched logs should be copied to later routes. | `bool`   | `false`     |
 | `config`     | The output configuration to use for the route.        | `string` |             |
 
-### Appendix E7
+### Appendix F7
 
 Specification for the `core_services_config.grafana` object.
 
@@ -1047,9 +1059,9 @@ Specification for the `core_services_config.grafana` object.
 | `admin_password`          | Admin password.                                                               | `string`                                      | `changeme`  |
 | `additional_data_sources` | Additional data sources.                                                      | `list(object)`                                | `[]`        |
 | `additional_plugins`      | Additional plugins to install.                                                | `list(string)`                                | `[]`        |
-| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`, `sidecar` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`, `sidecar` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E8
+### Appendix F8
 
 Specification for the `core_services_config.ingress_internal_core` object.
 
@@ -1061,40 +1073,40 @@ Specification for the `core_services_config.ingress_internal_core` object.
 | `lb_subnet_name`   | Name of the subnet to create the load balancer in, if not set subnet where node groups reside will be auto selected. _Should not be set unless specifically required._ | `string`       |                                   |
 | `public_dns`       | If the internal ingress DNS should be public or private.                                                                                                               | `bool`         | `false`                           |
 
-### Appendix E9
+### Appendix F9
 
 Specification for the `core_services_config.prometheus` object.
 
 | **Variable**         | **Description**                                                                                         | **Type**                                      | **Default** |
 | :------------------- | :------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
 | `remote_write`       | Remote write endpoints for metrics.                                                                     | `list(object)`                                | `[]`        |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E10
+### Appendix F10
 
 Specification for the `core_services_config.prometheus_node_exporter` object.
 
 | **Variable**         | **Description**                                                    | **Type**                                      | **Default** |
 | :------------------- | :----------------------------------------------------------------- | :-------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E11
+### Appendix F11
 
 Specification for the `core_services_config.thanos` object.
 
 | **Variable**         | **Description**                                                                                                                                                | **Type**                                      | **Default** |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix E12
+### Appendix F12
 
 Specification for the `core_services_config.loki` object.
 
 | **Variable**         | **Description**                                                                                                                 | **Type**                                      | **Default** |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------- | :---------- |
-| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `gateway_default`, `write_default` `read_default` or `backend_default` | `map(object)` (see [Appendix F](#appendix-f)) | `{}`        |
+| `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `gateway_default`, `write_default` `read_default` or `backend_default` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix F
+### Appendix G
 
 Specification for the `resource_overrides` object.
 
@@ -1104,18 +1116,18 @@ Specification for the `resource_overrides` object.
 | `cpu_limit`  | Value to set for cpu limit. If `cpu_limit` specified, and `cpu` not specified then will be rounded to nearest full cpu to `cpu` value | `number` | null        |
 | `memory`     | Value to set for memory                                                                                                               | `number` | null        |
 
-### Appendix G
+### Appendix H
 
 Specification for the `maintenance` object.
 
 | **Variable**    | **Description**                                                                                                                                                                  | **Type**                                     | **Default** |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :---------- |
 | `utc_offset`    | Maintenance offset to UTC as a duration (e.g. `+00:00`); this will be used to specify local time. If this is not set a default will be calculated based on the cluster location. | `string`                                     | `null`      |
-| `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix G1](#appendix-g1))       | []          |
-| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix G2](#appendix-g2))       | []          |
-| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix G3](#appendix-g3)) | []          |
+| `control_plane` | Planned maintainence window for the cluster control plane.                                                                                                                       | `object` ([Appendix H1](#appendix-h1))       | []          |
+| `nodes`         | Planned maintainence window for the cluster nodes.                                                                                                                               | `object` ([Appendix H2](#appendix-h2))       | []          |
+| `not_allowed`   | Absolute windows when all maintainance is not allowed.                                                                                                                           | `list(object)` ([Appendix H3](#appendix-h3)) | []          |
 
-### Appendix G1
+### Appendix H1
 
 Specification for the `maintenance_window.control_plane` object.
 
@@ -1127,7 +1139,7 @@ Specification for the `maintenance_window.control_plane` object.
 | `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
 | `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
-### Appendix G2
+### Appendix H2
 
 Specification for the `maintenance_window.nodes` object.
 
@@ -1139,7 +1151,7 @@ Specification for the `maintenance_window.nodes` object.
 | `start_time`   | Start time for the maintainance window adjusted against UTC by the `utc_offset`; in the format `HH:mm`.                                                                                  | `string` | `00:00`     |
 | `duration`     | Duration of the maintainance window in hours.                                                                                                                                            | `number` | `4`         |
 
-### Appendix G3
+### Appendix H3
 
 Specification for the `maintenance_window.not_allowed` object.
 

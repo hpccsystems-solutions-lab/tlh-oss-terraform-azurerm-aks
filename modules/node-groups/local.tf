@@ -17,11 +17,11 @@ locals {
       node_os             = "ubuntu"
       node_type           = "gp"
       node_type_variant   = "default"
-      node_type_version   = "v1"
-      node_size           = "xlarge"
+      node_type_version   = var.system_nodes.node_type_version
+      node_size           = var.system_nodes.node_size
       single_group        = false
-      min_capacity        = local.az_count
-      max_capacity        = local.az_count * 4
+      min_capacity        = var.system_nodes.min_capacity
+      max_capacity        = var.system_nodes.min_capacity * 4
       os_config           = { sysctl = {} }
       ultra_ssd           = false
       os_disk_size        = 128
@@ -47,23 +47,21 @@ locals {
   placement_group_keys  = distinct(compact([for k, v in local.node_groups : v.placement_group_key if !v.single_group]))
   placement_group_names = flatten([for k in local.placement_group_keys : [for z in var.availability_zones : "${k}${z}"]])
 
-  node_groups_expanded_0 = merge(concat([for k, v in local.node_groups : { for z in var.availability_zones : format("%s%s", k, z) => merge(v, {
-    availability_zones = [z]
-    az                 = z
-    min_capacity       = floor(v.min_capacity / local.az_count)
-    max_capacity       = floor(v.max_capacity / local.az_count)
+  node_groups_expanded = merge(concat([for k, v in local.node_groups : { for z in var.availability_zones : format("%s%s", k, z) => merge(v, {
+    availability_zones           = [z]
+    az                           = z
+    min_capacity                 = floor(v.min_capacity / local.az_count)
+    max_capacity                 = floor(v.max_capacity / local.az_count)
+    proximity_placement_group_id = (v.placement_group_key == null || v.placement_group_key == "") ? null : azurerm_proximity_placement_group.default["${v.placement_group_key}${v.z}"].id
     }) } if !v.single_group],
     [for k, v in local.node_groups : { format("%s0", k) = merge(v, {
-      availability_zones = var.availability_zones
-      az                 = 0
+      availability_zones           = var.availability_zones
+      proximity_placement_group_id = null
+      az                           = 0
   }) } if v.single_group])...)
 
-  node_groups_expanded_1 = { for k, v in local.node_groups_expanded_0 : k => merge(v, {
-    proximity_placement_group_id = v.single_group || v.placement_group_key == null || v.placement_group_key == "" ? null : azurerm_proximity_placement_group.default["${v.placement_group_key}${v.az}"].id
-  }) }
-
-  system_node_groups = { for k, v in local.node_groups_expanded_1 : k => v if v.system }
-  user_node_groups   = { for k, v in local.node_groups_expanded_1 : k => v if !v.system }
+  system_node_groups = { for k, v in local.node_groups_expanded : k => v if v.system }
+  user_node_groups   = { for k, v in local.node_groups_expanded : k => v if !v.system }
 
   ingress_node_group = anytrue([for group in var.node_groups : try(group.labels["lnrs.io/tier"] == "ingress", false) && (length(group.taints) == 0 || (length(group.taints) == 1 && try(group.taints[0].key == "ingress", false)))])
 }

@@ -6,12 +6,12 @@ resource "terraform_data" "immutable_inputs" {
     cni          = local.cni
     ipv6         = false
     system_nodes = {
-      arch         = "amd64"
+      arch         = var.system_nodes.node_arch
       os           = "ubuntu"
       type         = "gp"
       type_variant = "default"
-      type_version = "v1"
-      size         = "xlarge"
+      type_version = var.system_nodes.node_type_version
+      size         = var.system_nodes.node_size
     }
   }
 
@@ -22,6 +22,11 @@ resource "terraform_data" "immutable_inputs" {
       input.cni,
       input.system_nodes
     ]
+
+    precondition {
+      condition     = var.system_nodes.min_capacity % length(local.availability_zones) == 0
+      error_message = "Minimum capacity should be divisible by the total availability zones for the Azure region."
+    }
 
     postcondition {
       condition     = var.cluster_name == self.output.cluster_name
@@ -36,6 +41,21 @@ resource "terraform_data" "immutable_inputs" {
     postcondition {
       condition     = local.cni != "AZURE_OVERLAY" || alltrue([for k, v in var.node_groups : v.node_os != "windows2019"])
       error_message = "Azure Overlay CNI doesn't support Windows Server 2019."
+    }
+
+    postcondition {
+      condition     = var.system_nodes.node_type_version == self.output.system_nodes.type_version
+      error_message = "You can't change the system node type version for an existing cluster."
+    }
+
+    postcondition {
+      condition     = var.system_nodes.node_size == self.output.system_nodes.size
+      error_message = "You can't change the system node size for an existing cluster."
+    }
+
+    postcondition {
+      condition     = var.system_nodes.node_arch == self.output.system_nodes.arch
+      error_message = "You can't change the system node architecture for an existing cluster."
     }
   }
 }
@@ -106,6 +126,7 @@ module "node_groups" {
   availability_zones   = local.availability_zones
   bootstrap_name       = local.bootstrap_name
   bootstrap_vm_size    = local.bootstrap_vm_size
+  system_nodes         = var.system_nodes
   node_groups          = var.node_groups
   labels               = local.labels
   tags                 = local.tags

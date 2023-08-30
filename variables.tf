@@ -169,6 +169,28 @@ variable "rbac_bindings" {
   default  = {}
 }
 
+variable "system_nodes" {
+  description = "System node group to configure."
+  type = object({
+    node_arch         = optional(string, "amd64")
+    node_size         = optional(string, "xlarge")
+    node_type_version = optional(string, "v1")
+    min_capacity      = optional(number, 3)
+  })
+  nullable = false
+  default  = {}
+
+  validation {
+    condition     = contains(["amd64", "arm64"], var.system_nodes.node_arch)
+    error_message = "Node group architecture must be either \"amd64\" or \"arm64\"."
+  }
+
+  validation {
+    condition     = (var.system_nodes.min_capacity > 0)
+    error_message = "System node group min capacity must be 0 or more."
+  }
+}
+
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({

@@ -76,6 +76,17 @@ variable "bootstrap_vm_size" {
   nullable    = false
 }
 
+variable "system_nodes" {
+  description = "System node group to configure."
+  type = object({
+    node_arch         = string
+    node_size         = string
+    node_type_version = string
+    min_capacity      = number
+  })
+  nullable = false
+}
+
 variable "node_groups" {
   description = "Node groups to configure."
   type = map(object({
