@@ -2,6 +2,8 @@ locals {
   name          = "fluentd"
   chart_version = "3.10.0"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   location_sanitized = lower(replace(var.location, " ", ""))
 
   use_aad_workload_identity = false
@@ -83,11 +85,22 @@ locals {
 
     affinity = {
       podAntiAffinity = {
-        requiredDuringSchedulingIgnoredDuringExecution = [{
+        requiredDuringSchedulingIgnoredDuringExecution = concat([{
+          topologyKey = "kubernetes.io/hostname"
+          }], local.cluster_version_minor >= 27 ? [] : [{
           topologyKey = "topology.kubernetes.io/zone"
-        }]
+        }])
       }
     }
+
+    topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+      maxSkew            = 1
+      minDomains         = var.zones
+      topologyKey        = "topology.kubernetes.io/zone"
+      whenUnsatisfiable  = "DoNotSchedule"
+      nodeAffinityPolicy = "Honor"
+      nodeTaintsPolicy   = "Honor"
+    }] : []
 
     resources = {
       requests = {

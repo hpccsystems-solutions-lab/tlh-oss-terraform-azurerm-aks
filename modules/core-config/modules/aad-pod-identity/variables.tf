@@ -28,6 +28,12 @@ variable "kubelet_identity_id" {
   nullable    = false
 }
 
+variable "cluster_version" {
+  description = "The Kubernetes version to use for the EKS cluster."
+  type        = string
+  nullable    = false
+}
+
 variable "namespace" {
   description = "Namespace to install the Kubernetes resources into."
   type        = string

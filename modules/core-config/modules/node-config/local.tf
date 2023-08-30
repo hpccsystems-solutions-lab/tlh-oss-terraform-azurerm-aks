@@ -1,6 +1,8 @@
 locals {
   chart_version = "0.5.0"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   chart_values = {
     commonLabels = var.labels
 
@@ -89,25 +91,53 @@ locals {
                   values   = ["HOST_PATH"]
                 }
               ]
-            },
-            {
-              matchExpressions = [
-                {
-                  key      = "node.lnrs.io/temp-disk"
-                  operator = "In"
-                  values   = ["true"]
-                },
-                {
-                  key      = "node.lnrs.io/temp-disk-mode"
-                  operator = "In"
-                  values   = ["HOST_PATH"]
+              labelSelector = {
+                matchLabels = {
+                  "app.kubernetes.io/name"     = "node-config"
+                  "app.kubernetes.io/instance" = "node-config"
                 }
-              ]
+              }
             }
+
           ]
         }
       }
+
+      podAntiAffinity = {
+        requiredDuringSchedulingIgnoredDuringExecution = concat([{
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"     = "node-config"
+              "app.kubernetes.io/instance" = "node-config"
+            }
+          }
+          topologyKey = "kubernetes.io/hostname"
+          }], local.cluster_version_minor >= 27 ? [] : [{
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"     = "node-config"
+              "app.kubernetes.io/instance" = "node-config"
+            }
+          }
+          topologyKey = "topology.kubernetes.io/zone"
+        }])
+      }
     }
+
+    topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+      maxSkew            = 1
+      minDomains         = 3
+      topologyKey        = "topology.kubernetes.io/zone"
+      whenUnsatisfiable  = "DoNotSchedule"
+      nodeAffinityPolicy = "Honor"
+      nodeTaintsPolicy   = "Honor"
+      labelSelector = {
+        matchLabels = {
+          "app.kubernetes.io/name"     = "node-config"
+          "app.kubernetes.io/instance" = "node-config"
+        }
+      }
+    }] : []
 
     tolerations = [
       {

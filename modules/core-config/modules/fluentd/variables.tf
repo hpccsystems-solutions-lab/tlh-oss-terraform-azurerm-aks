@@ -22,6 +22,12 @@ variable "cluster_name" {
   nullable    = false
 }
 
+variable "cluster_version" {
+  description = "The Kubernetes version to use for the EKS cluster."
+  type        = string
+  nullable    = false
+}
+
 variable "cluster_oidc_issuer_url" {
   description = "The URL of the cluster OIDC issuer."
   type        = string

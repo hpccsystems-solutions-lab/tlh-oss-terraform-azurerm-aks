@@ -61,6 +61,7 @@ module "aad_pod_identity" {
   node_resource_group_name = var.node_resource_group_name
   cni                      = var.cni
   kubelet_identity_id      = var.kubelet_identity_id
+  cluster_version          = var.cluster_version
   namespace                = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
   labels                   = var.labels
   log_level                = var.logging.workloads.core_service_log_level
@@ -107,9 +108,10 @@ module "cert_manager" {
 module "coredns" {
   source = "./modules/coredns"
 
-  namespace     = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
-  labels        = var.labels
-  forward_zones = var.core_services_config.coredns.forward_zones
+  cluster_version = var.cluster_version
+  namespace       = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
+  labels          = var.labels
+  forward_zones   = var.core_services_config.coredns.forward_zones
 
   depends_on = [
     module.crds,
@@ -183,6 +185,7 @@ module "fluent_bit_aggregator" {
   location                = var.location
   resource_group_name     = var.resource_group_name
   cluster_name            = var.cluster_name
+  cluster_version         = var.cluster_version
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["observability"].metadata[0].name
   labels                  = var.labels
@@ -219,6 +222,7 @@ module "fluentd" {
   location                       = var.location
   resource_group_name            = var.resource_group_name
   cluster_name                   = var.cluster_name
+  cluster_version                = var.cluster_version
   cluster_oidc_issuer_url        = var.cluster_oidc_issuer_url
   namespace                      = kubernetes_namespace.default["logging"].metadata[0].name
   labels                         = var.labels
@@ -279,6 +283,7 @@ module "kube_prometheus_stack" {
   location                                 = var.location
   resource_group_name                      = var.resource_group_name
   cluster_name                             = var.cluster_name
+  cluster_version                          = var.cluster_version
   cluster_oidc_issuer_url                  = var.cluster_oidc_issuer_url
   namespace                                = kubernetes_namespace.default["monitoring"].metadata[0].name
   labels                                   = var.labels
@@ -341,6 +346,7 @@ module "loki" {
   location                = var.location
   resource_group_name     = var.resource_group_name
   cluster_name            = var.cluster_name
+  cluster_version         = var.cluster_version
   cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
   namespace               = kubernetes_namespace.default["logging"].metadata[0].name
   labels                  = var.labels
@@ -367,8 +373,9 @@ module "node_config" {
   source = "./modules/node-config"
   count  = var.storage.host_path.enabled ? 1 : 0
 
-  namespace = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
-  labels    = var.labels
+  cluster_version = var.cluster_version
+  namespace       = kubernetes_labels.system_namespace["kube-system"].metadata[0].name
+  labels          = var.labels
 
   timeouts = var.timeouts
 

@@ -1,6 +1,8 @@
 locals {
   chart_version = "4.1.18"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   chart_values = {
     rbac = {
       enabled              = true
@@ -50,6 +52,22 @@ locals {
 
       logVerbosity  = local.klog_level_lookup[var.log_level]
       loggingFormat = "json"
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        minDomains         = 3
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "DoNotSchedule"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"      = "aad-pod-identity"
+            "app.kubernetes.io/instance"  = "aad-pod-identity"
+            "app.kubernetes.io/component" = "mic"
+          }
+        }
+      }] : []
     }
 
     nmi = {

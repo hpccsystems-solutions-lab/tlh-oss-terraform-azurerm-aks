@@ -2,6 +2,8 @@ locals {
   name          = "loki"
   chart_version = "5.8.8"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   azure_cli_image_version = "2.9.1"
 
   use_aad_workload_identity = false
@@ -175,9 +177,19 @@ locals {
         }
       ]
       # NOTE: Use required anti affinity for stateful set. Topology must be set to zone over host.
+
       affinity = jsonencode({
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = [{
+          requiredDuringSchedulingIgnoredDuringExecution = concat([{
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = local.name
+                "app.kubernetes.io/instance"  = local.name
+                "app.kubernetes.io/component" = "backend"
+              }
+            }
+            topologyKey = "kubernetes.io/hostname"
+            }], local.cluster_version_minor >= 27 ? [] : [{
             labelSelector = {
               matchLabels = {
                 "app.kubernetes.io/name"      = local.name
@@ -186,10 +198,27 @@ locals {
               }
             }
             topologyKey = "topology.kubernetes.io/zone"
-          }]
-          preferredDuringSchedulingIgnoredDuringExecution = []
+          }])
         }
       })
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? jsonencode([
+        {
+          maxSkew            = 1
+          minDomains         = var.zones
+          topologyKey        = "topology.kubernetes.io/zone"
+          whenUnsatisfiable  = "DoNotSchedule"
+          nodeAffinityPolicy = "Honor"
+          nodeTaintsPolicy   = "Honor"
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"      = local.name
+              "app.kubernetes.io/instance"  = local.name
+              "app.kubernetes.io/component" = "backend"
+            }
+          }
+        }
+      ]) : null
 
       maxUnavailable = 1
 
@@ -236,7 +265,16 @@ locals {
 
       affinity = jsonencode({
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = [{
+          requiredDuringSchedulingIgnoredDuringExecution = concat([{
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = local.name
+                "app.kubernetes.io/instance"  = local.name
+                "app.kubernetes.io/component" = "write"
+              }
+            }
+            topologyKey = "kubernetes.io/hostname"
+            }], local.cluster_version_minor >= 27 ? [] : [{
             labelSelector = {
               matchLabels = {
                 "app.kubernetes.io/name"      = local.name
@@ -245,10 +283,27 @@ locals {
               }
             }
             topologyKey = "topology.kubernetes.io/zone"
-          }]
-          preferredDuringSchedulingIgnoredDuringExecution = []
+          }])
         }
       })
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? jsonencode([
+        {
+          maxSkew            = 1
+          minDomains         = var.zones
+          topologyKey        = "topology.kubernetes.io/zone"
+          whenUnsatisfiable  = "DoNotSchedule"
+          nodeAffinityPolicy = "Honor"
+          nodeTaintsPolicy   = "Honor"
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"      = local.name
+              "app.kubernetes.io/instance"  = local.name
+              "app.kubernetes.io/component" = "write"
+            }
+          }
+        }
+      ]) : null
 
       maxUnavailable = 1
 
@@ -301,10 +356,10 @@ locals {
 
       affinity = jsonencode({
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = []
-          preferredDuringSchedulingIgnoredDuringExecution = [
+          preferredDuringSchedulingIgnoredDuringExecution = concat([
             {
               podAffinityTerm = {
+                topologyKey = "kubernetes.io/hostname"
                 labelSelector = {
                   matchLabels = {
                     "app.kubernetes.io/name"      = local.name
@@ -312,14 +367,13 @@ locals {
                     "app.kubernetes.io/component" = "read"
                   }
                 }
-
-                topologyKey = "kubernetes.io/hostname"
               }
 
               weight = 100
-            },
+            }], local.cluster_version_minor >= 27 ? [] : [
             {
               podAffinityTerm = {
+                topologyKey = "topology.kubernetes.io/zone"
                 labelSelector = {
                   matchLabels = {
                     "app.kubernetes.io/name"      = local.name
@@ -327,15 +381,30 @@ locals {
                     "app.kubernetes.io/component" = "read"
                   }
                 }
-
-                topologyKey = "topology.kubernetes.io/zone"
               }
 
               weight = 50
             }
-          ]
+          ])
         }
       })
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? jsonencode([
+        {
+          maxSkew            = 1
+          topologyKey        = "topology.kubernetes.io/zone"
+          whenUnsatisfiable  = "ScheduleAnyway"
+          nodeAffinityPolicy = "Honor"
+          nodeTaintsPolicy   = "Honor"
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"      = local.name
+              "app.kubernetes.io/instance"  = local.name
+              "app.kubernetes.io/component" = "read"
+            }
+          }
+        }
+      ]) : null
 
       maxUnavailable = 1
 
@@ -387,10 +456,10 @@ locals {
 
       affinity = jsonencode({
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = []
-          preferredDuringSchedulingIgnoredDuringExecution = [
+          preferredDuringSchedulingIgnoredDuringExecution = concat([
             {
               podAffinityTerm = {
+                topologyKey = "kubernetes.io/hostname"
                 labelSelector = {
                   matchLabels = {
                     "app.kubernetes.io/name"      = local.name
@@ -398,14 +467,13 @@ locals {
                     "app.kubernetes.io/component" = "gateway"
                   }
                 }
-
-                topologyKey = "kubernetes.io/hostname"
               }
 
               weight = 100
-            },
+            }], local.cluster_version_minor >= 27 ? [] : [
             {
               podAffinityTerm = {
+                topologyKey = "topology.kubernetes.io/zone"
                 labelSelector = {
                   matchLabels = {
                     "app.kubernetes.io/name"      = local.name
@@ -413,15 +481,30 @@ locals {
                     "app.kubernetes.io/component" = "gateway"
                   }
                 }
-
-                topologyKey = "topology.kubernetes.io/zone"
               }
 
               weight = 50
             }
-          ]
+          ])
         }
       })
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? jsonencode([
+        {
+          maxSkew            = 1
+          topologyKey        = "topology.kubernetes.io/zone"
+          whenUnsatisfiable  = "ScheduleAnyway"
+          nodeAffinityPolicy = "Honor"
+          nodeTaintsPolicy   = "Honor"
+          labelSelector = {
+            matchLabels = {
+              "app.kubernetes.io/name"      = local.name
+              "app.kubernetes.io/instance"  = local.name
+              "app.kubernetes.io/component" = "gateway"
+            }
+          }
+        }
+      ]) : null
 
       resources = {
         requests = {

@@ -1,6 +1,8 @@
 locals {
   chart_version = "48.3.1"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   thanos_chart_version = "1.13.2"
 
   # Thanos image version should match version in Thanos chart
@@ -258,6 +260,51 @@ locals {
 
       logLevel  = local.log_level_lookup[var.log_level]
       logFormat = "json"
+
+      affinity = {
+        podAntiAffinity = {
+          requiredDuringSchedulingIgnoredDuringExecution = concat([{
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"     = "prometheus"
+                "app.kubernetes.io/instance" = "kube-prometheus-stack-prometheus"
+                "prometheus"                 = "kube-prometheus-stack-prometheus"
+              }
+            }
+            topologyKey = "kubernetes.io/hostname"
+            }], local.cluster_version_minor >= 27 ? [] : [{
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"     = "prometheus"
+                "app.kubernetes.io/instance" = "kube-prometheus-stack-prometheus"
+                "prometheus"                 = "kube-prometheus-stack-prometheus"
+              }
+            }
+            topologyKey = "topology.kubernetes.io/zone"
+          }])
+        }
+      }
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        minDomains         = var.zones
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "DoNotSchedule"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"     = "prometheus"
+            "app.kubernetes.io/instance" = "kube-prometheus-stack-prometheus"
+            "prometheus"                 = "kube-prometheus-stack-prometheus"
+          }
+        }
+      }] : []
+
+      extraArgs = [
+        "--query.timeout=5m",
+        "--query.lookback-delta=15m"
+      ]
     }
 
     alertmanager = {
@@ -754,6 +801,45 @@ locals {
         }
       ]
 
+      affinity = {
+        podAntiAffinity = {
+          requiredDuringSchedulingIgnoredDuringExecution = concat([{
+            topologyKey = "kubernetes.io/hostname"
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = "thanos"
+                "app.kubernetes.io/instance"  = "thanos"
+                "app.kubernetes.io/component" = "compact"
+              }
+            }
+            }], local.cluster_version_minor >= 27 ? [] : [{
+            topologyKey = "topology.kubernetes.io/zone"
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = "thanos"
+                "app.kubernetes.io/instance"  = "thanos"
+                "app.kubernetes.io/component" = "compact"
+              }
+            }
+          }])
+        }
+      }
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "ScheduleAnyway"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"      = "thanos"
+            "app.kubernetes.io/instance"  = "thanos"
+            "app.kubernetes.io/component" = "compact"
+          }
+        }
+      }] : []
+
       extraArgs = [
         "--retention.resolution-raw=28d",
         "--retention.resolution-1h=28d",
@@ -820,18 +906,53 @@ locals {
 
       affinity = {
         podAntiAffinity = {
-          preferredDuringSchedulingIgnoredDuringExecution = [
+          preferredDuringSchedulingIgnoredDuringExecution = concat([
             {
               podAffinityTerm = {
-
-                topologyKey = "topology.kubernetes.io/zone"
+                topologyKey = "kubernetes.io/hostname"
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = "thanos"
+                    "app.kubernetes.io/instance"  = "thanos"
+                    "app.kubernetes.io/component" = "query"
+                  }
+                }
               }
 
               weight = 100
+            }], local.cluster_version_minor >= 27 ? [] : [
+            {
+              podAffinityTerm = {
+                topologyKey = "topology.kubernetes.io/zone"
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = "thanos"
+                    "app.kubernetes.io/instance"  = "thanos"
+                    "app.kubernetes.io/component" = "query"
+                  }
+                }
+              }
+
+              weight = 50
             }
-          ]
+          ])
         }
       }
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "ScheduleAnyway"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"      = "thanos"
+            "app.kubernetes.io/instance"  = "thanos"
+            "app.kubernetes.io/component" = "query"
+          }
+        }
+      }] : []
 
       extraArgs = [
         "--query.timeout=5m",
@@ -907,18 +1028,53 @@ locals {
 
       affinity = {
         podAntiAffinity = {
-          preferredDuringSchedulingIgnoredDuringExecution = [
+          preferredDuringSchedulingIgnoredDuringExecution = concat([
             {
               podAffinityTerm = {
-
-                topologyKey = "topology.kubernetes.io/zone"
+                topologyKey = "kubernetes.io/hostname"
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = "thanos"
+                    "app.kubernetes.io/instance"  = "thanos"
+                    "app.kubernetes.io/component" = "query-frontend"
+                  }
+                }
               }
 
               weight = 100
+            }], local.cluster_version_minor >= 27 ? [] : [
+            {
+              podAffinityTerm = {
+                topologyKey = "topology.kubernetes.io/zone"
+                labelSelector = {
+                  matchLabels = {
+                    "app.kubernetes.io/name"      = "thanos"
+                    "app.kubernetes.io/instance"  = "thanos"
+                    "app.kubernetes.io/component" = "query-frontend"
+                  }
+                }
+              }
+
+              weight = 50
             }
-          ]
+          ])
         }
       }
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "ScheduleAnyway"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"      = "thanos"
+            "app.kubernetes.io/instance"  = "thanos"
+            "app.kubernetes.io/component" = "query-frontend"
+          }
+        }
+      }] : []
 
       extraArgs = [
         "--labels.split-interval=12h",
@@ -1104,12 +1260,43 @@ locals {
 
       affinity = {
         podAntiAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = [{
-
+          requiredDuringSchedulingIgnoredDuringExecution = concat([{
+            topologyKey = "kubernetes.io/hostname"
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = "thanos"
+                "app.kubernetes.io/instance"  = "thanos"
+                "app.kubernetes.io/component" = "store-gateway"
+              }
+            }
+            }], local.cluster_version_minor >= 27 ? [] : [{
             topologyKey = "topology.kubernetes.io/zone"
-          }]
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = "thanos"
+                "app.kubernetes.io/instance"  = "thanos"
+                "app.kubernetes.io/component" = "store-gateway"
+              }
+            }
+          }])
         }
       }
+
+      topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+        maxSkew            = 1
+        minDomains         = var.zones
+        topologyKey        = "topology.kubernetes.io/zone"
+        whenUnsatisfiable  = "DoNotSchedule"
+        nodeAffinityPolicy = "Honor"
+        nodeTaintsPolicy   = "Honor"
+        labelSelector = {
+          matchLabels = {
+            "app.kubernetes.io/name"      = "thanos"
+            "app.kubernetes.io/instance"  = "thanos"
+            "app.kubernetes.io/component" = "store-gateway"
+          }
+        }
+      }] : []
     }
   }
 

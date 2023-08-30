@@ -48,6 +48,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@appkins](https://github.com/appkins)
 - Added support for customizing the system node pool via the `var.system_nodes` input. [@appkins](https://github.com/appkins)
 - Added  **UNSUPPORTED** input variable `unsupported.monitoring_disabled` for disabling monitoring. ([#1325](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1325)) [@james-alford-ln](https://github.com/james-alford-ln)
+- Added `topologySpreadConstraints` to core services inside the module. ([#1324](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1324)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.19.1] - 2023-08-25
 

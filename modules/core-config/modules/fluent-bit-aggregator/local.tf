@@ -2,6 +2,8 @@ locals {
   name          = "fluent-bit-aggregator"
   chart_version = "0.8.0"
 
+  cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
+
   location_sanitized = lower(replace(var.location, " ", ""))
 
   use_aad_workload_identity = false
@@ -94,14 +96,14 @@ locals {
 
     affinity = {
       podAntiAffinity = {
-        preferredDuringSchedulingIgnoredDuringExecution = [
+        preferredDuringSchedulingIgnoredDuringExecution = concat([
           {
             podAffinityTerm = {
               topologyKey = "kubernetes.io/hostname"
             }
 
             weight = 100
-          },
+          }], local.cluster_version_minor >= 27 ? [] : [
           {
             podAffinityTerm = {
               topologyKey = "topology.kubernetes.io/zone"
@@ -109,11 +111,18 @@ locals {
 
             weight = 50
           }
-        ]
+        ])
       }
     }
 
-    topologySpreadConstraints = []
+    topologySpreadConstraints = local.cluster_version_minor >= 27 ? [{
+      maxSkew            = 1
+      minDomains         = var.zones
+      topologyKey        = "topology.kubernetes.io/zone"
+      whenUnsatisfiable  = "DoNotSchedule"
+      nodeAffinityPolicy = "Honor"
+      nodeTaintsPolicy   = "Honor"
+    }] : []
 
     tolerations = [
       {
