@@ -25,15 +25,15 @@ output "external_dns_public_identity" {
 
 output "fluent_bit_aggregator_identity" {
   description = "Identity that Fluent Bit Aggregator uses."
-  value       = var.core_services_config.fluent_bit_aggregator.enabled ? module.fluent_bit_aggregator[0].identity : null
+  value       = (var.logging.enabled && var.core_services_config.fluent_bit_aggregator.enabled) ? module.fluent_bit_aggregator[0].identity : null
 }
 
 output "fluentd_identity" {
   description = "Identity that Fluentd uses."
-  value       = var.core_services_config.fluent_bit_aggregator.enabled ? null : module.fluentd[0].identity
+  value       = (var.logging.enabled && !var.core_services_config.fluent_bit_aggregator.enabled) ? module.fluentd[0].identity : null
 }
 
 output "grafana_identity" {
   description = "Identity that Grafana uses."
-  value       = module.kube_prometheus_stack.grafana_identity
+  value       = var.monitoring.enabled ? module.kube_prometheus_stack[0].grafana_identity : null
 }

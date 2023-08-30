@@ -165,6 +165,10 @@ module "core_config" {
 
   dns_resource_group_lookup = var.dns_resource_group_lookup
 
+  monitoring = {
+    enabled = !var.unsupported.monitoring_disabled
+  }
+
   logging = local.logging
   storage = var.storage
 

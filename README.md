@@ -655,6 +655,16 @@ To disable the logging stack, you can use the following configuration.
 unsupported = { logging_disabled = true }
 ```
 
+### Observability Stack
+
+It is possible to entirely disable the observability stack. This should only be done by groups with explicit approval to do so. The aim of this flag is to enable groups to experiment with alternative approaches to external observability in development and nonproduction environments. This use case is **unsupported**.
+
+To disable the observability stack, you can use the following configuration:
+
+```terraform
+unsupported = { observability_disabled = true }
+```
+
 ### Windows Node Support
 
 > **Important**

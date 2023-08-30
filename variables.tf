@@ -592,9 +592,10 @@ variable "tags" {
 variable "unsupported" {
   description = "Configure unsupported features."
   type = object({
-    logging_disabled = optional(bool, false)
-    manual_upgrades  = optional(bool, false)
-    windows_support  = optional(bool, false)
+    logging_disabled    = optional(bool, false)
+    monitoring_disabled = optional(bool, false)
+    manual_upgrades     = optional(bool, false)
+    windows_support     = optional(bool, false)
   })
   nullable = false
   default  = {}

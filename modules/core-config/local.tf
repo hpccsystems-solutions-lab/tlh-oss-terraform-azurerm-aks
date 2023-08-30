@@ -27,15 +27,15 @@ locals {
   }
 
   loki_nodes_output = {
-    enabled = var.logging.nodes.loki.enabled
-    host    = var.logging.nodes.loki.enabled ? module.loki[0].host : null
-    port    = var.logging.nodes.loki.enabled ? module.loki[0].port : null
+    enabled = var.logging.enabled && var.logging.nodes.loki.enabled
+    host    = var.logging.enabled && var.logging.nodes.loki.enabled ? module.loki[0].host : null
+    port    = var.logging.enabled && var.logging.nodes.loki.enabled ? module.loki[0].port : null
   }
 
   loki_workloads_output = {
-    enabled = var.logging.workloads.loki.enabled
-    host    = var.logging.workloads.loki.enabled ? module.loki[0].host : null
-    port    = var.logging.workloads.loki.enabled ? module.loki[0].port : null
+    enabled = var.logging.enabled && var.logging.workloads.loki.enabled
+    host    = var.logging.enabled && var.logging.workloads.loki.enabled ? module.loki[0].host : null
+    port    = var.logging.enabled && var.logging.workloads.loki.enabled ? module.loki[0].port : null
   }
 
   azure_storage_nodes_output = {

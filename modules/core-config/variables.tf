@@ -87,6 +87,13 @@ variable "dns_resource_group_lookup" {
   nullable    = false
 }
 
+variable "monitoring" {
+  description = "Monitoring configuration."
+  type = object({
+    enabled = bool
+  })
+}
+
 variable "logging" {
   description = "Logging configuration."
   type = object({

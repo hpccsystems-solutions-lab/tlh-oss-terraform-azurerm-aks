@@ -47,6 +47,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Replaced `azurerm_monitor_diagnostic_setting.retention_policy` with the `azurerm_storage_management_policy` resource. [@appkins](https://github.com/appkins)
 - Removed `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days`. [@appkins](https://github.com/appkins)
 - Added support for customizing the system node pool via the `var.system_nodes` input. [@appkins](https://github.com/appkins)
+- Added  **UNSUPPORTED** input variable `unsupported.monitoring_disabled` for disabling monitoring. ([#1325](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1325)) [@james-alford-ln](https://github.com/james-alford-ln)
 
 ## [v1.19.1] - 2023-08-25
 

@@ -273,6 +273,7 @@ module "ingress_internal_core" {
 
 module "kube_prometheus_stack" {
   source = "./modules/kube-prometheus-stack"
+  count  = var.monitoring.enabled ? 1 : 0
 
   subscription_id                          = var.subscription_id
   location                                 = var.location
