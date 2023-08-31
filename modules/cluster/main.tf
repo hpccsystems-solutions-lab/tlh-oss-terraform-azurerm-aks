@@ -26,11 +26,11 @@ resource "azurerm_role_assignment" "network_contributor_nat_gateway" {
 }
 
 resource "terraform_data" "maintenance_control_plane_start_date" {
-  input = timecmp(formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timestamp()), timestamp()) == -1 ? formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timeadd(timestamp(), "24h")) : formatdate("YYYY-MM-DD'T'${var.maintenance.control_plane.start_time}:00Z", timestamp())
+  input = "${formatdate("YYYY-MM-DD", timecmp("${formatdate("YYYY-MM-DD", timestamp())}T${var.maintenance.control_plane.start_time}:00${local.maintenance_utc_offset}", timestamp()) == -1 ? timeadd(timestamp(), "24h") : timestamp())}T00:00:00Z"
 
   triggers_replace = [
-    var.maintenance.control_plane,
-    var.maintenance.control_plane.start_time
+    local.maintenance_utc_offset,
+    var.maintenance.control_plane
   ]
 
   lifecycle {
@@ -39,11 +39,11 @@ resource "terraform_data" "maintenance_control_plane_start_date" {
 }
 
 resource "terraform_data" "maintenance_nodes_start_date" {
-  input = timecmp(formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timestamp()), timestamp()) == -1 ? formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timeadd(timestamp(), "24h")) : formatdate("YYYY-MM-DD'T'${var.maintenance.nodes.start_time}:00Z", timestamp())
+  input = "${formatdate("YYYY-MM-DD", timecmp("${formatdate("YYYY-MM-DD", timestamp())}T${var.maintenance.nodes.start_time}:00${local.maintenance_utc_offset}", timestamp()) == -1 ? timeadd(timestamp(), "24h") : timestamp())}T00:00:00Z"
 
   triggers_replace = [
-    var.maintenance.nodes,
-    var.maintenance.nodes.start_time
+    local.maintenance_utc_offset,
+    var.maintenance.nodes
   ]
 
   lifecycle {
@@ -131,7 +131,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     interval     = local.maintainance_interval_lookup[var.maintenance.control_plane.frequency]
     day_of_month = var.maintenance.control_plane.frequency == "MONTHLY" ? var.maintenance.control_plane.day_of_month : null
     day_of_week  = var.maintenance.control_plane.frequency == "WEEKLY" || var.maintenance.control_plane.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.control_plane.day_of_week] : null
-    start_date   = "${split("T", terraform_data.maintenance_control_plane_start_date.output)[0]}T00:00:00Z"
+    start_date   = terraform_data.maintenance_control_plane_start_date.output
     start_time   = var.maintenance.control_plane.start_time
     duration     = var.maintenance.control_plane.duration
 
@@ -151,7 +151,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     interval     = local.maintainance_interval_lookup[var.maintenance.nodes.frequency]
     day_of_month = var.maintenance.nodes.frequency == "MONTHLY" ? var.maintenance.nodes.day_of_month : null
     day_of_week  = var.maintenance.nodes.frequency == "WEEKLY" || var.maintenance.nodes.frequency == "FORTNIGHTLY" ? local.maintainance_day_of_week_lookup[var.maintenance.nodes.day_of_week] : null
-    start_date   = "${split("T", terraform_data.maintenance_nodes_start_date.output)[0]}T00:00:00Z"
+    start_date   = terraform_data.maintenance_nodes_start_date.output
     start_time   = var.maintenance.nodes.start_time
     duration     = var.maintenance.nodes.duration
 
