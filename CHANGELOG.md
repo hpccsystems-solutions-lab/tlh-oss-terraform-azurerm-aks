@@ -32,9 +32,39 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.20.0] - UNRELEASED
+## [v1.20.0] - 2023-08-31
 
 ### Highlights
+
+#### System Node Pools
+
+Some components of the system node pools are now configurable. This allows changing the node arch to AMD, modifying the SKU and adjusting the minimum capacity of the system nodes. Node size should only be modified in the event that a cluster needs greater capacity. The _AKS_ module is very carefully bin packed, so lowering this could lead to a broken cluster.
+
+Read about how to configure the `var.system_nodes` variable [here](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/blob/main/README.md#appendix-b).
+
+#### AKS Topology
+
+For kubernetes version `1.27` or above, `topologySpreadConstraints` have been added to the module core services.
+
+#### Removals
+
+The `cluster_endpoint_public_access` variable has been removed from the module so make sure it is no longer being used when upgrading to `v1.20.0`.
+
+The `var.logging.control_plane.log_analytics.retention_enabled` and `var.logging.control_plane.log_analytics.retention_days` variables were both removed early by Microsoft and needed to be removed in this release.
+
+The experimental variable `experimental.node_upgrade_manual` because `unsupported.manual_upgrades` covers it's purpose and more.
+
+The experimental variable `experimental.cluster_patch_upgrade` has been removed as its function is now the default behaviour.
+
+> **Notice**  
+> **Log Analytics Workspace and Storage Account Retention**
+
+>**The Change:**  
+>**For Log Analytics: The module has already ceased to manage retention of data inside log analytics workspaces. Due to an accelerated change on Azure's end, we weren't able to provide the usual deprecation window.**  
+**For Storage Accounts: This change will be implemented in three releases v1.22.0.**
+
+>**Consumer Responsibility: Module consumers must now define their own storage and retention configurations.**  
+>**Immediate Action Required: Review and adjust your storage and retention settings as needed to align with this change.**
 
 ### All Changes
 
@@ -171,6 +201,9 @@ Kubernetes version `1.24` has been deprecated and will be removed in `v1.19.0`.
 - Deprecated the `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables in favour of the `logging.workloads.storage_account` input variable. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.17.2] - 2023-08-25
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - This version is no longer supported with `v1.20.0` being released.
 
 ### All Changes
 
