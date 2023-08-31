@@ -50,6 +50,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Added  **UNSUPPORTED** input variable `unsupported.monitoring_disabled` for disabling monitoring. ([#1325](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1325)) [@james-alford-ln](https://github.com/james-alford-ln)
 - Added `topologySpreadConstraints` to core services inside the module. ([#1324](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1324)) [@peterabarr](https://github.com/peterabarr)
 - Removed the `cluster_endpoint_public_access` variable as it has been deprecated by the provider in `v3.71.0` onwards. ([#1336](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1336)) [@hadeeds](https://github.com/hadeeds)
+- Updated storage management policy fixing an issue in control plane log retention. ([#1347](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1347)) [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.19.1] - 2023-08-25
 

@@ -243,7 +243,7 @@ AKS cluster logging is currently split up into two parts; the control plane logs
 
 Control plane logs are exported to one (or both) of a [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) or an [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview), these logs are retained for `30` days by default. Both of these destinations support the direct querying of the logs but sending logs to a Log Analytics Workspace will incur additional cost overhead.
 
-The control plane logs can be configured via the [logging.control_plane](#appendix-d1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as changing the retention. Although the module can create a Log Analytics Workspace for control plane logs this is **DEPRECATED** and it is recommended to create the workspace outside of the module so that logs are retained even when a cluster is replaced.
+The control plane logs can be configured via the [logging.control_plane](#appendix-d1) input variable which allows for the selection of the destinations as well as the profile ([see below](#control-plane-logging-profiles)) and additional configuration such as changing the retention (**DEPRECATED**).
 
 ###### Control Plane Logging Profiles
 
@@ -740,7 +740,7 @@ This module requires the following versions to be configured in the workspace `t
 | `managed_outbound_idle_timeout`       | Desired outbound flow idle timeout in seconds for the cluster managed load balancer, see the [documentation](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard#configure-the-load-balancer-idle-timeout). Ignored if NAT gateway is specified, must be between `240` and `7200` inclusive.                                                                                                          | `number`                                  | `240`             |
 | `admin_group_object_ids`              | AD Object IDs to be added to the cluster admin group, this should only ever be used to make the Terraform identity an admin if it can't be done outside the module.                                                                                                                                                                                                                                                 | `list(string)`                            | `[]`              |
 | `rbac_bindings`                       | User and groups to configure in Kubernetes `ClusterRoleBindings`; for Azure AD these are the IDs.                                                                                                                                                                                                                                                                                                                   | `object` ([Appendix A](#appendix-a))      | `{}`              |
-| `system_nodes`                         | System nodes to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix B](#appendix-b)) | `{}`              |
+| `system_nodes`                        | System nodes to configure.                                                                                                                                                                                                                                                                                                                                                                                          | `map(object)` ([Appendix B](#appendix-b)) | `{}`              |
 | `node_groups`                         | Node groups to configure.                                                                                                                                                                                                                                                                                                                                                                                           | `map(object)` ([Appendix C](#appendix-c)) | `{}`              |
 | `logging`                             | Logging configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix D](#appendix-d)) | `{}`              |
 | `storage`                             | Storage configuration.                                                                                                                                                                                                                                                                                                                                                                                              | `map(object)` ([Appendix E](#appendix-e)) | `{}`              |
@@ -768,12 +768,12 @@ Specification for the `rbac_bindings` object.
 
 Specification for the `system_nodes` objects.
 
-| **Variable**          | **Description**                                                                                                                                                                                                                                                                                                                                                         | **Type**                     | **Default** |
-| :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :---------- |
-| `node_arch`           | **EXPERIMENTAL** - Processor architecture to use for the system node group, `amd64` & `arm64` are supported. See [docs](#arm64-node-support).                                                                                                                                                                                                                               | `string`                     | `amd64`     |
-| `node_type_version`   | The version of the node type to use. See [node types](#node-types) for more information.                                                                                                                                                                                                                                                                                | `string`                     | `"v1"`      |
-| `node_size`           | Size of the instance to create in the system node group. See [node sizes](#node-sizes) for more information.                                                                                                                                                                                                                                                                | `string`                     |             |
-| `min_capacity`        | Minimum number of nodes in the system node group, this needs to be divisible by the number of subnets in use.                                                                                                                                                                                                                                                               | `number`                     | `3`         |
+| **Variable**        | **Description**                                                                                                                               | **Type** | **Default** |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :---------- |
+| `node_arch`         | **EXPERIMENTAL** - Processor architecture to use for the system node group, `amd64` & `arm64` are supported. See [docs](#arm64-node-support). | `string` | `amd64`     |
+| `node_type_version` | The version of the node type to use. See [node types](#node-types) for more information.                                                      | `string` | `"v1"`      |
+| `node_size`         | Size of the instance to create in the system node group. See [node sizes](#node-sizes) for more information.                                  | `string` |             |
+| `min_capacity`      | Minimum number of nodes in the system node group, this needs to be divisible by the number of subnets in use.                                 | `number` | `3`         |
 
 ### Appendix C
 
@@ -847,14 +847,14 @@ Specification for the `logging.control_plane.log_analytics` object.
 
 Specification for the `logging.control_plane.storage_account` object.
 
-| **Variable**                    | **Description**                                                          | **Type**       | **Default** |
-| :------------------------------ | :----------------------------------------------------------------------- | :------------- | :---------- |
-| `enabled`                       | If control plane logs should be sent to a storage account.               | `bool`         | `false`     |
-| `id`                            | The Azure Storage Account ID, if not specified the default will be used. | `string`       | `null`      |
-| `profile`                       | The profile to use for the log category types.                           | `string`       | `null`      |
-| `additional_log_category_types` | Additional log category types to collect.                                | `list(string)` | `[]`        |
-| `retention_enabled`             | If retention should be configured per log category collected.            | `bool`         | `true`      |
-| `retention_days`                | Number of days to retain the logs if `retention_enabled` is `true`.      | `number`       | `30`        |
+| **Variable**                    | **Description**                                                                      | **Type**       | **Default** |
+| :------------------------------ | :----------------------------------------------------------------------------------- | :------------- | :---------- |
+| `enabled`                       | If control plane logs should be sent to a storage account.                           | `bool`         | `false`     |
+| `id`                            | The Azure Storage Account ID, if not specified the default will be used.             | `string`       | `null`      |
+| `profile`                       | The profile to use for the log category types.                                       | `string`       | `null`      |
+| `additional_log_category_types` | Additional log category types to collect.                                            | `list(string)` | `[]`        |
+| `retention_enabled`             | **DEPRECATED** - If retention should be configured per log category collected.       | `bool`         | `true`      |
+| `retention_days`                | **DEPRECATED** - Number of days to retain the logs if `retention_enabled` is `true`. | `number`       | `30`        |
 
 ### Appendix D2
 
@@ -922,7 +922,7 @@ Specification for the `logging.log_analytics_workspace_config` object.
 
 | **Variable** | **Description**                                             | **Type** | **Default** |
 | :----------- | :---------------------------------------------------------- | :------- | :---------- |
-| `id`         | The Azure Loc Analytics workspace ID to be used by default. | `string` | `null`      |
+| `id`         | The Azure Log Analytics Workspace ID to be used by default. | `string` | `null`      |
 
 ### Appendix D5
 
@@ -1173,29 +1173,27 @@ Specification for the `maintenance_window.not_allowed` object.
 
 ## Outputs
 
-| **Variable**                                 | **Description**                                                                                                                                                 | **Type**       |
-| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
-| `cluster_id`                                 | ID of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                       | `string`       |
-| `cluster_name`                               | Name of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                     | `string`       |
-| `cluster_version`                            | Version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>`).                                                                              | `string`       |
-| `cluster_version_full`                       | Full version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>.<patch>`).                                                                 | `string`       |
-| `latest_version_full`                        | Latest full Kubernetes version the Azure Kubernetes Service (AKS) managed cluster could be on (`<major>.<minor>.<patch>`).                                      | `string`       |
-| `cluster_fqdn`                               | FQDN of the Azure Kubernetes Service managed cluster.                                                                                                           | `string`       |
-| `cluster_endpoint`                           | Endpoint for the Azure Kubernetes Service managed cluster API server.                                                                                           | `string`       |
-| `cluster_certificate_authority_data`         | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                                                                    | `string`       |
-| `control_plane_log_analytics_workspace_id`   | ID of the default log analytics workspace used for control plane logs.                                                                                          | `string`       |
-| `control_plane_log_analytics_workspace_name` | Name of the default log analytics workspace used for control plane logs, this will be empty if an external one is in use.                                       | `string`       |
-| `node_resource_group_name`                   | Auto-generated resource group which contains the resources for this managed Kubernetes cluster.                                                                 | `string`       |
-| `effective_outbound_ips`                     | Outbound IPs from the Azure Kubernetes Service cluster managed load balancer (this will be an empty array if the cluster is uisng a user-assigned NAT Gateway). | `list(string)` |
-| `cluster_identity`                           | User assigned identity used by the cluster.                                                                                                                     | `object`       |
-| `kubelet_identity`                           | Kubelet identity.                                                                                                                                               | `object`       |
-| `cert_manager_identity`                      | Identity that Cert Manager uses.                                                                                                                                | `object`       |
-| `coredns_custom_config_map_name`             | Name of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                                    | `string`       |
-| `coredns_custom_config_map_namespace`        | Namespace of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                               | `object`       |
-| `external_dns_private_identity`              | Identity that private ExternalDNS uses.                                                                                                                         | `object`       |
-| `external_dns_public_identity`               | Identity that public ExternalDNS uses.                                                                                                                          | `object`       |
-| `fluent_bit_aggregator_identity`             | Identity that Fluent Bit Aggregator uses.                                                                                                                       | `object`       |
-| `fluentd_identity`                           | Identity that Fluentd uses.                                                                                                                                     | `object`       |
-| `grafana_identity`                           | Identity that Grafana uses.                                                                                                                                     | `object`       |
-| `oms_agent_identity`                         | Identity that the OMS agent uses.                                                                                                                               | `object`       |
-| `windows_config`                             | Windows configuration.                                                                                                                                          | `object`       |
+| **Variable**                          | **Description**                                                                                                                                                 | **Type**       |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
+| `cluster_id`                          | ID of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                       | `string`       |
+| `cluster_name`                        | Name of the Azure Kubernetes Service (AKS) managed cluster.                                                                                                     | `string`       |
+| `cluster_version`                     | Version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>`).                                                                              | `string`       |
+| `cluster_version_full`                | Full version of the Azure Kubernetes Service (AKS) managed cluster (`<major>.<minor>.<patch>`).                                                                 | `string`       |
+| `latest_version_full`                 | Latest full Kubernetes version the Azure Kubernetes Service (AKS) managed cluster could be on (`<major>.<minor>.<patch>`).                                      | `string`       |
+| `cluster_fqdn`                        | FQDN of the Azure Kubernetes Service managed cluster.                                                                                                           | `string`       |
+| `cluster_endpoint`                    | Endpoint for the Azure Kubernetes Service managed cluster API server.                                                                                           | `string`       |
+| `cluster_certificate_authority_data`  | Base64 encoded certificate data for the Azure Kubernetes Service managed cluster API server.                                                                    | `string`       |
+| `node_resource_group_name`            | Auto-generated resource group which contains the resources for this managed Kubernetes cluster.                                                                 | `string`       |
+| `effective_outbound_ips`              | Outbound IPs from the Azure Kubernetes Service cluster managed load balancer (this will be an empty array if the cluster is uisng a user-assigned NAT Gateway). | `list(string)` |
+| `cluster_identity`                    | User assigned identity used by the cluster.                                                                                                                     | `object`       |
+| `kubelet_identity`                    | Kubelet identity.                                                                                                                                               | `object`       |
+| `cert_manager_identity`               | Identity that Cert Manager uses.                                                                                                                                | `object`       |
+| `coredns_custom_config_map_name`      | Name of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                                    | `string`       |
+| `coredns_custom_config_map_namespace` | Namespace of the CoreDNS custom `ConfigMap`, if external config has been enabled.                                                                               | `object`       |
+| `external_dns_private_identity`       | Identity that private ExternalDNS uses.                                                                                                                         | `object`       |
+| `external_dns_public_identity`        | Identity that public ExternalDNS uses.                                                                                                                          | `object`       |
+| `fluent_bit_aggregator_identity`      | Identity that Fluent Bit Aggregator uses.                                                                                                                       | `object`       |
+| `fluentd_identity`                    | Identity that Fluentd uses.                                                                                                                                     | `object`       |
+| `grafana_identity`                    | Identity that Grafana uses.                                                                                                                                     | `object`       |
+| `oms_agent_identity`                  | Identity that the OMS agent uses.                                                                                                                               | `object`       |
+| `windows_config`                      | Windows configuration.                                                                                                                                          | `object`       |

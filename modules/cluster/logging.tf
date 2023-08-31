@@ -46,13 +46,13 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account" {
 }
 
 resource "azurerm_storage_management_policy" "storage_account" {
-  count = var.logging.control_plane.storage_account.enabled ? 1 : 0
+  count = var.logging.control_plane.storage_account.retention_enabled ? 1 : 0
 
   storage_account_id = coalesce(var.logging.control_plane.storage_account.id, var.logging.storage_account_config.id)
 
   rule {
     name    = format("%s-delete-after-%d-days", var.cluster_name, var.logging.control_plane.storage_account.retention_days)
-    enabled = var.logging.control_plane.storage_account.retention_enabled
+    enabled = true
     filters {
       prefix_match = formatlist("insights-logs-%s/resourceId=%s", local.storage_account_log_category_types, upper(azurerm_kubernetes_cluster.default.id))
       blob_types   = ["appendBlob"]
