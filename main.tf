@@ -49,7 +49,7 @@ module "cluster" {
   node_upgrade_manual                  = var.experimental.node_upgrade_manual
   sku_tier                             = var.sku_tier
   fips                                 = var.fips
-  cluster_endpoint_public_access       = var.cluster_endpoint_public_access
+  # cluster_endpoint_public_access       = var.cluster_endpoint_public_access
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
   cni                                  = local.cni
   subnet_id                            = local.subnet_id
@@ -137,7 +137,7 @@ module "core_config" {
   ingress_node_group = module.node_groups.ingress_node_group
 
   subnet_id          = local.subnet_id
-  availability_zones = local.availability_zones
+  availability_zones = var.availability_zones
 
   kubelet_identity_id      = module.cluster.kubelet_identity.object_id
   node_resource_group_name = module.cluster.node_resource_group_name

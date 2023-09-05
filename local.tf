@@ -43,8 +43,6 @@ locals {
     }
   }
 
-  availability_zones = [1, 2, 3]
-
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
 
