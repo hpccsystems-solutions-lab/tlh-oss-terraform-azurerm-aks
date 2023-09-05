@@ -311,9 +311,6 @@ variable "logging" {
         enabled = optional(bool, false)
       }), {})
 
-      storage_account_logs        = optional(bool, false)
-      storage_account_container   = optional(string, null)
-      storage_account_path_prefix = optional(string, null)
     }), {})
 
     log_analytics_workspace_config = optional(object({

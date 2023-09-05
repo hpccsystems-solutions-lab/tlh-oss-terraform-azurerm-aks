@@ -20,7 +20,6 @@ This issue tracks the work to release `vX.Y.Z` of the module.
 The following tasks need to be completed to release the module.
 
 - [ ] Update module version & changelog
-- [ ] Check the AKS cluster versions are up to date
 - [ ] Remove deprecated attributes
 
 ### Update module version & changelog

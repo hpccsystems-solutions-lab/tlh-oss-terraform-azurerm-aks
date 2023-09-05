@@ -17,8 +17,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables are deprecated and will be removed in the `v1.21.0` release.
 - The `sku_tier` options `free` & `standard` are deprecated and will be removed in the `v1.23.0` release.
+- The `retention_enabled` and `retention_days` variables are deprecated and will be removed in the `v1.24.0` release.
 
 ---
 
@@ -35,6 +35,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ## [v1.21.0] - UNRELEASED
 
 ### All Changes
+
+- Removed the deprecated `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables. ([#1352](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1352)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.20.0] - 2023-08-31
 

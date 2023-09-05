@@ -892,9 +892,6 @@ Specification for the `logging.workloads` object.
 | :---------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------- | :---------- |
 | `core_service_log_level`      | Log level for the core services; one of `ERROR`, `WARN`, `INFO` or `DEBUG`.                    | `string`                                 | `"WARN"`    |
 | `storage_account`             | Workload logs storage account configuration.                                                   | `object` ([Appendix D3a](#appendix-d3a)) | `{}`        |
-| `storage_account_logs`        | **DEPRECATED** - If workload logs should be sent to Azure Blob Storage, use `storage_account`. | `bool`                                   | `false`     |
-| `storage_account_container`   | **DEPRECATED** - The container to use for the log storage, use `storage_account`.              | `string`                                 | `null`      |
-| `storage_account_path_prefix` | **DEPRECATED** - Blob prefix for the logs, use `storage_account`.                              | `string`                                 | `null`      |
 | `loki`                        | Loki workload logs configuration                                                               | `object` ([Appendix D3a](#appendix-d3b)) | `{}`        |
 
 ### Appendix D3a
