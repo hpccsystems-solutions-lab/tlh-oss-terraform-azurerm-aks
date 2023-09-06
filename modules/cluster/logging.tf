@@ -30,8 +30,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account" {
   name               = "control-plane-storage-account"
   target_resource_id = azurerm_kubernetes_cluster.default.id
 
-  storage_account_id = var.logging.control_plane.storage_account.id != null ? var.logging.control_plane.storage_account.id : var.logging.storage_account_config.id
-
+  storage_account_id = coalesce(var.logging.control_plane.storage_account.id, var.logging.storage_account_config.id)
   dynamic "enabled_log" {
     for_each = local.storage_account_log_category_types
 
@@ -46,10 +45,9 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account" {
 }
 
 resource "azurerm_storage_management_policy" "storage_account" {
-  count = var.logging.control_plane.storage_account.retention_enabled ? 1 : 0
+  count = (var.logging.control_plane.storage_account.enabled && var.logging.control_plane.storage_account.retention_enabled) ? 1 : 0
 
-  storage_account_id = var.logging.control_plane.storage_account.id != null ? var.logging.control_plane.storage_account.id : var.logging.storage_account_config.id
-
+  storage_account_id = coalesce(var.logging.control_plane.storage_account.id, var.logging.storage_account_config.id)
   rule {
     name    = format("%s-delete-after-%d-days", var.cluster_name, var.logging.control_plane.storage_account.retention_days)
     enabled = true
