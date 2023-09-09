@@ -82,7 +82,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     network_policy      = "calico"
     service_cidr        = "172.20.0.0/16"
     dns_service_ip      = "172.20.0.10"
-    pod_cidr            = var.cni == "KUBENET" ? var.podnet_cidr_block : null
+    pod_cidr            = var.cni != "AZURE" ? var.podnet_cidr_block : null
 
     outbound_type = var.nat_gateway_id != null ? "userAssignedNATGateway" : "loadBalancer"
 

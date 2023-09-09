@@ -39,11 +39,6 @@ resource "terraform_data" "immutable_inputs" {
     }
 
     postcondition {
-      condition     = local.cni != "AZURE_OVERLAY" || alltrue([for k, v in var.node_groups : v.node_os != "windows2019"])
-      error_message = "Azure Overlay CNI doesn't support Windows Server 2019."
-    }
-
-    postcondition {
       condition     = var.system_nodes.node_type_version == self.output.system_nodes.type_version
       error_message = "You can't change the system node type version for an existing cluster."
     }

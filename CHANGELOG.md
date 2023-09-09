@@ -37,6 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Removed the deprecated `logging.workloads.storage_account_logs`, `logging.workloads.storage_account_container` & `logging.workloads.storage_account_path_prefix` input variables. ([#1352](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1352)) [@peterabarr](https://github.com/peterabarr)
+- Removed constraint to block using the Azure Overlay CNI with Windows Server 2019. [@stevehipwell](https://github.com/stevehipwell)
+- Fixed Azure Overlay CNI implementation to correctly use the module `podnet_cidr_block` to set the pod CIDR now the API supports it. [@stevehipwell](https://github.com/stevehipwell)
 
 ## [v1.20.0] - 2023-08-31
 
@@ -62,14 +64,14 @@ The experimental variable `experimental.node_upgrade_manual` because `unsupporte
 
 The experimental variable `experimental.cluster_patch_upgrade` has been removed as its function is now the default behaviour.
 
-> **Notice**  
+> **Notice**
 > **Log Analytics Workspace and Storage Account Retention**
 
->**The Change:**  
->**For Log Analytics: The module has already ceased to manage retention of data inside log analytics workspaces. Due to an accelerated change on Azure's end, we weren't able to provide the usual deprecation window.**  
+>**The Change:**
+>**For Log Analytics: The module has already ceased to manage retention of data inside log analytics workspaces. Due to an accelerated change on Azure's end, we weren't able to provide the usual deprecation window.**
 **For Storage Accounts: This change will be implemented in three releases v1.22.0.**
 
->**Consumer Responsibility: Module consumers must now define their own storage and retention configurations.**  
+>**Consumer Responsibility: Module consumers must now define their own storage and retention configurations.**
 >**Immediate Action Required: Review and adjust your storage and retention settings as needed to align with this change.**
 
 ### All Changes
@@ -322,7 +324,7 @@ The introduction of the new input variable, `maintenance`, replaces the deprecat
 - Fix all metrics churn on no-op applies. ([#1194](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1194)) [@appkins](https://github.com/appkins)
 - Fixed node selector labels for _local-static-provisioner_ to start with `node.lnrs.io`. ([#1200](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1200)) [@james-alford-ln](https://github.com/james-alford-ln)
 - Updated _Kube Prometheus Stack_ chart to [v47.1.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-47.1.0) (contains _Prometheus Operator_ [v0.66.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.66.0), _Prometheus_ [v2.45.0](https://github.com/prometheus/prometheus/releases/tag/v2.45.0), _Grafana_ [v9.5.5](https://github.com/grafana/grafana/releases/tag/v9.5.5) & _Prometheus Node Exporter_ [v1.6.0](https://github.com/prometheus/node_exporter/releases/tag/v1.6.0)) also updated the CRDs. ([#1195](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1195)) [@peterabarr](https://github.com/peterabarr)
-  
+
 ## [v1.15.0] - 2023-06-22
 
 ### Highlights
@@ -378,7 +380,7 @@ Great news! The _AKS_ module now supports the latest version of Kubernetes `v1.2
 
 #### Removals
 
-The AKS module has the `paid` option for the `sku_tier` variable removed as it has been deprecated. If you are using this old variable and are upgrading to `v1.14.0` please change your input variable. 
+The AKS module has the `paid` option for the `sku_tier` variable removed as it has been deprecated. If you are using this old variable and are upgrading to `v1.14.0` please change your input variable.
 We have also removed the `azure_env` variable as it had been deprecated in favour of inferring the value from `location`.
 
 ### All Changes
@@ -807,7 +809,7 @@ We hope that all operators using the module are enjoying the holiday season. As 
 - Updated minimum version of the Kubernetes provider to [v2.15.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.15.0). ([#837](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/837)) [@aydosman](https://github.com/aydosman)
 - Fixed bug to set the default value of the subdomain_suffix to the value of the cluster name. ([#830](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/830)) [@aydosman](https://github.com/aydosman)
 - Updated _Thanos_ chart to [v1.9.1](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.9.1). ([#843](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/843)) [@hadeeds](https://github.com/hadeeds)
-  
+
 ## [v1.1.1] - 2022-12-20
 
 ### All Changes
