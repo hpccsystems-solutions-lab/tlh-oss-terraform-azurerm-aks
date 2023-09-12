@@ -65,6 +65,20 @@
         "./"
       ],
       "problemMatcher": []
+    },
+    {
+      "label": "trivy",
+      "type": "shell",
+      "command": "trivy",
+      "args": [
+        "config",
+        "--config",
+        "./trivy.yaml",
+        "--format",
+        "table",
+        "./"
+      ],
+      "problemMatcher": []
     }
   ]
 }

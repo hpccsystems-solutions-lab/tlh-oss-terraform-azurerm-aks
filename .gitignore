@@ -28,3 +28,6 @@ terraform.rc
 
 # Ignore DS Store files
 .DS_Store
+
+# Ignore reports
+trivy-report.json

@@ -12,3 +12,5 @@ jobs:
     secrets: inherit
     with:
       module_name: terraform-azurerm-aks
+      tfsec: false
+      trivy: true
