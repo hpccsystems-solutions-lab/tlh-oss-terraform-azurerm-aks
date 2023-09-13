@@ -1,7 +1,7 @@
 locals {
-  chart_version = "1.13.0"
+  chart_version = "1.13.1"
 
-  use_aad_workload_identity = false
+  use_aad_workload_identity = true
 
   chart_values = {
     serviceMonitor = {
