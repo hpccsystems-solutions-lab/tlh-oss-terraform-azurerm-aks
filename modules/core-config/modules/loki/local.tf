@@ -1,6 +1,6 @@
 locals {
   name          = "loki"
-  chart_version = "5.8.8"
+  chart_version = "5.21.0"
 
   cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
 
@@ -528,16 +528,17 @@ locals {
   }
 
   additional_config = {
-    extraArgs = ["-memberlist.bind-addr=$(MY_POD_IP)"]
-    extraEnv = [{
-      name = "MY_POD_IP"
-      valueFrom = {
-        fieldRef = { fieldPath = "status.podIP" }
-      }
-    }]
-
     podLabels = local.use_aad_workload_identity ? {} : {
       aadpodidbinding = module.identity.name
+    }
+
+    lifecycle = {
+      preStop = {
+        httpGet = {
+          path = "/ingester/flush_shutdown"
+          port = "http-metrics"
+        }
+      }
     }
   }
 

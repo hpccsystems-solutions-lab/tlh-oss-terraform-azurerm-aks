@@ -41,6 +41,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Fixed Azure Overlay CNI implementation to correctly use the module `podnet_cidr_block` to set the pod CIDR now the API supports it. [@stevehipwell](https://github.com/stevehipwell)
 - Updated _ExternalDNS_ chart to [v1.13.1](https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.13.1) (contains _ExternalDNS_ image update to [v0.13.6](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.6)) making it support Azure Workload Identity. ([#1363](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1363)) [@peterabarr](https://github.com/peterabarr)
 - Changed `use_aad_workload_identity` to be set to `true` for _ExternalDNS_. ([#1363](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1363)) [@peterabarr](https://github.com/peterabarr)
+- Fixed Loki bug that blocks aks maintenance ([#1368](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1368)) [@aydosman](https://github.com/aydosman) [@appkins](https://github.com/appkins)
 
 ## [v1.20.0] - 2023-08-31
 
