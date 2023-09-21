@@ -76,11 +76,11 @@ locals {
       } : {}
 
       annotations = local.use_aad_workload_identity ? {
-        "azure.workload.identity/client-id" = local.enable_private ? module.identity_private[0].id : ""
+        "azure.workload.identity/client-id" = local.enable_private ? module.identity_private[0].client_id : ""
       } : {}
     }
 
-    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? { "azure.workload.identity/use" = "true" } : {
       aadpodidbinding = local.enable_private ? module.identity_private[0].name : ""
     })
 
@@ -117,11 +117,11 @@ locals {
       } : {}
 
       annotations = local.use_aad_workload_identity ? {
-        "azure.workload.identity/client-id" = local.enable_public ? module.identity_public[0].id : ""
+        "azure.workload.identity/client-id" = local.enable_public ? module.identity_public[0].client_id : ""
       } : {}
     }
 
-    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? { "azure.workload.identity/use" = "true" } : {
       aadpodidbinding = local.enable_public ? module.identity_public[0].name : ""
     })
 

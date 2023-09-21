@@ -20,7 +20,7 @@ locals {
       } : {}
 
       annotations = local.use_aad_workload_identity ? {
-        "azure.workload.identity/client-id" = module.identity.id
+        "azure.workload.identity/client-id" = module.identity.client_id
       } : {}
     }
 
@@ -48,7 +48,7 @@ locals {
       maxUnavailable = 1
     }
 
-    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? { "azure.workload.identity/use" = "true" } : {
       aadpodidbinding = module.identity.name
     })
 

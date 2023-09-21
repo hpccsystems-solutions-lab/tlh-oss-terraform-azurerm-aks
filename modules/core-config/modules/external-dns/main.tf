@@ -25,7 +25,7 @@ resource "kubernetes_secret" "private_config" {
         "tenantId": "${var.tenant_id}",
         "subscriptionId": "${var.subscription_id}",
         "resourceGroup": "${local.private_dns_zone_resource_group_name}",
-        "useManagedIdentityExtension": true
+        "useWorkloadIdentityExtension": true
       }
     EOF
   }
@@ -68,7 +68,7 @@ resource "kubernetes_secret" "public_config" {
         "tenantId": "${var.tenant_id}",
         "subscriptionId": "${var.subscription_id}",
         "resourceGroup": "${local.public_dns_zone_resource_group_name}",
-        "useManagedIdentityExtension": true
+        "useWorkloadIdentityExtension": true
       }
     EOF
   }

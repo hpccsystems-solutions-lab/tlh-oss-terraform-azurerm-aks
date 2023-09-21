@@ -1,7 +1,7 @@
 locals {
-  chart_version = "1.12.3"
+  chart_version = "1.13.0"
 
-  use_aad_workload_identity = false
+  use_aad_workload_identity = true
 
   chart_values = {
     installCRDs = false
@@ -21,11 +21,11 @@ locals {
       } : {}
 
       annotations = local.use_aad_workload_identity ? {
-        "azure.workload.identity/client-id" = module.identity.id
+        "azure.workload.identity/client-id" = module.identity.client_id
       } : {}
     }
 
-    podLabels = merge(var.labels, local.use_aad_workload_identity ? {} : {
+    podLabels = merge(var.labels, local.use_aad_workload_identity ? { "azure.workload.identity/use" = "true" } : {
       aadpodidbinding = module.identity.name
     })
 

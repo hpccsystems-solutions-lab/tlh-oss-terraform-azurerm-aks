@@ -26,7 +26,7 @@ locals {
       } : {}
 
       annotations = local.use_aad_workload_identity ? {
-        "azure.workload.identity/client-id" = module.identity.id
+        "azure.workload.identity/client-id" = module.identity.client_id
       } : {}
     }
 
@@ -528,7 +528,7 @@ locals {
   }
 
   additional_config = {
-    podLabels = local.use_aad_workload_identity ? {} : {
+    podLabels = local.use_aad_workload_identity ? { "azure.workload.identity/use" = "true" } : {
       aadpodidbinding = module.identity.name
     }
 
