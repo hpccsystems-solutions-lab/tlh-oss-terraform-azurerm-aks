@@ -32,7 +32,25 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.22.0] - UNRELEASED
+## [v1.22.0] - 2023-09-25
+
+### Highlights
+
+#### Azure Overlay CNI Implementation
+
+- We fixed the missing configuration of the pod CIDR when using the Azure Overlay CNI. This was introduced due to a provider defect, but has now been fixed. Operators who were using the original code should set the `podnet_cidr_block` input variable to `10.244.0.0/16`, which is the Azure default.
+- Removed the limitation of the Azure Overlay CNI not being supported on Windows Server 2019, meaning that operators can now use the Azure Overlay CNI with AKS clusters running Windows Server 2019 nodes.
+
+#### AAD Worload Identity Support
+
+- _Cert Manager_ & _ExternalDNS_ now use AAD Workload Identity.
+
+#### Variable Removals
+
+- The following input variables were previously deprecated and due to be removed in this module release:
+  - `logging.workloads.storage_account_logs`
+  - `logging.workloads.storage_account_container`
+  - `logging.workloads.storage_account_path_prefix`
 
 ### All Changes
 
