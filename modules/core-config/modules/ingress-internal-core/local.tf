@@ -1,7 +1,7 @@
 locals {
   name = "core-internal"
 
-  chart_version = "4.7.1"
+  chart_version = "4.7.2"
 
   chart_values = {
     commonLabels = var.labels
