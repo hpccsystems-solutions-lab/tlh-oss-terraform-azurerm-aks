@@ -52,7 +52,16 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Local Static Provisioner_ chart to [v2.0.0](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/releases/tag/local-static-provisioner-2.0.0). ([#1369](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1369)) [@peterabarr](https://github.com/peterabarr)
 - Updated _Fluent Bit_ chart to [v0.38.0](https://github.com/fluent/helm-charts/releases/tag/fluent-bit-0.38.0). ([#1369](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1369)) [@peterabarr](https://github.com/peterabarr)
 
+## [v1.20.1] - 2023-09-25
+
+### All Changes
+
+- Increased the Helm release timeout for Loki, which in some instances caused a 'content deadline exceeded' error when upgrading the Kubernetes version. [@hadeeds](https://github.com/hadeeds)
+
 ## [v1.20.0] - 2023-08-31
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.20.1` instead due to a breaking change.
 
 ### Highlights
 
@@ -101,8 +110,17 @@ The experimental variable `experimental.cluster_patch_upgrade` has been removed 
 - Added `topologySpreadConstraints` to core services inside the module. ([#1324](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1324)) [@peterabarr](https://github.com/peterabarr)
 - Removed the `cluster_endpoint_public_access` variable as it has been deprecated by the provider in `v3.71.0` onwards. ([#1336](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1336)) [@hadeeds](https://github.com/hadeeds)
 - Updated storage management policy fixing an issue in control plane log retention. ([#1347](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1347)) [@stevehipwell](https://github.com/stevehipwell)
+  
+## [v1.19.2] - 2023-09-25
+
+### All Changes
+
+- Increased the Helm release timeout for Loki, which in some instances caused a 'content deadline exceeded' error when upgrading the Kubernetes version. [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.19.1] - 2023-08-25
+
+> **Warning**
+> **DO NOT USE THIS VERSION** - Please use `v1.19.2` instead due to a breaking change.
 
 ### All Changes
 
@@ -116,7 +134,7 @@ The experimental variable `experimental.cluster_patch_upgrade` has been removed 
 ## [v1.19.0] - 2023-08-16
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.19.0` instead due to a breaking change.
+> **DO NOT USE THIS VERSION** - Please use `v1.19.2` instead due to a breaking change.
 
 ### Highlights
 
@@ -173,7 +191,7 @@ For kubernetes version v1.27 or above, `topologySpreadConstraints` have been add
 ## [v1.18.0] - 2023-08-02
 
 > **Warning**
-> **DO NOT USE THIS VERSION** - Please use `v1.18.2` instead due to AKS Kubernetes version updates.
+> **DO NOT USE THIS VERSION** - Please use `v1.18.2` instead due to a breaking change.
 
 ### Highlights
 
