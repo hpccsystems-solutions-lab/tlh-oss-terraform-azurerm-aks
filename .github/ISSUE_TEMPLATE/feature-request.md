@@ -2,7 +2,7 @@
 name: Feature Request
 about: Request a new feature.
 title: "feat: <title>"
-labels: "enhancement, needs triage"
+labels: "kind/feature, needs/triage"
 assignees: ""
 
 ---

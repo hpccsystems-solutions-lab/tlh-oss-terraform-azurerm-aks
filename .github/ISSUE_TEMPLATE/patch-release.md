@@ -2,7 +2,7 @@
 name: Patch Release Module
 about: Propose a new module patch release.
 title: "chore: Release vX.Y.Z"
-labels: "chore, needs triage"
+labels: "kind/chore, needs/triage"
 assignees: ""
 
 ---

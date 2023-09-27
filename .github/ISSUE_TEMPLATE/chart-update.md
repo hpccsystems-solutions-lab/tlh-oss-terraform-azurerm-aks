@@ -2,7 +2,7 @@
 name: Chart Update
 about: Record that a new Helm chart update is available.
 title: "feat: Update chart <chart_name> to <chart_version>"
-labels: "update, needs triage"
+labels: "kind/upgrade, needs/triage"
 assignees: ""
 
 ---

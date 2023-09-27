@@ -2,7 +2,7 @@
 name: Prepare Module Development
 about: Prepare module for the coming sprint.
 title: "chore: Prepare Module Development vX.Y.Z"
-labels: "chore, needs triage"
+labels: "kind/chore, needs/triage"
 assignees: ""
 
 ---

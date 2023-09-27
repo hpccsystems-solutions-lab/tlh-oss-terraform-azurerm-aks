@@ -2,7 +2,7 @@
 name: Chore
 about: Request non-functional work.
 title: "chore: <title>"
-labels: "chore, needs triage"
+labels: "kind/chore, needs/triage"
 assignees: ""
 
 ---
