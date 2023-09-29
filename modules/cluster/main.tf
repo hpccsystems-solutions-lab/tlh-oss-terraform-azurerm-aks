@@ -12,6 +12,8 @@ resource "azurerm_role_assignment" "network_contributor_network" {
 }
 
 resource "azurerm_role_assignment" "network_contributor_route_table" {
+  count = var.cni == "KUBENET" ? 1 : 0
+
   principal_id         = azurerm_user_assigned_identity.default.principal_id
   role_definition_name = "Network Contributor"
   scope                = var.route_table_id

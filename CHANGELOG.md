@@ -36,6 +36,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Removed unnecessary _Network Contributor_ permissions from the cluster identity if the cluster isn't using the _Kubenet_ CNI. [@stevehipwell](https://github.com/stevehipwell)
+
 ## [v1.22.0] - 2023-09-25
 
 ### Highlights
@@ -132,7 +134,7 @@ The experimental variable `experimental.cluster_patch_upgrade` has been removed 
 - Added `topologySpreadConstraints` to core services inside the module. ([#1324](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1324)) [@peterabarr](https://github.com/peterabarr)
 - Removed the `cluster_endpoint_public_access` variable as it has been deprecated by the provider in `v3.71.0` onwards. ([#1336](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1336)) [@hadeeds](https://github.com/hadeeds)
 - Updated storage management policy fixing an issue in control plane log retention. ([#1347](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1347)) [@stevehipwell](https://github.com/stevehipwell)
-  
+
 ## [v1.19.2] - 2023-09-25
 
 ### All Changes

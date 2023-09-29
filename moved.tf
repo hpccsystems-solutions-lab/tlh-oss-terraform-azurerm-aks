@@ -32,3 +32,8 @@ moved {
   from = module.core_config.module.kube_prometheus_stack
   to   = module.core_config.module.kube_prometheus_stack[0]
 }
+
+moved {
+  from = module.cluster.azurerm_role_assignment.network_contributor_route_table
+  to   = module.cluster.azurerm_role_assignment.network_contributor_route_table[0]
+}

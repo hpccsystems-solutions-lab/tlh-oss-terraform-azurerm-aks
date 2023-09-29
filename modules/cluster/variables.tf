@@ -35,13 +35,13 @@ variable "manual_upgrades" {
 }
 
 variable "cni" {
-  description = "Kubernetes CNI, \"kubenet\" & \"azure\" are supported."
+  description = "Kubernetes CNI; \"KUBENET\", \"AZURE_OVERLAY\" & \"AZURE\" are supported."
   type        = string
   nullable    = false
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"free\" & \"standard\" are supported."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"FREE\" & \"STANDARD\" are supported."
   type        = string
   nullable    = false
 }
