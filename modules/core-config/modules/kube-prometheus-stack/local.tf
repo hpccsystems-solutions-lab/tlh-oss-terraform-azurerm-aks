@@ -3,7 +3,7 @@ locals {
 
   cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
 
-  thanos_chart_version = "1.14.1"
+  thanos_chart_version = "1.14.3"
 
   # Thanos image version should match version in Thanos chart
   thanos_image_version = "0.32.2"
