@@ -37,6 +37,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Removed unnecessary _Network Contributor_ permissions from the cluster identity if the cluster isn't using the _Kubenet_ CNI. [@stevehipwell](https://github.com/stevehipwell)
+- Updated minimum version of the Helm provider to [v2.11.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.11.0). ([#1388](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/1388)) [@hadeeds](https://github.com/hadeeds)
+- Updated minimum version of the Kubernetes provider to [v2.23.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.23.0). ([#1388](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/1388)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.22.0] - 2023-09-25
 
