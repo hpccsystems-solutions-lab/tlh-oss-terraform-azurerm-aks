@@ -43,6 +43,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Kube Prometheus Stack_ chart to [v51.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-51.2.0). ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Ingress NGINX_ chart to [v4.8.0](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.8.0) (contains Nginx Controller update to [v1.9.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.9.0)). ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Thanos_ chart to [v1.14.3](https://github.com/stevehipwell/helm-charts/releases/tag/thanos-1.14.3) (contains _Thanos_ [v0.32.3](https://github.com/thanos-io/thanos/releases/tag/v0.32.3)). ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Cert Manager_ chart to [v1.13.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.13.1) making it support Azure Workload Identity. ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.22.0] - 2023-09-25
 
