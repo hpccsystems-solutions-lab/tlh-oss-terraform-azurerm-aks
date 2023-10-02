@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated minimum version of the Helm provider to [v2.11.0](https://github.com/hashicorp/terraform-provider-helm/releases/tag/v2.11.0). ([#1388](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/1388)) [@hadeeds](https://github.com/hadeeds)
 - Updated minimum version of the Kubernetes provider to [v2.23.0](https://github.com/hashicorp/terraform-provider-kubernetes/releases/tag/v2.23.0). ([#1388](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/issues/1388)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Helm Loki_ chart to [v5.23.1](https://github.com/grafana/helm-charts/releases/tag/helm-loki-5.23.1). ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
+- Updated _Kube Prometheus Stack_ chart to [v51.2.0](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-51.2.0). ([#1395](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1395)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.22.0] - 2023-09-25
 
