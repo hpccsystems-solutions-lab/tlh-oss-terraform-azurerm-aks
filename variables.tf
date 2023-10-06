@@ -38,14 +38,14 @@ variable "cluster_version" {
 }
 
 variable "sku_tier" {
-  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"FREE\", \"STANDARD\", \"free\" (DEPRECATED) & \"standard\" (DEPRECATED) are supported. For production clusters or clusters with more than 10 nodes this should be set to \"STANDARD\"."
+  description = "Pricing tier for the Azure Kubernetes Service managed cluster; \"FREE\" & \"STANDARD\" are supported. For production clusters or clusters with more than 10 nodes this should be set to \"STANDARD\"."
   type        = string
   nullable    = false
   default     = "FREE"
 
   validation {
-    condition     = contains(["FREE", "STANDARD"], upper(var.sku_tier))
-    error_message = "Available SKU tiers are \"FREE\", \"STANDARD\", \"free\" (DEPRECATED) or \"standard\" (DEPRECATED)."
+    condition     = contains(["FREE", "STANDARD"], var.sku_tier)
+    error_message = "Available SKU tiers are \"FREE\" or \"STANDARD\"."
   }
 }
 

@@ -64,7 +64,7 @@ module "cluster" {
   cluster_name                         = var.cluster_name
   cluster_version                      = var.cluster_version
   manual_upgrades                      = var.unsupported.manual_upgrades
-  sku_tier                             = upper(var.sku_tier)
+  sku_tier                             = var.sku_tier
   fips                                 = var.fips
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
   cni                                  = local.cni
