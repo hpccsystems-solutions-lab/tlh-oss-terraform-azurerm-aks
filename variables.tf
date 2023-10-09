@@ -33,7 +33,7 @@ variable "cluster_version" {
 
   validation {
     condition     = contains(["1.27", "1.26", "1.25"], var.cluster_version)
-    error_message = "Available versions are \"1.27\" (EXPERIMENTAL), \"1.26\" or \"1.25\""
+    error_message = "Available versions are \"1.27\", \"1.26\" or \"1.25\""
   }
 }
 

@@ -114,11 +114,13 @@ locals {
     }
 
     persistence = {
-      enabled      = true
-      legacy       = true
-      storageClass = "azure-disk-premium-ssd-delete"
-      accessMode   = "ReadWriteOnce"
-      size         = "64Gi"
+      enabled       = true
+      legacy        = true
+      storageClass  = "azure-disk-premium-ssd-delete"
+      accessMode    = "ReadWriteOnce"
+      size          = "64Gi"
+      retainDeleted = false
+      retainScaled  = true
     }
 
     env = [for k, v in local.additional_env : { name = k, value = v }]

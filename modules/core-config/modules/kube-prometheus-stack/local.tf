@@ -779,10 +779,12 @@ locals {
       }
 
       persistence = {
-        enabled      = true
-        storageClass = "azure-disk-premium-ssd-delete"
-        accessMode   = "ReadWriteOnce"
-        size         = "64Gi"
+        enabled       = true
+        storageClass  = "azure-disk-premium-ssd-delete"
+        accessMode    = "ReadWriteOnce"
+        size          = "64Gi"
+        retainDeleted = false
+        retainScaled  = true
       }
 
       nodeSelector = {
@@ -1135,10 +1137,12 @@ locals {
       }
 
       persistence = {
-        enabled      = true
-        storageClass = "azure-disk-premium-ssd-delete"
-        accessMode   = "ReadWriteOnce"
-        size         = "16Gi"
+        enabled       = true
+        storageClass  = "azure-disk-premium-ssd-delete"
+        accessMode    = "ReadWriteOnce"
+        size          = "16Gi"
+        retainDeleted = false
+        retainScaled  = false
       }
 
       nodeSelector = {
@@ -1236,10 +1240,12 @@ locals {
       }
 
       persistence = {
-        enabled      = true
-        storageClass = "azure-disk-premium-ssd-delete"
-        accessMode   = "ReadWriteOnce"
-        size         = "16Gi"
+        enabled       = true
+        storageClass  = "azure-disk-premium-ssd-delete"
+        accessMode    = "ReadWriteOnce"
+        size          = "16Gi"
+        retainDeleted = false
+        retainScaled  = true
       }
 
       nodeSelector = {
