@@ -31,7 +31,29 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Deprecated
 - Removed -->
 
-## [v1.23.0] - UNRELEASED
+## [v1.23.0] - 2023-10-10
+
+### Highlights
+
+#### Kubernetes 1.27 GA
+
+##### Pod Topology Updates
+
+- Enhanced granularity introduced with policies like `minDomain` and parameters such as `nodeAffinityPolicy`.
+
+##### StatefulSet Changes
+
+- New beta policy for PersistentVolumeClaims (PVCs) retention during StatefulSet adjustments.
+- For a detailed deprecation guide and changes in v1.27, [visit the official Kubernetes documentation](https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-27).
+- For detailed release notes, [please refer to the official Kubernetes blog post](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/).
+
+#### Module Updates
+
+- We updated the minimum Helm and Kubernetes provider versions as well as updating the core services used in the module that were due an update.
+
+#### Removals
+
+- With the `sku_tier` values `free` & `standard` being removed operators must set `sku_tier` to either `FREE` or `STANDARD`.
 
 ### All Changes
 
