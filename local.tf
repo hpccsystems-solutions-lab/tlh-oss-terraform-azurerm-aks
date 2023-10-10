@@ -6,7 +6,7 @@ data "azurerm_subscription" "current" {
 
 locals {
   module_name    = "terraform-azurerm-aks"
-  module_version = "v1.23.0"
+  module_version = "v1.24.0-beta.1"
 
   availability_zones = [1, 2, 3]
 
