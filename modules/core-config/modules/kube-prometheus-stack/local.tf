@@ -1,5 +1,5 @@
 locals {
-  chart_version = "51.2.0"
+  chart_version = "51.5.3"
 
   cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
 

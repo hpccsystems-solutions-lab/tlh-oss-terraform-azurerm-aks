@@ -36,6 +36,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 ### All Changes
 
 - Changed fluent bit collector filters to use lua ([#1396](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/pull/1396))  [@james-alford-ln](https://github.com/james-alford-ln)
+- Updated _Kube Prometheus Stack_ chart to [v51.5.3](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-51.5.3) (contains Grafana [v6.60.x](https://github.com/grafana/helm-charts/releases/tag/grafana-6.60.4) and Prometheus [v2.47.1](https://github.com/prometheus/prometheus/releases/tag/v2.47.1)). ([#1409](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1409)) [@hadeeds](https://github.com/hadeeds)
 
 ## [v1.23.0] - 2023-10-10
 
