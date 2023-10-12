@@ -1,6 +1,6 @@
 locals {
   name          = "fluent-bit-aggregator"
-  chart_version = "0.9.0"
+  chart_version = "0.10.0"
 
   cluster_version_minor = tonumber(regex("^1\\.(\\d+)", var.cluster_version)[0])
 
