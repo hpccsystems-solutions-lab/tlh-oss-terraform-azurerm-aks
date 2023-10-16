@@ -121,6 +121,10 @@ locals {
       outputs       = local.output_config
     }
 
+    luaScripts = {
+      "filters.lua" = file("${path.module}/resources/filters.lua")
+    }
+
     hotReload = {
       enabled = true
 
@@ -233,19 +237,12 @@ EOT
     flush_ms              2000
 
 %{endfor~}
-[FILTER]
-    name   record_modifier
-    match  *
-    record cloud azure
-    record location ${local.location_sanitized}
-    record cluster ${var.cluster_name}
 
 [FILTER]
-    name  modify
-    match host.*
-    copy  hostname node
-    copy  systemd_unit app
-    add   namespace _
+    name   lua
+    match  host.*
+    script /fluent-bit/scripts/filters.lua
+    call   HostRecordModifier
 
 [FILTER]
     name                kubernetes
@@ -260,69 +257,12 @@ EOT
     kube_token_ttl      600
 
 [FILTER]
-    name         nest
-    match        kube.*
-    operation    lift
-    nested_under kubernetes
-    add_prefix   kubernetes_
+    name   lua
+    match  kube.*
+    script /fluent-bit/scripts/filters.lua
+    call   KubeRecordModifier
 
-[FILTER]
-    name         nest
-    match        kube.*
-    operation    lift
-    nested_under kubernetes_labels
-    add_prefix   kubernetes_label_
-
-[FILTER]
-    name         nest
-    match        kube.*
-    operation    lift
-    nested_under kubernetes_annotations
-    add_prefix   kubernetes_annotation_
-
-[FILTER]
-    name  modify
-    match kube.*
-    copy  kubernetes_host node
-    copy  kubernetes_namespace_name namespace
-    copy  kubernetes_pod_name pod
-    copy  kubernetes_container_name container
-    copy  kubernetes_container_hash containerHash
-    copy  kubernetes_container_image containerImage
-    copy  kubernetes_label_app.kubernetes.io/name app
-    copy  kubernetes_label_app app
-    copy  kubernetes_pod_name app
-    copy  kubernetes_label_app.kubernetes.io/instance instance
-    copy  kubernetes_namespace_name instance
-    copy  kubernetes_label_app.kubernetes.io/component component
-    copy  kubernetes_label_app.kubernetes.io/part-of partOf
-    copy  kubernetes_label_app.kubernetes.io/version version
-
-[FILTER]
-    name          nest
-    match         kube.*
-    operation     nest
-    wildcard      kubernetes_label_*
-    nest_under    labels
-    remove_prefix kubernetes_label_
-
-[FILTER]
-    name          nest
-    match         kube.*
-    operation     nest
-    wildcard      kubernetes_annotation_*
-    nest_under    annotations
-    remove_prefix kubernetes_annotation_
-
-[FILTER]
-    name         modify
-    match        kube.*
-    remove       _p
-    remove       stream
-    remove_regex ^kubernetes\_.+
 EOT
-
-
   output_config = <<EOT
 [OUTPUT]
     name                     forward

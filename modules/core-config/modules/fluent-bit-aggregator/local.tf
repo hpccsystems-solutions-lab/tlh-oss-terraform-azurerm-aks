@@ -8,6 +8,15 @@ locals {
 
   use_aad_workload_identity = false
 
+  extra_records = merge(
+    var.extra_records,
+    {
+      cloud    = "azure",
+      location = local.location_sanitized,
+      cluster  = var.cluster_name
+    }
+  )
+
   chart_values = {
     commonLabels = var.labels
 
@@ -196,14 +205,14 @@ locals {
     buffer_max_size                   4M
     storage.type                      filesystem
     storage.pause_on_chunks_overlimit false
-%{if length(var.extra_records) > 0}
+
 [FILTER]
     name record_modifier
     match *
-%{for k, v in var.extra_records~}
+%{for k, v in local.extra_records~}
     record ${k} ${v}
 %{endfor~}
-%{endif~}
+
 %{for filter in local.raw_filters}
 ${chomp(filter)}
 %{endfor~}

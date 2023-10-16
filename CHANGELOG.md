@@ -35,6 +35,8 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ### All Changes
 
+- Changed fluent bit collector filters to use lua ([#1396](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/pull/1396))  [@james-alford-ln](https://github.com/james-alford-ln)
+
 ## [v1.23.0] - 2023-10-10
 
 ### Highlights

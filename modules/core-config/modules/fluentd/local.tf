@@ -6,6 +6,15 @@ locals {
 
   location_sanitized = lower(replace(var.location, " ", ""))
 
+  extra_records = merge(
+    var.extra_records,
+    {
+      cloud    = "azure",
+      location = local.location_sanitized,
+      cluster  = var.cluster_name
+    }
+  )
+
   use_aad_workload_identity = false
 
   chart_values = {
@@ -268,16 +277,14 @@ locals {
   }] : [], var.route_config)
 
   filter_config_string = <<EOT
-%{if length(var.extra_records) > 0~}
 <filter **>
   @type record_transformer
   <record>
-%{for k, v in var.extra_records~}
+%{for k, v in local.extra_records~}
     ${k} ${replace(v, "/(?i)\\$\\{([a-z0-9_]+)\\}/", "#{ENV['$n']}")}
 %{endfor~}
   </record>
 </filter>
-%{endif~}
 %{if var.filters != null~}
 ${trimspace(var.filters)}
 %{endif~}
