@@ -17,8 +17,6 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 
 ## Deprecations
 
-- The `retention_enabled` and `retention_days` variables are deprecated and will be removed in the `v1.24.0` release.
-
 ---
 
 <!-- ## [vX.Y.Z] - UNRELEASED
