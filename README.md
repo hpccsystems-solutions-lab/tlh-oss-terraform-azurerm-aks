@@ -985,10 +985,11 @@ Specification for the `core_services_config` object.
 | `fluentd`                  | Fluentd configuration.                  | `object` ([Appendix F5](#appendix-f5))   | `{}`        |
 | `grafana`                  | Grafana configuration.                  | `object` ([Appendix F7](#appendix-f7))   | `{}`        |
 | `ingress_internal_core`    | Ingress internal-core configuration.    | `object` ([Appendix F8](#appendix-f8))   |             |
-| `prometheus`               | Prometheus configuration.               | `object` ([Appendix F9](#appendix-f9))   | `{}`        |
-| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix F10](#appendix-f10)) | `{}`        |
-| `thanos`                   | Thanos configuration.                   | `object` ([Appendix F11](#appendix-f11)) | `{}`        |
-| `loki`                     | Loki.                                   | `object` ([Appendix F12](#appendix-f12)) | `{}`        |
+| `kube_state_metrics`       | Kube State Metrics configuration.       | `object` ([Appendix F9](#appendix-f9))   | `{}`        |
+| `prometheus`               | Prometheus configuration.               | `object` ([Appendix F10](#appendix-f10)) | `{}`        |
+| `prometheus_node_exporter` | Prometheus Node Exporter configuration. | `object` ([Appendix F11](#appendix-f11)) | `{}`        |
+| `thanos`                   | Thanos configuration.                   | `object` ([Appendix F12](#appendix-f12)) | `{}`        |
+| `loki`                     | Loki.                                   | `object` ([Appendix F13](#appendix-f13)) | `{}`        |
 
 ### Appendix F1
 
@@ -1081,6 +1082,14 @@ Specification for the `core_services_config.ingress_internal_core` object.
 
 ### Appendix F9
 
+Specification for the `core_services_config.kube_state_metrics` object
+
+| **Variable**   | **Description**                             | **Type**  | **Default** |
+| :------------- | :------------------------------------------ | :-------- | :---------- |
+| `resource_overrides`      | Resource overrides for pod containers. Map key(s) can be `default`| `map(object)` (see [Appendix H](#appendix-h)) | `{}`        |
+
+### Appendix F10
+
 Specification for the `core_services_config.prometheus` object.
 
 | **Variable**         | **Description**                                                                                         | **Type**                                      | **Default** |
@@ -1088,7 +1097,7 @@ Specification for the `core_services_config.prometheus` object.
 | `remote_write`       | Remote write endpoints for metrics.                                                                     | `list(object)`                                | `[]`        |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default`, `thanos_sidecar`, `config_reloader` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix F10
+### Appendix F11
 
 Specification for the `core_services_config.prometheus_node_exporter` object.
 
@@ -1096,7 +1105,7 @@ Specification for the `core_services_config.prometheus_node_exporter` object.
 | :------------------- | :----------------------------------------------------------------- | :-------------------------------------------- | :---------- |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `default` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix F11
+### Appendix F12
 
 Specification for the `core_services_config.thanos` object.
 
@@ -1104,7 +1113,7 @@ Specification for the `core_services_config.thanos` object.
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :---------- |
 | `resource_overrides` | Resource overrides for pod containers. Map key(s) can be `store_gateway_default`, `rule_default`, `query_frontend_default`, `query_default`, `compact_default` | `map(object)` (see [Appendix G](#appendix-g)) | `{}`        |
 
-### Appendix F12
+### Appendix F13
 
 Specification for the `core_services_config.loki` object.
 

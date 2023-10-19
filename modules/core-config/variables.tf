@@ -275,6 +275,13 @@ variable "core_services_config" {
       lb_subnet_name   = string
       public_dns       = bool
     })
+    kube_state_metrics = object({
+      resource_overrides = map(object({
+        cpu       = number
+        cpu_limit = number
+        memory    = number
+      }))
+    })
     loki = object({
       resource_overrides = map(object({
         cpu       = number

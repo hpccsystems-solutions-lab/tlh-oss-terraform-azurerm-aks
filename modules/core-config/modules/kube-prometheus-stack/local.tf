@@ -640,13 +640,13 @@ locals {
 
       resources = {
         requests = {
-          cpu    = "50m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.kube_state_metrics_default.cpu, null), "50")}m"
+          memory = "${coalesce(try(var.resource_overrides.kube_state_metrics_default.memory, null), "256")}Mi"
         }
 
         limits = {
-          cpu    = "1000m"
-          memory = "256Mi"
+          cpu    = "${coalesce(try(var.resource_overrides.kube_state_metrics_default.cpu_limit, null), "1000")}m"
+          memory = "${coalesce(try(var.resource_overrides.kube_state_metrics_default.memory, null), "256")}Mi"
         }
       }
 

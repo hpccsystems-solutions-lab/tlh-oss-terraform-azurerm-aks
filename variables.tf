@@ -466,6 +466,13 @@ variable "core_services_config" {
       lb_subnet_name   = optional(string, null)
       public_dns       = optional(bool, false)
     })
+    kube_state_metrics = optional(object({
+      resource_overrides = optional(map(object({
+        cpu       = optional(number, null)
+        cpu_limit = optional(number, null)
+        memory    = optional(number, null)
+      })), {})
+    }), {})
     prometheus = optional(object({
       remote_write = optional(any, [])
       resource_overrides = optional(map(object({
