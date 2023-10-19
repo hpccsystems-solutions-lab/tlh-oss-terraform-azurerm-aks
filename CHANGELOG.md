@@ -40,6 +40,7 @@ All clusters created with a module version older than `v1.0.0-beta.10` need to b
 - Updated _Fluent Bit Aggregator_ chart to [v0.10.0](https://github.com/stevehipwell/helm-charts/releases/tag/fluent-bit-aggregator-0.10.0) (contains Fluent Bit OCI image update to [v2.1.10](https://github.com/fluent/fluent-bit/releases/tag/v2.1.10)). ([#1409](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1409)) [@hadeeds](https://github.com/hadeeds)
 - Updated _Ingress NGINX_ chart to [v4.8.1](https://github.com/kubernetes/ingress-nginx/releases/tag/helm-chart-4.8.1) (contains Nginx Controller update to [v1.9.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.9.1)). ([#1409](https://github.com/LexisNexis-RBA/rsg-terraform-azurerm-aks/pull/1409)) [@hadeeds](https://github.com/hadeeds)
 - Upgrade _Loki_ chart to [v5.31.0](https://github.com/grafana/loki/tree/helm-loki-5.31.0/production/helm/loki) [@appkins](https://github.com/appkins)
+- Added new outputs to the module `internal_lb_source_ranges` & `dashboards`. ([#1417](https://github.com/LexisNexis-RBA/rsg-terraform-aws-eks/pull/1417)) [@peterabarr](https://github.com/peterabarr)
 
 ## [v1.23.0] - 2023-10-10
 

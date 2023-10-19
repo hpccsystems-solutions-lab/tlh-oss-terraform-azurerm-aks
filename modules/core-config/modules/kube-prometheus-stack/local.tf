@@ -252,9 +252,9 @@ locals {
         annotations      = var.ingress_annotations
         ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-        hosts            = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = [local.prometheus_host]
         tls = [{
-          hosts = ["prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = [local.prometheus_host]
         }]
       }
 
@@ -392,9 +392,9 @@ locals {
         annotations      = var.ingress_annotations
         ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-        hosts            = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = [local.alertmanager_host]
         tls = [{
-          hosts = ["alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = [local.alertmanager_host]
         }]
       }
 
@@ -501,9 +501,9 @@ locals {
         ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
         path             = "/"
-        hosts            = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = [local.grafana_host]
         tls = [{
-          hosts = ["grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+          hosts = [local.grafana_host]
         }]
       }
 
@@ -997,7 +997,7 @@ locals {
         annotations      = var.ingress_annotations
         ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-        hosts            = ["thanos-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = [local.thanos_query_frontend_host]
       }
 
       resources = {
@@ -1121,7 +1121,7 @@ locals {
         annotations      = var.ingress_annotations
         ingressClassName = var.ingress_class_name
         pathType         = "Prefix"
-        hosts            = ["thanos-rule-${var.ingress_subdomain_suffix}.${var.ingress_domain}"]
+        hosts            = [local.thanos_rule_host]
       }
 
       resources = {
@@ -1543,6 +1543,12 @@ locals {
   thanos_rule_service_account_name          = "thanos-rule"
   thanos_store_gateway_service_account_name = "thanos-store-gateway"
   grafana_service_account_name              = "kube-prometheus-stack-grafana"
+
+  alertmanager_host          = "alertmanager-${var.ingress_subdomain_suffix}.${var.ingress_domain}"
+  grafana_host               = "grafana-${var.ingress_subdomain_suffix}.${var.ingress_domain}"
+  prometheus_host            = "prometheus-${var.ingress_subdomain_suffix}.${var.ingress_domain}"
+  thanos_query_frontend_host = "thanos-${var.ingress_subdomain_suffix}.${var.ingress_domain}"
+  thanos_rule_host           = "thanos-rule-${var.ingress_subdomain_suffix}.${var.ingress_domain}"
 
   log_level_lookup = {
     "ERROR" = "error"

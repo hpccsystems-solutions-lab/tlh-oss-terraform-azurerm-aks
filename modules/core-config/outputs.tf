@@ -37,3 +37,13 @@ output "grafana_identity" {
   description = "Identity that Grafana uses."
   value       = var.monitoring.enabled ? module.kube_prometheus_stack[0].grafana_identity : null
 }
+
+output "internal_lb_source_ranges" {
+  description = "List of internal CIDRs used in ingress"
+  value       = var.core_services_config.ingress_internal_core.lb_source_cidrs
+}
+
+output "dashboards" {
+  description = "Core service dashboards."
+  value       = local.dashboards
+}

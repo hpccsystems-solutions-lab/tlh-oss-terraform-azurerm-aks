@@ -58,6 +58,29 @@ locals {
     }
   })
 
+  dashboards = {
+    alertmanager = {
+      enabled = var.monitoring.enabled
+      url     = var.monitoring.enabled ? module.kube_prometheus_stack[0].alertmanager_dashboard_url : null
+    }
+    grafana = {
+      enabled = var.monitoring.enabled
+      url     = var.monitoring.enabled ? module.kube_prometheus_stack[0].grafana_dashboard_url : null
+    }
+    prometheus = {
+      enabled = var.monitoring.enabled
+      url     = var.monitoring.enabled ? module.kube_prometheus_stack[0].prometheus_dashboard_url : null
+    }
+    thanos_query_frontend = {
+      enabled = var.monitoring.enabled
+      url     = var.monitoring.enabled ? module.kube_prometheus_stack[0].thanos_query_frontend_dashboard_url : null
+    }
+    thanos_rule = {
+      enabled = var.monitoring.enabled
+      url     = var.monitoring.enabled ? module.kube_prometheus_stack[0].thanos_rule_dashboard_url : null
+    }
+  }
+
   resource_overrides = merge(flatten([
     for service, settings in var.core_services_config : [
       for container, resources in lookup(settings, "resource_overrides", {}) : {

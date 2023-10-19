@@ -73,6 +73,11 @@ output "coredns_custom_config_map_namespace" {
   value       = module.core_config.coredns_custom_config_map_namespace
 }
 
+output "dashboards" {
+  description = "Dashboards exposed."
+  value       = module.core_config.dashboards
+}
+
 output "external_dns_private_identity" {
   description = "Identity that private ExternalDNS uses."
   value       = module.core_config.external_dns_private_identity
@@ -96,6 +101,11 @@ output "fluentd_identity" {
 output "grafana_identity" {
   description = "Identity that Grafana uses."
   value       = module.core_config.grafana_identity
+}
+
+output "internal_lb_source_ranges" {
+  description = "All internal CIDRs."
+  value       = module.core_config.internal_lb_source_ranges
 }
 
 output "oms_agent_identity" {
