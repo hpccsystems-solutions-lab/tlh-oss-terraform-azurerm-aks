@@ -5,10 +5,17 @@ data "azurerm_subscription" "current" {
 # }
 
 locals {
+  unsupported = {
+    logging_disabled    = var.logging_monitoring_enabled? false : true
+    monitoring_disabled = var.logging_monitoring_enabled? false : true
+    manual_upgrades     = false
+    windows_support     = false
+  }
+
   module_name    = "terraform-azurerm-aks"
   module_version = "v1.24.0-beta.1"
 
-  availability_zones = [1, 2, 3]
+  availability_zones = var.availability_zones
 
   bootstrap_name    = "bootstrap"
   bootstrap_vm_size = "Standard_B2s"
@@ -18,7 +25,7 @@ locals {
   # client_id       = data.azurerm_client_config.current.client_id
   azure_env = startswith(var.location, "usgov") ? "usgovernment" : "public"
 
-  cni = var.experimental.azure_cni_overlay ? "AZURE_OVERLAY" : (var.experimental.windows_support || var.unsupported.windows_support ? "AZURE" : "KUBENET")
+  cni = var.experimental.azure_cni_overlay ? "AZURE_OVERLAY" : (var.experimental.windows_support || local.unsupported.windows_support ? "AZURE" : "KUBENET")
 
   virtual_network_resource_group_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.virtual_network_resource_group_name}"
   virtual_network_id                = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}"
@@ -26,7 +33,7 @@ locals {
   route_table_id                    = "${local.virtual_network_resource_group_id}/providers/Microsoft.Network/routeTables/${var.route_table_name}"
 
   logging = merge(var.logging, {
-    enabled = !var.unsupported.logging_disabled
+    enabled = !local.unsupported.logging_disabled
     workloads = {
       core_service_log_level = var.logging.workloads.core_service_log_level
 

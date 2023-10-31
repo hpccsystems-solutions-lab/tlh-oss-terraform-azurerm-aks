@@ -325,10 +325,10 @@ variable "logging" {
   })
   nullable = false
 
-  validation {
+  /*validation {
     condition     = var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.storage_account.enabled
     error_message = "Control plane logging must be enabled."
-  }
+  }*/
 
   validation {
     condition     = !var.logging.control_plane.log_analytics.enabled || var.logging.control_plane.log_analytics.workspace_id != null || var.logging.log_analytics_workspace_config.id != null
@@ -587,16 +587,11 @@ variable "tags" {
   default     = {}
 }
 
-variable "unsupported" {
-  description = "Configure unsupported features."
-  type = object({
-    logging_disabled    = optional(bool, false)
-    monitoring_disabled = optional(bool, false)
-    manual_upgrades     = optional(bool, false)
-    windows_support     = optional(bool, false)
-  })
-  nullable = false
-  default  = {}
+variable "logging_monitoring_enabled" {
+  description = "If true then logging and monitoring will occur else it will not."
+  type        = bool
+  nullable    = false
+  default     = true
 }
 
 variable "experimental" {
@@ -650,14 +645,4 @@ variable "availability_zones" {
   type        = list(number)
   nullable    = false
   default     = [1]
-}
-
-variable "unsupported" {
-  description = "Configure unsupported features."
-  type = object({
-    logging_disabled = optional(bool, false)
-    windows_support  = optional(bool, false)
-  })
-  nullable = false
-  default  = {}
 }

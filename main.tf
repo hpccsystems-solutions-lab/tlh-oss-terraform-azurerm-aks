@@ -63,7 +63,7 @@ module "cluster" {
   resource_group_name                  = var.resource_group_name
   cluster_name                         = var.cluster_name
   cluster_version                      = var.cluster_version
-  manual_upgrades                      = var.unsupported.manual_upgrades
+  manual_upgrades                      = local.unsupported.manual_upgrades
   sku_tier                             = var.sku_tier
   fips                                 = var.fips
   cluster_endpoint_access_cidrs        = var.cluster_endpoint_access_cidrs
@@ -83,7 +83,7 @@ module "cluster" {
   maintenance                          = var.maintenance
   oms_agent                            = var.experimental.oms_agent
   oms_agent_log_analytics_workspace_id = var.experimental.oms_agent_log_analytics_workspace_id
-  windows_support                      = var.experimental.windows_support || var.unsupported.windows_support
+  windows_support                      = var.experimental.windows_support || local.unsupported.windows_support
   tags                                 = local.tags
   timeouts                             = local.timeouts
 
@@ -161,7 +161,7 @@ module "core_config" {
   dns_resource_group_lookup = var.dns_resource_group_lookup
 
   monitoring = {
-    enabled = !var.unsupported.monitoring_disabled
+    enabled = !local.unsupported.monitoring_disabled
   }
 
   logging = local.logging
