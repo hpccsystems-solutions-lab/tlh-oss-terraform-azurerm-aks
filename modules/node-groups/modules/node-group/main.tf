@@ -23,7 +23,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "default" {
   os_type = local.os_types[var.node_os]
   os_sku  = local.os_skus[var.node_os]
 
-  vm_size                = local.vm_size_lookup["${var.node_arch}_${var.node_type}_${var.node_type_variant}_${var.node_type_version}"][var.node_size]
+  # The conditional on this statement checks to see if var.node_size is in the lookup table. If it isn't, it assumes var.node_size is a valid azure vm size (e.g. "Standard_B8ms").
+  vm_size                = try(local.vm_size_lookup["${var.node_arch}_${var.node_type}_${var.node_type_variant}_${var.node_type_version}"][var.node_size],"") != ""? local.vm_size_lookup["${var.node_arch}_${var.node_type}_${var.node_type_variant}_${var.node_type_version}"][var.node_size] : var.node_size
   enable_host_encryption = true
   enable_node_public_ip  = false
   ultra_ssd_enabled      = var.ultra_ssd
