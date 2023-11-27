@@ -167,7 +167,7 @@ resource "azurerm_kubernetes_cluster" "default" {
     }
   }
 
-  node_resource_group = "mc_${var.cluster_name}"
+  node_resource_group = "ng_${var.cluster_name}"
 
   default_node_pool {
     name = var.bootstrap_name
