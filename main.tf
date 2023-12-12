@@ -75,7 +75,7 @@ module "cluster" {
   managed_outbound_ip_count            = var.managed_outbound_ip_count
   managed_outbound_ports_allocated     = var.managed_outbound_ports_allocated
   managed_outbound_idle_timeout        = var.managed_outbound_idle_timeout
-  admin_group_object_ids               = var.admin_group_object_ids
+  #admin_group_object_ids               = var.admin_group_object_ids
   bootstrap_name                       = local.bootstrap_name
   bootstrap_vm_size                    = local.bootstrap_vm_size
   logging                              = local.logging
