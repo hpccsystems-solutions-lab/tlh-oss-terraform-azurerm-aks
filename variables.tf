@@ -170,7 +170,7 @@ variable "system_nodes" {
     #node_size         = optional(string, "xlarge")
     node_size         = optional(string, "large")
     node_type_version = optional(string, "v1")
-    min_capacity      = optional(number, 3)
+    min_capacity      = optional(number, 1)
   })
   nullable = false
   default  = {}
