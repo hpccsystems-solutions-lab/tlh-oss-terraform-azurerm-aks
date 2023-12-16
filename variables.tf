@@ -167,10 +167,9 @@ variable "system_nodes" {
   description = "System node group to configure."
   type = object({
     node_arch         = optional(string, "amd64")
-    #node_size         = optional(string, "xlarge")
-    node_size         = optional(string, "large")
+    node_size         = optional(string, "xlarge")
     node_type_version = optional(string, "v1")
-    min_capacity      = optional(number, 1)
+    min_capacity      = optional(number, 3)
   })
   nullable = false
   default  = {}
