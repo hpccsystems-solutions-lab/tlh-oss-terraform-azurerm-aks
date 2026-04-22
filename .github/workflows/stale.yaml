@@ -10,7 +10,7 @@ jobs:
     environment: project
     steps:
       - name: Stale Issues
-        uses: actions/stale@1160a2240286f5da8ec72b1c0816ce2481aabf84 # v8.0.0
+        uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f # v10.2.0
         with:
           repo-token: ${{ secrets.SECRET }}
           days-before-stale: 14
