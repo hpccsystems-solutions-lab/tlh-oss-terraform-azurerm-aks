@@ -12,7 +12,7 @@ jobs:
     environment: project
     steps:
       - name: Add Issue
-        uses: actions/add-to-project@4756e6330fe1e0a736690d3cfd9f11c9399c2ed4
+        uses: actions/add-to-project@5afcf98fcd03f1c2f92c3c83f58ae24323cc57fd
         with:
           project-url: https://github.com/orgs/LexisNexis-RBA/projects/55
           github-token: ${{ secrets.SECRET }}
